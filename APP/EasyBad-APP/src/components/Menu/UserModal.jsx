@@ -4,7 +4,7 @@ import SettingsInSideBarModal from './UserModal/Settings';
 import HelpInSideBarModal from './UserModal/Help';
 import ThemeInSideBarModal from './UserModal/Theme';
 import DisconnectInSideBarModal from './UserModal/Disconnect';
-import '../styles/navbarStyles.css';
+import '../../styles/navbarStyles.css';
 
 function UserModal() {
   return (

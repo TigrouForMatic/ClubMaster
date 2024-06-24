@@ -1,4 +1,4 @@
-import '../../styles/navbarStyles.css';
+import '../../../styles/navbarStyles.css';
 import { SystemShut } from 'iconoir-react';
 
 

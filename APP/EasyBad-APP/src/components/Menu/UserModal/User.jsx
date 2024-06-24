@@ -1,5 +1,5 @@
 import { User } from 'iconoir-react';
-import '../../styles/navbarStyles.css';
+import '../../../styles/navbarStyles.css';
 
 function UserInSideBarModal() {
    return(

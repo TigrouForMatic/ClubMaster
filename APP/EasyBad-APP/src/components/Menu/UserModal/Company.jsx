@@ -1,4 +1,4 @@
-import '../../styles/navbarStyles.css';
+import '../../../styles/navbarStyles.css';
 // import pebblelogo from '../../assets/pebble-logo.png'
 
 

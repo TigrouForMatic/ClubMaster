@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import '../styles/navbarStyles.css';
+import '../../styles/navbarStyles.css';
 import { Menu, User, Home, Activity, ChatBubble, Contactless, CloudDownload } from 'iconoir-react';
 import UserModal from './UserModal';
 
