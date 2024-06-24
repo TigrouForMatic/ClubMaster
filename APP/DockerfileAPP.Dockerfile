@@ -1,3 +1,3 @@
 FROM bigpapoo/r5a05-nginx:latest
 
-COPY /HQL-APP/dist/ /usr/share/nginx/html/
+COPY /EasyBad-APP/dist/ /usr/share/nginx/html/

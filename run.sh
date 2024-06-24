@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ./APP/HQL-APP
+cd ./APP/EasyBad-APP
 
 npm run build
 
