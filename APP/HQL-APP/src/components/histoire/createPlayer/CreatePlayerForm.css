@@ -1,0 +1,76 @@
+
+.create-player-form {
+    font-family: "enchanted", sans-serif;
+    margin: 0 auto; 
+    background-color: #7c142c;
+    padding: 50px;
+    border-radius: 30px;
+
+  }
+
+  .create-player-form h2 {
+    margin : 0 0 69px 0;
+    font-size: 40px;
+  }
+  .create-player-form form{
+    font-size: 25px;
+  }
+  
+  .create-player-form label {
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .dice{
+    display: flex;  
+    flex-direction: column;
+  }
+
+  .create-player-form input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .create-player-form button {
+    padding: 10px 20px;
+    background-color: #f4be69;
+    color: #000000;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .create-player-form button:hover {
+    background-color: #7c142c;
+    color: #ffffff;
+  }
+  .stats-container {
+    margin-bottom: 15px;
+  }
+  
+  .potion-options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 40px;
+  }
+  
+  .potion-options input[type="radio"] {
+    display: none; 
+    margin-right: 10px;
+  }
+  
+  .potion-options img {
+    width: 120px; 
+    height: 120px; 
+    margin-right: 30px; 
+    cursor: pointer;
+  }
+  
+  .potion-options img.selected {
+    border: 2px solid #cc8c54; 
+  }

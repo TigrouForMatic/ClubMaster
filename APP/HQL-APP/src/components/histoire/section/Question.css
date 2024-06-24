@@ -1,0 +1,37 @@
+/* Style de base pour le composant */
+.ComposantQuestion {
+    font-family: Arial, sans-serif;
+    margin-bottom: 20px;
+  }
+  
+  /* Style pour l'élément input */
+  .ComposantQuestion input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+  
+  /* Style pour les boutons */
+  .ComposantQuestion button {
+    padding: 8px 16px;
+    background-color: #7c142ccd;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: 10px ;
+  }
+  
+  /* Style pour les boutons au survol */
+  .ComposantQuestion button:hover {
+    background-color: #cc8c54;
+  }
+  
+  /* Style pour le paragraphe */
+  .ComposantQuestion p {
+    margin-top: 10px;
+    font-size: 16px;
+  }
+  

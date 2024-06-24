@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: ./API
+      dockerfile: DockerfileAPI.Dockerfile
+    ports:
+      - "3200:3200"
+    depends_on:
+      - db
+    networks:
+      - frontend
+      - backend
+
+  db:
+    build:
+      context: ./BDD
+      dockerfile: DockerfileBDD.Dockerfile
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+
+  web:
+    build:
+      context: ./APP
+      dockerfile: DockerfileAPP.Dockerfile
+    ports:
+      - "3100:3100"
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - frontend
+
+networks:
+  frontend:
+  backend:

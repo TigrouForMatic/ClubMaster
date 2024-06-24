@@ -1,0 +1,64 @@
+@font-face {
+    font-family: enchanted; /* Name of the font */
+    src: url(../../assets/fonts/enchanted_land-font/enchanted_land/Enchanted_Land.otf) format(truetype); /* Path to the font file */
+}
+.container {
+    background-color: #7c142c;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    font-family: enchanted, sans-serif;
+    font-size: 30px;
+    align-items: center;
+  }
+
+ul {
+  padding : 0;
+}
+  
+  .player-item {
+    background-color: #cc8c54;
+    border: 10px solid white;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .player-item:hover {
+    background-color: #7c142c;
+    border-color: #cc8c54;
+  }
+  
+  .player-details {
+    display: flex;
+    gap: 20px;
+    flex-grow: 1;
+  }
+  
+  .player-column {
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  
+  .reprendre-btn {
+    background-color: #7c142c;
+    color: #f0f0f0;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: center;
+  }
+  
+  .reprendre-btn:hover {
+    background-color: white;
+    color: black;
+  }
+  
