@@ -1,11 +1,16 @@
 import React from "react";
+import './App.css'
+import './styles/navbarStyles.css'; 
+import SideBarContainer  from './components/SideBarContainer'
+
 
 function App() {
+  
   return (
-    <div className="App">
-      <h1>Calendar</h1>
-    </div>
-  );
+    <>
+      <SideBarContainer/>
+    </>
+  )
 }
 
-export default App;
+export default App

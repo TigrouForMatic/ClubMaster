@@ -1,0 +1,125 @@
+.sidebar {
+  position: fixed;
+  left: 15px;
+  top: 20px;
+  bottom: 20px;
+  min-width: 50px;
+  background-color: #110633;
+  border: 1px solid rgb(176, 63, 237);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.menu-item {
+  border-radius: 5px;
+  min-height: 50px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+
+}
+
+.menu-item:hover {
+  background-color: rgba(162, 162, 162, 0.261);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.menu-icon {
+  border-radius: 5px;
+  margin : 5px 0;
+  align-items: center;
+  justify-content: center;
+  padding:  10px 0 5px 0 ;
+
+}
+
+.menu-icon:hover {
+  background-color: rgba(162, 162, 162, 0.261);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.icon-detail{
+  color:white;
+   height:24;
+    width:24;
+}
+
+.menu-profileIcon {
+  position: absolute;
+  width: 50px;
+  margin-top: auto;
+  align-items: center;
+  padding-bottom: 10px;
+  bottom: 0;
+}
+
+.menu-item p {
+  margin-top: -5px;
+  font-size: 10px;
+}
+.sidebar hr {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(176, 63, 237, 0.454);
+  width: 100%;
+}
+
+.modal {
+  min-width: 220px;
+  border: #525254 1px solid;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 20px;
+  left: 220px; 
+  transform: translateX(-50%);
+}
+  
+  .modal-content {
+    border-radius: 5px;
+  }
+  
+  .modal-item {
+    display: flex;
+    align-items: center;
+    margin: 15px 20px 15px 20px;
+    padding: 5px;
+  }
+  .modal-item:hover {
+    background-color: rgba(162, 162, 162, 0.1);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .disconnect{
+    color:#d62323
+  }
+  
+  .icon--detail__modal {
+    margin-right: 20px;
+  }
+
+  .pebblelogo{
+    width: 24px;
+    height: auto;
+  }
+
+
+.sidebarSmall {
+  max-height: 45px;
+  padding: 0;
+}
+ .menuSmall-icon{
+  margin: 0;
+ }
