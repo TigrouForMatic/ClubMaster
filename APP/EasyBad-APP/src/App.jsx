@@ -4,6 +4,14 @@ import './styles/navbarStyles.css';
 import SideBarContainer from './components/Menu/SideBarContainer';
 import SideBarContainerMobile from './components/Menu/SideBarContainerMobile';
 
+
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import HomeView from './views/HomeView';
+import ActivityListView from './views/ActivityListView';
+import ChatView from './views/ChatView';
+import ContactView from './views/ContactView';
+import ExportView from './views/ExportView';
+
 function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -22,9 +30,18 @@ function App() {
   }, []);
 
   return (
-    <>
-      {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
-    </>
+    <Router>
+    <div className="App">
+    {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
+      <Switch>
+        <Route path="/" exact component={HomeView} />
+        <Route path="/activity" component={ActivityListView} />
+        <Route path="/chat" component={ChatView} />
+        <Route path="/contact" component={ContactView} />
+        <Route path="/export" component={ExportView} />
+      </Switch>
+    </div>
+  </Router>
   )
 }
 
