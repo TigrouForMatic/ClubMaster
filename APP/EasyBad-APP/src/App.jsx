@@ -5,26 +5,36 @@ import SideBarContainer from './components/Menu/SideBarContainer';
 import SideBarContainerMobile from './components/Menu/SideBarContainerMobile';
 
 function App() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
-    function handleResize() {
+    const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
-    }
+    };
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
+    const debounceHandleResize = debounce(handleResize, 100);
+
+    window.addEventListener('resize', debounceHandleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', debounceHandleResize);
     };
   }, []);
 
   return (
     <>
-      {isMobile && <SideBarContainerMobile /> ||  <SideBarContainer />}
+      {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
     </>
   )
 }
 
 export default App;
+
+// Utilitaire de debounce
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
