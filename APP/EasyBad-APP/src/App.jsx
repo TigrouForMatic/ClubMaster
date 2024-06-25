@@ -4,8 +4,7 @@ import './styles/navbarStyles.css';
 import SideBarContainer from './components/Menu/SideBarContainer';
 import SideBarContainerMobile from './components/Menu/SideBarContainerMobile';
 
-
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomeView from './views/HomeView';
 import ActivityListView from './views/ActivityListView';
 import ChatView from './views/ChatView';
@@ -30,18 +29,18 @@ function App() {
   }, []);
 
   return (
-    <Router>
+  <Router>
     <div className="App">
-    {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
-      <Switch>
-        <Route path="/" exact component={HomeView} />
-        <Route path="/activity" component={ActivityListView} />
-        <Route path="/chat" component={ChatView} />
-        <Route path="/contact" component={ContactView} />
-        <Route path="/export" component={ExportView} />
-      </Switch>
+      {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
+      <Routes>
+         <Route path="/" exact component={HomeView} />
+         <Route path="/activity" component={ActivityListView} />
+         <Route path="/chat" component={ChatView} />
+         <Route path="/contact" component={ContactView} />
+         <Route path="/export" component={ExportView} />
+      </Routes>
     </div>
-  </Router>
+    </Router>
   )
 }
 
