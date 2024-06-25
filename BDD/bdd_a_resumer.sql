@@ -14,45 +14,45 @@ BEGIN
     CREATE SCHEMA db;
     SET search_path TO db;
 
-    -- CREATE TABLE db.Address (
-    --     Id SERIAL PRIMARY KEY,
-    --     Street VARCHAR(255),
-    --     City VARCHAR(255),
-    --     State VARCHAR(255),
-    --     PostalCode VARCHAR(20),
-    --     Country VARCHAR(100),
-    --     Validate BOOLEAN,
-    -- );
+    CREATE TABLE db.address (
+        Id SERIAL PRIMARY KEY,
+        Street VARCHAR(255),
+        City VARCHAR(255),
+        State VARCHAR(255),
+        PostalCode VARCHAR(20),
+        Country VARCHAR(100),
+        Validate BOOLEAN,
+    );
 
-    -- CREATE TABLE db.PersonPhysic (
-    --     Id SERIAL PRIMARY KEY,
-    --     Name VARCHAR(255) NOT NULL,
-    --     PhoneNumber VARCHAR(20),
-    --     EmailAddress VARCHAR(255),
-    --     AddressId INT,
-    --     FOREIGN KEY (AddressId) REFERENCES db.Address(Id)
-    -- );
+    CREATE TABLE db.personPhysic (
+        Id SERIAL PRIMARY KEY,
+        Name VARCHAR(255) NOT NULL,
+        PhoneNumber VARCHAR(20),
+        EmailAddress VARCHAR(255),
+        AddressId INT,
+        FOREIGN KEY (AddressId) REFERENCES db.address(Id)
+    );
 
-   CREATE TABLE db.PersonMoral (
+    CREATE TABLE db.personMoral (
         Id SERIAL PRIMARY KEY,
         Name VARCHAR(255) NOT NULL
     );
 
-    CREATE TABLE db.Club (
+    CREATE TABLE db.club (
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
         PersonMoralId INT,
-        FOREIGN KEY (PersonMoralId) REFERENCES db.PersonMoral(Id)
+        FOREIGN KEY (PersonMoralId) REFERENCES db.personMoral(Id)
     );
 
-    CREATE TABLE db.ProduitType (
+    CREATE TABLE db.produitType (
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
         ClubId INT,
-        FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
+        FOREIGN KEY (ClubId) REFERENCES db.club(Id)
     );
 
-    CREATE TABLE db.Produit (
+    CREATE TABLE db.produit (
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
         Description TEXT,
@@ -61,17 +61,17 @@ BEGIN
         Df TIMESTAMP,
         Price FLOAT,
         Stock INT,
-        FOREIGN KEY (ProduitTypeId) REFERENCES db.ProduitType(Id)
+        FOREIGN KEY (ProduitTypeId) REFERENCES db.produitType(Id)
     );
 
-    CREATE TABLE db.EventType (
+    CREATE TABLE db.eventType (
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
         ClubId INT,
-        FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
+        FOREIGN KEY (ClubId) REFERENCES db.club(Id)
     );
 
-    CREATE TABLE db.Event (
+    CREATE TABLE db.event (
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
         Description TEXT,
@@ -79,45 +79,45 @@ BEGIN
         Dd TIMESTAMP,
         Df TIMESTAMP,
         InscritIds TEXT,
-        FOREIGN KEY (EventTypeId) REFERENCES db.EventType(Id)
+        FOREIGN KEY (EventTypeId) REFERENCES db.eventType(Id)
     );
 
-    -- CREATE TABLE db.LicenceType (
-    --     Id SERIAL PRIMARY KEY,
-    --     Label VARCHAR(255) NOT NULL,
-    --     ClubId INT,
-    --     Price FLOAT,
-    --     FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
-    -- );
+    CREATE TABLE db.licenceType (
+        Id SERIAL PRIMARY KEY,
+        Label VARCHAR(255) NOT NULL,
+        ClubId INT,
+        Price FLOAT,
+        FOREIGN KEY (ClubId) REFERENCES db.club(Id)
+    );
 
-    -- CREATE TABLE db.Role (
-    --     Id SERIAL PRIMARY KEY,
-    --     Label VARCHAR(255) NOT NULL,
-    --     ClubId INT,
-    --     FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
-    -- );
+    CREATE TABLE db.role (
+        Id SERIAL PRIMARY KEY,
+        Label VARCHAR(255) NOT NULL,
+        ClubId INT,
+        FOREIGN KEY (ClubId) REFERENCES db.club(Id)
+    );
 
-    -- CREATE TABLE db.Licence (
-    --     Id SERIAL PRIMARY KEY,
-    --     Label VARCHAR(255) NOT NULL,
-    --     Dd TIMESTAMP,
-    --     Df TIMESTAMP,
-    --     LicenceTypeId INT,
-    --     PersonPhysicId INT,
-    --     RoleId INT,
-    --     FOREIGN KEY (LicenceTypeId) REFERENCES db.LicenceType(Id),
-    --     FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id),
-    --     FOREIGN KEY (RoleId) REFERENCES db.Role(Id)
-    -- );
+    CREATE TABLE db.licence (
+        Id SERIAL PRIMARY KEY,
+        Label VARCHAR(255) NOT NULL,
+        Dd TIMESTAMP,
+        Df TIMESTAMP,
+        LicenceTypeId INT,
+        PersonPhysicId INT,
+        RoleId INT,
+        FOREIGN KEY (LicenceTypeId) REFERENCES db.licenceType(Id),
+        FOREIGN KEY (PersonPhysicId) REFERENCES db.personPhysic(Id),
+        FOREIGN KEY (RoleId) REFERENCES db.role(Id)
+    );
 
-    -- CREATE TABLE db.Login (
-    --     Id SERIAL PRIMARY KEY,
-    --     Login VARCHAR(255) NOT NULL,
-    --     Password VARCHAR(255) NOT NULL,
-    --     Pseudo VARCHAR(255),
-    --     PersonPhysicId INT,
-    --     FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
-    -- );
+    CREATE TABLE db.login (
+        Id SERIAL PRIMARY KEY,
+        Login VARCHAR(255) NOT NULL,
+        Password VARCHAR(255) NOT NULL,
+        Pseudo VARCHAR(255),
+        PersonPhysicId INT,
+        FOREIGN KEY (PersonPhysicId) REFERENCES db.personPhysic(Id)
+    );
 
     INSERT INTO db.personMoral(Name) VALUES
         ('Vol en Oust');
@@ -149,7 +149,7 @@ BEGIN
         ('SweatShirt Vol en Pleuc','Taille L', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 20, 30),
         ('SweatShirt Vol en Pleuc','Taille M', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 20, 30),
         ('SweatShirt Vol en Pleuc','Taille S', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 20, 30);
-    
+
     INSERT INTO db.eventType(Label, ClubId) VALUES
         ('Entrainement', 1),
         ('Cours', 1),
@@ -170,6 +170,43 @@ BEGIN
         ('Cours', 'Cours le 15/04 à 19h', 7, '2024-04-15 19:00:00', '2024-04-15 21:00:00', ''),
         ('Cours', 'Cours le 15/05 à 19h', 2, '2024-05-15 19:00:00', '2024-05-15 21:00:00', ''),
         ('Cours', 'Cours le 17/06 à 19h', 7, '2024-06-17 19:00:00', '2024-06-17 21:00:00', '');
+
+    -- Entrainement pour le club 1 (lundi et mercredi de chaque semaine du 01/01 au 31/08)
+    -- DO $$
+    -- DECLARE
+    --     start_date DATE := '2024-01-01';
+    --     end_date DATE := '2024-08-31';
+    --     current_date DATE;
+    -- BEGIN
+    --     current_date := start_date;
+    --     WHILE current_date <= end_date LOOP
+    --         IF EXTRACT(DOW FROM current_date) = 1 THEN -- Lundi
+    --             INSERT INTO db.event(Label, Description, EventTypeId, Dd, Df, InscritIds) VALUES
+    --                 ('Entrainement', 'Entrainement le lundi', 1, current_date + TIME '19:00', current_date + TIME '21:00', '');
+    --         ELSIF EXTRACT(DOW FROM current_date) = 3 THEN -- Mercredi
+    --             INSERT INTO db.event(Label, Description, EventTypeId, Dd, Df, InscritIds) VALUES
+    --                 ('Entrainement', 'Entrainement le mercredi', 1, current_date + TIME '19:30', current_date + TIME '21:30', '');
+    --         END IF;
+    --         current_date := current_date + INTERVAL '1 day';
+    --     END LOOP;
+    -- END $$;
+
+    -- Entrainement pour le club 2 (jeudi de chaque semaine du 01/01 au 31/08)
+    -- DO $$
+    -- DECLARE
+    --     start_date DATE := '2024-01-01';
+    --     end_date DATE := '2024-08-31';
+    --     current_date DATE;
+    -- BEGIN
+    --     current_date := start_date;
+    --     WHILE current_date <= end_date LOOP
+    --         IF EXTRACT(DOW FROM current_date) = 4 THEN -- Jeudi
+    --             INSERT INTO db.event(Label, Description, EventTypeId, Dd, Df, InscritIds) VALUES
+    --                 ('Entrainement', 'Entrainement le jeudi', 6, current_date + TIME '19:00', current_date + TIME '22:00', '');
+    --         END IF;
+    --         current_date := current_date + INTERVAL '1 day';
+    --     END LOOP;
+    -- END $$;
 
 END
 $$;

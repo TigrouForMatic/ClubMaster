@@ -18,12 +18,43 @@ const pool = new Pool({
     port: 5432,
 });
 
-// Endpoint pour récupérer toutes les entrées d'une table
+// // Endpoint pour récupérer toutes les entrées d'une table
+// app.get('/:table', async (req, res) => {
+//     const table = req.params.table;
+//     try {
+//         const client = await pool.connect();
+//         const result = await client.query(`SELECT * FROM db.${table}`);
+//         client.release();
+//         res.json(result.rows);
+//     } catch (err) {
+//         console.error(`Erreur lors de la récupération des entrées de la table ${table}`, err);
+//         res.status(500).send(`Erreur lors de la récupération des entrées de la table ${table}`);
+//     }
+// });
+
+// Endpoint pour récupérer les entrées d'une table en fonction de critères
 app.get('/:table', async (req, res) => {
     const table = req.params.table;
+    const filters = req.query; // Les filtres sont dans req.query
+
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM db.${table}`);
+
+        // Construction de la requête dynamique en fonction des filtres
+        let queryString = `SELECT * FROM db.${table}`;
+        if (Object.keys(filters).length > 0) {
+            queryString += ' WHERE';
+            let isFirstFilter = true;
+            for (const key in filters) {
+                if (!isFirstFilter) {
+                    queryString += ' AND';
+                }
+                queryString += ` ${key} = '${filters[key]}'`;
+                isFirstFilter = false;
+            }
+        }
+
+        const result = await client.query(queryString);
         client.release();
         res.json(result.rows);
     } catch (err) {

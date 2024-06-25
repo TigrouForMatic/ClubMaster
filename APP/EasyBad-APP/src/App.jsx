@@ -33,11 +33,11 @@ function App() {
       <div className="App">
         {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
         <Routes>
-          <Route path="/" exact component={HomeView} />
-          <Route path="/matchs" component={MatchsView} />
-          {/* <Route path="/chat" component={ChatView} /> */}
-          <Route path="/calendrier" component={CalendarView} />
-          <Route path="/shop" component={ShopView} />
+          <Route path="/" element={<HomeView />} />
+          <Route path="/matchs" element={<MatchsView />} />
+          {/* <Route path="/chat" element={<ChatView />} /> */}
+          <Route path="/calendrier" element={<CalendarView />} />
+          <Route path="/shop" element={<ShopView />} />
         </Routes>
       </div>
     </Router>
