@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import '../../styles/navbarStyles.css';
-import { Menu, User, Home, Activity, ChatBubble, Contactless, CloudDownload } from 'iconoir-react';
+import { Menu, User, Home, ArcheryMatch, Calendar, Shop } from 'iconoir-react';
 import UserModal from './UserModal';
 
 function Sidebar({ onClose }) {
@@ -29,48 +29,6 @@ function Sidebar({ onClose }) {
     setIsModalOpen(!isModalOpen);
   };
 
-  // return (
-  //   <div className="sidebar">
-  //     <div className="menu-icon" onClick={onClose}> 
-  //       <Menu className='icon-detail' />
-  //     </div>
-  //     <hr />
-  //     <div className='menu-items'>
-  //       <div className="menu-item">
-  //         <Home className='icon-detail' />
-  //         <p>Home</p>
-  //       </div>
-  //       <div className="menu-item">
-  //         <Activity className='icon-detail' />
-  //         <p>Activity list</p>
-  //       </div>
-  //       <div className="menu-item">
-  //         <ChatBubble className='icon-detail' />
-  //         <p>Chat</p>
-  //       </div>
-  //       <div className="menu-item">
-  //         <Contactless className='icon-detail' />
-  //         <p>Contact</p>
-  //       </div>
-  //       <div className="menu-item">
-  //         <CloudDownload className='icon-detail' />
-  //         <p>Export</p>
-  //       </div>
-  //     </div>
-  //     <hr />
-  //     <div
-  //       ref={profileIconRef}
-  //       className={`menu-profileIcon ${isModalOpen ? 'active' : ''}`}
-  //       onClick={handleProfileIconClick}
-  //     >
-  //       <hr />
-  //       <div className="menu-icon">
-  //         <User className='icon-detail' />
-  //       </div>
-  //     </div>
-  //     {isModalOpen && <div ref={modalRef}><UserModal /></div>}
-  //   </div>
-  // );
   return (
     <div className="sidebar">
       <div className="menu-icon" onClick={onClose}>
@@ -78,25 +36,33 @@ function Sidebar({ onClose }) {
       </div>
       <hr />
       <div className='menu-items'>
-        <NavLink to="/" exact className="menu-item" activeClassName="active-link">
-          <Home className='icon-detail' />
-          <p>Home</p>
+        <NavLink to="/" exact activeClassName="active-link">
+          <div className="menu-item">
+            <Home className='icon-detail' />
+            <p>News</p>
+          </div>
         </NavLink>
-        <NavLink to="/activity" className="menu-item" activeClassName="active-link">
-          <Activity className='icon-detail' />
-          <p>Activity list</p>
+        <NavLink to="/matchs" activeClassName="active-link">
+          <div className="menu-item">
+            <ArcheryMatch className='icon-detail' />
+            <p>Matchs</p>
+          </div>
         </NavLink>
-        <NavLink to="/chat" className="menu-item" activeClassName="active-link">
+        <NavLink to="/calendrier" activeClassName="active-link">
+          <div className="menu-item">
+            <Calendar className='icon-detail' />
+            <p>Calendrier</p>
+          </div>
+        </NavLink>
+        {/* <NavLink to="/chat" className="menu-item" activeClassName="active-link">
           <ChatBubble className='icon-detail' />
           <p>Chat</p>
-        </NavLink>
-        <NavLink to="/contact" className="menu-item" activeClassName="active-link">
-          <Contactless className='icon-detail' />
-          <p>Contact</p>
-        </NavLink>
-        <NavLink to="/export" className="menu-item" activeClassName="active-link">
-          <CloudDownload className='icon-detail' />
-          <p>Export</p>
+        </NavLink> */}
+        <NavLink to="/shop" activeClassName="active-link">
+          <div className="menu-item">
+            <Shop className='icon-detail' />
+            <p>Shop</p>
+          </div>
         </NavLink>
       </div>
       <hr />
@@ -106,7 +72,7 @@ function Sidebar({ onClose }) {
           <User className='icon-detail' />
         </div>
       </div>
-      <UserModal /> {/* Vous pouvez rendre le modal toujours visible ou utiliser un état local pour le contrôler */}
+      {isModalOpen && <div ref={modalRef}><UserModal /></div>}
     </div>
   );
 }

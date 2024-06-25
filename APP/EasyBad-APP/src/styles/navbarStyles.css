@@ -22,13 +22,21 @@
   align-items: center;
   justify-content: center;
   padding-top: 10px;
-
+  text-decoration: none;
+  color: inherit;
 }
 
 .menu-item:hover {
   background-color: rgba(162, 162, 162, 0.261);
   cursor: pointer;
   transition: 0.2s;
+}
+
+.active-link {
+  font-weight: bold;
+  color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+  text-decoration: none;
 }
 
 .menu-icon {
@@ -48,8 +56,9 @@
 
 .icon-detail{
   color:white;
-   height:24;
-    width:24;
+  height:30;
+  width:30;
+  padding-bottom: 5px;
 }
 
 .menu-profileIcon {
