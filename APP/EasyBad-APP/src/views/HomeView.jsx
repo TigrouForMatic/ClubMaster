@@ -9,24 +9,30 @@ function HomeView() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [typeEventResponse, eventResponse] = await Promise.all([
+                const [{ data: typeEventData }, { data: eventData }] = await Promise.all([
                     axios.get("http://localhost:3200/eventType?clubid=1"),
                     axios.get("http://localhost:3200/event"),
                 ]);
-                setTypeEvent(typeEventResponse.data);
-
-                const eventsDuClub = eventResponse.data.filter(event =>
-                    typeEventResponse.data.some(type => event.eventtypeid === type.id)
+    
+                setTypeEvent(typeEventData);
+    
+                const eventsDuClub = eventData.filter(event =>
+                    typeEventData.some(type => event.eventtypeid === type.id)
                 );
-
-                setEvent(eventsDuClub);
+    
+                const sortedEventsDuClub = eventsDuClub
+                    .filter(event => new Date(event.dd) >= new Date())
+                    .sort((a, b) => new Date(a.dd) - new Date(b.dd));
+    
+                setEvent(sortedEventsDuClub);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données :", error);
             }
         };
+    
         fetchData();
     }, []);
-
+    
     const getDateDisplay = (date) => {
         return dateFormat(date);
     }
