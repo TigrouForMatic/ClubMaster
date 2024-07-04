@@ -4,9 +4,7 @@ import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import './App.css'
-import './styles/navbarStyles.css'; 
-// import SideBarContainer from './components/Menu/SideBarContainer';
-// import SideBarContainerMobile from './components/Menu/SideBarContainerMobile';
+import './styles/navbarStyles.css';
 
 // Lazy loading des composants
 const SideBarContainer = lazy(() => import('./components/Menu/SideBarContainer'));
