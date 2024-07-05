@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -34,6 +34,7 @@ function AppContent() {
           <Route path={ROUTES.MATCHS} element={<MatchsView />} />
           <Route path={ROUTES.CALENDAR} element={<CalendarView />} />
           <Route path={ROUTES.SHOP} element={<ShopView />} />
+          <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
       </Suspense>
     </div>
