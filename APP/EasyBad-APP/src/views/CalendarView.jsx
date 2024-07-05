@@ -8,6 +8,7 @@ import styles from "../styles/CalendarView.module.css";
 const CalendarView = () => {
   const [typeEvent, setTypeEvent] = useState([]);
   const [event, setEvent] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -16,9 +17,10 @@ const CalendarView = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [{ data: typeEventData }, { data: eventData }] = await Promise.all([
+        const [{ data: typeEventData }, { data: eventData }, { data: locationData }] = await Promise.all([
           axios.get("http://localhost:3200/eventType?clubid=1"),
           axios.get("http://localhost:3200/event"),
+          axios.get("http://localhost:3200/address?private=false"),
         ]);
 
         setTypeEvent(typeEventData);
@@ -28,6 +30,18 @@ const CalendarView = () => {
         );
 
         setEvent(eventsDuClub);
+
+        let locationDataLabel = [];
+        for(let location of locationData){
+            let locationObj ={
+                value : location.id,
+                label: location.street + " , " + location.postalcode + " " + location.city
+            }
+            locationDataLabel.push(locationObj)
+        }
+        setLocations(locationDataLabel)
+        
+        // setLocations(locationData)
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
       }
@@ -47,11 +61,11 @@ const CalendarView = () => {
     setSelectedTypes(selectedOptions.map(option => option.value));
   };
 
-  const locations = [
-    { value: 'loc1', label: 'Salle A' },
-    { value: 'loc2', label: 'Salle B' },
-    { value: 'loc3', label: 'Terrain extérieur' },
-  ];
+//   const locations = [
+//     { value: 'loc1', label: 'Salle A' },
+//     { value: 'loc2', label: 'Salle B' },
+//     { value: 'loc3', label: 'Terrain extérieur' },
+//   ];
 
   const teams = [
     { value: 'team1', label: 'Équipe 1' },

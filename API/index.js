@@ -19,11 +19,11 @@ const pool = new Pool({
 });
 
 // // Endpoint pour récupérer toutes les entrées d'une table
-// app.get('/:table', async (req, res) => {
+// app.get('/address', async (req, res) => {
 //     const table = req.params.table;
 //     try {
 //         const client = await pool.connect();
-//         const result = await client.query(`SELECT * FROM db.${table}`);
+//         const result = await client.query(`SELECT * FROM db.Address WHERE Private LIKE "false" AND Validate LIKE "true"`);
 //         client.release();
 //         res.json(result.rows);
 //     } catch (err) {
