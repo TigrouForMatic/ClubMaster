@@ -1,0 +1,113 @@
+.shopContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .shopTitle {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    color: #333;
+  }
+  
+  .categoryFilter {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  
+  .filterButton {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .filterButton:hover, .filterButton.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .productGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .productCard {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .productImage {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .productName {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .productDescription {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+    flex-grow: 1;
+  }
+  
+  .productPrice {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px;
+  }
+  
+  .productStock {
+    font-size: 0.9em;
+    color: #28a745;
+    margin-bottom: 15px;
+  }
+  
+  .addToCartButton {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .addToCartButton:hover {
+    background-color: #218838;
+  }
+  
+  .loading, .error {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+  }
+  
+  .error {
+    color: #dc3545;
+  }
+  
+  @media (max-width: 768px) {
+    .productGrid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+  }
