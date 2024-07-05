@@ -23,8 +23,8 @@ const useShopData = (clubId) => {
     const fetchData = async () => {
       try {
         const [typeShopResponse, produitResponse] = await Promise.all([
-          axios.get(`http://localhost:3200/produitType?clubid=${clubId}`),
-          axios.get("http://localhost:3200/produit"),
+          axios.get(`http://localhost:3200/api/produitType?clubid=${clubId}`),
+          axios.get("http://localhost:3200/api/produit"),
         ]);
         setTypeShop(typeShopResponse.data);
         setProduit(produitResponse.data);

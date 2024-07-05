@@ -18,9 +18,9 @@ const CalendarView = () => {
     const fetchData = async () => {
       try {
         const [{ data: typeEventData }, { data: eventData }, { data: locationData }] = await Promise.all([
-          axios.get("http://localhost:3200/eventType?clubid=1"),
-          axios.get("http://localhost:3200/event"),
-          axios.get("http://localhost:3200/address?private=false"),
+          axios.get("http://localhost:3200/api/eventType?clubid=1"),
+          axios.get("http://localhost:3200/api/event"),
+          axios.get("http://localhost:3200/api/address?private=false"),
         ]);
 
         setTypeEvent(typeEventData);

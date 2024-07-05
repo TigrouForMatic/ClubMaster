@@ -30,8 +30,8 @@ const useMatchData = (clubId) => {
     const fetchData = async () => {
       try {
         const [{ data: typeEventData }, { data: eventData }] = await Promise.all([
-          axios.get(`http://localhost:3200/eventType?clubid=${clubId}`),
-          axios.get("http://localhost:3200/event"),
+          axios.get(`http://localhost:3200/api/eventType?clubid=${clubId}`),
+          axios.get("http://localhost:3200/api/event"),
         ]);
 
         setTypeEvent(typeEventData);
