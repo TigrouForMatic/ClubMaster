@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import Select from 'react-select';
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../styles/CalendarView.module.css";
+import { dateFormat } from "../js/date";
 
 const CalendarView = () => {
   const [typeEvent, setTypeEvent] = useState([]);
@@ -61,12 +62,6 @@ const CalendarView = () => {
     setSelectedTypes(selectedOptions.map(option => option.value));
   };
 
-//   const locations = [
-//     { value: 'loc1', label: 'Salle A' },
-//     { value: 'loc2', label: 'Salle B' },
-//     { value: 'loc3', label: 'Terrain extérieur' },
-//   ];
-
   const teams = [
     { value: 'team1', label: 'Équipe 1' },
     { value: 'team2', label: 'Équipe 2' },
@@ -112,7 +107,8 @@ const CalendarView = () => {
               style={{ backgroundColor: getEventColor(e.eventtypeid) }}
               onClick={() => handleEventClick(e)}
             >
-              {e.title}
+              <div><strong>{e.label}</strong></div>
+              <div>{e.dd.slice(11,16).replace(":", 'h')}</div>
             </div>
           ))}
         </div>
