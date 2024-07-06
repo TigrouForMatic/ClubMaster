@@ -1,0 +1,51 @@
+.menuBar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #110633;
+    border-top: 1px solid rgb(176, 63, 237);
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+  }
+  
+  .menuItems {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .menuItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .menuItem:hover {
+    background-color: rgba(162, 162, 162, 0.261);
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .activeLink .menuItem {
+    font-weight: bold;
+    color: #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+  }
+  
+  .iconDetail {
+    color: white;
+    height: 30px;
+    width: 30px;
+    margin-bottom: 5px;
+  }
+  
+  .menuItem p {
+    color: white;
+    margin: 0;
+    font-size: 10px;
+  }

@@ -8,18 +8,20 @@ import './styles/navbarStyles.css';
 
 // Lazy loading des composants
 const SideBarContainer = lazy(() => import('./components/Menu/SideBarContainer'));
-const SideBarContainerMobile = lazy(() => import('./components/Menu/SideBarContainerMobile'));
+const SideBarContainerMobile = lazy(() => import('./components/Menu/MenuBarMobile'));
 const HomeView = lazy(() => import('./views/HomeView'));
 const MatchsView = lazy(() => import('./views/MatchsView'));
 const CalendarView = lazy(() => import('./views/CalendarView'));
 const ShopView = lazy(() => import('./views/ShopView'));
+const UserView = lazy(() => import('./views/UserView'));
 
 // Constantes pour les routes
 const ROUTES = {
   HOME: '/',
-  MATCHS: '/matchs',
-  CALENDAR: '/calendrier',
+  MATCHS: '/match',
+  CALENDAR: '/calendar',
   SHOP: '/shop',
+  USER: '/user',
 };
 
 function AppContent() {
@@ -34,6 +36,7 @@ function AppContent() {
           <Route path={ROUTES.MATCHS} element={<MatchsView />} />
           <Route path={ROUTES.CALENDAR} element={<CalendarView />} />
           <Route path={ROUTES.SHOP} element={<ShopView />} />
+          <Route path={ROUTES.USER} element={<UserView />} />
           <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
       </Suspense>

@@ -42,13 +42,13 @@ function Sidebar({ onClose }) {
             <p>News</p>
           </div>
         </NavLink>
-        <NavLink to="/matchs" activeClassName="active-link">
+        <NavLink to="/match" activeClassName="active-link">
           <div className="menu-item">
             <ArcheryMatch className='icon-detail' />
             <p>Matchs</p>
           </div>
         </NavLink>
-        <NavLink to="/calendrier" activeClassName="active-link">
+        <NavLink to="/calendar" activeClassName="active-link">
           <div className="menu-item">
             <Calendar className='icon-detail' />
             <p>Calendrier</p>
