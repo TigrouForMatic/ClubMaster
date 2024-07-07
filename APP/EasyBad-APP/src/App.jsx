@@ -1,8 +1,9 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
+import AuthForm from './components/AuthForm';
 import './App.css'
 import './styles/navbarStyles.css';
 
@@ -26,6 +27,11 @@ const ROUTES = {
 
 function AppContent() {
   const isMobile = useMobile();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  if (!isAuthenticated) {
+    return <AuthForm onAuthenticate={() => setIsAuthenticated(true)} />;
+  }
 
   return (
     <div className="App">

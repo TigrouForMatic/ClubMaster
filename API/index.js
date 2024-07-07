@@ -1,11 +1,15 @@
 const express = require('express');
+const helmet = require('helmet');
 const cors = require('cors');
+require('dotenv').config();
 const bodyParser = require('body-parser');
 const { setupDatabase } = require('./database');
-const routes = require('./routes');
+const routes = require('./src/routes/routes');
+
+const port = process.env.APP_PORT || 3200;
 
 const app = express();
-const port = 3200;
+app.use(helmet());
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -15,6 +19,12 @@ setupDatabase();
 
 // Utilisation des routes
 app.use('/api', routes);
+
+// Après vos routes
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+  });
 
 // Endpoint de test
 app.get('/test', (req, res) => {

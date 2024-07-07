@@ -1,4 +1,4 @@
-const { pool } = require('./database');
+const { pool } = require('../../database');
 
 const getEntries = async (req, res) => {
     const table = req.params.table;
