@@ -3,7 +3,7 @@ import styles from '../styles/AuthForm.module.css';
 
 function AuthForm({ onAuthenticate }) {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
+  const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -47,7 +47,7 @@ function AuthForm({ onAuthenticate }) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ login, password }),
         });
 
         const data = await response.json();
@@ -72,7 +72,7 @@ function AuthForm({ onAuthenticate }) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ login, password }),
         });
 
         const data = await response.json();
@@ -93,7 +93,7 @@ function AuthForm({ onAuthenticate }) {
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
-    setEmail('');
+    setLogin('');
     setPassword('');
     setConfirmPassword('');
   };
@@ -112,8 +112,8 @@ function AuthForm({ onAuthenticate }) {
         <input
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={login}
+          onChange={(e) => setLogin(e.target.value)}
           required
         />
         <input

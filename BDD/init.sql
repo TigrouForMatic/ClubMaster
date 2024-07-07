@@ -15,6 +15,13 @@ BEGIN
     CREATE SCHEMA db;
     SET search_path TO db;
 
+     CREATE TABLE db.Login (
+        Id SERIAL PRIMARY KEY,
+        Login VARCHAR(255) NOT NULL,
+        Password VARCHAR(255) NOT NULL,
+        Pseudo VARCHAR(255)
+    );
+
     CREATE TABLE db.Address (
         Id SERIAL PRIMARY KEY,
         Street VARCHAR(255),
@@ -32,7 +39,8 @@ BEGIN
         PhoneNumber VARCHAR(20),
         EmailAddress VARCHAR(255),
         AddressId INT,
-        FOREIGN KEY (AddressId) REFERENCES db.Address(Id)
+        LoginId INT,
+        FOREIGN KEY (LoginId) REFERENCES db.Login(Id)
     );
 
     CREATE TABLE db.PersonMoral (
@@ -112,15 +120,6 @@ BEGIN
         FOREIGN KEY (LicenceTypeId) REFERENCES db.LicenceType(Id),
         FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id),
         FOREIGN KEY (RoleId) REFERENCES db.Role(Id)
-    );
-
-    CREATE TABLE db.Login (
-        Id SERIAL PRIMARY KEY,
-        Login VARCHAR(255) NOT NULL,
-        Password VARCHAR(255) NOT NULL,
-        Pseudo VARCHAR(255),
-        PersonPhysicId INT,
-        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
     );
 
     -- Insert test data
@@ -214,10 +213,6 @@ BEGIN
     INSERT INTO db.Licence (Label, Dd, Df, LicenceTypeId, PersonPhysicId, RoleId) VALUES
     ('Licence 2024 - John Doe', '2024-01-01 00:00:00', '2024-12-31 23:59:59', 1, 1, 4),
     ('Licence 2024 - Jane Smith', '2024-01-01 00:00:00', '2024-12-31 23:59:59', 1, 2, 1);
-
-    INSERT INTO db.Login (Login, Password, Pseudo, PersonPhysicId) VALUES
-    ('johndoe', 'hashedpassword1', 'JD', 1),
-    ('janesmith', 'hashedpassword2', 'JS', 2);
 
 END
 $$;
