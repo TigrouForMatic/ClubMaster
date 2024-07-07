@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ./APP/EasyBad-APP
+cd ./APP/ClubMaster-APP
 
 npm run build
 if [ $? -ne 0 ]; then
