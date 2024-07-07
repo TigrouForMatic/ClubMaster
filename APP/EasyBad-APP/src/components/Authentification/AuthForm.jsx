@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../styles/AuthForm.module.css';
+import styles from '../../styles/AuthForm.module.css';
+import PersonalInfoForm from './PersonnalInfoForm';
 
 function AuthForm({ onAuthenticate }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,6 +12,7 @@ function AuthForm({ onAuthenticate }) {
     valid: false,
     errors: []
   });
+  const [showPersonalInfo, setShowPersonalInfo] = useState(false);
 
   const rules = [
     { message: "Une lettre minuscule.", regex: /[a-z]+/, successId: false },
@@ -41,7 +43,7 @@ function AuthForm({ onAuthenticate }) {
 
     try {
       if (isLogin) {
-        // Appel à la route de connexion
+        // Code de connexion inchangé
         const response = await fetch('http://localhost:3200/api/auth/login', {
           method: 'POST',
           headers: {
@@ -54,7 +56,6 @@ function AuthForm({ onAuthenticate }) {
 
         if (response.ok) {
           console.log('Connexion réussie:', data);
-          // Stockez le token si nécessaire
           localStorage.setItem('token', data.token);
           onAuthenticate();
         } else {
@@ -66,7 +67,6 @@ function AuthForm({ onAuthenticate }) {
           return;
         }
 
-        // Appel à la route de création de compte
         const response = await fetch('http://localhost:3200/api/auth/create-account', {
           method: 'POST',
           headers: {
@@ -79,8 +79,9 @@ function AuthForm({ onAuthenticate }) {
 
         if (response.ok) {
           console.log('Compte créé avec succès:', data);
-          // Vous pouvez choisir de connecter automatiquement l'utilisateur ici
-          onAuthenticate();
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('login', JSON.stringify({ id: data.id, login : data.login, pseudo : data.pseudo, token : data.token }));
+          setShowPersonalInfo(true);
         } else {
           setError(data.message || 'Erreur lors de la création du compte');
         }
@@ -96,64 +97,75 @@ function AuthForm({ onAuthenticate }) {
     setLogin('');
     setPassword('');
     setConfirmPassword('');
+    setError('');
+    setShowPersonalInfo(false);
   };
 
   const continueWithoutLogin = () => {
     console.log('Continuer sans être connecté');
-    // Appeler onAuthenticate pour passer à l'application principale
     onAuthenticate();
   };
 
   return (
     <div className={styles.authContainer}>
       {error && <p className={styles.error}>{error}</p>}
-      <form onSubmit={handleSubmit} className={styles.authForm}>
-        <h2>{isLogin ? 'Connexion' : 'Création de compte'}</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          value={login}
-          onChange={(e) => setLogin(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Mot de passe"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        {!isLogin && (
-          <>
-            <input
-              type="password"
-              placeholder="Confirmer le mot de passe"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-            <div className={styles.passwordValidationCard}>
-              {passwordValidation.errors.map((error, index) => (
-                <div 
-                  key={index} 
-                  className={`${styles.validationRule} ${error.successId ? styles.validRule : styles.invalidRule}`}
-                >
-                  {error.successId ? '✓' : '✗'} {error.message}
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-        <button type="submit" disabled={!isLogin && !passwordValidation.valid}>
-          {isLogin ? 'Se connecter' : 'Créer un compte'}
-        </button>
-      </form>
-      <button onClick={toggleForm} className={styles.toggleButton}>
-        {isLogin ? 'Créer un compte' : 'Se connecter'}
-      </button>
-      <button onClick={continueWithoutLogin} className={styles.skipButton}>
-        Continuer sans être connecté
-      </button>
+      {!showPersonalInfo ? (
+        <form onSubmit={handleSubmit} className={styles.authForm}>
+          <h2>{isLogin ? 'Connexion' : 'Création de compte'}</h2>
+          <input
+            type="email"
+            placeholder="Email"
+            value={login}
+            onChange={(e) => setLogin(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Mot de passe"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          {!isLogin && (
+            <>
+              <input
+                type="password"
+                placeholder="Confirmer le mot de passe"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+              <div className={styles.passwordValidationCard}>
+                {passwordValidation.errors.map((error, index) => (
+                  <div 
+                    key={index} 
+                    className={`${styles.validationRule} ${error.successId ? styles.validRule : styles.invalidRule}`}
+                  >
+                    {error.successId ? '✓' : '✗'} {error.message}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+          <button type="submit" disabled={!isLogin && !passwordValidation.valid}>
+            {isLogin ? 'Se connecter' : 'Créer un compte'}
+          </button>
+        </form>
+      ) : (
+        <>
+          <PersonalInfoForm onAuthenticate={onAuthenticate} />
+        </>
+      )}
+      {!showPersonalInfo && (
+        <>
+          <button onClick={toggleForm} className={styles.toggleButton}>
+            {isLogin ? 'Créer un compte' : 'Se connecter'}
+          </button>
+          <button onClick={continueWithoutLogin} className={styles.skipButton}>
+            Continuer sans être connecté
+          </button>
+        </>
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
-import AuthForm from './components/AuthForm';
+import AuthForm from './components/Authentification/AuthForm';
 import './App.css'
 import './styles/navbarStyles.css';
 
@@ -30,7 +30,9 @@ function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   if (!isAuthenticated) {
-    return <AuthForm onAuthenticate={() => setIsAuthenticated(true)} />;
+    return (
+        <AuthForm onAuthenticate={() => setIsAuthenticated(true)} />
+    );
   }
 
   return (

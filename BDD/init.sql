@@ -52,7 +52,6 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
         PersonMoralId INT,
-        FOREIGN KEY (PersonMoralId) REFERENCES db.PersonMoral(Id)
     );
 
     CREATE TABLE db.ProduitType (

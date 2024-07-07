@@ -8,8 +8,6 @@ const createAccount = async (req, res) => {
     try {
         const client = await pool.connect();
 
-        console.log(login, password)
-
         // Vérifier si le login existe déjà
         const checkLoginQuery = 'SELECT * FROM db.Login WHERE Login = $1';
         const checkLoginResult = await client.query(checkLoginQuery, [login]);
@@ -22,8 +20,6 @@ const createAccount = async (req, res) => {
         // Hacher le mot de passe
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-        console.log(login, hashedPassword)
 
         // Insérer le nouvel utilisateur
         const insertUserQuery = 'INSERT INTO db.Login (Login, Password) VALUES ($1, $2) RETURNING Id, Login';
