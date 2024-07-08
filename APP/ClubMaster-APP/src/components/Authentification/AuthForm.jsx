@@ -78,9 +78,8 @@ function AuthForm({ onAuthenticate }) {
         const data = await response.json();
 
         if (response.ok) {
-          console.log('Compte créé avec succès:', data);
           localStorage.setItem('token', data.token);
-          localStorage.setItem('login', JSON.stringify({ id: data.id, login : data.login, pseudo : data.pseudo, token : data.token }));
+          localStorage.setItem('login', JSON.stringify({ id: data.user.id, login : data.user.login, pseudo : data.user.pseudo }));
           setShowPersonalInfo(true);
         } else {
           setError(data.message || 'Erreur lors de la création du compte');

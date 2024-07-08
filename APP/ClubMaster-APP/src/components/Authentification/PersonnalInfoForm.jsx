@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../../styles/AuthForm.module.css';
 
 function PersonalInfoForm({ onAuthenticate }) {
@@ -15,6 +15,20 @@ function PersonalInfoForm({ onAuthenticate }) {
 
   const [consentGiven, setConsentGiven] = useState(false);
   const [error, setError] = useState('');
+
+  const [loginData, setLoginData] = useState(null);
+
+  useEffect(() => {
+    const storedLogin = localStorage.getItem('login');
+    if (storedLogin) {
+      try {
+        const parsedLoginData = JSON.parse(storedLogin);
+        setLoginData(parsedLoginData);
+      } catch (error) {
+        console.error('Erreur lors du parsing des données de login:', error);
+      }
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -57,21 +71,7 @@ function PersonalInfoForm({ onAuthenticate }) {
       const addressData = await addressResponse.json();
       const addressId = addressData.id;
 
-       // Récupération et parsing sécurisé de l'ID de connexion
-      let loginId;
-      const storedLogin = localStorage.getItem('login');
-      if (storedLogin) {
-        try {
-          const loginData = JSON.parse(storedLogin);
-          loginId = loginData.id;
-        } catch (parseError) {
-          console.error('Erreur lors du parsing des données de connexion:', parseError);
-          setError('Erreur lors de la récupération des données de connexion. Veuillez vous reconnecter.');
-          return;
-        }
-      }
-
-      if (!loginId) {
+      if (!loginData || !loginData.id) {
         setError('ID de connexion non trouvé. Veuillez vous reconnecter.');
         return;
       }
@@ -87,7 +87,7 @@ function PersonalInfoForm({ onAuthenticate }) {
         body: JSON.stringify({
           name: formData.firstName + ' ' + formData.lastName,
           phoneNumber: formData.phoneNumber,
-          loginId: JSON.parse(localStorage.getItem('login')).id,
+          loginId: loginData.id,
           addressId: addressId
         }),
       });
