@@ -31,7 +31,19 @@ function AppContent() {
 
   if (!isAuthenticated) {
     return (
+      isMobile ? (
         <AuthForm onAuthenticate={() => setIsAuthenticated(true)} />
+      ) : (
+        // <div style={{
+        //   display: 'flex',
+        //   justifyContent: 'center',
+        //   alignItems: 'center',
+        //   height: '75vh'
+        // }}>
+        <div style={{ marginTop: '100px' }}>
+          <AuthForm onAuthenticate={() => setIsAuthenticated(true)} />
+        </div>
+      )
     );
   }
 
