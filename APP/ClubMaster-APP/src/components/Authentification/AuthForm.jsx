@@ -55,8 +55,8 @@ function AuthForm({ onAuthenticate }) {
         const data = await response.json();
 
         if (response.ok) {
-          console.log('Connexion réussie:', data);
           localStorage.setItem('token', data.token);
+          localStorage.setItem('login', JSON.stringify({ id: data.user.id, login : data.user.login, pseudo : data.user.pseudo }));
           onAuthenticate();
         } else {
           setError(data.message || 'Erreur lors de la connexion');
@@ -78,7 +78,6 @@ function AuthForm({ onAuthenticate }) {
         const data = await response.json();
 
         if (response.ok) {
-          console.log(data.token)
           localStorage.setItem('token', data.token);
           localStorage.setItem('login', JSON.stringify({ id: data.user.id, login : data.user.login, pseudo : data.user.pseudo }));
           setShowPersonalInfo(true);

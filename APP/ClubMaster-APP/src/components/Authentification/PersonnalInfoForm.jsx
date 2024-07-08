@@ -45,8 +45,6 @@ function PersonalInfoForm({ onAuthenticate }) {
       return;
     }
 
-    console.log(localStorage.getItem('token'))
-
     try {
       // Enregistrement de l'adresse
       const addressResponse = await fetch('http://localhost:3200/api/address/', {
@@ -79,7 +77,6 @@ function PersonalInfoForm({ onAuthenticate }) {
       }
 
       // Enregistrement des informations personnelles
-      // const personalInfoResponse = await fetch('http://localhost:3200/api/user/personal-info', {
       const personalInfoResponse = await fetch('http://localhost:3200/api/personPhysic', {
         method: 'POST',
         headers: {
