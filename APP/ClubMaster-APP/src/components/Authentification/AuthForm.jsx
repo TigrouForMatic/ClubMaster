@@ -1,6 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styles from '../../styles/AuthForm.module.css';
-import PersonalInfoForm from './PersonnalInfoForm';
+import PersonalInfoForm from './PersonalInfoForm';
+import ClubOptions from '../ClubOptions/ClubOptions';
+
+const API_BASE_URL = 'http://localhost:3200/api';
+
+const passwordRules = [
+  { message: "Une lettre minuscule.", regex: /[a-z]+/ },
+  { message: "Une lettre majuscule.", regex: /[A-Z]+/ },
+  { message: "8 caractères minimum.", regex: /.{8,}/ },
+  { message: "Un chiffre minimum.", regex: /[0-9]+/ }
+];
 
 function AuthForm({ onAuthenticate }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,77 +23,105 @@ function AuthForm({ onAuthenticate }) {
     errors: []
   });
   const [showPersonalInfo, setShowPersonalInfo] = useState(false);
+  const [showClubOptions, setShowClubOptions] = useState(false);
 
-  const rules = [
-    { message: "Une lettre minuscule.", regex: /[a-z]+/, successId: false },
-    { message: "Une lettre majuscule.", regex: /[A-Z]+/, successId: false },
-    { message: "8 caractères minimum.", regex: /.{8,}/, successId: false },
-    { message: "Un chiffre minimum.", regex: /[0-9]+/, successId: false }
-  ];
-
-  useEffect(() => {
-    validatePassword(password);
-  }, [password]);
-
-  const validatePassword = (newPassword) => {
-    let errors = rules.map(condition => {
-      const isValid = condition.regex.test(newPassword);
-      return { ...condition, successId: isValid };
-    });
+  const validatePassword = useCallback((newPassword) => {
+    const errors = passwordRules.map(condition => ({
+      ...condition,
+      successId: condition.regex.test(newPassword)
+    }));
 
     setPasswordValidation({
       valid: errors.every(error => error.successId),
-      errors: errors
+      errors
     });
-  };
+  }, []);
+
+  useEffect(() => {
+    validatePassword(password);
+  }, [password, validatePassword]);
+
+  const fetchClub = useCallback(async (personPhysicId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/club/personnel/${personPhysicId}`, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) throw new Error('Erreur lors de la récupération des données du club');
+
+      const dataClub = await response.json();
+
+      if (dataClub.length) {
+        console.log(dataClub)
+        localStorage.setItem('clubPersonnel', JSON.stringify(dataClub));
+        onAuthenticate();
+      } else {
+        setShowClubOptions(true);
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      setError(error.message);
+    }
+  }, []);
+
+  const fetchPersonPhysic = useCallback(async (userId) => {
+    try {
+      const url = new URL(`${API_BASE_URL}/personPhysic`);
+      url.searchParams.append('loginId', userId);
+
+      const response = await fetch(url, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) throw new Error('Erreur lors de la récupération des données personnelles');
+
+      const dataPersonPhysic = await response.json();
+
+      if (dataPersonPhysic.length) {
+        localStorage.setItem('personPhysic', JSON.stringify(dataPersonPhysic));
+        await fetchClub(dataPersonPhysic.id);
+      } else {
+        setShowPersonalInfo(true);
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      setError(error.message);
+    }
+  }, [fetchClub]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      if (isLogin) {
-        // Code de connexion inchangé
-        const response = await fetch('http://localhost:3200/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ login, password }),
-        });
+      const endpoint = isLogin ? 'auth/login' : 'auth/create-account';
+      const body = isLogin ? { login, password } : { login, password, confirmPassword };
 
-        const data = await response.json();
+      if (!isLogin && password !== confirmPassword) {
+        setError("Les mots de passe ne correspondent pas");
+        return;
+      }
 
-        if (response.ok) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('login', JSON.stringify({ id: data.user.id, login : data.user.login, pseudo : data.user.pseudo }));
-          onAuthenticate();
-        } else {
-          setError(data.message || 'Erreur lors de la connexion');
-        }
+      const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('login', JSON.stringify({ id: data.user.id, login: data.user.login, pseudo: data.user.pseudo }));
+        
+        if (isLogin) {
+          await fetchPersonPhysic(data.user.id);
+        } 
+        // else {
+        //   setShowPersonalInfo(true);
+        // }
       } else {
-        if (password !== confirmPassword) {
-          setError("Les mots de passe ne correspondent pas");
-          return;
-        }
-
-        const response = await fetch('http://localhost:3200/api/auth/create-account', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ login, password }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('login', JSON.stringify({ id: data.user.id, login : data.user.login, pseudo : data.user.pseudo }));
-          setShowPersonalInfo(true);
-        } else {
-          setError(data.message || 'Erreur lors de la création du compte');
-        }
+        setError(data.message || `Erreur lors de ${isLogin ? 'la connexion' : 'la création du compte'}`);
       }
     } catch (err) {
       console.error('Erreur:', err);
@@ -101,9 +139,15 @@ function AuthForm({ onAuthenticate }) {
   };
 
   const continueWithoutLogin = () => {
-    console.log('Continuer sans être connecté');
-    onAuthenticate();
+    if (window.confirm("Êtes-vous sûr de vouloir continuer sans être connecté ? La majorité des fonctionnalités de l'application requièrent une connexion.")) {
+      onAuthenticate();
+    }
   };
+
+  const handlePersonalInformationSet = () => {
+    setShowClubOptions(true);
+    setShowPersonalInfo(false);
+  }
 
   return (
     <div className={styles.authContainer}>
@@ -151,9 +195,7 @@ function AuthForm({ onAuthenticate }) {
           </button>
         </form>
       ) : (
-        <>
-          <PersonalInfoForm onAuthenticate={onAuthenticate} />
-        </>
+        <PersonalInfoForm login={login} onAuthenticate={onAuthenticate} handlePersonalInformationSet={handlePersonalInformationSet} />
       )}
       {!showPersonalInfo && (
         <>
@@ -165,6 +207,7 @@ function AuthForm({ onAuthenticate }) {
           </button>
         </>
       )}
+      {isLogin && !showPersonalInfo && showClubOptions && <ClubOptions />}
     </div>
   );
 }

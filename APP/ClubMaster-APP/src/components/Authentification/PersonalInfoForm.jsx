@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../../styles/AuthForm.module.css';
 
-function PersonalInfoForm({ onAuthenticate }) {
+function PersonalInfoForm({ login, onAuthenticate, handlePersonnalInformationSet }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -87,7 +87,8 @@ function PersonalInfoForm({ onAuthenticate }) {
           name: formData.firstName + ' ' + formData.lastName,
           phoneNumber: formData.phoneNumber,
           loginId: loginData.id,
-          addressId: addressId
+          addressId: addressId,
+          emailaddress: login
         }),
       });
 
@@ -95,8 +96,9 @@ function PersonalInfoForm({ onAuthenticate }) {
         throw new Error('Erreur lors de l\'enregistrement des informations personnelles');
       }
 
-      console.log('Informations personnelles enregistrées avec succès');
-      onAuthenticate();
+      localStorage.setItem('personPhysic', JSON.stringify(personalInfoResponse));
+
+      handlePersonnalInformationSet();
     } catch (err) {
       setConsentGiven(false);
       console.error('Erreur:', err);

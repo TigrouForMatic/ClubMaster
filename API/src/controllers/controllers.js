@@ -90,7 +90,17 @@ const deleteEntry = async (req, res) => {
     }
 };
 
-// ... (autres fonctions inchangées)
+const prepareInsertData = (body) => {
+    const columns = Object.keys(body).join(', ');
+    const values = Object.values(body);
+    return { columns, values };
+};
+
+const prepareUpdateData = (body) => {
+    const updates = Object.keys(body).map((key, index) => `${key} = $${index + 1}`).join(', ');
+    const values = Object.values(body);
+    return { updates, values };
+};
 
 module.exports = {
     getEntries,

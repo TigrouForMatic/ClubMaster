@@ -51,7 +51,8 @@ BEGIN
     CREATE TABLE db.Club (
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
-        PersonMoralId INT,
+        AddressId INT,
+        PersonMoralId INT
     );
 
     CREATE TABLE db.ProduitType (
@@ -140,9 +141,9 @@ BEGIN
     INSERT INTO db.PersonMoral (Name) VALUES
     ('Vol en Oust');
 
-    INSERT INTO db.Club (Label, PersonMoralId) VALUES
-    ('La Claie', 1),
-    ('Vol en Pleuc', 1);
+    INSERT INTO db.Club (Label, AddressId, PersonMoralId) VALUES
+    ('La Claie', 3, null),
+    ('Vol en Pleuc', 4, null);
 
     INSERT INTO db.ProduitType (Label, ClubId) VALUES
     ('Tee-Shirt', 1),
