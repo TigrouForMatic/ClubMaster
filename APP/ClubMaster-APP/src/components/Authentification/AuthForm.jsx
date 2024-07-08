@@ -22,6 +22,7 @@ function AuthForm({ onAuthenticate }) {
     valid: false,
     errors: []
   });
+  const [showLoginForm, setShowLoginForm] = useState(true);
   const [showPersonalInfo, setShowPersonalInfo] = useState(false);
   const [showClubOptions, setShowClubOptions] = useState(false);
 
@@ -113,13 +114,14 @@ function AuthForm({ onAuthenticate }) {
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('login', JSON.stringify({ id: data.user.id, login: data.user.login, pseudo: data.user.pseudo }));
+        setShowLoginForm(false);
         
         if (isLogin) {
           await fetchPersonPhysic(data.user.id);
-        } 
-        // else {
-        //   setShowPersonalInfo(true);
-        // }
+        } else {
+          setShowPersonalInfo(true);
+        }
+        
       } else {
         setError(data.message || `Erreur lors de ${isLogin ? 'la connexion' : 'la création du compte'}`);
       }
@@ -152,52 +154,57 @@ function AuthForm({ onAuthenticate }) {
   return (
     <div className={styles.authContainer}>
       {error && <p className={styles.error}>{error}</p>}
-      {!showPersonalInfo ? (
+      {showLoginForm && (
         <form onSubmit={handleSubmit} className={styles.authForm}>
           <h2>{isLogin ? 'Connexion' : 'Création de compte'}</h2>
-          <input
-            type="email"
-            placeholder="Email"
-            value={login}
-            onChange={(e) => setLogin(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Mot de passe"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          {!isLogin && (
-            <>
-              <input
-                type="password"
-                placeholder="Confirmer le mot de passe"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-              <div className={styles.passwordValidationCard}>
-                {passwordValidation.errors.map((error, index) => (
-                  <div 
-                    key={index} 
-                    className={`${styles.validationRule} ${error.successId ? styles.validRule : styles.invalidRule}`}
-                  >
-                    {error.successId ? '✓' : '✗'} {error.message}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-          <button type="submit" disabled={!isLogin && !passwordValidation.valid}>
-            {isLogin ? 'Se connecter' : 'Créer un compte'}
-          </button>
+            <input
+              type="email"
+              placeholder="Email"
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Mot de passe"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            {!isLogin && (
+              <>
+                <input
+                  type="password"
+                  placeholder="Confirmer le mot de passe"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+                <div className={styles.passwordValidationCard}>
+                  {passwordValidation.errors.map((error, index) => (
+                    <div 
+                      key={index} 
+                      className={`${styles.validationRule} ${error.successId ? styles.validRule : styles.invalidRule}`}
+                    >
+                      {error.successId ? '✓' : '✗'} {error.message}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+            <button type="submit" disabled={!isLogin && !passwordValidation.valid}>
+              {isLogin ? 'Se connecter' : 'Créer un compte'}
+            </button>
         </form>
-      ) : (
-        <PersonalInfoForm login={login} onAuthenticate={onAuthenticate} handlePersonalInformationSet={handlePersonalInformationSet} />
       )}
-      {!showPersonalInfo && (
+      {showPersonalInfo && (
+        <PersonalInfoForm 
+          login={login} 
+          onAuthenticate={onAuthenticate} 
+          handlePersonalInformationSet={handlePersonalInformationSet} 
+        />
+      )}
+      {showLoginForm && (
         <>
           <button onClick={toggleForm} className={styles.toggleButton}>
             {isLogin ? 'Créer un compte' : 'Se connecter'}
@@ -207,7 +214,7 @@ function AuthForm({ onAuthenticate }) {
           </button>
         </>
       )}
-      {isLogin && !showPersonalInfo && showClubOptions && <ClubOptions />}
+      {showClubOptions && <ClubOptions />}
     </div>
   );
 }
