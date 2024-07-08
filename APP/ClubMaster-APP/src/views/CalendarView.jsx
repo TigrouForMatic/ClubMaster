@@ -4,7 +4,6 @@ import DatePicker from "react-datepicker";
 import Select from 'react-select';
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../styles/CalendarView.module.css";
-import { dateFormat } from "../js/date";
 
 const CalendarView = () => {
   const [typeEvent, setTypeEvent] = useState([]);
@@ -21,7 +20,7 @@ const CalendarView = () => {
         const [{ data: typeEventData }, { data: eventData }, { data: locationData }] = await Promise.all([
           axios.get("http://localhost:3200/api/eventType?clubid=1"),
           axios.get("http://localhost:3200/api/event"),
-          axios.get("http://localhost:3200/api/address?private=false"),
+          axios.get("http://localhost:3200/api/address"),
         ]);
 
         setTypeEvent(typeEventData);
@@ -62,11 +61,11 @@ const CalendarView = () => {
     setSelectedTypes(selectedOptions.map(option => option.value));
   };
 
-  const teams = [
-    { value: 'team1', label: 'Équipe 1' },
-    { value: 'team2', label: 'Équipe 2' },
-    { value: 'team3', label: 'Équipe 3' },
-  ];
+  // const teams = [
+  //   { value: 'team1', label: 'Équipe 1' },
+  //   { value: 'team2', label: 'Équipe 2' },
+  //   { value: 'team3', label: 'Équipe 3' },
+  // ];
 
   const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
@@ -166,7 +165,7 @@ const CalendarView = () => {
           />
         </div>
 
-        <div className={styles.filterSection}>
+        {/* <div className={styles.filterSection}>
           <h3>Équipe</h3>
           <Select
             options={teams}
@@ -174,7 +173,7 @@ const CalendarView = () => {
             onChange={setSelectedTeam}
             placeholder="Sélectionner une équipe"
           />
-        </div>
+        </div> */}
       </div>
 
       <div className={styles.monthlyCalendar}>

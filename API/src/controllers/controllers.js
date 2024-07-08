@@ -37,6 +37,9 @@ const getEntryById = async (req, res) => {
 };
 
 const addEntry = async (req, res) => {
+    // Vérification de l'authentification
+    if (!req.user) return res.sendStatus(401);
+
     const table = req.params.table;
     const { columns, values } = prepareInsertData(req.body);
 
@@ -53,6 +56,9 @@ const addEntry = async (req, res) => {
 };
 
 const updateEntry = async (req, res) => {
+    // Vérification de l'authentification
+    if (!req.user) return res.sendStatus(401);
+
     const { table, id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
 
@@ -69,6 +75,9 @@ const updateEntry = async (req, res) => {
 };
 
 const deleteEntry = async (req, res) => {
+    // Vérification de l'authentification
+    if (!req.user) return res.sendStatus(401);
+
     const { table, id } = req.params;
     try {
         const client = await pool.connect();
@@ -81,17 +90,7 @@ const deleteEntry = async (req, res) => {
     }
 };
 
-const prepareInsertData = (body) => {
-    const columns = Object.keys(body).join(', ');
-    const values = Object.values(body);
-    return { columns, values };
-};
-
-const prepareUpdateData = (body) => {
-    const updates = Object.keys(body).map((key, index) => `${key} = $${index + 1}`).join(', ');
-    const values = Object.values(body);
-    return { updates, values };
-};
+// ... (autres fonctions inchangées)
 
 module.exports = {
     getEntries,

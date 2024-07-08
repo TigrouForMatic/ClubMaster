@@ -45,6 +45,8 @@ function PersonalInfoForm({ onAuthenticate }) {
       return;
     }
 
+    console.log(localStorage.getItem('token'))
+
     try {
       // Enregistrement de l'adresse
       const addressResponse = await fetch('http://localhost:3200/api/address/', {
@@ -99,6 +101,7 @@ function PersonalInfoForm({ onAuthenticate }) {
       console.log('Informations personnelles enregistrées avec succès');
       onAuthenticate();
     } catch (err) {
+      setConsentGiven(false);
       console.error('Erreur:', err);
       setError('Une erreur est survenue. Veuillez réessayer.');
     }
