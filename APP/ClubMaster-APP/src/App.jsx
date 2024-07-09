@@ -40,9 +40,9 @@ function AppContent() {
         //   alignItems: 'center',
         //   height: '75vh'
         // }}>
-        <div style={{ marginTop: '100px' }}>
+        // <div style={{ marginTop: '100px' }}>
           <AuthForm onAuthenticate={() => setIsAuthenticated(true)} />
-        </div>
+        // </div>
       )
     );
   }

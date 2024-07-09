@@ -1,12 +1,13 @@
 import '../../../styles/navbarStyles.css';
-// import pebblelogo from '../../assets/pebble-logo.png'
+import { HomeSecure } from 'iconoir-react';
 
 
 function CompanyInSideBarModal (){
     return(
-    <div className='modal-item'>
-        {/* <img src={pebblelogo} className="icon--detail__modal pebblelogo" alt="pebblelogo" />Pebble */}
-    </div>
+        <div className="modal-item home-secure">
+            <HomeSecure className='icon--detail__modal' />
+            Club
+        </div>
     );
 }
 
