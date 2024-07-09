@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../../styles/AuthForm.module.css';
 
-function PersonalInfoForm({ login, onAuthenticate, handlePersonnalInformationSet }) {
+function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -15,15 +15,13 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonnalInformationSet
 
   const [consentGiven, setConsentGiven] = useState(false);
   const [error, setError] = useState('');
-
   const [loginData, setLoginData] = useState(null);
 
   useEffect(() => {
     const storedLogin = localStorage.getItem('login');
     if (storedLogin) {
       try {
-        const parsedLoginData = JSON.parse(storedLogin);
-        setLoginData(parsedLoginData);
+        setLoginData(JSON.parse(storedLogin));
       } catch (error) {
         console.error('Erreur lors du parsing des données de login:', error);
       }
@@ -45,14 +43,21 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonnalInformationSet
       return;
     }
 
+    if (!loginData?.id) {
+      setError('ID de connexion non trouvé. Veuillez vous reconnecter.');
+      return;
+    }
+
     try {
-      // Enregistrement de l'adresse
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
       const addressResponse = await fetch('http://localhost:3200/api/address/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers,
         body: JSON.stringify({
           street: formData.street,
           city: formData.city,
@@ -68,26 +73,16 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonnalInformationSet
         throw new Error('Erreur lors de l\'enregistrement de l\'adresse');
       }
 
-      const addressData = await addressResponse.json();
-      const addressId = addressData.id;
+      const { id: addressId } = await addressResponse.json();
 
-      if (!loginData || !loginData.id) {
-        setError('ID de connexion non trouvé. Veuillez vous reconnecter.');
-        return;
-      }
-
-      // Enregistrement des informations personnelles
       const personalInfoResponse = await fetch('http://localhost:3200/api/personPhysic', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers,
         body: JSON.stringify({
-          name: formData.firstName + ' ' + formData.lastName,
+          name: `${formData.firstName} ${formData.lastName}`,
           phoneNumber: formData.phoneNumber,
           loginId: loginData.id,
-          addressId: addressId,
+          addressId,
           emailaddress: login
         }),
       });
@@ -96,83 +91,32 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonnalInformationSet
         throw new Error('Erreur lors de l\'enregistrement des informations personnelles');
       }
 
-      localStorage.setItem('personPhysic', JSON.stringify(personalInfoResponse));
+      const personalInfo = await personalInfoResponse.json();
+      localStorage.setItem('personPhysic', JSON.stringify(personalInfo));
 
-      handlePersonnalInformationSet();
+      handlePersonalInformationSet();
     } catch (err) {
-      setConsentGiven(false);
       console.error('Erreur:', err);
       setError('Une erreur est survenue. Veuillez réessayer.');
+      setConsentGiven(false);
     }
-  };
-
-  const continueWithoutSetInformation = () => {
-    console.log('Continuer sans donner ses informations');
-    onAuthenticate();
   };
 
   return (
     <form onSubmit={handleSubmit} className={styles.authForm}>
       {error && <p className={styles.error}>{error}</p>}
       <h2>Informations personnelles</h2>
-      <input
-        type="text"
-        name="firstName"
-        placeholder="Prénom"
-        value={formData.firstName}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="text"
-        name="lastName"
-        placeholder="Nom"
-        value={formData.lastName}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="tel"
-        name="phoneNumber"
-        placeholder="Numéro de téléphone"
-        value={formData.phoneNumber}
-        onChange={handleChange}
-      />
-      <input
-        type="text"
-        name="street"
-        placeholder="Rue"
-        value={formData.street}
-        onChange={handleChange}
-      />
-      <input
-        type="text"
-        name="city"
-        placeholder="Ville"
-        value={formData.city}
-        onChange={handleChange}
-      />
-      <input
-        type="text"
-        name="state"
-        placeholder="État/Région"
-        value={formData.state}
-        onChange={handleChange}
-      />
-      <input
-        type="text"
-        name="postalCode"
-        placeholder="Code postal"
-        value={formData.postalCode}
-        onChange={handleChange}
-      />
-      <input
-        type="text"
-        name="country"
-        placeholder="Pays"
-        value={formData.country}
-        onChange={handleChange}
-      />
+      {Object.entries(formData).map(([key, value]) => (
+        <input
+          key={key}
+          type={key === 'phoneNumber' ? 'tel' : 'text'}
+          name={key}
+          placeholder={key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+          value={value}
+          onChange={handleChange}
+          required={['firstName', 'lastName'].includes(key)}
+        />
+      ))}
       
       <label className={styles.checkboxLabel}>
         <input
@@ -185,7 +129,7 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonnalInformationSet
       <button type="submit" disabled={!consentGiven}>
         Enregistrer et continuer
       </button>
-      <button onClick={continueWithoutSetInformation} className={styles.skipButton}>
+      <button onClick={onAuthenticate} className={styles.skipButton}>
         Passer pour le moment
       </button>
     </form>
