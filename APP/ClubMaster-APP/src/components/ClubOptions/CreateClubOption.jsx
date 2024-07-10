@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 
 const CreateClubOption = () => {
   const [clubData, setClubData] = useState({
-    label: '',
-    address: {
+      label: '',
+      address: {
       street: '',
       city: '',
       state: '',

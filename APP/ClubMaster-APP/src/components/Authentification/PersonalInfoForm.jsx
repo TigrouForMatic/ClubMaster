@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import styles from '../../styles/AuthForm.module.css';
 
 function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet }) {
-  const [formData, setFormData] = useState({
+  const [personalInfo, setPersonalInfo] = useState({
     firstName: '',
     lastName: '',
     phoneNumber: '',
+    bornDate: '',
+  });
+
+  const [addressInfo, setAddressInfo] = useState({
     street: '',
     city: '',
     state: '',
@@ -28,11 +32,19 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet 
     }
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+  const handlePersonalInfoChange = (e) => {
+    const { name, value } = e.target;
+    setPersonalInfo(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
+    }));
+  };
+
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setAddressInfo(prev => ({
+      ...prev,
+      [name]: value
     }));
   };
 
@@ -59,11 +71,7 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet 
         method: 'POST',
         headers,
         body: JSON.stringify({
-          street: formData.street,
-          city: formData.city,
-          state: formData.state,
-          postalCode: formData.postalCode,
-          country: formData.country,
+          ...addressInfo,
           private: true,
           validate: true
         }),
@@ -79,8 +87,9 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet 
         method: 'POST',
         headers,
         body: JSON.stringify({
-          name: `${formData.firstName} ${formData.lastName}`,
-          phoneNumber: formData.phoneNumber,
+          name: `${personalInfo.firstName} ${personalInfo.lastName}`,
+          naissanceDate: personalInfo.bornDate,
+          phoneNumber: personalInfo.phoneNumber,
           loginId: loginData.id,
           addressId,
           emailaddress: login
@@ -91,8 +100,8 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet 
         throw new Error('Erreur lors de l\'enregistrement des informations personnelles');
       }
 
-      const personalInfo = await personalInfoResponse.json();
-      localStorage.setItem('personPhysic', JSON.stringify(personalInfo));
+      const personalInfoData = await personalInfoResponse.json();
+      localStorage.setItem('personPhysic', JSON.stringify(personalInfoData));
 
       handlePersonalInformationSet();
     } catch (err) {
@@ -105,16 +114,48 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet 
   return (
     <form onSubmit={handleSubmit} className={styles.authForm}>
       {error && <p className={styles.error}>{error}</p>}
+      
       <h2>Informations personnelles</h2>
-      {Object.entries(formData).map(([key, value]) => (
+      <input
+        type="text"
+        name="firstName"
+        placeholder="Prénom"
+        value={personalInfo.firstName}
+        onChange={handlePersonalInfoChange}
+        required
+      />
+      <input
+        type="text"
+        name="lastName"
+        placeholder="Nom"
+        value={personalInfo.lastName}
+        onChange={handlePersonalInfoChange}
+        required
+      />
+      <input
+        type="tel"
+        name="phoneNumber"
+        placeholder="Numéro de téléphone"
+        value={personalInfo.phoneNumber}
+        onChange={handlePersonalInfoChange}
+      />
+      <input
+        type="date"
+        name="bornDate"
+        placeholder="Date de naissance"
+        value={personalInfo.bornDate}
+        onChange={handlePersonalInfoChange}
+      />
+
+      <h2>Adresse</h2>
+      {Object.entries(addressInfo).map(([key, value]) => (
         <input
           key={key}
-          type={key === 'phoneNumber' ? 'tel' : 'text'}
+          type="text"
           name={key}
           placeholder={key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
           value={value}
-          onChange={handleChange}
-          required={['firstName', 'lastName'].includes(key)}
+          onChange={handleAddressChange}
         />
       ))}
       
@@ -129,7 +170,7 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet 
       <button type="submit" disabled={!consentGiven}>
         Enregistrer et continuer
       </button>
-      <button onClick={onAuthenticate} className={styles.skipButton}>
+      <button type="button" onClick={onAuthenticate} className={styles.skipButton}>
         Passer pour le moment
       </button>
     </form>

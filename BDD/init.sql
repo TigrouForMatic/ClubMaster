@@ -36,6 +36,7 @@ BEGIN
     CREATE TABLE db.PersonPhysic (
         Id SERIAL PRIMARY KEY,
         Name VARCHAR(255) NOT NULL,
+        NaissanceDate DATE,
         PhoneNumber VARCHAR(20),
         EmailAddress VARCHAR(255),
         AddressId INT,
@@ -124,19 +125,9 @@ BEGIN
 
     -- Insert test data
     INSERT INTO db.Address (Street, City, State, PostalCode, Country, Private, Validate) VALUES
-    ('123 Main St', 'Anytown', 'State', '12345', 'Country', true, true),
-    ('456 Elm St', 'Othertown', 'State', '67890', 'Country', true, true),
     ('4 Av. du Stade', 'Bohal', '', '56140', 'France', false, true),
     ('Complexe polyvalent', 'Pleucadeuc', '', '56140', 'France', false, true),
     ('Le Daufresne', 'Malestroit', '', '56140', 'France', false, true);
-
-    INSERT INTO db.PersonPhysic (Name, PhoneNumber, EmailAddress, AddressId) VALUES
-    ('John Doe', '123-456-7890', 'john@example.com', 1),
-    ('Jules Chassany', '123-456-7890', 'john@example.com', 1),
-    ('Catherine Sauvage', '987-654-3210', 'jane@example.com', 1),
-    ('Amandine Doe', '123-456-7890', 'john@example.com', 1),
-    ('Isabelle Chasson', '987-654-3210', 'jane@example.com', 2),
-    ('Olivier Fragnaud', '123-456-7890', 'john@example.com', 2);
 
     INSERT INTO db.PersonMoral (Name) VALUES
     ('Vol en Oust');
@@ -209,10 +200,6 @@ BEGIN
     ('Trésorier', 2),
     ('Secrétaire', 2),
     ('Membre', 2);
-
-    INSERT INTO db.Licence (Label, Dd, Df, LicenceTypeId, PersonPhysicId, RoleId) VALUES
-    ('Licence 2024 - John Doe', '2024-01-01 00:00:00', '2024-12-31 23:59:59', 1, 1, 4),
-    ('Licence 2024 - Jane Smith', '2024-01-01 00:00:00', '2024-12-31 23:59:59', 1, 2, 1);
 
 END
 $$;
