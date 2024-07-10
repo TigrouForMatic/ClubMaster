@@ -79,7 +79,7 @@ function AuthForm({ onAuthenticate }) {
       const dataPersonPhysic = await response.json();
 
       if (dataPersonPhysic.length) {
-        localStorage.setItem('personPhysic', JSON.stringify(dataPersonPhysic));
+        localStorage.setItem('personPhysic', JSON.stringify(dataPersonPhysic[0]));
         await fetchClub(dataPersonPhysic.id);
       } else {
         setShowPersonalInfo(true);

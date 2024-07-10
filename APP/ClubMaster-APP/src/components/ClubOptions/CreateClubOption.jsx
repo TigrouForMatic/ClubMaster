@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styles from '../../styles/CreateClubOptions.module.css';
+import { toSqlDate, getDateEndLicence } from '../../js/date';
+
+const API_BASE_URL = 'http://localhost:3200/api';
 
 const CreateClubOption = () => {
   const [clubData, setClubData] = useState({
@@ -13,28 +16,88 @@ const CreateClubOption = () => {
     },
   });
 
-  const handleChange = (e) => {
+  // Utilisation de useCallback pour mémoriser la fonction
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    if (name.startsWith('address.')) {
-      const addressField = name.split('.')[1];
-      setClubData(prevData => ({
-        ...prevData,
-        address: {
-          ...prevData.address,
-          [addressField]: value
-        }
-      }));
-    } else {
-      setClubData(prevData => ({
-        ...prevData,
-        [name]: value
-      }));
-    }
-  };
+    setClubData(prevData => ({
+      ...prevData,
+      ...(name.startsWith('address.') 
+        ? { address: { ...prevData.address, [name.split('.')[1]]: value } }
+        : { [name]: value })
+    }));
+  }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Club data to submit:', clubData);
+
+    try {
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      // Fonction d'aide pour les requêtes fetch
+      const fetchData = async (url, method, body = null) => {
+        const response = await fetch(`${API_BASE_URL}${url}`, {
+          method,
+          headers,
+          body: body ? JSON.stringify(body) : null,
+        });
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        return response.json();
+      };
+
+      // Création de l'adresse
+      const { id: addressId } = await fetchData('/address/', 'POST', {
+        ...clubData.address,
+        private: true,
+        validate: true
+      });
+
+      // Création du club
+      const { id: clubId } = await fetchData('/club', 'POST', {
+        label: clubData.label,
+        addressId
+      });
+
+      // Création des types de licence
+      const licenceTypeData = await fetchData(`/licenceType/newCLub/${clubId}`, 'POST');
+      // Exemple : { id: 8, label: 'Licence Adulte', clubid: 12, price: null }
+      if (!licenceTypeData || !licenceTypeData.id) {
+        throw new Error('Données de type de licence invalides');
+      }
+
+      // Création des rôles
+      const roleData = await fetchData(`/role/newCLub/${clubId}`, 'POST');
+      if (!roleData || !roleData[1] || !roleData[1].id) {
+        throw new Error('Données de rôle invalides');
+      }
+
+      // Avant d'utiliser personPhysic, parsez-le en JSON
+      const personPhysic = JSON.parse(localStorage.getItem('personPhysic'));
+
+      // Vérifiez si personPhysic existe et a un id avant de l'utiliser
+      if (!personPhysic || !personPhysic.id) {
+        throw new Error('Données personPhysic manquantes ou invalides');
+      }
+
+      // Création de la licence
+      await fetchData('/licence', 'POST', {
+        label: "Licence Président",
+        dd: toSqlDate(new Date()),
+        df: toSqlDate(getDateEndLicence()),
+        licenceTypeId: licenceTypeData.id,
+        personPhysicId: personPhysic.id,
+        roleId: roleData[1].id,
+      });
+
+      console.log('Club et données associées créés avec succès');
+    } catch (err) {
+      console.error('Erreur lors de la création du club:', err.message);
+    }
   };
 
   return (
@@ -53,60 +116,18 @@ const CreateClubOption = () => {
           />
         </div>
         
-        <div className={styles.formGroup}>
-          <label htmlFor="street">Rue:</label>
-          <input
-            type="text"
-            id="street"
-            name="address.street"
-            value={clubData.address.street}
-            onChange={handleChange}
-          />
-        </div>
-        
-        <div className={styles.formGroup}>
-          <label htmlFor="city">Ville:</label>
-          <input
-            type="text"
-            id="city"
-            name="address.city"
-            value={clubData.address.city}
-            onChange={handleChange}
-          />
-        </div>
-        
-        <div className={styles.formGroup}>
-          <label htmlFor="state">État/Province:</label>
-          <input
-            type="text"
-            id="state"
-            name="address.state"
-            value={clubData.address.state}
-            onChange={handleChange}
-          />
-        </div>
-        
-        <div className={styles.formGroup}>
-          <label htmlFor="postalCode">Code postal:</label>
-          <input
-            type="text"
-            id="postalCode"
-            name="address.postalCode"
-            value={clubData.address.postalCode}
-            onChange={handleChange}
-          />
-        </div>
-        
-        <div className={styles.formGroup}>
-          <label htmlFor="country">Pays:</label>
-          <input
-            type="text"
-            id="country"
-            name="address.country"
-            value={clubData.address.country}
-            onChange={handleChange}
-          />
-        </div>
+        {['street', 'city', 'state', 'postalCode', 'country'].map((field) => (
+          <div key={field} className={styles.formGroup}>
+            <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
+            <input
+              type="text"
+              id={field}
+              name={`address.${field}`}
+              value={clubData.address[field]}
+              onChange={handleChange}
+            />
+          </div>
+        ))}
         
         <button type="submit">Créer le club</button>
       </form>

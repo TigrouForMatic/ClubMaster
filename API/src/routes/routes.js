@@ -6,6 +6,9 @@ const { authenticateToken } = require('../middleware/auth');
 const { getAddresses, getAddressById, addAddress, updateAddress, deleteAddress } = require('../controllers/addressControllers');
 const { getPersonPhysic, getPersonPhysicById, addPersonPhysic, updatePersonPhysic, deletePersonPhysic } = require('../controllers/personPhysicControllers');
 const { getClub, getClubByPerson, getClubById, addClub, updateClub, deleteClub } = require('../controllers/clubControllers');
+const { getLicenceType, getLicenceTypeById, addLicenceType, addLicenceTypeFromNewClub, updateLicenceType, deleteLicenceType } = require('../controllers/licenceTypeControllers');
+const { getLicence, getLicenceById, addLicence, updateLicence, deleteLicence } = require('../controllers/licenceControllers');
+const { getRole, getRoleById, addRole, addRoleFromNewClub, updateRole, deleteRole } = require('../controllers/roleControllers');
 
 const { getEntries, getEntryById, addEntry, updateEntry, deleteEntry } = require('../controllers/controllers');
 
@@ -34,6 +37,29 @@ router.get('/club/:id', getClubById);
 router.post('/club', authenticateToken, addClub);
 router.put('/club/:id', authenticateToken, updateClub);
 router.delete('/club/:id', authenticateToken, deleteClub);
+
+// Routes pour le CRUD des types de licence
+router.get('/licenceType', getLicenceType);
+router.get('/licenceType/:id', getLicenceTypeById);
+router.post('/licenceType', authenticateToken, addLicenceType);
+router.post('/licenceType/newCLub/:clubId', authenticateToken, addLicenceTypeFromNewClub);
+router.put('/licenceType/:id', authenticateToken, updateLicenceType);
+router.delete('/licenceType/:id', authenticateToken, deleteLicenceType);
+
+// Routes pour le CRUD des licences
+router.get('/licence', getLicence);
+router.get('/licence/:id', getLicenceById);
+router.post('/licence', authenticateToken, addLicence);
+router.put('/licence/:id', authenticateToken, updateLicence);
+router.delete('/licence/:id', authenticateToken, deleteLicence);
+
+// Routes pour le CRUD des licences
+router.get('/role', getRole);
+router.get('/role/:id', getRoleById);
+router.post('/role', authenticateToken, addRole);
+router.post('/role/newCLub/:clubId', authenticateToken, addRoleFromNewClub);
+router.put('/role/:id', authenticateToken, updateRole);
+router.delete('/role/:id', authenticateToken, deleteRole);
 
 // Routes génériques
 router.get('/:table', getEntries);

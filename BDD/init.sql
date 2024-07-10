@@ -106,6 +106,7 @@ BEGIN
     CREATE TABLE db.Role (
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
+        Level INT,
         ClubId INT,
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
     );
@@ -184,22 +185,6 @@ BEGIN
     ('Rencontre', 'Rencontre avec Serent', 4, '2024-07-28 19:00:00', '2024-07-28 23:00:00', ''),
     ('Tournois Amical', 'Tournois a Ploermel', 3, '2024-08-28 19:00:00', '2024-08-28 22:30:00', ''),
     ('Cours', 'Cours de fin d année', 2, '2024-08-31 19:00:00', '2024-08-31 22:30:00', '');
-
-    INSERT INTO db.LicenceType (Label, ClubId, Price) VALUES
-    ('Licence Adulte', 1, 50),
-    ('Licence Jeune', 1, 30),
-    ('Licence Adulte', 2, 55),
-    ('Licence Jeune', 2, 35);
-
-    INSERT INTO db.Role (Label, ClubId) VALUES
-    ('Président', 1),
-    ('Trésorier', 1),
-    ('Secrétaire', 1),
-    ('Membre', 1),
-    ('Président', 2),
-    ('Trésorier', 2),
-    ('Secrétaire', 2),
-    ('Membre', 2);
 
 END
 $$;
