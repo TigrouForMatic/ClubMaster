@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-// import styles from '../../styles/FindClubOption.module.css';
+import styles from '../../styles/FindClubOption.module.css';
 import Select from 'react-select';
 
 const ClubCard = React.memo(({ club, onClick }) => (

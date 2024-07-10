@@ -8,33 +8,46 @@ const ClubOptions = () => {
   const [activeOption, setActiveOption] = useState('options');
 
   const handleClick = (option) => {
-    setActiveOption(option);
-    console.log(`Option sélectionnée : ${option}`);
+    try {
+      setActiveOption(option);
+    } catch (error) {
+      console.error("Erreur lors de la sélection de l'option:", error);
+    }
+  };
+
+  const renderContent = () => {
+    switch(activeOption) {
+      case 'options':
+        return (
+          <div className={styles.clubOptionsContainer}>
+            <button 
+              className={styles.clubOption} 
+              onClick={() => handleClick('find')}
+            >
+              <ShieldSearch className={styles.iconDetail} />
+              Trouver un club
+            </button>
+            <button 
+              className={styles.clubOption} 
+              onClick={() => handleClick('create')}
+            >
+              <PlusSquare className={styles.iconDetail} />
+              Créer un club
+            </button>
+          </div>
+        );
+      case 'find':
+        return <FindClubOption />;
+      case 'create':
+        return <CreateClubOption />;
+      default:
+        return <div>Option non reconnue</div>;
+    }
   };
 
   return (
     <div className={styles.clubOptions}>
-      {activeOption === 'options' && (
-        <div className={styles.clubOptionsContainer}>
-          <button 
-            className={styles.clubOption} 
-            onClick={() => handleClick('find')}
-          >
-            <ShieldSearch className={styles.iconDetail} />
-            Trouver un club
-          </button>
-          <button 
-            className={styles.clubOption} 
-            onClick={() => handleClick('create')}
-          >
-            <PlusSquare className={styles.iconDetail} />
-            Créer un club
-          </button>
-        </div>
-      )}
-
-      {activeOption === 'find' && <FindClubOption />}
-      {activeOption === 'create' && <CreateClubOption />}
+      {renderContent()}
     </div>
   );
 };
