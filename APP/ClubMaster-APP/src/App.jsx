@@ -26,12 +26,6 @@ const ROUTES = {
   USER: '/user',
 };
 
-const notifications = [
-  { label: "Nouvelle mise à jour disponible", time: "2024-07-10 14:30:20" },
-  { label: "Message reçu de Jean", time: "2024-07-10 15:45:02" },
-  { label: "Rappel : Réunion à 16h" },
-];
-
 function AppContent() {
   const isMobile = useMobile();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -58,7 +52,6 @@ function AppContent() {
     <div className="App">
       <Suspense fallback={<LoadingSpinner />}>
         {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
-        <NotificationContainer notifications={notifications} />
         <Routes>
           <Route path={ROUTES.HOME} element={<HomeView />} />
           <Route path={ROUTES.MATCHS} element={<MatchsView />} />
@@ -77,6 +70,7 @@ function App() {
     <ErrorBoundary>
       <MobileProvider>
         <Router>
+          <NotificationContainer />
           <AppContent />
         </Router>
       </MobileProvider>

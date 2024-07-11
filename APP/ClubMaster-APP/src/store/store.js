@@ -4,6 +4,11 @@ const useStore = create((set) => ({
   clubs: [],
   addresses: [],
   people: [],
+  notifications: [
+    { id : 1, label: "Nouvelle mise à jour disponible", time: "2024-07-10 14:30:20" },
+    { id : 2, label: "Message reçu de Jean", time: "2024-07-10 15:45:02" },
+    { id : 3, label: "Rappel : Réunion à 16h" },
+  ],
 
   addItem: (category, newItem) => set((state) => ({
     [category]: [...state[category], newItem]

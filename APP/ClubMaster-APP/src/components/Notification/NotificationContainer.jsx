@@ -1,10 +1,16 @@
-// NotificationContainer.js
 import React from 'react';
 import Notification from './Notification';
 import styles from '../../styles/Notification.module.css';
 import { getDisplayTimeFormat } from '../../js/date';
+import useStore from '../../store/store';
 
-const NotificationContainer = ({ notifications }) => {
+const NotificationContainer = () => {
+  const deleteItem = useStore((state) => state.deleteItem);
+  const notifications = useStore((state) => state.notifications);
+
+  const handleDeleteNotification = (index) => {
+    deleteItem('notifications', index);
+  };
 
   return (
     <div className={styles.notificationContainer}>
@@ -12,7 +18,8 @@ const NotificationContainer = ({ notifications }) => {
         <Notification
           key={index}
           label={notification.label}
-          time={ getDisplayTimeFormat(notification.time) }
+          time={notification.time ? getDisplayTimeFormat(notification.time) : ''}
+          handleDeleteNotification={() => handleDeleteNotification(notification.id)}
         />
       ))}
     </div>

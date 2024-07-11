@@ -1,5 +1,5 @@
 
-.notificationWrapper {
+/* .notificationWrapper {
     background-color: #006eff86;
     border-radius: 4px;
     padding: 10px;
@@ -23,4 +23,38 @@
     width: 300px;
     max-height: 80vh;
     overflow-y: auto;
-  }
+  } */
+
+  .notificationWrapper {
+    background-color: #006eff86;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; /* Pour que le positionnement absolu de l'icône se base sur ce conteneur */
+}
+
+.label {
+    font-weight: bold;
+}
+
+.time {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.notificationContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.iconDetail {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
