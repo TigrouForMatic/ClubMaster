@@ -1,10 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import styles from '../../styles/CreateClubOptions.module.css';
 import { toSqlDate, getDateEndLicence } from '../../js/date';
+import useStore from '../../store/store';
 
 const API_BASE_URL = 'http://localhost:3200/api';
 
 const CreateClubOption = ( onAuthenticate ) => {
+
+  const addItem = useStore((state) => state.addItem);
+
   const [clubData, setClubData] = useState({
     label: '',
     address: {
@@ -97,7 +101,11 @@ const CreateClubOption = ( onAuthenticate ) => {
     } catch (err) {
       console.error('Erreur lors de la création du club:', err.message);
     } finally {
-      window.alert('Club créé avec succès !! Vous etes desormais le président de ' + clubData.label);
+      const createdClubNotif = {
+        label : `Club créé avec succès !! Vous etes desormais le président de ${clubData.label}`,
+        time : new Date()
+      };
+      addItem('notifications', createdClubNotif);
       onAuthenticate();
     }
   };

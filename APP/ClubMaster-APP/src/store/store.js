@@ -3,7 +3,7 @@ import create from 'zustand'
 const useStore = create((set) => ({
   clubs: [],
   addresses: [],
-  people: [],
+  personPhysics: [],
   notifications: [
     { label: "Nouvelle mise à jour disponible", time: "2024-07-10 14:30:20" },
     { label: "Message reçu de Jean", time: "2024-07-10 15:45:02" },
