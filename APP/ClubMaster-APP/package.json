@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.6.8",
+    "axios": "^1.7.2",
     "date-and-time": "^3.3.0",
     "dotenv": "^16.4.5",
     "echarts": "^5.5.0",
@@ -24,7 +24,8 @@
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.24.0",
     "react-select": "^5.8.0",
-    "ua-parser-js": "^0.7.14"
+    "ua-parser-js": "^0.7.14",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
