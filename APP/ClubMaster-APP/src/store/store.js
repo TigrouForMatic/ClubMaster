@@ -5,10 +5,15 @@ const useStore = create((set) => ({
   addresses: [],
   people: [],
   notifications: [
-    { id : 1, label: "Nouvelle mise à jour disponible", time: "2024-07-10 14:30:20" },
-    { id : 2, label: "Message reçu de Jean", time: "2024-07-10 15:45:02" },
-    { id : 3, label: "Rappel : Réunion à 16h" },
+    { label: "Nouvelle mise à jour disponible", time: "2024-07-10 14:30:20" },
+    { label: "Message reçu de Jean", time: "2024-07-10 15:45:02" },
+    { label: "Rappel : Réunion à 16h" },
   ],
+
+  // Notifications
+  deleteNotif: (index) => set((state) => ({
+    notifications: state.notifications.filter((_, i) => i !== index)
+  })),
 
   addItem: (category, newItem) => set((state) => ({
     [category]: [...state[category], newItem]
@@ -27,9 +32,12 @@ const useStore = create((set) => ({
 
 export default useStore
 
-
-// const { addItem, updateItem, deleteItem } = useStore()
-
-// addItem('clubs', { id: 1, name: 'Club A' })
-// updateItem('addresses', 2, { street: 'New Street' })
-// deleteItem('people', 3)
+// Exemple of controlled store
+//  // Clubs
+//  addClub: (newClub) => set((state) => ({ clubs: [...state.clubs, newClub] })),
+//  updateClub: (id, updatedClub) => set((state) => ({
+//    clubs: state.clubs.map(club => club.id === id ? {...club, ...updatedClub} : club)
+//  })),
+//  deleteClub: (id) => set((state) => ({
+//    clubs: state.clubs.filter(club => club.id !== id)
+//  })),

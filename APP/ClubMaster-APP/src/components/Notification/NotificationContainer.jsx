@@ -5,11 +5,11 @@ import { getDisplayTimeFormat } from '../../js/date';
 import useStore from '../../store/store';
 
 const NotificationContainer = () => {
-  const deleteItem = useStore((state) => state.deleteItem);
+  const deleteNotif = useStore((state) => state.deleteNotif);
   const notifications = useStore((state) => state.notifications);
 
   const handleDeleteNotification = (index) => {
-    deleteItem('notifications', index);
+    deleteNotif(index);
   };
 
   return (
@@ -19,7 +19,7 @@ const NotificationContainer = () => {
           key={index}
           label={notification.label}
           time={notification.time ? getDisplayTimeFormat(notification.time) : ''}
-          handleDeleteNotification={() => handleDeleteNotification(notification.id)}
+          handleDeleteNotification={() => handleDeleteNotification(index)}
         />
       ))}
     </div>
