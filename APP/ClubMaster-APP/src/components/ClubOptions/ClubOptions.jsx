@@ -4,7 +4,7 @@ import { ShieldSearch, PlusSquare } from 'iconoir-react';
 import FindClubOption from './FindClubOption';
 import CreateClubOption from './CreateClubOption';
 
-const ClubOptions = () => {
+const ClubOptions = (onAuthenticate) => {
   const [activeOption, setActiveOption] = useState('options');
 
   const handleClick = (option) => {
@@ -37,9 +37,9 @@ const ClubOptions = () => {
           </div>
         );
       case 'find':
-        return <FindClubOption />;
+        return <FindClubOption onAuthenticate={onAuthenticate} />;
       case 'create':
-        return <CreateClubOption />;
+        return <CreateClubOption onAuthenticate={onAuthenticate} />;
       default:
         return <div>Option non reconnue</div>;
     }

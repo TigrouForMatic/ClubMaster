@@ -214,7 +214,7 @@ function AuthForm({ onAuthenticate }) {
           </button>
         </>
       )}
-      {showClubOptions && <ClubOptions />}
+      {showClubOptions && <ClubOptions onAuthenticate={onAuthenticate} />}
     </div>
   );
 }

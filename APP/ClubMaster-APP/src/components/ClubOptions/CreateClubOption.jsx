@@ -4,7 +4,7 @@ import { toSqlDate, getDateEndLicence } from '../../js/date';
 
 const API_BASE_URL = 'http://localhost:3200/api';
 
-const CreateClubOption = () => {
+const CreateClubOption = ( onAuthenticate ) => {
   const [clubData, setClubData] = useState({
     label: '',
     address: {
@@ -53,7 +53,7 @@ const CreateClubOption = () => {
       // Création de l'adresse
       const { id: addressId } = await fetchData('/address/', 'POST', {
         ...clubData.address,
-        private: true,
+        private: false,
         validate: true
       });
 
@@ -94,9 +94,11 @@ const CreateClubOption = () => {
         roleId: roleData[1].id,
       });
 
-      console.log('Club et données associées créés avec succès');
     } catch (err) {
       console.error('Erreur lors de la création du club:', err.message);
+    } finally {
+      window.alert('Club créé avec succès !! Vous etes desormais le président de ' + clubData.label);
+      onAuthenticate();
     }
   };
 

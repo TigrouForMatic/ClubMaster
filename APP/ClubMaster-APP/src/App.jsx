@@ -4,6 +4,7 @@ import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import AuthForm from './components/Authentification/AuthForm';
+import NotificationContainer from './components/Notification/NotificationContainer';
 import './App.css'
 import './styles/navbarStyles.css';
 
@@ -24,6 +25,12 @@ const ROUTES = {
   SHOP: '/shop',
   USER: '/user',
 };
+
+const notifications = [
+  { label: "Nouvelle mise à jour disponible", time: "2024-07-10 14:30:20" },
+  { label: "Message reçu de Jean", time: "2024-07-10 15:45:02" },
+  { label: "Rappel : Réunion à 16h" },
+];
 
 function AppContent() {
   const isMobile = useMobile();
@@ -51,6 +58,7 @@ function AppContent() {
     <div className="App">
       <Suspense fallback={<LoadingSpinner />}>
         {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
+        <NotificationContainer notifications={notifications} />
         <Routes>
           <Route path={ROUTES.HOME} element={<HomeView />} />
           <Route path={ROUTES.MATCHS} element={<MatchsView />} />

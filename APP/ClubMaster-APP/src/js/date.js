@@ -429,3 +429,20 @@ export function getDateEndLicence() {
     const year = currentDate.getMonth() > 7 ? currentDate.getFullYear() + 1 : currentDate.getFullYear();
     return new Date(year, 7, 31);
 }
+
+/**
+ * Formate une geure pour l'affichage.
+ * 
+ * Formatage retournée : 14h45
+ * 
+ * @param {string|Date} val Une date au format YYYY-MM-DD HH:II:SS
+ * 
+ * @returns {string}
+ */
+export function getDisplayTimeFormat (val) {
+	let date = val ? new Date(val) : new Date();
+	const hours = date.getHours().toString().padStart(2, '0');
+	const minutes = date.getMinutes().toString().padStart(2, '0');
+
+	return `${hours}h${minutes}`;
+};
