@@ -32,7 +32,7 @@ router.delete('/personPhysic/:id', authenticateToken, deletePersonPhysic);
 
 // Routes pour le CRUD des clubs
 router.get('/club', getClub);
-router.get('/club/personnel/:id', getClubByPerson);
+router.get('/club/personnel/:idPersonnel', getClubByPerson);
 router.get('/club/:id', getClubById);
 router.post('/club', authenticateToken, addClub);
 router.put('/club/:id', authenticateToken, updateClub);

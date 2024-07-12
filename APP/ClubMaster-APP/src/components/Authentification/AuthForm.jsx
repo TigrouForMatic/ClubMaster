@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import styles from '../../styles/AuthForm.module.css';
 import PersonalInfoForm from './PersonalInfoForm';
 import ClubOptions from '../ClubOptions/ClubOptions';
+import useStore from '../../store/store';
 
 const API_BASE_URL = 'http://localhost:3200/api';
 
@@ -25,6 +26,8 @@ function AuthForm({ onAuthenticate }) {
   const [showLoginForm, setShowLoginForm] = useState(true);
   const [showPersonalInfo, setShowPersonalInfo] = useState(false);
   const [showClubOptions, setShowClubOptions] = useState(false);
+
+  const setItems = useStore((state) => state.setItems);
 
   const validatePassword = useCallback((newPassword) => {
     const errors = passwordRules.map(condition => ({
@@ -53,8 +56,7 @@ function AuthForm({ onAuthenticate }) {
       const dataClub = await response.json();
 
       if (dataClub.length) {
-        console.log(dataClub)
-        localStorage.setItem('clubPersonnel', JSON.stringify(dataClub));
+        setItems('userClubs', dataClub);
         onAuthenticate();
       } else {
         setShowClubOptions(true);
@@ -79,8 +81,8 @@ function AuthForm({ onAuthenticate }) {
       const dataPersonPhysic = await response.json();
 
       if (dataPersonPhysic.length) {
-        localStorage.setItem('personPhysic', JSON.stringify(dataPersonPhysic[0]));
-        await fetchClub(dataPersonPhysic.id);
+        setItems('currentUser',dataPersonPhysic[0]);
+        await fetchClub(dataPersonPhysic[0].id);
       } else {
         setShowPersonalInfo(true);
       }
@@ -113,7 +115,7 @@ function AuthForm({ onAuthenticate }) {
 
       if (response.ok) {
         localStorage.setItem('token', data.token);
-        localStorage.setItem('login', JSON.stringify({ id: data.user.id, login: data.user.login, pseudo: data.user.pseudo }));
+        setItems('login',{ id: data.user.id, login: data.user.login, pseudo: data.user.pseudo });
         setShowLoginForm(false);
         
         if (isLogin) {
@@ -198,8 +200,7 @@ function AuthForm({ onAuthenticate }) {
         </form>
       )}
       {showPersonalInfo && (
-        <PersonalInfoForm 
-          login={login} 
+        <PersonalInfoForm  
           onAuthenticate={onAuthenticate} 
           handlePersonalInformationSet={handlePersonalInformationSet} 
         />
@@ -214,7 +215,7 @@ function AuthForm({ onAuthenticate }) {
           </button>
         </>
       )}
-      {showClubOptions && <ClubOptions onAuthenticate={onAuthenticate} />}
+      {showClubOptions && <ClubOptions onAuthenticate={() => onAuthenticate()} />}
     </div>
   );
 }

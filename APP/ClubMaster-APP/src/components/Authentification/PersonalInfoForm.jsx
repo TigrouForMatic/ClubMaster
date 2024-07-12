@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from '../../styles/AuthForm.module.css';
+import useStore from '../../store/store';
 
-function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet }) {
+function PersonalInfoForm({ onAuthenticate, handlePersonalInformationSet }) {
   const [personalInfo, setPersonalInfo] = useState({
     firstName: '',
     lastName: '',
@@ -19,18 +20,9 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet 
 
   const [consentGiven, setConsentGiven] = useState(false);
   const [error, setError] = useState('');
-  const [loginData, setLoginData] = useState(null);
 
-  useEffect(() => {
-    const storedLogin = localStorage.getItem('login');
-    if (storedLogin) {
-      try {
-        setLoginData(JSON.parse(storedLogin));
-      } catch (error) {
-        console.error('Erreur lors du parsing des données de login:', error);
-      }
-    }
-  }, []);
+  const setItems = useStore((state) => state.setItems);
+  const login = useStore((state) => state.login);
 
   const handlePersonalInfoChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +47,7 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet 
       return;
     }
 
-    if (!loginData?.id) {
+    if (!login.id) {
       setError('ID de connexion non trouvé. Veuillez vous reconnecter.');
       return;
     }
@@ -90,7 +82,7 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet 
           name: `${personalInfo.firstName} ${personalInfo.lastName}`,
           naissanceDate: personalInfo.bornDate,
           phoneNumber: personalInfo.phoneNumber,
-          loginId: loginData.id,
+          loginId: login.id,
           addressId,
           emailaddress: login
         }),
@@ -101,7 +93,7 @@ function PersonalInfoForm({ login, onAuthenticate, handlePersonalInformationSet 
       }
 
       const personalInfoData = await personalInfoResponse.json();
-      localStorage.setItem('personPhysic', JSON.stringify(personalInfoData));
+      setItems('currentUser',personalInfoData);
 
       handlePersonalInformationSet();
     } catch (err) {

@@ -4,7 +4,7 @@ import { ShieldSearch, PlusSquare } from 'iconoir-react';
 import FindClubOption from './FindClubOption';
 import CreateClubOption from './CreateClubOption';
 
-const ClubOptions = (onAuthenticate) => {
+const ClubOptions = ( onAuthenticate ) => {
   const [activeOption, setActiveOption] = useState('options');
 
   const handleClick = (option) => {
@@ -33,6 +33,14 @@ const ClubOptions = (onAuthenticate) => {
             >
               <PlusSquare className={styles.iconDetail} />
               Créer un club
+            </button>
+
+            <button 
+              className={styles.clubOption} 
+              onClick={() => onAuthenticate()}
+            >
+              <PlusSquare className={styles.iconDetail} />
+              TEST on authenicate
             </button>
           </div>
         );

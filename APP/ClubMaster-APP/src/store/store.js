@@ -1,32 +1,51 @@
 import create from 'zustand'
 
 const useStore = create((set) => ({
+  userClubs: [],
   clubs: [],
   addresses: [],
   personPhysics: [],
-  notifications: [
-    { label: "Nouvelle mise à jour disponible", time: "2024-07-10 14:30:20" },
-    { label: "Message reçu de Jean", time: "2024-07-10 15:45:02" },
-    { label: "Rappel : Réunion à 16h" },
-  ],
+  licences: [],
+  licenceTypes: [],
+  notifications: [],
+  currentUser: [],
+  login: [],
+
 
   // Notifications
   deleteNotif: (index) => set((state) => ({
     notifications: state.notifications.filter((_, i) => i !== index)
   })),
 
+  // Ajouter un élément
   addItem: (category, newItem) => set((state) => ({
     [category]: [...state[category], newItem]
   })),
 
+  // Mettre à jour un élément
   updateItem: (category, id, updatedItem) => set((state) => ({
-    [category]: state[category].map(item => 
-      item.id === id ? {...item, ...updatedItem} : item
-    )
+    [category]: state[category].map(item => item.id === id ? {...item, ...updatedItem} : item)
   })),
 
+  // Supprimer un élément
   deleteItem: (category, id) => set((state) => ({
     [category]: state[category].filter(item => item.id !== id)
+  })),
+
+  // Nouvelles fonctions pour manipuler tout un tableau
+  setItems: (category, items) => set(() => ({
+    [category]: items
+  })),
+
+  updateItems: (category, updatedItems) => set((state) => ({
+    [category]: state[category].map(item => {
+      const updatedItem = updatedItems.find(u => u.id === item.id);
+      return updatedItem ? {...item, ...updatedItem} : item;
+    })
+  })),
+
+  deleteItems: (category, ids) => set((state) => ({
+    [category]: state[category].filter(item => !ids.includes(item.id))
   })),
 }))
 
