@@ -5,10 +5,11 @@ import useStore from '../../store/store';
 
 const API_BASE_URL = 'http://localhost:3200/api';
 
-const CreateClubOption = ( onAuthenticate ) => {
+const CreateClubOption = ( ) => {
 
   const addItem = useStore((state) => state.addItem);
   const currentUser = useStore((state) => state.currentUser);
+  const setShowApp = useStore((state) => state.setShowApp);
 
   const [clubData, setClubData] = useState({
     label: '',
@@ -111,7 +112,7 @@ const CreateClubOption = ( onAuthenticate ) => {
         time : new Date()
       };
       addItem('notifications', createdClubNotif);
-      onAuthenticate();
+      setShowApp();
     }
   };
 

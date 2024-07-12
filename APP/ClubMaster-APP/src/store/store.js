@@ -12,6 +12,12 @@ const useStore = create((set) => ({
   roles: [],
   currentClub: [],
   login: [],
+  showApp: false,
+
+  // ShowApp
+  setShowApp: () => set((state) => ({
+    showApp: !state.showApp
+  })),
 
 
   // Notifications

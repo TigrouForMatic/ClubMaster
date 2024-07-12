@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState } from "react";
+import React, { lazy, Suspense, useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -7,6 +7,7 @@ import AuthForm from './components/Authentification/AuthForm';
 import NotificationContainer from './components/Notification/NotificationContainer';
 import './App.css'
 import './styles/navbarStyles.css';
+import useStore from './store/store';
 
 // Lazy loading des composants
 const SideBarContainer = lazy(() => import('./components/Menu/SideBarContainer'));
@@ -30,10 +31,12 @@ function AppContent() {
   const isMobile = useMobile();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  if (!isAuthenticated) {
+  const showApp = useStore((state) => state.showApp);
+
+  if (!showApp) {
     return (
       isMobile ? (
-        <AuthForm onAuthenticate={() => setIsAuthenticated(true)} />
+        <AuthForm />
       ) : (
         // <div style={{
         //   display: 'flex',
@@ -42,7 +45,7 @@ function AppContent() {
         //   height: '75vh'
         // }}>
         // <div style={{ marginTop: '100px' }}>
-          <AuthForm onAuthenticate={() => setIsAuthenticated(true)} />
+          <AuthForm />
         // </div>
       )
     );

@@ -13,7 +13,7 @@ const passwordRules = [
   { message: "Un chiffre minimum.", regex: /[0-9]+/ }
 ];
 
-function AuthForm({ onAuthenticate }) {
+function AuthForm({ }) {
   const [isLogin, setIsLogin] = useState(true);
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
@@ -28,6 +28,7 @@ function AuthForm({ onAuthenticate }) {
   const [showClubOptions, setShowClubOptions] = useState(false);
 
   const setItems = useStore((state) => state.setItems);
+  const setShowApp = useStore((state) => state.setShowApp);
 
   const validatePassword = useCallback((newPassword) => {
     const errors = passwordRules.map(condition => ({
@@ -57,7 +58,8 @@ function AuthForm({ onAuthenticate }) {
 
       if (dataClub.length) {
         setItems('userClubs', dataClub);
-        onAuthenticate();
+
+        setShowApp();
       } else {
         setShowClubOptions(true);
       }
@@ -144,7 +146,7 @@ function AuthForm({ onAuthenticate }) {
 
   const continueWithoutLogin = () => {
     if (window.confirm("Êtes-vous sûr de vouloir continuer sans être connecté ? La majorité des fonctionnalités de l'application requièrent une connexion.")) {
-      onAuthenticate();
+      setShowApp();
     }
   };
 
@@ -201,7 +203,6 @@ function AuthForm({ onAuthenticate }) {
       )}
       {showPersonalInfo && (
         <PersonalInfoForm  
-          onAuthenticate={onAuthenticate} 
           handlePersonalInformationSet={handlePersonalInformationSet} 
         />
       )}
@@ -215,7 +216,7 @@ function AuthForm({ onAuthenticate }) {
           </button>
         </>
       )}
-      {showClubOptions && <ClubOptions onAuthenticate={() => onAuthenticate()} />}
+      {showClubOptions && <ClubOptions />}
     </div>
   );
 }
