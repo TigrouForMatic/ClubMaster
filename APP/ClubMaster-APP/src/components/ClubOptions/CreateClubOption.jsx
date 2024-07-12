@@ -8,6 +8,7 @@ const API_BASE_URL = 'http://localhost:3200/api';
 const CreateClubOption = ( onAuthenticate ) => {
 
   const addItem = useStore((state) => state.addItem);
+  const currentUser = useStore((state) => state.currentUser);
 
   const [clubData, setClubData] = useState({
     label: '',
@@ -55,17 +56,23 @@ const CreateClubOption = ( onAuthenticate ) => {
       };
 
       // Création de l'adresse
-      const { id: addressId } = await fetchData('/address/', 'POST', {
+      const addressData = await fetchData('/address/', 'POST', {
         ...clubData.address,
         private: false,
         validate: true
       });
 
+      addItem('addresses', addressData);
+
       // Création du club
-      const { id: clubId } = await fetchData('/club', 'POST', {
+      const clubDataReturn = await fetchData('/club', 'POST', {
         label: clubData.label,
-        addressId
+        addressId : addressData.id
       });
+
+      addItem('clubs', clubDataReturn);
+
+      const clubId = clubDataReturn.id;
 
       // Création des types de licence
       const licenceTypeData = await fetchData(`/licenceType/newCLub/${clubId}`, 'POST');
@@ -80,23 +87,21 @@ const CreateClubOption = ( onAuthenticate ) => {
         throw new Error('Données de rôle invalides');
       }
 
-      // Avant d'utiliser personPhysic, parsez-le en JSON
-      const personPhysic = JSON.parse(localStorage.getItem('personPhysic'));
-
-      // Vérifiez si personPhysic existe et a un id avant de l'utiliser
-      if (!personPhysic || !personPhysic.id) {
-        throw new Error('Données personPhysic manquantes ou invalides');
+      for(let role of roleData) {
+        addItem('licences',role);
       }
 
       // Création de la licence
-      await fetchData('/licence', 'POST', {
+      const licenceData = await fetchData('/licence', 'POST', {
         label: "Licence Président",
         dd: toSqlDate(new Date()),
         df: toSqlDate(getDateEndLicence()),
         licenceTypeId: licenceTypeData.id,
-        personPhysicId: personPhysic.id,
+        personPhysicId: currentUser.id,
         roleId: roleData[1].id,
       });
+
+      addItem('licences',licenceData);
 
     } catch (err) {
       console.error('Erreur lors de la création du club:', err.message);

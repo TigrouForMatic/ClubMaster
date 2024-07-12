@@ -9,6 +9,8 @@ const useStore = create((set) => ({
   licenceTypes: [],
   notifications: [],
   currentUser: [],
+  roles: [],
+  currentClub: [],
   login: [],
 
 
