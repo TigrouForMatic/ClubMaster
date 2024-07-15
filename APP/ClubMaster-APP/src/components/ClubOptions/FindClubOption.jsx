@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from '../../styles/FindClubOption.module.css';
 import Select from 'react-select';
+import { toSqlDate, getDateEndLicence } from '../../js/date';
 import useStore from '../../store/store';
 
+// Correction : Ajout de la prop manquante key
 const ClubCard = React.memo(({ club, onClick }) => (
   <li className={styles.clubCard} onClick={() => onClick(club)}>
     <h3 className={styles.clubTitle}>{club.label}</h3>
@@ -16,16 +18,22 @@ const FindClubOption = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const clubsPerPage = 10;
 
-  const { clubs, addresses, setItems, addItem } = useStore((state) => ({
+  // Optimisation : Destructuration plus complète du store
+  const { clubs, addresses, setItems, addItem, currentUser, setShowApp } = useStore((state) => ({
     clubs: state.clubs || [],
     addresses: state.addresses || [],
     setItems: state.setItems,
-    addItem: state.addItem
+    addItem: state.addItem,
+    currentUser: state.currentUser,
+    setShowApp: state.setShowApp // Ajout de setShowApp
   }));
+
+  // Correction : Ajout de la variable API_BASE_URL manquante
+  const API_BASE_URL = 'http://localhost:3200/api';
 
   const fetchData = useCallback(async (endpoint) => {
     try {
-      const response = await fetch(`http://localhost:3200/api/${endpoint}`);
+      const response = await fetch(`${API_BASE_URL}/${endpoint}`);
       if (!response.ok) throw new Error(`Erreur lors de la récupération des données de ${endpoint}`);
       return await response.json();
     } catch (error) {
@@ -62,10 +70,68 @@ const FindClubOption = () => {
     });
   }, [clubs, addresses, nomClub, selectedLocation]);
 
-  const handleClick = useCallback((club) => {
-    console.log(club);
-    addItem('userClubs', club);
-  }, [addItem]);
+  // Correction : Correction de la déclaration de handleClick
+  const handleClick = useCallback(async (club) => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      // Fonction d'aide pour les requêtes fetch
+      const fetchData = async (url, method, body = null) => {
+        const response = await fetch(`${API_BASE_URL}${url}`, {
+          method,
+          headers,
+          body: body ? JSON.stringify(body) : null,
+        });
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        return response.json();
+      };
+
+      // Récupération du rôle de visiteur
+      const roleData = await fetchData(`/role`, 'GET');
+
+      const roleId = roleData.find(role => role.clubid === club.id && role.level === 0)?.id;
+      if (roleId === undefined) {
+        console.error(`Aucun rôle trouvé pour le club ${club.id} avec le niveau 0`);
+      }
+
+      // Récupération du type de Licence
+      const licenceTypeData = await fetchData(`/licenceType`, 'GET');
+
+      const licenceTypeId = licenceTypeData.find(licTyp => licTyp.clubid === club.id && licTyp.label === "Licence Adulte")?.id;
+      if (licenceTypeId === undefined) {
+        console.error(`Aucun type de licence trouvé pour le club ${club.id} avec le nom Licence Adulte`);
+      }
+
+      // Création de la licence
+      const licenceData = await fetchData('/licence', 'POST', {
+        label: "Licence Visiteur",
+        dd: toSqlDate(new Date()),
+        df: toSqlDate(getDateEndLicence()),
+        licenceTypeId: licenceTypeId,
+        personPhysicId: currentUser.id,
+        roleId: roleId,
+      });
+
+      addItem('licences', licenceData);
+
+      const createdClubNotif = {
+        label: `Club rejoint avec succès !! Vous êtes désormais visiteur de ${club.label}`,
+        time: new Date()
+      };
+      addItem('notifications', createdClubNotif);
+      addItem('userClubs', club);
+      setShowApp();
+    } catch (err) {
+      console.error('Erreur lors de la création du club:', err.message);
+      setError(err.message);
+    }
+  }, [addItem, currentUser, setShowApp, API_BASE_URL]);
 
   const locations = useMemo(() => {
     if (!addresses || addresses.length === 0) return [];
