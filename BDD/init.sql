@@ -46,7 +46,11 @@ BEGIN
 
     CREATE TABLE db.PersonMoral (
         Id SERIAL PRIMARY KEY,
-        Name VARCHAR(255) NOT NULL
+        Name VARCHAR(255),
+        Rib VARCHAR(255),
+        RnaNumber VARCHAR(11),
+        Siren VARCHAR(10),
+        Siret VARCHAR(15)
     );
 
     CREATE TABLE db.Club (
@@ -126,9 +130,10 @@ BEGIN
 
     -- Insert test data
     INSERT INTO db.Address (Street, City, State, PostalCode, Country, Private, Validate) VALUES
-    ('4 Av. du Stade', 'Bohal', '', '56140', 'France', false, true),
-    ('Complexe polyvalent', 'Pleucadeuc', '', '56140', 'France', false, true),
-    ('Le Daufresne', 'Malestroit', '', '56140', 'France', false, true);
+    ('4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', false, true),
+    ('Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', false, true),
+    ('Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', false, true),
+    ('29 rue saint roch','Ploermel','Bretagne','56800','France', true, true);
 
     INSERT INTO db.PersonMoral (Name) VALUES
     ('Vol en Oust');
@@ -185,6 +190,29 @@ BEGIN
     ('Rencontre', 'Rencontre avec Serent', 4, '2024-07-28 19:00:00', '2024-07-28 23:00:00', ''),
     ('Tournois Amical', 'Tournois a Ploermel', 3, '2024-08-28 19:00:00', '2024-08-28 22:30:00', ''),
     ('Cours', 'Cours de fin d année', 2, '2024-08-31 19:00:00', '2024-08-31 22:30:00', '');
+
+     INSERT INTO db.Login (Login, Password, Pseudo) VALUES
+    ('jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach');
+
+    INSERT INTO db.PersonPhysic ( Name, NaissanceDate, PhoneNumber, EmailAddress, AddressId, LoginId) VALUES
+    ('Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1,1);
+
+    INSERT INTO db.LicenceType ( Label, ClubId, Price) VALUES
+    ('Licence Visiteur',1, null),
+    ('Licence Complete',1, 20),
+    ('Demi-Licence',1, 10),
+    ('Licence Spécifique',1,null);
+
+    INSERT INTO db.Role ( Label, Level, ClubId) VALUES
+    ('Visiteur',0,1),
+    ('Président',4,1),
+    ('Secrétaire',3,1),
+    ('Trésorier',3,1),
+    ('Coach',2,1),
+    ('Adhérent',1,1);
+
+    INSERT INTO db.Licence (Label, Dd, Df, LicenceTypeId, PersonPhysicId, RoleId) VALUES
+    ('Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,1,1);
 
 END
 $$;
