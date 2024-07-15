@@ -1,70 +1,113 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from '../../styles/FindClubOption.module.css';
 import Select from 'react-select';
+import useStore from '../../store/store';
 
 const ClubCard = React.memo(({ club, onClick }) => (
-  <div className={styles.clubCard} onClick={() => onClick(club)}>
-    <div className={styles.clubHeader}>
-      <h3 className={styles.clubTitle}>{club.label}</h3>
-    </div>
-  </div>
+  <li className={styles.clubCard} onClick={() => onClick(club)}>
+    <h3 className={styles.clubTitle}>{club.label}</h3>
+  </li>
 ));
 
 const FindClubOption = () => {
-  const [clubs, setClubs] = useState([]);
-  const [addresses, setAddresses] = useState([]);
   const [error, setError] = useState(null);
   const [nomClub, setNomClub] = useState('');
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const clubsPerPage = 10;
 
-  const fetchData = useCallback(async (endpoint, setter) => {
+  const { clubs, addresses, setItems, addItem } = useStore((state) => ({
+    clubs: state.clubs || [],
+    addresses: state.addresses || [],
+    setItems: state.setItems,
+    addItem: state.addItem
+  }));
+
+  const fetchData = useCallback(async (endpoint) => {
     try {
-      const response = await fetch(`http://localhost:3200/api/${endpoint}`, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-
+      const response = await fetch(`http://localhost:3200/api/${endpoint}`);
       if (!response.ok) throw new Error(`Erreur lors de la récupération des données de ${endpoint}`);
-
-      const data = await response.json();
-      setter(data);
+      return await response.json();
     } catch (error) {
       console.error('Erreur:', error);
       setError(error.message);
+      return [];
     }
   }, []);
 
   useEffect(() => {
-    fetchData('club', setClubs);
-    fetchData('address', setAddresses);
-  }, [fetchData]);
+    const fetchAllData = async () => {
+      const [clubsData, addressesData] = await Promise.all([
+        fetchData('club'),
+        fetchData('address')
+      ]);
+      setItems('clubs', clubsData);
+      setItems('addresses', addressesData);
+    };
+    
+    fetchAllData();
+  }, [fetchData, setItems]);
 
   const filteredClubs = useMemo(() => {
     return clubs.filter((club) => {
       const isNameMatch = club.label.toLowerCase().includes(nomClub.toLowerCase());
-      const isLocationMatch = !selectedLocation || club.addressId === selectedLocation.value;
+      if (!selectedLocation || selectedLocation.value === 'all') return isNameMatch;
+      
+      const clubAddress = addresses.find(add => add.id === club.addressid);
+      const isLocationMatch = clubAddress && 
+        clubAddress.postalcode === selectedLocation.postalcode && 
+        clubAddress.city === selectedLocation.city;
+      
       return isNameMatch && isLocationMatch;
     });
-  }, [clubs, nomClub, selectedLocation]);
+  }, [clubs, addresses, nomClub, selectedLocation]);
 
   const handleClick = useCallback((club) => {
     console.log(club);
-  }, []);
+    addItem('userClubs', club);
+  }, [addItem]);
 
   const locations = useMemo(() => {
-    return addresses
-      .sort((a, b) => a.postalCode.localeCompare(b.postalCode))
-      .map(add => ({
-        value: add.id,
-        label: `${add.postalCode} : ${add.city}`
-      }));
+    if (!addresses || addresses.length === 0) return [];
+  
+    const uniqueLocations = new Map();
+  
+    addresses
+      .filter(add => add && add.postalcode && add.city)
+      .forEach(add => {
+        const key = `${add.postalcode}:${add.city}`;
+        if (!uniqueLocations.has(key)) {
+          uniqueLocations.set(key, {
+            value: add.id,
+            label: `${add.postalcode} : ${add.city}`,
+            postalcode: add.postalcode,
+            city: add.city
+          });
+        }
+      });
+  
+    const sortedLocations = Array.from(uniqueLocations.values())
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    return [
+      { value: 'all', label: 'Toutes les locations' },
+      ...sortedLocations
+    ];
+  
   }, [addresses]);
 
   if (error) {
     return <div className={styles.error}>{error}</div>;
   }
 
+  const indexOfLastClub = currentPage * clubsPerPage;
+  const indexOfFirstClub = indexOfLastClub - clubsPerPage;
+  const currentClubs = filteredClubs.slice(indexOfFirstClub, indexOfLastClub);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
-    <div>
+    <div className={styles.findClubContainer}>
       <div className={styles.filters}>
         <div className={styles.filterSection}>
           <h3>Nom</h3>
@@ -73,6 +116,7 @@ const FindClubOption = () => {
             placeholder="Nom du club"
             value={nomClub}
             onChange={(e) => setNomClub(e.target.value)}
+            className={styles.input}
           />
         </div>
 
@@ -83,18 +127,27 @@ const FindClubOption = () => {
             className={styles.select}
             onChange={setSelectedLocation}
             placeholder="Sélectionner un lieu"
+            value={selectedLocation}
           />
         </div>
       </div>
 
-      <div className={styles.clubsList}>
-        {filteredClubs.length > 0 ? (
-          filteredClubs.map((club) => (
+      <ul className={styles.clubsList}>
+        {currentClubs.length > 0 ? (
+          currentClubs.map((club) => (
             <ClubCard key={club.id} club={club} onClick={handleClick} />
           ))
         ) : (
           <p className={styles.noClubs}>Aucun club ne correspond à ces critères.</p>
         )}
+      </ul>
+
+      <div className={styles.pagination}>
+        {Array.from({ length: Math.ceil(filteredClubs.length / clubsPerPage) }, (_, i) => (
+          <button key={i} onClick={() => paginate(i + 1)} className={styles.pageButton}>
+            {i + 1}
+          </button>
+        ))}
       </div>
     </div>
   );

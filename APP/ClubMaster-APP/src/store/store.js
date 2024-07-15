@@ -10,7 +10,6 @@ const useStore = create((set) => ({
   notifications: [],
   currentUser: [],
   roles: [],
-  currentClub: [],
   login: [],
   showApp: false,
 
