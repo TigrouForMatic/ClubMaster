@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState, useEffect } from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -29,25 +29,12 @@ const ROUTES = {
 
 function AppContent() {
   const isMobile = useMobile();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const showApp = useStore((state) => state.showApp);
 
   if (!showApp) {
     return (
-      isMobile ? (
         <AuthForm />
-      ) : (
-        // <div style={{
-        //   display: 'flex',
-        //   justifyContent: 'center',
-        //   alignItems: 'center',
-        //   height: '75vh'
-        // }}>
-        // <div style={{ marginTop: '100px' }}>
-          <AuthForm />
-        // </div>
-      )
     );
   }
 
