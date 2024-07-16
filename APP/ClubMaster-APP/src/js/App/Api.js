@@ -1,5 +1,5 @@
 // api.js
-import { APIController } from './APIController';
+import { APIController } from './ApiController';
 
 const api = new APIController({
   baseURL: 'http://localhost:3200/api',

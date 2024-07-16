@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import styles from '../../styles/AuthForm.module.css';
 import useStore from '../../store/store';
+import api from '../../js/App/Api';
 
-function PersonalInfoForm({ onAuthenticate, handlePersonalInformationSet }) {
+function PersonalInfoForm({ handlePersonalInformationSet }) {
   const [personalInfo, setPersonalInfo] = useState({
     firstName: '',
     lastName: '',
@@ -53,47 +54,24 @@ function PersonalInfoForm({ onAuthenticate, handlePersonalInformationSet }) {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      };
-
-      const addressResponse = await fetch('http://localhost:3200/api/address/', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          ...addressInfo,
-          private: true,
-          validate: true
-        }),
+      const addressResponse = await api.post('/address/', {
+        ...addressInfo,
+        private: true,
+        validate: true
       });
 
-      if (!addressResponse.ok) {
-        throw new Error('Erreur lors de l\'enregistrement de l\'adresse');
-      }
+      const { id: addressId } = addressResponse;
 
-      const { id: addressId } = await addressResponse.json();
-
-      const personalInfoResponse = await fetch('http://localhost:3200/api/personPhysic', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          name: `${personalInfo.firstName} ${personalInfo.lastName}`,
-          naissanceDate: personalInfo.bornDate,
-          phoneNumber: personalInfo.phoneNumber,
-          loginId: login.id,
-          addressId,
-          emailaddress: login
-        }),
+      const personalInfoResponse = await api.post('/personPhysic', {
+        name: `${personalInfo.firstName} ${personalInfo.lastName}`,
+        naissanceDate: personalInfo.bornDate,
+        phoneNumber: personalInfo.phoneNumber,
+        loginId: login.id,
+        addressId,
+        emailaddress: login
       });
 
-      if (!personalInfoResponse.ok) {
-        throw new Error('Erreur lors de l\'enregistrement des informations personnelles');
-      }
-
-      const personalInfoData = await personalInfoResponse.json();
-      setItems('currentUser',personalInfoData);
+      setItems('currentUser', personalInfoResponse);
 
       handlePersonalInformationSet();
     } catch (err) {
@@ -162,9 +140,9 @@ function PersonalInfoForm({ onAuthenticate, handlePersonalInformationSet }) {
       <button type="submit" disabled={!consentGiven}>
         Enregistrer et continuer
       </button>
-      <button type="button" onClick={onAuthenticate} className={styles.skipButton}>
+      {/* <button type="button" onClick={onAuthenticate} className={styles.skipButton}>
         Passer pour le moment
-      </button>
+      </button> */}
     </form>
   );
 }

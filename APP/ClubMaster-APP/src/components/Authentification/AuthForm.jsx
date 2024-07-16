@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from '../../styles/AuthForm.module.css';
 import PersonalInfoForm from './PersonalInfoForm';
-import ClubOptions from '../ClubOptions/ClubOptions';
+// import ClubOptions from '../ClubOptions/ClubOptions';
+import FindClubOption from '../ClubOptions/FindClubOption';
 import useStore from '../../store/store';
-
-const API_BASE_URL = 'http://localhost:3200/api';
+import api from '../../js/App/Api';
 
 const passwordRules = [
   { message: "Une lettre minuscule.", regex: /[a-z]+/ },
@@ -13,7 +13,7 @@ const passwordRules = [
   { message: "Un chiffre minimum.", regex: /[0-9]+/ }
 ];
 
-function AuthForm({ }) {
+function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
@@ -48,17 +48,10 @@ function AuthForm({ }) {
 
   const fetchClub = useCallback(async (personPhysicId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/club/personnel/${personPhysicId}`, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (!response.ok) throw new Error('Erreur lors de la récupération des données du club');
-
-      const dataClub = await response.json();
+      const dataClub = await api.get(`/club/personnel/${personPhysicId}`);
 
       if (dataClub.length) {
         setItems('userClubs', dataClub);
-
         setShowApp();
       } else {
         setShowClubOptions(true);
@@ -67,23 +60,14 @@ function AuthForm({ }) {
       console.error('Erreur:', error);
       setError(error.message);
     }
-  }, []);
+  }, [setItems, setShowApp]);
 
   const fetchPersonPhysic = useCallback(async (userId) => {
     try {
-      const url = new URL(`${API_BASE_URL}/personPhysic`);
-      url.searchParams.append('loginId', userId);
-
-      const response = await fetch(url, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (!response.ok) throw new Error('Erreur lors de la récupération des données personnelles');
-
-      const dataPersonPhysic = await response.json();
+      const dataPersonPhysic = await api.get('/personPhysic', { params: { loginId: userId } });
 
       if (dataPersonPhysic.length) {
-        setItems('currentUser',dataPersonPhysic[0]);
+        setItems('currentUser', dataPersonPhysic[0]);
         await fetchClub(dataPersonPhysic[0].id);
       } else {
         setShowPersonalInfo(true);
@@ -92,7 +76,7 @@ function AuthForm({ }) {
       console.error('Erreur:', error);
       setError(error.message);
     }
-  }, [fetchClub]);
+  }, [fetchClub, setItems]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -107,31 +91,20 @@ function AuthForm({ }) {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
+      const data = await api.post(endpoint, body);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        setItems('login',{ id: data.user.id, login: data.user.login, pseudo: data.user.pseudo });
-        setShowLoginForm(false);
-        
-        if (isLogin) {
-          await fetchPersonPhysic(data.user.id);
-        } else {
-          setShowPersonalInfo(true);
-        }
-        
+      localStorage.setItem('token', data.token);
+      setItems('login', { id: data.user.id, login: data.user.login, pseudo: data.user.pseudo });
+      setShowLoginForm(false);
+      
+      if (isLogin) {
+        await fetchPersonPhysic(data.user.id);
       } else {
-        setError(data.message || `Erreur lors de ${isLogin ? 'la connexion' : 'la création du compte'}`);
+        setShowPersonalInfo(true);
       }
     } catch (err) {
       console.error('Erreur:', err);
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      setError(err.message || `Erreur lors de ${isLogin ? 'la connexion' : 'la création du compte'}`);
     }
   };
 
@@ -144,11 +117,11 @@ function AuthForm({ }) {
     setShowPersonalInfo(false);
   };
 
-  const continueWithoutLogin = () => {
-    if (window.confirm("Êtes-vous sûr de vouloir continuer sans être connecté ? La majorité des fonctionnalités de l'application requièrent une connexion.")) {
-      setShowApp();
-    }
-  };
+  // const continueWithoutLogin = () => {
+  //   if (window.confirm("Êtes-vous sûr de vouloir continuer sans être connecté ? La majorité des fonctionnalités de l'application requièrent une connexion.")) {
+  //     setShowApp();
+  //   }
+  // };
 
   const handlePersonalInformationSet = () => {
     setShowClubOptions(true);
@@ -211,12 +184,13 @@ function AuthForm({ }) {
           <button onClick={toggleForm} className={styles.toggleButton}>
             {isLogin ? 'Créer un compte' : 'Se connecter'}
           </button>
-          <button onClick={continueWithoutLogin} className={styles.skipButton}>
+          {/* <button onClick={continueWithoutLogin} className={styles.skipButton}>
             Continuer sans être connecté
-          </button>
+          </button> */}
         </>
       )}
-      {showClubOptions && <ClubOptions />}
+      {/* {showClubOptions && <ClubOptions />} */}
+      {showClubOptions && <FindClubOption />}
     </div>
   );
 }

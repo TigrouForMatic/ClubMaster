@@ -1,10 +1,11 @@
+//ApiController.js
 import axios from "axios";
 
 export class APIController {
   constructor(options = {}) {
     this.axios = axios.create({
       baseURL: options.baseURL || '',
-      timeout: options.timeout || 10000,
+      timeout: options.timeout || 5000,
       headers: options.headers || {}
     });
 
