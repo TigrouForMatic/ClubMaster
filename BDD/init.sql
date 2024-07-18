@@ -90,10 +90,10 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
         Description TEXT,
-        AddressId INT,
         EventTypeId INT,
         Dd TIMESTAMP,
         Df TIMESTAMP,
+        AddressId INT,
         InscritIds TEXT,
         FOREIGN KEY (AddressId) REFERENCES db.Address(Id),
         FOREIGN KEY (EventTypeId) REFERENCES db.EventType(Id)
@@ -133,14 +133,15 @@ BEGIN
     ('4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', false, true),
     ('Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', false, true),
     ('Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', false, true),
-    ('29 rue saint roch','Ploermel','Bretagne','56800','France', true, true);
+    ('29 rue saint roch','Ploermel','Bretagne','56800','France', true, true),
+    ('Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', false, true);
 
     INSERT INTO db.PersonMoral (Name) VALUES
     ('Vol en Oust');
 
     INSERT INTO db.Club (Label, AddressId, PersonMoralId) VALUES
     ('La Claie', 3, null),
-    ('Vol en Pleuc', 4, null);
+    ('Vol en Pleuc', 2, null);
 
     INSERT INTO db.ProduitType (Label, ClubId) VALUES
     ('Tee-Shirt', 1),
@@ -178,18 +179,18 @@ BEGIN
     ('Rencontre', 2),
     ('Repas', 2);
 
-    INSERT INTO db.Event (Label, Description, EventTypeId, Dd, Df, InscritIds) VALUES
-    ('Cours', 'Cours le 10/01 à 19h', 2, '2024-01-10 19:00:00', '2024-01-10 21:00:00', ''),
-    ('Cours', 'Cours le 12/02 à 19h', 7, '2024-02-12 19:00:00', '2024-02-12 21:00:00', ''),
-    ('Cours', 'Cours le 13/03 à 19h', 2, '2024-03-13 19:00:00', '2024-03-13 21:00:00', ''),
-    ('Cours', 'Cours le 15/04 à 19h', 7, '2024-04-15 19:00:00', '2024-04-15 21:00:00', ''),
-    ('Cours', 'Cours le 15/05 à 19h', 2, '2024-05-15 19:00:00', '2024-05-15 21:00:00', ''),
-    ('Cours', 'Cours le 17/06 à 19h', 7, '2024-06-17 19:00:00', '2024-06-17 21:00:00', ''),
-    ('Repas', 'Repas de fin d année le 28/06 à 19h', 4, '2024-06-28 19:00:00', '2024-06-28 21:00:00', ''),
-    ('Repas', 'Repas de fin d année le 28/06 à 19h', 9, '2024-06-28 19:00:00', '2024-06-28 21:00:00', ''),
-    ('Rencontre', 'Rencontre avec Serent', 4, '2024-07-28 19:00:00', '2024-07-28 23:00:00', ''),
-    ('Tournois Amical', 'Tournois a Ploermel', 3, '2024-08-28 19:00:00', '2024-08-28 22:30:00', ''),
-    ('Cours', 'Cours de fin d année', 2, '2024-08-31 19:00:00', '2024-08-31 22:30:00', '');
+    INSERT INTO db.Event (Label, Description, EventTypeId, Dd, Df, AddressId, InscritIds) VALUES
+    ('Cours', 'Cours le 10/01 à 19h', 2, '2024-01-10 19:00:00', '2024-01-10 21:00:00', 3 ,  ''),
+    ('Cours', 'Cours le 12/02 à 19h', 7, '2024-02-12 19:00:00', '2024-02-12 21:00:00', 2 , ''),
+    ('Cours', 'Cours le 13/03 à 19h', 2, '2024-03-13 19:00:00', '2024-03-13 21:00:00', 3 , ''),
+    ('Cours', 'Cours le 15/04 à 19h', 7, '2024-04-15 19:00:00', '2024-04-15 21:00:00', 2 , ''),
+    ('Cours', 'Cours le 15/05 à 19h', 2, '2024-05-15 19:00:00', '2024-05-15 21:00:00', 3 , ''),
+    ('Cours', 'Cours le 17/06 à 19h', 7, '2024-06-17 19:00:00', '2024-06-17 21:00:00', 1 , ''),
+    ('Repas', 'Repas de fin d année le 28/06 à 19h', 4, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , ''),
+    ('Repas', 'Repas de fin d année le 28/06 à 19h', 9, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , ''),
+    ('Rencontre', 'Rencontre avec Serent', 4, '2024-08-19 19:00:00', '2024-08-19 23:00:00', 1 , ''),
+    ('Tournois Amical', 'Tournois a Ploermel', 3, '2024-08-28 19:00:00', '2024-08-28 22:30:00', 5 , ''),
+    ('Cours', 'Cours de fin d année', 2, '2024-08-31 19:00:00', '2024-08-31 22:30:00', 3 , '');
 
      INSERT INTO db.Login (Login, Password, Pseudo) VALUES
     ('jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach');

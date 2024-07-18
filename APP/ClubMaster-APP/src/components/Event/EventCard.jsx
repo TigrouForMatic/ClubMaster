@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from '../../styles/EventCard.module.css';
 
-const EventCard = ({ event, getDateDisplay }) => (
+const EventCard = ({ event, getDateDisplay, getTimeDisplay }) => (
   <div className={styles.card}>
     <h3 className={styles.title}>{event.label}</h3>
     <p className={styles.date}>
-      Du {getDateDisplay(event.dd)} au {getDateDisplay(event.df)}
+      Le {getDateDisplay(event.dd)} de {getTimeDisplay(event.dd)} à {getTimeDisplay(event.df)}
     </p>
     <p className={styles.description}>{event.description}</p>
   </div>

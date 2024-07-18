@@ -11,6 +11,8 @@ const useStore = create((set) => ({
   currentUser: [],
   roles: [],
   login: [],
+  typesEvent: [],
+  events: [],
   showApp: false,
 
   // ShowApp

@@ -9,6 +9,8 @@ const { getClub, getClubByPerson, getClubById, addClub, updateClub, deleteClub }
 const { getLicenceType, getLicenceTypeById, addLicenceType, addLicenceTypeFromNewClub, updateLicenceType, deleteLicenceType } = require('../controllers/licenceTypeControllers');
 const { getLicence, getLicenceById, addLicence, updateLicence, deleteLicence } = require('../controllers/licenceControllers');
 const { getRole, getRoleById, addRole, addRoleFromNewClub, updateRole, deleteRole } = require('../controllers/roleControllers');
+const { getEventType, getEventTypeById, addEventType, updateEventType, deleteEventType } = require('../controllers/eventTypeControllers');
+const { getEvent, getEventById, addEvent, updateEvent, deleteEvent } = require('../controllers/eventControllers');
 
 const { getEntries, getEntryById, addEntry, updateEntry, deleteEntry } = require('../controllers/controllers');
 
@@ -53,13 +55,27 @@ router.post('/licence', authenticateToken, addLicence);
 router.put('/licence/:id', authenticateToken, updateLicence);
 router.delete('/licence/:id', authenticateToken, deleteLicence);
 
-// Routes pour le CRUD des licences
+// Routes pour le CRUD des roles
 router.get('/role', getRole);
 router.get('/role/:id', getRoleById);
 router.post('/role', authenticateToken, addRole);
 router.post('/role/newCLub/:clubId', authenticateToken, addRoleFromNewClub);
 router.put('/role/:id', authenticateToken, updateRole);
 router.delete('/role/:id', authenticateToken, deleteRole);
+
+// Routes pour le CRUD des types d'evenement
+router.get('/eventType', getEventType);
+router.get('/eventType/:id', getEventTypeById);
+router.post('/eventType', authenticateToken, addEventType);
+router.put('/eventType/:id', authenticateToken, updateEventType);
+router.delete('/eventType/:id', authenticateToken, deleteEventType);
+
+// Routes pour le CRUD des evenements
+router.get('/event', getEvent);
+router.get('/event/:id', getEventById);
+router.post('/event', authenticateToken, addEvent);
+router.put('/event/:id', authenticateToken, updateEvent);
+router.delete('/event/:id', authenticateToken, deleteEvent);
 
 // Routes génériques
 router.get('/:table', getEntries);

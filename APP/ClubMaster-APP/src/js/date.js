@@ -144,6 +144,27 @@ export function dateToTime(val, refVal) {
 
 /**
  * Modifie le format de la date entrée en paramètre et la retourne 
+ * sous le format horaire 19h30
+ * 
+ * @param {string|Date} date - La date à formater
+ * @returns {string|null} La date formatée ou null si la date est invalide
+ */
+export function dateToTimeFormat(date) {
+    if (!date) {
+        return null;
+    }
+    
+    let d = date instanceof Date ? date : new Date(date);
+    
+    if (isNaN(d.getTime())) {
+        return null;
+    }
+    
+    return `${d.getHours().toString().padStart(2, '0')}h${d.getMinutes().toString().padStart(2, '0')}`;
+}
+
+/**
+ * Modifie le format de la date entrée en paramètre et la retourne 
  * sous le format 01 févr. 2021
  * 
  * Déprécié, utiliser plutôt getDisplayFormatedDate.

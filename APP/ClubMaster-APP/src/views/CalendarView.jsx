@@ -1,71 +1,56 @@
 import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
 import DatePicker from "react-datepicker";
 import Select from 'react-select';
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../styles/CalendarView.module.css";
+import useStore from '../store/store';
 
 const CalendarView = () => {
-  const [typeEvent, setTypeEvent] = useState([]);
-  const [event, setEvent] = useState([]);
-  const [locations, setLocations] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedClub, setSelectedClub] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [{ data: typeEventData }, { data: eventData }, { data: locationData }] = await Promise.all([
-          axios.get("http://localhost:3200/api/eventType?clubid=1"),
-          axios.get("http://localhost:3200/api/event"),
-          axios.get("http://localhost:3200/api/address"),
-        ]);
-
-        setTypeEvent(typeEventData);
-
-        const eventsDuClub = eventData.filter(event =>
-          typeEventData.some(type => event.eventtypeid === type.id)
-        );
-
-        setEvent(eventsDuClub);
-
-        let locationDataLabel = [];
-        for(let location of locationData){
-            let locationObj ={
-                value : location.id,
-                label: location.street + " , " + location.postalcode + " " + location.city
-            }
-            locationDataLabel.push(locationObj)
-        }
-        setLocations(locationDataLabel)
-        
-        // setLocations(locationData)
-      } catch (error) {
-        console.error("Erreur lors de la récupération des données :", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const userClubs = useStore((state) => state.userClubs);
+  const addresses = useStore((state) => state.addresses);
+  const events = useStore((state) => state.events);
+  const typeEvent = useStore((state) => state.typesEvent);
 
   const getDataForSelectFromTypeEvent = useMemo(() => {
-    return [
-      { value: 0, label: "Tous" },
-      ...typeEvent.map(type => ({ value: type.id, label: type.label }))
-    ];
+    return typeEvent.map(type => ({ value: type.id, label: type.label }));
   }, [typeEvent]);
 
   const handleTypeChange = (selectedOptions) => {
     setSelectedTypes(selectedOptions.map(option => option.value));
   };
 
-  // const teams = [
-  //   { value: 'team1', label: 'Équipe 1' },
-  //   { value: 'team2', label: 'Équipe 2' },
-  //   { value: 'team3', label: 'Équipe 3' },
-  // ];
+  const locationOptions = useMemo(() => {
+    return [
+      { value: 0, label: "Tous les lieux" },
+      ...addresses.map(location => ({
+        value: location.id,
+        label: `${location.street}, ${location.postalcode} ${location.city}`
+      }))
+    ];
+  }, [addresses]);
+
+  const clubOptions = useMemo(() => {
+    return [
+      { value: 0, label: "Tous les clubs" },
+      ...userClubs.map(club => ({
+        value: club.id,
+        label: club.label
+      }))
+    ];
+  }, [userClubs]);
+
+  const handleClubChange = (selectedOption) => {
+    setSelectedClub(selectedOption);
+  };
+
+  const handleLocationChange = (selectedOption) => {
+    setSelectedLocation(selectedOption);
+  };
 
   const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
@@ -88,12 +73,14 @@ const CalendarView = () => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
-      const eventsForDay = event.filter(e => {
+      const eventsForDay = events.filter(e => {
         const eventDate = new Date(e.dd);
         return eventDate.getDate() === day && 
                eventDate.getMonth() === month && 
                eventDate.getFullYear() === year &&
-               (!selectedTypes.length || selectedTypes.includes(e.eventtypeid));
+               (!selectedTypes.length || selectedTypes.includes(e.eventtypeid)) &&
+               (!selectedClub || selectedClub.value === 0 || e.clubid === selectedClub.value) &&
+               (!selectedLocation || selectedLocation.value === 0 || e.addressid === selectedLocation.value);
       });
 
       days.push(
@@ -118,7 +105,6 @@ const CalendarView = () => {
   };
 
   const getEventColor = (eventTypeId) => {
-    // Ici, vous pouvez définir une logique pour attribuer des couleurs en fonction du type d'événement
     const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33F1', '#33FFF1'];
     return colors[eventTypeId % colors.length];
   };
@@ -158,22 +144,24 @@ const CalendarView = () => {
         <div className={styles.filterSection}>
           <h3>Lieu</h3>
           <Select
-            options={locations}
+            options={locationOptions}
             className={styles.select}
-            onChange={setSelectedLocation}
+            onChange={handleLocationChange}
             placeholder="Sélectionner un lieu"
+            value={selectedLocation}
           />
         </div>
 
-        {/* <div className={styles.filterSection}>
-          <h3>Équipe</h3>
+        <div className={styles.filterSection}>
+          <h3>Club</h3>
           <Select
-            options={teams}
+            options={clubOptions}
             className={styles.select}
-            onChange={setSelectedTeam}
-            placeholder="Sélectionner une équipe"
+            onChange={handleClubChange}
+            placeholder="Sélectionner un club"
+            value={selectedClub}
           />
-        </div> */}
+        </div>
       </div>
 
       <div className={styles.monthlyCalendar}>
