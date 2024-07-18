@@ -4,6 +4,7 @@ import Select from 'react-select';
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../styles/CalendarView.module.css";
 import useStore from '../store/store';
+import { dateToTimeFormat } from "../js/date";
 
 const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -94,7 +95,7 @@ const CalendarView = () => {
               onClick={() => handleEventClick(e)}
             >
               <div><strong>{e.label}</strong></div>
-              <div>{e.dd.slice(11,16).replace(":", 'h')}</div>
+              <div>{getTimeDisplay(e.dd)} à {getTimeDisplay(e.df)}</div>
             </div>
           ))}
         </div>
@@ -112,6 +113,8 @@ const CalendarView = () => {
   const handleEventClick = (event) => {
     console.log('Informations de l\'événement :', event);
   };
+
+  const getTimeDisplay = (date) => dateToTimeFormat(date);
 
   return (
     <div className={styles.calendarContainer}>
