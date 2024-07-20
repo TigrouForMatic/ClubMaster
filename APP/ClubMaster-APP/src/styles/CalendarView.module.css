@@ -33,12 +33,25 @@
   width: 100%;
 }
 
-.datePicker {
-  width: 125%; /*Modifier le placement pour centrer le date picker entre les autres selects*/
-  height: 32px;
-  padding: 2px 8px;
+.datePickerWrapper {
+  display: flex;
+  align-items: center;
   border: 1px solid #ccc;
   border-radius: 4px;
+  overflow: hidden;
+}
+
+.iconDetail {
+  padding: 4px;
+  color: #555;
+  background-color: #f8f8f8;
+}
+
+.datePicker {
+  flex-grow: 1;
+  border: none;
+  height: 32px;
+  padding: 2px 8px;
   font-size: 14px;
   line-height: 1.5;
   color: #333;
@@ -48,6 +61,9 @@
 
 .datePicker:focus {
   outline: none;
+}
+
+.datePickerWrapper:focus-within {
   border-color: #2684FF;
   box-shadow: 0 0 0 1px #2684FF;
 }

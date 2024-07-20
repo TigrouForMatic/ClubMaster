@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import DatePicker from "react-datepicker";
 import Select from 'react-select';
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../styles/CalendarView.module.css";
 import useStore from '../store/store';
 import { dateToTimeFormat } from "../js/date";
+import { Calendar } from 'iconoir-react';
 
 const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -135,13 +136,16 @@ const CalendarView = () => {
 
         <div className={styles.filterSection}>
           <h3>Mois</h3>
-          <DatePicker
-            selected={currentDate}
-            onChange={date => setCurrentDate(date)}
-            dateFormat="MM/yyyy"
-            showMonthYearPicker
-            className={styles.datePicker}
-          />
+          <div className={styles.datePickerWrapper}>
+            <Calendar className={styles.iconDetail} />
+            <DatePicker
+              selected={currentDate}
+              onChange={date => setCurrentDate(date)}
+              dateFormat="MM/yyyy"
+              showMonthYearPicker
+              className={styles.datePicker}
+            />
+          </div>
         </div>
 
         <div className={styles.filterSection}>
