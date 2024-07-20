@@ -141,13 +141,21 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
       ))}
       
       <label className={styles.checkboxLabel}>
-        <input
-          type="checkbox"
-          checked={consentGiven}
-          onChange={(e) => setConsentGiven(e.target.checked)}
-        />
-        J'accepte la politique de confidentialité et le traitement de mes données personnelles
-        <OpenInWindow className={styles.iconDetail} onClick={openModal} style={{ cursor: 'pointer' }} />
+        <div className={styles.checkboxContainer}>
+          <input
+            type="checkbox"
+            checked={consentGiven}
+            onChange={(e) => setConsentGiven(e.target.checked)}
+          />
+          <span className={styles.checkboxText}>
+            J'accepte la politique de confidentialité et le traitement de mes données personnelles
+          </span>
+          <OpenInWindow 
+            className={styles.iconDetail} 
+            onClick={openModal} 
+            style={{ cursor: 'pointer', width: '16px', height: '16px' }} 
+          />
+        </div>
       </label>
       <button type="submit" disabled={!consentGiven}>
         Enregistrer et continuer
