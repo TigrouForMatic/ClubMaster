@@ -81,7 +81,7 @@ const FindClubOption = () => {
       }
 
       const licenceTypeData = await fetchData(`/licenceType`, 'GET');
-      const licenceTypeId = licenceTypeData.find(licTyp => licTyp.clubid === club.id && licTyp.label === "Licence Adulte")?.id;
+      const licenceTypeId = licenceTypeData.find(licTyp => licTyp.clubid === club.id && licTyp.label === "Licence Visiteur")?.id;
       if (licenceTypeId === undefined) {
         console.error(`Aucun type de licence trouvé pour le club ${club.id} avec le nom Licence Adulte`);
       }

@@ -202,7 +202,11 @@ BEGIN
     ('Licence Visiteur',1, null),
     ('Licence Complete',1, 20),
     ('Demi-Licence',1, 10),
-    ('Licence Spécifique',1,null);
+    ('Licence Spécifique',1,null),
+    ('Licence Visiteur',2, null),
+    ('Licence Complete',2, 20),
+    ('Demi-Licence',2, 10),
+    ('Licence Spécifique',2,null);
 
     INSERT INTO db.Role ( Label, Level, ClubId) VALUES
     ('Visiteur',0,1),

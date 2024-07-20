@@ -90,3 +90,40 @@
   .checkboxLabel {
     margin: 10px 0;
   }
+
+  .iconDetail {
+    background-color: rgba(162, 162, 162, 0.1);
+  }
+
+  /* PrivacyPolicyModal */
+
+  .modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+  
+  .modal h2 {
+    margin-top: 0;
+  }
+  
+  .modal button {
+    margin-top: 20px;
+  }

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import styles from '../../styles/AuthForm.module.css';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
+import styles from '../../styles/AuthForm.module.css';
+import { OpenInWindow } from 'iconoir-react';
+import PrivacyPolicyModal from './PrivacyPolicyModal';
 
 function PersonalInfoForm({ handlePersonalInformationSet }) {
   const [personalInfo, setPersonalInfo] = useState({
@@ -21,6 +23,7 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
 
   const [consentGiven, setConsentGiven] = useState(false);
   const [error, setError] = useState('');
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const setItems = useStore((state) => state.setItems);
   const login = useStore((state) => state.login);
@@ -81,6 +84,14 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
     }
   };
 
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
   return (
     <form onSubmit={handleSubmit} className={styles.authForm}>
       {error && <p className={styles.error}>{error}</p>}
@@ -136,13 +147,17 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
           onChange={(e) => setConsentGiven(e.target.checked)}
         />
         J'accepte la politique de confidentialité et le traitement de mes données personnelles
+        <OpenInWindow className={styles.iconDetail} onClick={openModal} style={{ cursor: 'pointer' }} />
       </label>
       <button type="submit" disabled={!consentGiven}>
         Enregistrer et continuer
       </button>
+      
       {/* <button type="button" onClick={onAuthenticate} className={styles.skipButton}>
         Passer pour le moment
       </button> */}
+
+      <PrivacyPolicyModal isOpen={modalIsOpen} onRequestClose={closeModal} />
     </form>
   );
 }
