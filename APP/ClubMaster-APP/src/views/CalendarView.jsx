@@ -10,8 +10,6 @@ import { Calendar } from 'iconoir-react';
 const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTypes, setSelectedTypes] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [selectedClub, setSelectedClub] = useState(null);
 
   const userClubs = useStore((state) => state.userClubs);
   const addresses = useStore((state) => state.addresses);
@@ -37,6 +35,9 @@ const CalendarView = () => {
   }, [addresses]);
 
   const clubOptions = useMemo(() => {
+
+    if(userClubs.length === 1) return [ { value: userClubs[0].id, label: userClubs[0].label }];
+
     return [
       { value: 0, label: "Tous les clubs" },
       ...userClubs.map(club => ({
@@ -45,6 +46,9 @@ const CalendarView = () => {
       }))
     ];
   }, [userClubs]);
+
+  const [selectedLocation, setSelectedLocation] = useState(locationOptions[0]);
+  const [selectedClub, setSelectedClub] = useState(clubOptions[0]);
 
   const handleClubChange = (selectedOption) => {
     setSelectedClub(selectedOption);
