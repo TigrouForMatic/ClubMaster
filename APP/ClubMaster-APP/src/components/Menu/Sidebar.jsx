@@ -1,33 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import '../../styles/navbarStyles.css';
 import { Menu, User, Home, ArcheryMatch, Calendar, Shop } from 'iconoir-react';
-import UserModal from './UserModal';
 
 function Sidebar({ onClose }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const modalRef = useRef(null);
-  const profileIconRef = useRef(null);
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (
-        modalRef.current && !modalRef.current.contains(event.target) &&
-        profileIconRef.current && !profileIconRef.current.contains(event.target)
-      ) {
-        setIsModalOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [modalRef, profileIconRef]);
-
-  const handleProfileIconClick = () => {
-    setIsModalOpen(!isModalOpen);
-  };
 
   return (
     <div className="sidebar">
@@ -66,13 +41,15 @@ function Sidebar({ onClose }) {
         </NavLink>
       </div>
       <hr />
-      <div className="menu-profileIcon" onClick={handleProfileIconClick}>
+      <div className="menu-profileIcon" >
         <hr />
-        <div className="menu-icon">
-          <User className='icon-detail' />
-        </div>
+        <NavLink to="/user" activeClassName="active-link">
+          <div className="menu-item">
+            <User className='icon-detail' />
+            <p>User</p>
+          </div>
+        </NavLink>
       </div>
-      {isModalOpen && <div ref={modalRef}><UserModal /></div>}
     </div>
   );
 }

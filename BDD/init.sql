@@ -57,7 +57,9 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
         AddressId INT,
-        PersonMoralId INT
+        PersonMoralId INT,
+        OldLabel VARCHAR(255),
+        CreationDate DATE
     );
 
     CREATE TABLE db.ProduitType (
@@ -139,9 +141,9 @@ BEGIN
     INSERT INTO db.PersonMoral (Name) VALUES
     ('Vol en Oust');
 
-    INSERT INTO db.Club (Label, AddressId, PersonMoralId) VALUES
-    ('La Claie', 3, null),
-    ('Vol en Pleuc', 2, null);
+    INSERT INTO db.Club (Label, AddressId, PersonMoralId, OldLabel, CreationDate) VALUES
+    ('La Claie', 3, null, null, '2022-08-01T00:00:00.000Z'),
+    ('Vol en Pleuc', 2, null, null, '2022-08-01T00:00:00.000Z');
 
     INSERT INTO db.ProduitType (Label, ClubId) VALUES
     ('Tee-Shirt', 1),
