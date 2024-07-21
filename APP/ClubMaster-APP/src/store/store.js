@@ -15,6 +15,7 @@ const useStore = create((set) => ({
   events: [],
   productTypes: [],
   products: [],
+  panier: [],
   showApp: false,
 
   // ShowApp

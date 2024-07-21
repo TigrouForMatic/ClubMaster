@@ -1,44 +1,81 @@
 .shopContainer {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-bottom: 120px;
+}
+
+.shopTitle {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.5em;
+  color: #333;
+}
+
+.categoryFilter {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.filterButton {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: background-color 0.3s;
+}
+
+.filterButton:hover, .filterButton.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.addToCartButton {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.addToCartButton:hover {
+  background-color: #218838;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+}
+
+.error {
+  color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .shopContainer {
+    padding-bottom: 130px;
   }
-  
-  .shopTitle {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 2.5em;
-    color: #333;
-  }
-  
-  .categoryFilter {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 30px;
-  }
-  
-  .filterButton {
-    background-color: #f0f0f0;
-    border: none;
-    padding: 10px 20px;
-    margin: 5px;
-    cursor: pointer;
-    border-radius: 20px;
-    transition: background-color 0.3s;
-  }
-  
-  .filterButton:hover, .filterButton.active {
-    background-color: #007bff;
-    color: white;
-  }
-  
+
   .productGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
-  
+}
+
+
+  /* Product Card */
   .productCard {
     background-color: white;
     border-radius: 8px;
@@ -81,33 +118,88 @@
     color: #28a745;
     margin-bottom: 15px;
   }
-  
-  .addToCartButton {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+
+
+/* CartBar */
+.cartBar {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #3498db;
+  padding: 20px 30px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  height: 50px;
+  color: white;
+}
+
+.lastAdded {
+  font-size: 16px;
+}
+
+.totalCost {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.cartIconWrapper {
+  position: relative;
+  margin-right: 10px;
+}
+
+.cartIconWrapper svg {
+  font-size: 24px;
+}
+
+.itemCountBubble {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .cartBar {
+    bottom: 90px;
+    padding: 15px 20px;
+    width: 80%;
+    max-width: none;
+    height: 30px;
+    border-radius: 20px;
   }
-  
-  .addToCartButton:hover {
-    background-color: #218838;
+
+  .lastAdded {
+    font-size: 14px;
   }
-  
-  .loading, .error {
-    text-align: center;
-    padding: 20px;
-    font-size: 18px;
+
+  .totalCost {
+    font-size: 16px;
   }
-  
-  .error {
-    color: #dc3545;
+
+  .cartIconWrapper svg {
+    font-size: 20px;
   }
-  
-  @media (max-width: 768px) {
-    .productGrid {
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
+
+  .itemCountBubble {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
   }
+}

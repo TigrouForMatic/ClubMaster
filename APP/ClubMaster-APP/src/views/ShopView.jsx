@@ -2,22 +2,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import useStore from '../store/store';
 import api from '../js/App/Api';
 import styles from "../styles/ShopView.module.css";
-import ComingSoonImage from "../assets/photos/comming_soon.jpg";
-
-const ProductCard = ({ product }) => (
-  <div className={styles.productCard}>
-    <img 
-      src={product.imageurl || ComingSoonImage} 
-      alt={product.imageurl ? product.label : "Image à venir"} 
-      className={styles.productImage} 
-    />
-    <h3 className={styles.productName}>{product.label}</h3>
-    <p className={styles.productDescription}>{product.description}</p>
-    <p className={styles.productPrice}>{product.price.toFixed(2)} €</p>
-    <p className={styles.productStock}>En stock: {product.stock}</p>
-    <button className={styles.addToCartButton}>Ajouter au panier</button>
-  </div>
-);
+import ProductCard from "../components/Shop/ProductCard";
+import CartBar from "../components/Shop/CartBar";
 
 const useShopData = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -59,6 +45,10 @@ function ShopView() {
   const { productTypes, products, isLoading, error } = useShopData();
   const [selectedType, setSelectedType] = useState("all");
 
+  const addItem = useStore((state) => state.addItem);
+  const updateItem = useStore((state) => state.updateItem);
+  const panier = useStore((state) => state.panier);
+
   const filteredProducts = useMemo(() => {
     if (selectedType === "all") {
       return products;
@@ -66,12 +56,39 @@ function ShopView() {
     return products.filter(prod => prod.producttypeid == selectedType);
   }, [products, selectedType]);
 
+  const handleAddToCart = (product) => {
+    let productWithQuantity = product;
+    let labelNotif;
+
+    const prodInCart = panier.find(prod => prod.id = product.id);
+    if (prodInCart) {
+      labelNotif = "Ajout d'un produit dans le panier : " + product.label
+      productWithQuantity.quantity = prodInCart.quantity + 1;
+      updateItem('panier', product.id, productWithQuantity)
+    } else {
+      labelNotif = "Nouvel element dans le panier : " + product.label;
+      productWithQuantity.quantity = 1;
+      addItem('panier',productWithQuantity);
+    }
+
+    const createdClubNotif = {
+      label: labelNotif,
+      time: new Date()
+    };
+
+    addItem('notifications', createdClubNotif);
+  };
+
   if (isLoading) return <div className={styles.loading}>Chargement...</div>;
   if (error) return <div className={styles.error}>Une erreur est survenue : {error.message}</div>;
 
   return (
     <div className={styles.shopContainer}>
-      <h1 className={styles.shopTitle}>Boutique du Club</h1>
+      <h1 className={styles.shopTitle}>La Boutique</h1>
+
+      {panier.length > 0 && (
+        <CartBar />
+      )}
 
       <div className={styles.categoryFilter}>
         <button
@@ -93,7 +110,10 @@ function ShopView() {
 
       <div className={styles.productGrid}>
         {filteredProducts.map((prod) => (
-          <ProductCard key={prod.id} product={prod} />
+          <ProductCard 
+            key={prod.id} 
+            product={prod}
+            onAddToCart={handleAddToCart}  />
         ))}
       </div>
     </div>
