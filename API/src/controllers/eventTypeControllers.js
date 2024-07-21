@@ -4,14 +4,13 @@ const TABLE_NAME = 'db.EventType';
 
 const getEventType = async (req, res) => {
     const { arrayClubId } = req.query;
-
     try {
         let queryString = `SELECT * FROM ${TABLE_NAME}`;
         const values = [];
         
         if (arrayClubId && Array.isArray(JSON.parse(arrayClubId))) {
             const clubIds = JSON.parse(arrayClubId);
-            queryString += ` WHERE clubId = ANY($1)`;
+            queryString += ` WHERE clubid = ANY($1)`;
             values.push(clubIds);
         }
 

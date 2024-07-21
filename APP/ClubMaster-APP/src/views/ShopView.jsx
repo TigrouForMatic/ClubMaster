@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
+import useStore from '../store/store';
+import api from '../js/App/Api';
 import styles from "../styles/ShopView.module.css";
+import ComingSoonImage from "../assets/photos/comming_soon.jpg";
 
 const ProductCard = ({ product }) => (
   <div className={styles.productCard}>
-    <img src={product.image || "placeholder.jpg"} alt={product.label} className={styles.productImage} />
+    <img 
+      src={product.imageurl || ComingSoonImage} 
+      alt={product.imageurl ? product.label : "Image à venir"} 
+      className={styles.productImage} 
+    />
     <h3 className={styles.productName}>{product.label}</h3>
     <p className={styles.productDescription}>{product.description}</p>
     <p className={styles.productPrice}>{product.price.toFixed(2)} €</p>
@@ -13,21 +19,29 @@ const ProductCard = ({ product }) => (
   </div>
 );
 
-const useShopData = (clubId) => {
-  const [typeShop, setTypeShop] = useState([]);
-  const [produit, setProduit] = useState([]);
+const useShopData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const userClubs = useStore((state) => state.userClubs);
+  const setItems = useStore((state) => state.setItems);
+  const productTypes = useStore((state) => state.productTypes);
+  const products = useStore((state) => state.products);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [typeShopResponse, produitResponse] = await Promise.all([
-          axios.get(`http://localhost:3200/api/produitType?clubid=${clubId}`),
-          axios.get("http://localhost:3200/api/produit"),
-        ]);
-        setTypeShop(typeShopResponse.data);
-        setProduit(produitResponse.data);
+        setIsLoading(true);
+
+        const arrayClubId = userClubs.map(club => club.id);
+
+        const typeShopData = await api.get("/productType", { params: { arrayClubId: JSON.stringify(arrayClubId) } });
+        setItems('productTypes', typeShopData);
+
+        const arrayTypeProductId = typeShopData.map(type => type.id);
+        const productData = await api.get("/product", { params: { arrayTypeProductId: JSON.stringify(arrayTypeProductId) } });
+        setItems('products', productData);
+
         setIsLoading(false);
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
@@ -36,23 +50,21 @@ const useShopData = (clubId) => {
       }
     };
     fetchData();
-  }, [clubId]);
+  }, [setItems, userClubs]);
 
-  return { typeShop, produit, isLoading, error };
+  return { productTypes, products, isLoading, error };
 };
 
 function ShopView() {
-  const { typeShop, produit, isLoading, error } = useShopData(1);
+  const { productTypes, products, isLoading, error } = useShopData();
   const [selectedType, setSelectedType] = useState("all");
 
   const filteredProducts = useMemo(() => {
     if (selectedType === "all") {
-      return produit.filter(prod =>
-        typeShop.some(type => prod.produittypeid === type.id)
-      );
+      return products;
     }
-    return produit.filter(prod => prod.produittypeid === selectedType);
-  }, [produit, typeShop, selectedType]);
+    return products.filter(prod => prod.producttypeid == selectedType);
+  }, [products, selectedType]);
 
   if (isLoading) return <div className={styles.loading}>Chargement...</div>;
   if (error) return <div className={styles.error}>Une erreur est survenue : {error.message}</div>;
@@ -68,7 +80,7 @@ function ShopView() {
         >
           Tous
         </button>
-        {typeShop.map((type) => (
+        {productTypes.map((type) => (
           <button
             key={type.id}
             className={`${styles.filterButton} ${selectedType === type.id ? styles.active : ""}`}

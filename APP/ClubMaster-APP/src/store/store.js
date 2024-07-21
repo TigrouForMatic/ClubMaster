@@ -13,6 +13,8 @@ const useStore = create((set) => ({
   login: [],
   typesEvent: [],
   events: [],
+  productTypes: [],
+  products: [],
   showApp: false,
 
   // ShowApp

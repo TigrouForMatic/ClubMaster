@@ -2,34 +2,8 @@ const { pool } = require('../../database');
 
 const TABLE_NAME = 'db.Event';
 
-// const getEvent = async (req, res) => {
-//     const filters = req.query;
-
-//     try {
-//         let queryString = `SELECT * FROM ${TABLE_NAME}`;
-//         const values = [];
-        
-//         if (Object.keys(filters).length > 0) {
-//             const filterConditions = Object.entries(filters).map(([key, value], index) => {
-//                 values.push(value);
-//                 return `${key} = $${index + 1}`;
-//             });
-//             queryString += ' AND ' + filterConditions.join(' AND ');
-//         }
-
-//         const client = await pool.connect();
-//         const result = await client.query(queryString, values);
-//         client.release();
-//         res.json(result.rows);
-//     } catch (err) {
-//         console.error('Erreur lors de la récupération des roles', err);
-//         res.status(500).send('Erreur lors de la récupération des roles');
-//     }
-// };
-
 const getEvent = async (req, res) => {
     const { arrayEventTypeId } = req.query;
-
     try {
         let queryString = `SELECT * FROM ${TABLE_NAME}`;
         const values = [];

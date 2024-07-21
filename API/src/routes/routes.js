@@ -11,6 +11,10 @@ const { getLicence, getLicenceById, addLicence, updateLicence, deleteLicence } =
 const { getRole, getRoleById, addRole, addRoleFromNewClub, updateRole, deleteRole } = require('../controllers/roleControllers');
 const { getEventType, getEventTypeById, addEventType, updateEventType, deleteEventType } = require('../controllers/eventTypeControllers');
 const { getEvent, getEventById, addEvent, updateEvent, deleteEvent } = require('../controllers/eventControllers');
+const { getProductType, getProductTypeById, addProductType, updateProductType, deleteProductType } = require('../controllers/productTypeControllers');
+const { getProduct, getProductById, addProduct, updateProduct, deleteProduct } = require('../controllers/productControllers');
+
+const { getGenerateImage } = require('../controllers/generateImageControllers');
 
 const { getEntries, getEntryById, addEntry, updateEntry, deleteEntry } = require('../controllers/controllers');
 
@@ -76,6 +80,23 @@ router.get('/event/:id', getEventById);
 router.post('/event', authenticateToken, addEvent);
 router.put('/event/:id', authenticateToken, updateEvent);
 router.delete('/event/:id', authenticateToken, deleteEvent);
+
+// Routes pour le CRUD des types de produit
+router.get('/productType', getProductType);
+router.get('/productType/:id', getProductTypeById);
+router.post('/productType', authenticateToken, addProductType);
+router.put('/productType/:id', authenticateToken, updateProductType);
+router.delete('/productType/:id', authenticateToken, deleteProductType);
+
+// Routes pour le CRUD des produits
+router.get('/product', getProduct);
+router.get('/product/:id', getProductById);
+router.post('/product', authenticateToken, addProduct);
+router.put('/product/:id', authenticateToken, updateProduct);
+router.delete('/product/:id', authenticateToken, deleteProduct);
+
+// Routes pour générer une image 
+router.get('/generateImage', getGenerateImage);
 
 // Routes génériques
 router.get('/:table', getEntries);

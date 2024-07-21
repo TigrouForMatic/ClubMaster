@@ -62,23 +62,24 @@ BEGIN
         CreationDate DATE
     );
 
-    CREATE TABLE db.ProduitType (
+    CREATE TABLE db.ProductType (
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
         ClubId INT,
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
     );
 
-    CREATE TABLE db.Produit (
+    CREATE TABLE db.Product (
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
         Description TEXT,
-        ProduitTypeId INT,
+        ProductTypeId INT,
         Dd TIMESTAMP,
         Df TIMESTAMP,
+        ImageUrl VARCHAR(255),
         Price FLOAT,
         Stock INT,
-        FOREIGN KEY (ProduitTypeId) REFERENCES db.ProduitType(Id)
+        FOREIGN KEY (ProductTypeId) REFERENCES db.ProductType(Id)
     );
 
     CREATE TABLE db.EventType (
@@ -145,7 +146,7 @@ BEGIN
     ('La Claie', 3, null, null, '2022-08-01T00:00:00.000Z'),
     ('Vol en Pleuc', 2, null, null, '2022-08-01T00:00:00.000Z');
 
-    INSERT INTO db.ProduitType (Label, ClubId) VALUES
+    INSERT INTO db.ProductType (Label, ClubId) VALUES
     ('Tee-Shirt', 1),
     ('Mug', 1),
     ('Tee-Shirt', 2),
@@ -153,21 +154,21 @@ BEGIN
     ('SweatShirt', 1),
     ('SweatShirt', 2);
 
-    INSERT INTO db.Produit (Label, Description, ProduitTypeId, Dd, Df, Price, Stock) VALUES
-    ('Tee-Shirt La Claie', 'Taille L', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 15, 20),
-    ('Tee-Shirt La Claie', 'Taille M', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 15, 20),
-    ('Tee-Shirt La Claie', 'Taille S', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 15, 20),
-    ('Mug La Claie', 'Mug avec une Capacité de 33cl', 2, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 10, 5),
-    ('Tee-Shirt Vol en Pleuc', 'Taille L', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 15, 20),
-    ('Tee-Shirt Vol en Pleuc', 'Taille M', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 15, 20),
-    ('Tee-Shirt Vol en Pleuc', 'Taille S', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 15, 20),
-    ('Mug Vol en Pleuc', 'Mug avec une Capacité de 33cl', 4, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 10, 5),
-    ('SweatShirt La Claie', 'Taille L', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 20, 30),
-    ('SweatShirt La Claie', 'Taille M', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 20, 30),
-    ('SweatShirt La Claie', 'Taille S', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 20, 30),
-    ('SweatShirt Vol en Pleuc', 'Taille L', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 20, 30),
-    ('SweatShirt Vol en Pleuc', 'Taille M', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 20, 30),
-    ('SweatShirt Vol en Pleuc', 'Taille S', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 20, 30);
+    INSERT INTO db.Product (Label, Description, ProductTypeId, Dd, Df, ImageUrl, Price, Stock) VALUES
+    ('Tee-Shirt La Claie', 'Taille L', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
+    ('Tee-Shirt La Claie', 'Taille M', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
+    ('Tee-Shirt La Claie', 'Taille S', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', null , 15, 20),
+    ('Mug La Claie', 'Mug avec une Capacité de 33cl', 2, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/5n-2nQZ6Rlu-IrlE1KQrsg.webp', 10, 5),
+    ('Tee-Shirt Vol en Pleuc', 'Taille L', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
+    ('Tee-Shirt Vol en Pleuc', 'Taille M', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
+    ('Tee-Shirt Vol en Pleuc', 'Taille S', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
+    ('Mug Vol en Pleuc', 'Mug avec une Capacité de 33cl', 4, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/5n-2nQZ6Rlu-IrlE1KQrsg.webp', 10, 5),
+    ('SweatShirt La Claie', 'Taille L', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
+    ('SweatShirt La Claie', 'Taille M', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
+    ('SweatShirt La Claie', 'Taille S', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
+    ('SweatShirt Vol en Pleuc', 'Taille L', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
+    ('SweatShirt Vol en Pleuc', 'Taille M', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
+    ('SweatShirt Vol en Pleuc', 'Taille S', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30);
 
     INSERT INTO db.EventType (Label, ClubId) VALUES
     ('Entrainement', 1),
