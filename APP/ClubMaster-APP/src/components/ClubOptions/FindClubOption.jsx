@@ -55,7 +55,7 @@ const FindClubOption = () => {
       const isNameMatch = club.label.toLowerCase().includes(nomClub.toLowerCase());
       if (!selectedLocation || selectedLocation.value === 'all') return isNameMatch;
       
-      const clubAddress = addresses.find(add => add.id === club.addressid);
+      const clubAddress = addresses.find(add => add.referenceid === club.id);
       const isLocationMatch = clubAddress && 
         clubAddress.postalcode === selectedLocation.postalcode && 
         clubAddress.city === selectedLocation.city;

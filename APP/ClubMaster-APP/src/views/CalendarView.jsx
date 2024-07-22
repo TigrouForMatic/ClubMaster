@@ -86,7 +86,7 @@ const CalendarView = () => {
                eventDate.getFullYear() === year &&
                (!selectedTypes.length || selectedTypes.includes(e.eventtypeid)) &&
                (!selectedClub || selectedClub.value === 0 || e.clubid === selectedClub.value) &&
-               (!selectedLocation || selectedLocation.value === 0 || e.addressid === selectedLocation.value);
+               (!selectedLocation || selectedLocation.value === 0 || e.id === addresses.find(add => add.id = selectedLocation.value).referenceid);
       });
 
       days.push(

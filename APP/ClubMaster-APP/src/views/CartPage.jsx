@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom"; 
 import useStore from '../store/store';
-import api from '../../js/App/Api';
+import api from '../js/App/Api';
 import styles from "../styles/CartPage.module.css";
 import { Bin, Cart } from 'iconoir-react';
 import CustomConfirm from '../components/CustomConfirm';

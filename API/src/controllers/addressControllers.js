@@ -52,6 +52,10 @@ const getAddressByPerson = async (req, res) => {
 };
 
 const getAddressById = async (req, res) => {
+
+    // Vérification de l'authentification
+    if (!req.user) return res.sendStatus(401);
+    
     const { id } = req.params;
     try {
         const client = await pool.connect();

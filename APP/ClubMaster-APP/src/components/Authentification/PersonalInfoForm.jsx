@@ -57,24 +57,24 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
     }
 
     try {
-      const addressResponse = await api.post('/address/', {
-        ...addressInfo,
-        private: true,
-        validate: true
-      });
-
-      const { id: addressId } = addressResponse;
-
       const personalInfoResponse = await api.post('/personPhysic', {
         name: `${personalInfo.firstName} ${personalInfo.lastName}`,
         naissanceDate: personalInfo.bornDate,
         phoneNumber: personalInfo.phoneNumber,
         loginId: login.id,
-        addressId,
         emailaddress: login
       });
 
       setItems('currentUser', personalInfoResponse);
+
+      const addressResponse = await api.post('/address/', {
+        ...addressInfo,
+        referenceid: personalInfoResponse.id,
+        private: true,
+        validate: true
+      });
+
+      setItems('currentAddressesPerson', addressResponse)
 
       handlePersonalInformationSet();
     } catch (err) {

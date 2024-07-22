@@ -24,7 +24,7 @@ router.post('/auth/login', testLogin);
 
 // Routes pour le CRUD des addresses
 router.get('/address', getAddresses);
-router.get('/address/:id', getAddressById);
+router.get('/address/:id',authenticateToken, getAddressById);
 router.get('/address/personnel/:idPersonnel',authenticateToken, getAddressByPerson);
 router.post('/address', authenticateToken, addAddress);
 router.put('/address/:id', authenticateToken, updateAddress);
