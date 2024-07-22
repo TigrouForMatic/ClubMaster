@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import useStore from './store/store';
 import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -7,7 +8,6 @@ import AuthForm from './components/Authentification/AuthForm';
 import NotificationContainer from './components/Notification/NotificationContainer';
 import './App.css'
 import './styles/navbarStyles.css';
-import useStore from './store/store';
 
 // Lazy loading des composants
 const SideBarContainer = lazy(() => import('./components/Menu/SideBarContainer'));
@@ -17,6 +17,7 @@ const MatchsView = lazy(() => import('./views/MatchsView'));
 const CalendarView = lazy(() => import('./views/CalendarView'));
 const ShopView = lazy(() => import('./views/ShopView'));
 const UserView = lazy(() => import('./views/UserView'));
+const CartPage = lazy(() => import('./views/CartPage'));
 
 // Constantes pour les routes
 const ROUTES = {
@@ -24,6 +25,7 @@ const ROUTES = {
   MATCHS: '/match',
   CALENDAR: '/calendar',
   SHOP: '/shop',
+  CART: '/cart',
   USER: '/user',
 };
 
@@ -47,6 +49,7 @@ function AppContent() {
           <Route path={ROUTES.MATCHS} element={<MatchsView />} />
           <Route path={ROUTES.CALENDAR} element={<CalendarView />} />
           <Route path={ROUTES.SHOP} element={<ShopView />} />
+          <Route path={ROUTES.CART} element={<CartPage />} />
           <Route path={ROUTES.USER} element={<UserView />} />
           <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>

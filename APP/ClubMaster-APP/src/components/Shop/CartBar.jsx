@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import useStore from '../../store/store';
 import styles from '../../styles/ShopView.module.css';
 import { Cart } from 'iconoir-react';
@@ -14,18 +15,20 @@ const CartBar = () => {
   const itemCount = calculateItemCount();
 
   return (
-    <div className={styles.cartBar}>
-      <div className={styles.lastAdded}>
-        Dernier ajout : {lastAddedProduct?.label || 'Aucun'}
-      </div>
-      <div className={styles.totalCost}>
-        <div className={styles.cartIconWrapper}>
-          <Cart />
-          <span className={styles.itemCountBubble}>{itemCount}</span>
+    <NavLink to="/cart" exact activeClassName="active-link">
+      <div className={styles.cartBar}>
+        <div className={styles.lastAdded}>
+          Dernier ajout : {lastAddedProduct?.label || 'Aucun'}
         </div>
-        {totalCost.toFixed(2)} €
+        <div className={styles.totalCost}>
+          <div className={styles.cartIconWrapper}>
+            <Cart />
+            <span className={styles.itemCountBubble}>{itemCount}</span>
+          </div>
+          {totalCost.toFixed(2)} €
+        </div>
       </div>
-    </div>
+    </NavLink>
   );
 };
 

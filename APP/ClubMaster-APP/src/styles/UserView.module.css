@@ -3,6 +3,7 @@
     margin: 0 auto;
     padding: 20px;
     font-family: Arial, sans-serif;
+    padding-bottom: 100px;
   }
   
   .header {
@@ -115,5 +116,6 @@
   @media (max-width: 768px) {
     .container {
       padding: 10px;
+      padding-bottom: 100px;
     }
   }
