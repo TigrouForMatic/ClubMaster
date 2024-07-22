@@ -1,10 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from '../styles/UserView.module.css';
 import useStore from '../store/store';
 import { SystemShut } from 'iconoir-react';
 
 function UserView() {
 
+  const navigate = useNavigate();
   const setShowApp = useStore((state) => state.setShowApp);
   const setItems = useStore((state) => state.setItems);
 
@@ -23,10 +25,11 @@ function UserView() {
   };
 
   const handleLogout = () => {
-      localStorage.setItem('token', null);
-      setItems('currentUser',null);
-      setItems('login',null);
-      setShowApp();
+    localStorage.setItem('token', null);
+    setItems('currentUser',null);
+    setItems('login',null);
+    navigate('/');
+    setShowApp();
   };
 
   return (

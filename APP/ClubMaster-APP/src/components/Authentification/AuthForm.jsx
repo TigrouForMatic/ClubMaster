@@ -46,6 +46,16 @@ function AuthForm() {
     validatePassword(password);
   }, [password, validatePassword]);
 
+  const fetchAdressCurrentUser = useCallback(async (personPhysicId) => {
+    try {
+      const dataCurrentUserAddresses = await api.get(`/address/personnel/${personPhysicId}`);
+      setItems('currentUserAddresses', dataCurrentUserAddresses)
+    } catch (error) {
+      console.error('Erreur:', error);
+      setError(error.message);
+    }
+  }, [setItems]);
+
   const fetchClub = useCallback(async (personPhysicId) => {
     try {
       const dataClub = await api.get(`/club/personnel/${personPhysicId}`);
@@ -68,6 +78,7 @@ function AuthForm() {
 
       if (dataPersonPhysic.length) {
         setItems('currentUser', dataPersonPhysic[0]);
+        await fetchAdressCurrentUser(dataPersonPhysic[0].id);
         await fetchClub(dataPersonPhysic[0].id);
       } else {
         setShowPersonalInfo(true);
