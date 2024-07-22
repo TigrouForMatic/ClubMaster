@@ -22,16 +22,6 @@ BEGIN
         Pseudo VARCHAR(255)
     );
 
-    CREATE TABLE db.Address (
-        Id SERIAL PRIMARY KEY,
-        Street VARCHAR(255),
-        City VARCHAR(255),
-        State VARCHAR(255),
-        PostalCode VARCHAR(20),
-        Country VARCHAR(100),
-        Private BOOLEAN,
-        Validate BOOLEAN
-    );
 
     CREATE TABLE db.PersonPhysic (
         Id SERIAL PRIMARY KEY,
@@ -39,9 +29,20 @@ BEGIN
         NaissanceDate DATE,
         PhoneNumber VARCHAR(20),
         EmailAddress VARCHAR(255),
-        AddressId INT,
         LoginId INT,
         FOREIGN KEY (LoginId) REFERENCES db.Login(Id)
+    );
+
+    CREATE TABLE db.Address (
+        Id SERIAL PRIMARY KEY,
+        Street VARCHAR(255),
+        City VARCHAR(255),
+        State VARCHAR(255),
+        PostalCode VARCHAR(20),
+        Country VARCHAR(100),
+        ReferenceId INT,
+        Private BOOLEAN,
+        Validate BOOLEAN
     );
 
     CREATE TABLE db.PersonMoral (
@@ -56,7 +57,6 @@ BEGIN
     CREATE TABLE db.Club (
         Id SERIAL PRIMARY KEY,
         Label VARCHAR(255) NOT NULL,
-        AddressId INT,
         PersonMoralId INT,
         OldLabel VARCHAR(255),
         CreationDate DATE
@@ -132,19 +132,19 @@ BEGIN
     );
 
     -- Insert test data
-    INSERT INTO db.Address (Street, City, State, PostalCode, Country, Private, Validate) VALUES
-    ('4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', false, true),
-    ('Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', false, true),
-    ('Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', false, true),
-    ('29 rue saint roch','Ploermel','Bretagne','56800','France', true, true),
-    ('Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', false, true);
+    INSERT INTO db.Address (Street, City, State, PostalCode, Country, ReferenceId, Private, Validate) VALUES
+    ('4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', null, false, true),
+    ('Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', 2, false, true),
+    ('Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', 1, false, true),
+    ('29 rue saint roch','Ploermel','Bretagne','56800','France', 1, true, true),
+    ('Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
 
     INSERT INTO db.PersonMoral (Name) VALUES
     ('Vol en Oust');
 
-    INSERT INTO db.Club (Label, AddressId, PersonMoralId, OldLabel, CreationDate) VALUES
-    ('La Claie', 3, null, null, '2022-08-01T00:00:00.000Z'),
-    ('Vol en Pleuc', 2, null, null, '2022-08-01T00:00:00.000Z');
+    INSERT INTO db.Club (Label, PersonMoralId, OldLabel, CreationDate) VALUES
+    ('La Claie', null, null, '2022-08-01T00:00:00.000Z'),
+    ('Vol en Pleuc', null, null, '2022-08-01T00:00:00.000Z');
 
     INSERT INTO db.ProductType (Label, ClubId) VALUES
     ('Tee-Shirt', 1),
@@ -198,8 +198,8 @@ BEGIN
      INSERT INTO db.Login (Login, Password, Pseudo) VALUES
     ('jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach');
 
-    INSERT INTO db.PersonPhysic ( Name, NaissanceDate, PhoneNumber, EmailAddress, AddressId, LoginId) VALUES
-    ('Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1,1);
+    INSERT INTO db.PersonPhysic ( Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId) VALUES
+    ('Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1);
 
     INSERT INTO db.LicenceType ( Label, ClubId, Price) VALUES
     ('Licence Visiteur',1, null),

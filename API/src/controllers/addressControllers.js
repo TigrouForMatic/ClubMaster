@@ -27,6 +27,30 @@ const getAddresses = async (req, res) => {
     }
 };
 
+const getAddressByPerson = async (req, res) => {
+    
+    // Vérification de l'authentification
+    if (!req.user) return res.sendStatus(401);
+    
+    const { idPersonnel } = req.params;
+
+    try {
+
+        let queryString = `SELECT * FROM ${TABLE_NAME} WHERE private = true AND validate = true AND referenceid = $1`;
+
+        const client = await pool.connect();
+        try {
+            const result = await client.query(queryString, [idPersonnel]);
+            res.json(result.rows);
+        } finally {
+            client.release();
+        }
+    } catch (err) {
+        console.error('Erreur lors de la récupération des clubs', err);
+        res.status(500).send('Erreur lors de la récupération des clubs');
+    }
+};
+
 const getAddressById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -119,6 +143,7 @@ const prepareUpdateData = (body) => {
 
 module.exports = {
     getAddresses,
+    getAddressByPerson,
     getAddressById,
     addAddress,
     updateAddress,

@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { createAccount, testLogin } = require('../controllers/authControllers');
 const { authenticateToken } = require('../middleware/auth');
-const { getAddresses, getAddressById, addAddress, updateAddress, deleteAddress } = require('../controllers/addressControllers');
+const { getAddresses, getAddressById, getAddressByPerson, addAddress, updateAddress, deleteAddress } = require('../controllers/addressControllers');
 const { getPersonPhysic, getPersonPhysicById, addPersonPhysic, updatePersonPhysic, deletePersonPhysic } = require('../controllers/personPhysicControllers');
 const { getClub, getClubByPerson, getClubById, addClub, updateClub, deleteClub } = require('../controllers/clubControllers');
 const { getLicenceType, getLicenceTypeById, addLicenceType, addLicenceTypeFromNewClub, updateLicenceType, deleteLicenceType } = require('../controllers/licenceTypeControllers');
@@ -25,6 +25,7 @@ router.post('/auth/login', testLogin);
 // Routes pour le CRUD des addresses
 router.get('/address', getAddresses);
 router.get('/address/:id', getAddressById);
+router.get('/address/personnel/:idPersonnel',authenticateToken, getAddressByPerson);
 router.post('/address', authenticateToken, addAddress);
 router.put('/address/:id', authenticateToken, updateAddress);
 router.delete('/address/:id', authenticateToken, deleteAddress);

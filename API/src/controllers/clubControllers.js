@@ -30,8 +30,6 @@ const getClub = async (req, res) => {
 const getClubByPerson = async (req, res) => {
     const { idPersonnel } = req.params;
 
-    console.log(idPersonnel)
-
     try {
         const queryString = `
             SELECT DISTINCT c.*, l.Dd AS DateDebut, l.Df AS DateFin, r.Label AS RoleLabel

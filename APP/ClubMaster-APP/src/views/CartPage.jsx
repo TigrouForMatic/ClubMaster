@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom"; 
 import useStore from '../store/store';
+import api from '../../js/App/Api';
 import styles from "../styles/CartPage.module.css";
 import { Bin, Cart } from 'iconoir-react';
 import CustomConfirm from '../components/CustomConfirm';
@@ -8,15 +9,32 @@ import ComingSoonImage from "../assets/photos/comming_soon.jpg";
 
 function CartPage() {
   const navigate = useNavigate();
+
   const panier = useStore((state) => state.panier);
+  const currentAddressesPerson = useStore((state) => state.currentAddressesPerson);
+  const currentUser = useStore((state) => state.currentUser);
   const deleteItem = useStore((state) => state.deleteItem);
-  const updateItemQuantity = useStore((state) => state.updateItemQuantity);
+  const updateItem = useStore((state) => state.updateItem);
+  const addItem = useStore((state) => state.addItem);
+  const setItem = useStore((state) => state.setItem);
+
   const [promoCode, setPromoCode] = useState('');
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState('');
   const [itemToDelete, setItemToDelete] = useState(null);
 
   const total = panier.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  const fetchAdressePersonnelle = useCallback(async () => {
+    console.log(currentUser)
+    try {
+      const dataCurrentAddressesPerson = await api.get(`/address/personnel/${currentUser.id}`);
+      setItem('currentAddressesPerson', dataCurrentAddressesPerson)
+    } catch (error) {
+      console.error('Erreur:', error);
+      setError(error.message);
+    }
+  }, [addItem, currentAddressesPerson, currentUser]);
 
   useEffect(() => {
     if(panier.length === 0) {
@@ -64,7 +82,7 @@ function CartPage() {
   return (
     <div className={styles.cartPageContainer}>
       <div className={styles.productList}>
-      <h2 className={styles.cartTitle}>
+        <h2 className={styles.cartTitle}>
           Votre panier <Cart className={styles.cartIcon} />
         </h2>
         {panier.map((item) => (
@@ -97,37 +115,69 @@ function CartPage() {
             </div>
           </div>
         ))}
-      <div className={styles.paymentSection}>
-        <h3>Ajouter un mode de paiement</h3>
-        <div className={styles.paymentOption}>
-          <img src="/path-to-credit-card-icon.png" alt="Credit Card" />
-          <span>Ajouter une carte de crédit ou de débit</span>
+        <hr className={styles.separator} />
+        <div className={styles.paymentSection}>
+          <h3>Ajouter un mode de paiement</h3>
+          <div className={styles.paymentOption}>
+            <img src="/path-to-credit-card-icon.png" alt="Credit Card" />
+            <span>Ajouter une carte de crédit ou de débit</span>
+          </div>
+          <h4>Autres modes de paiement</h4>
+          <div className={styles.paymentOption}>
+            <img src="/path-to-sepa-icon.png" alt="SEPA" />
+            <span>Ajouter un compte courant</span>
+          </div>
+          <div className={styles.paymentOption}>
+            <img src="/path-to-bancontact-icon.png" alt="Bancontact" />
+            <span>Payer avec Bancontact</span>
+          </div>
+          <div className={styles.promoCodeSection}>
+            <h4>Codes cartes cadeaux et bons de réduction disponibles</h4>
+            <input 
+              type="text" 
+              placeholder="Saisissez le code"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+            />
+            <button onClick={handleApplyPromo}>Appliquer</button>
+          </div>
         </div>
-        <h4>Autres modes de paiement</h4>
-        <div className={styles.paymentOption}>
-          <img src="/path-to-sepa-icon.png" alt="SEPA" />
-          <span>Ajouter un compte courant</span>
-        </div>
-        <div className={styles.paymentOption}>
-          <img src="/path-to-bancontact-icon.png" alt="Bancontact" />
-          <span>Payer avec Bancontact</span>
-        </div>
-        <div className={styles.promoCodeSection}>
-          <h4>Codes cartes cadeaux et bons de réduction disponibles</h4>
-          <input 
-            type="text" 
-            placeholder="Saisissez le code"
-            value={promoCode}
-            onChange={(e) => setPromoCode(e.target.value)}
-          />
-          <button onClick={handleApplyPromo}>Appliquer</button>
-        </div>
+        <hr className={styles.separator} />
       </div>
-      </div>
-      <div className={styles.orderSummary}>
-        <h2>Résumé de la commande</h2>
-        <p>Total: {total.toFixed(2)}€</p>
-        <button className={styles.checkoutButton}>Passer la commande</button>
+      <div className={styles.stickyOrderSummary}>
+        <div className={styles.orderSummary}>
+          <h2>Résumé de la commande</h2>
+          <table className={styles.orderTable}>
+            <thead>
+              <tr>
+                <th>Prix unitaire</th>
+                <th>Article</th>
+                <th>Quantité</th>
+                <th>Sous-total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {panier.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.price.toFixed(2)}€</td>
+                  <td>{item.label}</td>
+                  <td>{item.quantity}</td>
+                  <td>{(item.price * item.quantity).toFixed(2)}€</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colSpan="4" className={styles.totalSeparator}></td>
+              </tr>
+              <tr>
+                <td colSpan="3" className={styles.totalLabel}>Total :</td>
+                <td className={styles.totalAmount}>{total.toFixed(2)}€</td>
+              </tr>
+            </tfoot>
+          </table>
+          <button className={styles.checkoutButton}>Passer la commande</button>
+        </div>
       </div>
       <CustomConfirm
         isOpen={isConfirmOpen}
