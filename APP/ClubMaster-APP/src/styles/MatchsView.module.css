@@ -1,121 +1,126 @@
 .matchsContainer {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-bottom: 100px;
+}
+
+.matchsTitle {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.5em;
+  color: #333;
+}
+
+.matchsList {
+  display: grid;
+  gap: 20px;
+}
+
+.matchCard {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s ease;
+}
+
+.matchCard:hover {
+  transform: translateY(-5px);
+}
+
+.matchHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.matchType {
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8em;
+}
+
+.matchDate {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.matchTitle {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.matchDescription {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.matchTeams {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.homeTeam, .awayTeam {
+  font-weight: bold;
+  color: #333;
+}
+
+.vs {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.detailsButton {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+
+.detailsButton:hover {
+  background-color: #218838;
+}
+
+.loading, .error, .noMatches {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+}
+
+.error {
+  color: #dc3545;
+}
+
+@media (max-width: 600px) {
+  .matchsContainer {
+    padding-bottom: 100px;
   }
-  
-  .matchsTitle {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 2.5em;
-    color: #333;
-  }
-  
-  .matchsList {
-    display: grid;
-    gap: 20px;
-  }
-  
+
   .matchCard {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    transition: transform 0.3s ease;
+    padding: 15px;
   }
-  
-  .matchCard:hover {
-    transform: translateY(-5px);
-  }
-  
-  .matchHeader {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  
-  .matchType {
-    background-color: #007bff;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.8em;
-  }
-  
-  .matchDate {
-    color: #666;
-    font-size: 0.9em;
-  }
-  
+
   .matchTitle {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-    color: #333;
+    font-size: 1em;
   }
-  
-  .matchDescription {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 15px;
-  }
-  
+
   .matchTeams {
-    display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 15px;
   }
-  
-  .homeTeam, .awayTeam {
-    font-weight: bold;
-    color: #333;
-  }
-  
+
   .vs {
-    font-size: 0.8em;
-    color: #666;
+    margin: 5px 0;
   }
-  
-  .detailsButton {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width: 100%;
-  }
-  
-  .detailsButton:hover {
-    background-color: #218838;
-  }
-  
-  .loading, .error, .noMatches {
-    text-align: center;
-    padding: 20px;
-    font-size: 18px;
-  }
-  
-  .error {
-    color: #dc3545;
-  }
-  
-  @media (max-width: 600px) {
-    .matchCard {
-      padding: 15px;
-    }
-  
-    .matchTitle {
-      font-size: 1em;
-    }
-  
-    .matchTeams {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .vs {
-      margin: 5px 0;
-    }
-  }
+}

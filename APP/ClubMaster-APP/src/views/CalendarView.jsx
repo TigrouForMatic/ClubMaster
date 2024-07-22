@@ -123,7 +123,7 @@ const CalendarView = () => {
 
   return (
     <div className={styles.calendarContainer}>
-      <h1 className={styles.title}>Calendrier du Club</h1>
+      <h1 className={styles.title}>Le Calendrier</h1>
 
       <div className={styles.filters}>
         <div className={styles.filterSection}>
