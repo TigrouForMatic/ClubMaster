@@ -4,6 +4,7 @@ import useStore from '../store/store';
 import styles from "../styles/CartPage.module.css";
 import { Bin, Cart } from 'iconoir-react';
 import CustomConfirm from '../components/CustomConfirm';
+import ComingSoonImage from "../assets/photos/comming_soon.jpg";
 
 function CartPage() {
   const navigate = useNavigate();
@@ -63,17 +64,24 @@ function CartPage() {
   return (
     <div className={styles.cartPageContainer}>
       <div className={styles.productList}>
-        <h2>Votre panier <Cart /></h2>
+      <h2 className={styles.cartTitle}>
+          Votre panier <Cart className={styles.cartIcon} />
+        </h2>
         {panier.map((item) => (
           <div key={item.id} className={styles.cartItem}>
-            <img src={item.imageurl} alt={item.label} className={styles.itemImage} />
+            <img 
+              src={item.imageurl || ComingSoonImage}  
+              alt={item.imageurl ? item.label : "Image à venir"} 
+              className={styles.itemImage} />
             <div className={styles.itemInfo}>
               <h3>{item.label}</h3>
               <p>Prix: {item.price.toFixed(2)}€</p>
               {item.stock > 0 && 
                 <p className={styles.inStock}>En stock</p>
               }
-              <select 
+            </div>
+            <div className={styles.editItem}>
+            <select 
                 value={item.quantity}
                 onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
                 className={styles.quantitySelect}
@@ -83,10 +91,10 @@ function CartPage() {
                 ))}
                 {item.stock > 10 && <option value={10}>10+</option>}
               </select>
+              <button onClick={() => handleRemoveItem(item.id)} className={styles.removeButton}>
+                <Bin />
+              </button>
             </div>
-            <button onClick={() => handleRemoveItem(item.id)} className={styles.removeButton}>
-              <Bin />
-            </button>
           </div>
         ))}
       <div className={styles.paymentSection}>

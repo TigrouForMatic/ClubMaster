@@ -1,51 +1,102 @@
 .cartPageContainer {
-    display: flex;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .productList {
-    width: 60%;
-    padding-right: 20px;
-  }
-  
-  .orderSummary {
-    width: 40%;
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .cartItem {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-  }
-  
-  .itemImage {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    margin-right: 20px;
-  }
-  
-  .itemInfo {
-    flex-grow: 1;
-  }
-  
-  .removeButton {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.cartTitle {
+  display: flex;
+  align-items: center;
+}
+
+.cartIcon {
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+}
+
+.productList {
+  width: 60%;
+  padding-right: 20px;
+}
+
+.orderSummary {
+  width: 40%;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.cartItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+}
+
+.itemImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.itemInfo {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.itemInfo h3 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.itemInfo p {
+  margin: 5px 0;
+}
+
+.inStock {
+  color: green;
+}
+
+.editItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.quantitySelect {
+  width: 60px;
+  height: 35px;
+  border-radius: 5px;
+  margin-right: 10px; /* Ajoute un espace entre le select et le bouton */
+}
+
+.removeButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 35px; /* Ajusté pour correspondre à la hauteur du select */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ajustement de l'icône dans le bouton */
+.removeButton svg {
+  width: 20px;
+  height: 20px;
+}
+
   .checkoutButton {
     background-color: #28a745;
     color: white;

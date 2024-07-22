@@ -60,7 +60,7 @@ function ShopView() {
     let productWithQuantity = product;
     let labelNotif;
 
-    const prodInCart = panier.find(prod => prod.id = product.id);
+    const prodInCart = panier.find(prod => prod.id === product.id);
     if (prodInCart) {
       labelNotif = "Ajout d'un produit dans le panier : " + product.label
       productWithQuantity.quantity = prodInCart.quantity + 1;
