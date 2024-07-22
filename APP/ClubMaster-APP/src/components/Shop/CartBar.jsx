@@ -1,10 +1,11 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useStore from '../../store/store';
 import styles from '../../styles/ShopView.module.css';
 import { Cart } from 'iconoir-react';
 
 const CartBar = () => {
+  const navigate = useNavigate();
   const { panier } = useStore();
   const lastAddedProduct = panier[0];
 
@@ -14,21 +15,23 @@ const CartBar = () => {
   const totalCost = calculateTotalCost();
   const itemCount = calculateItemCount();
 
+  const handleClick = () => {
+    navigate('/cart');
+  }
+
   return (
-    <NavLink to="/cart" exact activeClassName="active-link">
-      <div className={styles.cartBar}>
-        <div className={styles.lastAdded}>
-          Dernier ajout : {lastAddedProduct?.label || 'Aucun'}
-        </div>
-        <div className={styles.totalCost}>
-          <div className={styles.cartIconWrapper}>
-            <Cart />
-            <span className={styles.itemCountBubble}>{itemCount}</span>
-          </div>
-          {totalCost.toFixed(2)} €
-        </div>
+    <div className={styles.cartBar} onClick={handleClick}>
+      <div className={styles.lastAdded}>
+        Dernier ajout : {lastAddedProduct?.label || 'Aucun'}
       </div>
-    </NavLink>
+      <div className={styles.totalCost}>
+        <div className={styles.cartIconWrapper}>
+          <Cart />
+          <span className={styles.itemCountBubble}>{itemCount}</span>
+        </div>
+        {totalCost.toFixed(2)} €
+      </div>
+    </div>
   );
 };
 

@@ -56,6 +56,42 @@
     font-size: 1.1em;
     width: 100%;
   }
+
+  .paymentSection {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .paymentOption {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .paymentOption img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+  
+  .promoCodeSection {
+    margin-top: 20px;
+  }
+  
+  .promoCodeSection input {
+    padding: 8px;
+    margin-right: 10px;
+  }
+  
+  .promoCodeSection button {
+    padding: 8px 16px;
+    background-color: #f0c14b;
+    border: 1px solid #a88734;
+    border-radius: 3px;
+    cursor: pointer;
+  }
   
   @media (max-width: 768px) {
     .cartPageContainer {
