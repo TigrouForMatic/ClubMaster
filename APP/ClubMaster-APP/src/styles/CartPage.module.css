@@ -3,11 +3,40 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
+}
+
+.undoButton {
+  position: absolute;
+  left: -60px;
+  top: -10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #007bff;
+  transition: color 0.3s;
+  border-radius: 5px;
+}
+
+.undoButton:hover {
+  color: #0056b3;
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.undoButton svg {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
 }
 
 .cartTitle {
   display: flex;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 .cartIcon {
