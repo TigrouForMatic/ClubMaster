@@ -3,7 +3,7 @@ import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import styles from '../../styles/AuthForm.module.css';
 import { OpenInWindow } from 'iconoir-react';
-import PrivacyPolicyModal from './PrivacyPolicyModal';
+import PrivacyPolicyModal from '../Modale/PrivacyPolicyModal';
 
 function PersonalInfoForm({ handlePersonalInformationSet }) {
   const [personalInfo, setPersonalInfo] = useState({

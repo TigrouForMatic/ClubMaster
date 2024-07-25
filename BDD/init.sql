@@ -17,6 +17,8 @@ BEGIN
 
      CREATE TABLE db.Login (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Login VARCHAR(255) NOT NULL,
         Password VARCHAR(255) NOT NULL,
         Pseudo VARCHAR(255)
@@ -25,6 +27,8 @@ BEGIN
 
     CREATE TABLE db.PersonPhysic (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Name VARCHAR(255) NOT NULL,
         NaissanceDate DATE,
         PhoneNumber VARCHAR(20),
@@ -35,6 +39,8 @@ BEGIN
 
     CREATE TABLE db.Address (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Street VARCHAR(255),
         City VARCHAR(255),
         State VARCHAR(255),
@@ -47,6 +53,8 @@ BEGIN
 
     CREATE TABLE db.PersonMoral (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Name VARCHAR(255),
         Rib VARCHAR(255),
         RnaNumber VARCHAR(11),
@@ -56,6 +64,8 @@ BEGIN
 
     CREATE TABLE db.Club (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Label VARCHAR(255) NOT NULL,
         PersonMoralId INT,
         OldLabel VARCHAR(255),
@@ -64,6 +74,8 @@ BEGIN
 
     CREATE TABLE db.ProductType (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Label VARCHAR(255) NOT NULL,
         ClubId INT,
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
@@ -71,6 +83,8 @@ BEGIN
 
     CREATE TABLE db.Product (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Label VARCHAR(255) NOT NULL,
         Description TEXT,
         ProductTypeId INT,
@@ -84,6 +98,8 @@ BEGIN
 
     CREATE TABLE db.EventType (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Label VARCHAR(255) NOT NULL,
         ClubId INT,
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
@@ -91,19 +107,33 @@ BEGIN
 
     CREATE TABLE db.Event (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Label VARCHAR(255) NOT NULL,
         Description TEXT,
         EventTypeId INT,
         Dd TIMESTAMP,
         Df TIMESTAMP,
         AddressId INT,
-        InscritIds TEXT,
+        MaxPerson INT,
         FOREIGN KEY (AddressId) REFERENCES db.Address(Id),
         FOREIGN KEY (EventTypeId) REFERENCES db.EventType(Id)
     );
 
+    CREATE TABLE db.Insciption {
+        Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
+        EventId INT,
+        PersonPhysicId INT,
+        FOREIGN KEY (EventId) REFERENCES db.Event(Id),
+        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+    };
+
     CREATE TABLE db.LicenceType (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Label VARCHAR(255) NOT NULL,
         ClubId INT,
         Price FLOAT,
@@ -112,6 +142,8 @@ BEGIN
 
     CREATE TABLE db.Role (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Label VARCHAR(255) NOT NULL,
         Level INT,
         ClubId INT,
@@ -120,6 +152,8 @@ BEGIN
 
     CREATE TABLE db.Licence (
         Id SERIAL PRIMARY KEY,
+        Dc Date,
+        Dm Date,
         Label VARCHAR(255) NOT NULL,
         Dd TIMESTAMP,
         Df TIMESTAMP,
@@ -132,95 +166,100 @@ BEGIN
     );
 
     -- Insert test data
-    INSERT INTO db.Address (Street, City, State, PostalCode, Country, ReferenceId, Private, Validate) VALUES
-    ('4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', null, false, true),
-    ('Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', 2, false, true),
-    ('Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', 1, false, true),
-    ('29 rue saint roch','Ploermel','Bretagne','56800','France', 1, true, true),
-    ('Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
+    INSERT INTO db.Address (Dc, Dm, Street, City, State, PostalCode, Country, ReferenceId, Private, Validate) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', '4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', null, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', 2, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', 1, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', '29 rue saint roch','Ploermel','Bretagne','56800','France', 1, true, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
 
-    INSERT INTO db.PersonMoral (Name) VALUES
-    ('Vol en Oust');
+    INSERT INTO db.PersonMoral (Dc, Dm, Name, Rib, RnaNumber, Siren, Siret) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Vol en Oust', null, null, null, null);
 
-    INSERT INTO db.Club (Label, PersonMoralId, OldLabel, CreationDate) VALUES
-    ('La Claie', null, null, '2022-08-01T00:00:00.000Z'),
-    ('Vol en Pleuc', null, null, '2022-08-01T00:00:00.000Z');
+    INSERT INTO db.Club (Dc, Dm, Label, PersonMoralId, OldLabel, CreationDate) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'La Claie', null, null, '2022-08-01T00:00:00.000Z'),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Vol en Pleuc', null, null, '2022-08-01T00:00:00.000Z');
 
-    INSERT INTO db.ProductType (Label, ClubId) VALUES
-    ('Tee-Shirt', 1),
-    ('Mug', 1),
-    ('Tee-Shirt', 2),
-    ('Mug', 2),
-    ('SweatShirt', 1),
-    ('SweatShirt', 2);
+    INSERT INTO db.ProductType (Dc, Dm, Label, ClubId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt', 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Mug', 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt', 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Mug', 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'SweatShirt', 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'SweatShirt', 2);
 
-    INSERT INTO db.Product (Label, Description, ProductTypeId, Dd, Df, ImageUrl, Price, Stock) VALUES
-    ('Tee-Shirt La Claie', 'Taille L', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
-    ('Tee-Shirt La Claie', 'Taille M', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
-    ('Tee-Shirt La Claie', 'Taille S', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', null , 15, 20),
-    ('Mug La Claie', 'Mug avec une Capacité de 33cl', 2, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/5n-2nQZ6Rlu-IrlE1KQrsg.webp', 10, 5),
-    ('Tee-Shirt Vol en Pleuc', 'Taille L', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
-    ('Tee-Shirt Vol en Pleuc', 'Taille M', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
-    ('Tee-Shirt Vol en Pleuc', 'Taille S', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
-    ('Mug Vol en Pleuc', 'Mug avec une Capacité de 33cl', 4, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/5n-2nQZ6Rlu-IrlE1KQrsg.webp', 10, 5),
-    ('SweatShirt La Claie', 'Taille L', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
-    ('SweatShirt La Claie', 'Taille M', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
-    ('SweatShirt La Claie', 'Taille S', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
-    ('SweatShirt Vol en Pleuc', 'Taille L', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
-    ('SweatShirt Vol en Pleuc', 'Taille M', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
-    ('SweatShirt Vol en Pleuc', 'Taille S', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30);
+    INSERT INTO db.Product (Dc, Dm, Label, Description, ProductTypeId, Dd, Df, ImageUrl, Price, Stock) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt La Claie', 'Taille L', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt La Claie', 'Taille M', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt La Claie', 'Taille S', 1, '2023-09-01 08:00:00', '2024-08-31 00:00:00', null , 15, 20),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Mug La Claie', 'Mug avec une Capacité de 33cl', 2, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/5n-2nQZ6Rlu-IrlE1KQrsg.webp', 10, 5),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt Vol en Pleuc', 'Taille L', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt Vol en Pleuc', 'Taille M', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt Vol en Pleuc', 'Taille S', 3, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://pics.craiyon.com/2023-11-21/Zwc901p9SqqrxhW3TTrCBA.webp', 15, 20),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Mug Vol en Pleuc', 'Mug avec une Capacité de 33cl', 4, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/5n-2nQZ6Rlu-IrlE1KQrsg.webp', 10, 5),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'SweatShirt La Claie', 'Taille L', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'SweatShirt La Claie', 'Taille M', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'SweatShirt La Claie', 'Taille S', 5, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'SweatShirt Vol en Pleuc', 'Taille L', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'SweatShirt Vol en Pleuc', 'Taille M', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'SweatShirt Vol en Pleuc', 'Taille S', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30);
 
-    INSERT INTO db.EventType (Label, ClubId) VALUES
-    ('Entrainement', 1),
-    ('Cours', 1),
-    ('Tournoi', 1),
-    ('Rencontre', 1),
-    ('Repas', 1),
-    ('Entrainement', 2),
-    ('Cours', 2),
-    ('Tournoi', 2),
-    ('Rencontre', 2),
-    ('Repas', 2);
+    INSERT INTO db.EventType (Dc, Dm, Label, ClubId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Entrainement', 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tournoi', 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Entrainement', 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tournoi', 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', 2);
 
-    INSERT INTO db.Event (Label, Description, EventTypeId, Dd, Df, AddressId, InscritIds) VALUES
-    ('Cours', 'Cours le 10/01 à 19h', 2, '2024-01-10 19:00:00', '2024-01-10 21:00:00', 3 ,  ''),
-    ('Cours', 'Cours le 12/02 à 19h', 7, '2024-02-12 19:00:00', '2024-02-12 21:00:00', 2 , ''),
-    ('Cours', 'Cours le 13/03 à 19h', 2, '2024-03-13 19:00:00', '2024-03-13 21:00:00', 3 , ''),
-    ('Cours', 'Cours le 15/04 à 19h', 7, '2024-04-15 19:00:00', '2024-04-15 21:00:00', 2 , ''),
-    ('Cours', 'Cours le 15/05 à 19h', 2, '2024-05-15 19:00:00', '2024-05-15 21:00:00', 3 , ''),
-    ('Cours', 'Cours le 17/06 à 19h', 7, '2024-06-17 19:00:00', '2024-06-17 21:00:00', 1 , ''),
-    ('Repas', 'Repas de fin d année le 28/06 à 19h', 4, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , ''),
-    ('Repas', 'Repas de fin d année le 28/06 à 19h', 9, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , ''),
-    ('Rencontre', 'Rencontre avec Serent', 4, '2024-08-19 19:00:00', '2024-08-19 23:00:00', 1 , ''),
-    ('Tournois Amical', 'Tournois a Ploermel', 3, '2024-08-28 19:00:00', '2024-08-28 22:30:00', 5 , ''),
-    ('Cours', 'Cours de fin d année', 2, '2024-08-31 19:00:00', '2024-08-31 22:30:00', 3 , '');
+    INSERT INTO db.Event (Dc, Dm, Label, Description, EventTypeId, Dd, Df, AddressId, MaxPerson) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 10/01 à 19h', 2, '2024-01-10 19:00:00', '2024-01-10 21:00:00', 3 ,  null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 12/02 à 19h', 7, '2024-02-12 19:00:00', '2024-02-12 21:00:00', 2 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 13/03 à 19h', 2, '2024-03-13 19:00:00', '2024-03-13 21:00:00', 3 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 15/04 à 19h', 7, '2024-04-15 19:00:00', '2024-04-15 21:00:00', 2 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 15/05 à 19h', 2, '2024-05-15 19:00:00', '2024-05-15 21:00:00', 3 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 17/06 à 19h', 7, '2024-06-17 19:00:00', '2024-06-17 21:00:00', 1 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', 'Repas de fin d année le 28/06 à 19h', 4, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', 'Repas de fin d année le 28/06 à 19h', 9, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', 'Rencontre avec Serent', 4, '2024-08-19 19:00:00', '2024-08-19 23:00:00', 1 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tournois Amical', 'Tournois a Ploermel', 3, '2024-08-28 19:00:00', '2024-08-28 22:30:00', 5 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours de fin d année', 2, '2024-08-31 19:00:00', '2024-08-31 22:30:00', 3 , null);
 
-     INSERT INTO db.Login (Login, Password, Pseudo) VALUES
-    ('jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach');
+     INSERT INTO db.Login (Dc, Dm, Login, Password, Pseudo) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach');
 
-    INSERT INTO db.PersonPhysic ( Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId) VALUES
-    ('Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1);
+    INSERT INTO db.PersonPhysic (Dc, Dm, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1);
 
-    INSERT INTO db.LicenceType ( Label, ClubId, Price) VALUES
-    ('Licence Visiteur',1, null),
-    ('Licence Complete',1, 20),
-    ('Demi-Licence',1, 10),
-    ('Licence Spécifique',1,null),
-    ('Licence Visiteur',2, null),
-    ('Licence Complete',2, 20),
-    ('Demi-Licence',2, 10),
-    ('Licence Spécifique',2,null);
+    INSERT INTO db.Insciption (Dc, Dm, EventId, PersonPhysicId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 7, 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 9, 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, 1);
 
-    INSERT INTO db.Role ( Label, Level, ClubId) VALUES
-    ('Visiteur',0,1),
-    ('Président',4,1),
-    ('Secrétaire',3,1),
-    ('Trésorier',3,1),
-    ('Coach',2,1),
-    ('Adhérent',1,1);
+    INSERT INTO db.LicenceType (Dc, Dm, Label, ClubId, Price) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur',1, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Complete',1, 20),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Demi-Licence',1, 10),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Spécifique',1,null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur',2, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Complete',2, 20),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Demi-Licence',2, 10),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Spécifique',2,null);
 
-    INSERT INTO db.Licence (Label, Dd, Df, LicenceTypeId, PersonPhysicId, RoleId) VALUES
-    ('Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,1,1);
+    INSERT INTO db.Role (Dc, Dm, Label, Level, ClubId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Visiteur',0,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Président',4,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Secrétaire',3,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Trésorier',3,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Coach',2,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Adhérent',1,1);
+
+    INSERT INTO db.Licence (Dc, Dm, Label, Dd, Df, LicenceTypeId, PersonPhysicId, RoleId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,1,1);
 
 END
 $$;
