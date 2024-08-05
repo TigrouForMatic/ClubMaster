@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const createAccount = async (req, res) => {
     const { login, password } = req.body;
+    const currentDate = new Date();
 
     try {
         const client = await pool.connect();
@@ -20,9 +21,9 @@ const createAccount = async (req, res) => {
             // Hacher le mot de passe
             const hashedPassword = await bcrypt.hash(password, 10);
 
-            // Insérer le nouvel utilisateur
-            const insertUserQuery = 'INSERT INTO db.Login (Login, Password) VALUES ($1, $2) RETURNING Id, Login';
-            const insertUserResult = await client.query(insertUserQuery, [login, hashedPassword]);
+            // Insérer le nouvel utilisateur avec les dates de création et modification
+            const insertUserQuery = 'INSERT INTO db.Login (Dc, Dm, Login, Password) VALUES ($1, $2, $3, $4) RETURNING Id, Login';
+            const insertUserResult = await client.query(insertUserQuery, [currentDate, currentDate, login, hashedPassword]);
 
             const user = insertUserResult.rows[0];
 

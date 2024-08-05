@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import DatePicker from "react-datepicker";
 import Select from 'react-select';
 import "react-datepicker/dist/react-datepicker.css";
@@ -6,67 +6,71 @@ import styles from "../styles/CalendarView.module.css";
 import useStore from '../store/store';
 import { dateToTimeFormat } from "../js/date";
 import { Calendar } from 'iconoir-react';
+import ModalInfoEvent from '../components/Modale/ModalInfoEvent';
 
 const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTypes, setSelectedTypes] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState({ value: 0, label: "Tous les lieux" });
+  const [selectedClub, setSelectedClub] = useState({ value: 0, label: "Tous les clubs" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const userClubs = useStore((state) => state.userClubs);
-  const addresses = useStore((state) => state.addresses);
-  const events = useStore((state) => state.events);
-  const typeEvent = useStore((state) => state.typesEvent);
+  const { userClubs, addresses, events, typesEvent } = useStore();
 
-  const getDataForSelectFromTypeEvent = useMemo(() => {
-    return typeEvent.map(type => ({ value: type.id, label: type.label }));
-  }, [typeEvent]);
+  const getDataForSelectFromTypeEvent = useMemo(() => 
+    typesEvent.map(type => ({ value: type.id, label: type.label })),
+  [typesEvent]);
 
-  const handleTypeChange = (selectedOptions) => {
+  const locationOptions = useMemo(() => [
+    { value: 0, label: "Tous les lieux" },
+    ...addresses.map(location => ({
+      value: location.id,
+      label: `${location.street}, ${location.postalcode} ${location.city}`
+    }))
+  ], [addresses]);
+
+  const clubOptions = useMemo(() => 
+    userClubs.length === 1
+      ? [{ value: userClubs[0].id, label: userClubs[0].label }]
+      : [
+          { value: 0, label: "Tous les clubs" },
+          ...userClubs.map(club => ({
+            value: club.id,
+            label: club.label
+          }))
+        ],
+  [userClubs]);
+
+  const handleTypeChange = useCallback((selectedOptions) => {
     setSelectedTypes(selectedOptions.map(option => option.value));
-  };
+  }, []);
 
-  const locationOptions = useMemo(() => {
-    return [
-      { value: 0, label: "Tous les lieux" },
-      ...addresses.map(location => ({
-        value: location.id,
-        label: `${location.street}, ${location.postalcode} ${location.city}`
-      }))
-    ];
-  }, [addresses]);
-
-  const clubOptions = useMemo(() => {
-
-    if(userClubs.length === 1) return [ { value: userClubs[0].id, label: userClubs[0].label }];
-
-    return [
-      { value: 0, label: "Tous les clubs" },
-      ...userClubs.map(club => ({
-        value: club.id,
-        label: club.label
-      }))
-    ];
-  }, [userClubs]);
-
-  const [selectedLocation, setSelectedLocation] = useState(locationOptions[0]);
-  const [selectedClub, setSelectedClub] = useState(clubOptions[0]);
-
-  const handleClubChange = (selectedOption) => {
+  const handleClubChange = useCallback((selectedOption) => {
     setSelectedClub(selectedOption);
-  };
+  }, []);
 
-  const handleLocationChange = (selectedOption) => {
+  const handleLocationChange = useCallback((selectedOption) => {
     setSelectedLocation(selectedOption);
-  };
+  }, []);
 
-  const getDaysInMonth = (year, month) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
+  const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
+  const getFirstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
 
-  const getFirstDayOfMonth = (year, month) => {
-    return new Date(year, month, 1).getDay();
-  };
+  const filteredEvents = useMemo(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    return events.filter(e => {
+      const eventDate = new Date(e.dd);
+      return eventDate.getMonth() === month && 
+             eventDate.getFullYear() === year &&
+             (!selectedTypes.length || selectedTypes.includes(e.eventtypeid)) &&
+             (selectedLocation.value === 0 || e.id === addresses.find(add => add.id === selectedLocation.value)?.referenceid) &&
+             (selectedClub.value === 0 || e.clubid === selectedClub.value);
+    });
+  }, [events, currentDate, selectedTypes, selectedLocation, selectedClub, addresses]);
 
-  const renderCalendar = () => {
+  const renderCalendar = useCallback(() => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const daysInMonth = getDaysInMonth(year, month);
@@ -78,16 +82,7 @@ const CalendarView = () => {
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
-      const eventsForDay = events.filter(e => {
-        const eventDate = new Date(e.dd);
-        return eventDate.getDate() === day && 
-               eventDate.getMonth() === month && 
-               eventDate.getFullYear() === year &&
-               (!selectedTypes.length || selectedTypes.includes(e.eventtypeid)) &&
-               (!selectedClub || selectedClub.value === 0 || e.clubid === selectedClub.value) &&
-               (!selectedLocation || selectedLocation.value === 0 || e.id === addresses.find(add => add.id = selectedLocation.value).referenceid);
-      });
+      const eventsForDay = filteredEvents.filter(e => new Date(e.dd).getDate() === day);
 
       days.push(
         <div key={day} className={styles.day}>
@@ -100,7 +95,7 @@ const CalendarView = () => {
               onClick={() => handleEventClick(e)}
             >
               <div><strong>{e.label}</strong></div>
-              <div>{getTimeDisplay(e.dd)} à {getTimeDisplay(e.df)}</div>
+              <div>{dateToTimeFormat(e.dd)} à {dateToTimeFormat(e.df)}</div>
             </div>
           ))}
         </div>
@@ -108,18 +103,22 @@ const CalendarView = () => {
     }
 
     return days;
-  };
+  }, [currentDate, filteredEvents]);
 
   const getEventColor = (eventTypeId) => {
     const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33F1', '#33FFF1'];
     return colors[eventTypeId % colors.length];
   };
 
-  const handleEventClick = (event) => {
-    console.log('Informations de l\'événement :', event);
-  };
+  const handleEventClick = useCallback((event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  }, []);
 
-  const getTimeDisplay = (date) => dateToTimeFormat(date);
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedEvent(null);
+  }, []);
 
   return (
     <div className={styles.calendarContainer}>
@@ -144,7 +143,7 @@ const CalendarView = () => {
             <Calendar className={styles.iconDetail} />
             <DatePicker
               selected={currentDate}
-              onChange={date => setCurrentDate(date)}
+              onChange={setCurrentDate}
               dateFormat="MM/yyyy"
               showMonthYearPicker
               className={styles.datePicker}
@@ -177,18 +176,17 @@ const CalendarView = () => {
 
       <div className={styles.monthlyCalendar}>
         <div className={styles.weekdays}>
-          <div>Dim</div>
-          <div>Lun</div>
-          <div>Mar</div>
-          <div>Mer</div>
-          <div>Jeu</div>
-          <div>Ven</div>
-          <div>Sam</div>
+          {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => (
+            <div key={day}>{day}</div>
+          ))}
         </div>
         <div className={styles.days}>
           {renderCalendar()}
         </div>
       </div>
+      
+      <ModalInfoEvent isOpen={isModalOpen} onClose={closeModal} event={selectedEvent} />
+    
     </div>
   );
 };

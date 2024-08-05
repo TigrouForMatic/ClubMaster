@@ -17,8 +17,8 @@ BEGIN
 
      CREATE TABLE db.Login (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Login VARCHAR(255) NOT NULL,
         Password VARCHAR(255) NOT NULL,
         Pseudo VARCHAR(255)
@@ -27,8 +27,8 @@ BEGIN
 
     CREATE TABLE db.PersonPhysic (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Name VARCHAR(255) NOT NULL,
         NaissanceDate DATE,
         PhoneNumber VARCHAR(20),
@@ -39,8 +39,8 @@ BEGIN
 
     CREATE TABLE db.Address (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Street VARCHAR(255),
         City VARCHAR(255),
         State VARCHAR(255),
@@ -53,8 +53,8 @@ BEGIN
 
     CREATE TABLE db.PersonMoral (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Name VARCHAR(255),
         Rib VARCHAR(255),
         RnaNumber VARCHAR(11),
@@ -64,8 +64,8 @@ BEGIN
 
     CREATE TABLE db.Club (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Label VARCHAR(255) NOT NULL,
         PersonMoralId INT,
         OldLabel VARCHAR(255),
@@ -74,8 +74,8 @@ BEGIN
 
     CREATE TABLE db.ProductType (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Label VARCHAR(255) NOT NULL,
         ClubId INT,
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
@@ -83,8 +83,8 @@ BEGIN
 
     CREATE TABLE db.Product (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Label VARCHAR(255) NOT NULL,
         Description TEXT,
         ProductTypeId INT,
@@ -98,8 +98,8 @@ BEGIN
 
     CREATE TABLE db.EventType (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Label VARCHAR(255) NOT NULL,
         ClubId INT,
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
@@ -107,8 +107,8 @@ BEGIN
 
     CREATE TABLE db.Event (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Label VARCHAR(255) NOT NULL,
         Description TEXT,
         EventTypeId INT,
@@ -120,20 +120,20 @@ BEGIN
         FOREIGN KEY (EventTypeId) REFERENCES db.EventType(Id)
     );
 
-    CREATE TABLE db.Insciption {
+    CREATE TABLE db.Inscription (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         EventId INT,
         PersonPhysicId INT,
         FOREIGN KEY (EventId) REFERENCES db.Event(Id),
         FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
-    };
+    );
 
     CREATE TABLE db.LicenceType (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Label VARCHAR(255) NOT NULL,
         ClubId INT,
         Price FLOAT,
@@ -142,8 +142,8 @@ BEGIN
 
     CREATE TABLE db.Role (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Label VARCHAR(255) NOT NULL,
         Level INT,
         ClubId INT,
@@ -152,8 +152,8 @@ BEGIN
 
     CREATE TABLE db.Licence (
         Id SERIAL PRIMARY KEY,
-        Dc Date,
-        Dm Date,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
         Label VARCHAR(255) NOT NULL,
         Dd TIMESTAMP,
         Df TIMESTAMP,
@@ -235,10 +235,6 @@ BEGIN
     INSERT INTO db.PersonPhysic (Dc, Dm, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1);
 
-    INSERT INTO db.Insciption (Dc, Dm, EventId, PersonPhysicId) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 7, 1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 9, 1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, 1);
 
     INSERT INTO db.LicenceType (Dc, Dm, Label, ClubId, Price) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur',1, null),
@@ -261,5 +257,10 @@ BEGIN
     INSERT INTO db.Licence (Dc, Dm, Label, Dd, Df, LicenceTypeId, PersonPhysicId, RoleId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,1,1);
 
+    -- INSERT INTO db.Insciption (Dc, Dm, EventId, PersonPhysicId) VALUES
+    -- ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 7, 1),
+    -- ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 9, 1),
+    -- ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, 1);
+    
 END
 $$;

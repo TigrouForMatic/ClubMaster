@@ -6,7 +6,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import AuthForm from './components/Authentification/AuthForm';
 import NotificationContainer from './components/Notification/NotificationContainer';
-import './App.css'
+import './App.css';
 import './styles/navbarStyles.css';
 
 // Lazy loading des composants
