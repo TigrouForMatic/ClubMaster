@@ -16,7 +16,7 @@ const CalendarView = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const { userClubs, addresses, events, typesEvent } = useStore();
+  const { userClubs, addresses, events, typesEvent, inscriptions } = useStore();
 
   const getDataForSelectFromTypeEvent = useMemo(() => 
     typesEvent.map(type => ({ value: type.id, label: type.label })),

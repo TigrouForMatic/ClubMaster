@@ -3,15 +3,15 @@ const { pool } = require('../../database');
 const TABLE_NAME = 'db.Inscription';
 
 const getInscription = async (req, res) => {
-    const { arrayTypeProductId } = req.query;
+    const { arrayEventId } = req.query;
     try {
         let queryString = `SELECT * FROM ${TABLE_NAME}`;
         const values = [];
         
-        if (arrayTypeProductId && Array.isArray(JSON.parse(arrayTypeProductId))) {
-            const productTypeId = JSON.parse(arrayTypeProductId);
-            queryString += ` WHERE producttypeid = ANY($1)`;
-            values.push(productTypeId);
+        if (arrayEventId && Array.isArray(JSON.parse(arrayEventId))) {
+            const eventId = JSON.parse(arrayEventId);
+            queryString += ` WHERE EventId = ANY($1)`;
+            values.push(eventId);
         }
 
         const client = await pool.connect();

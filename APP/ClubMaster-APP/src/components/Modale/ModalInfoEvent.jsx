@@ -4,11 +4,13 @@ import api from '../../js/App/Api';
 import { dateToTimeFormat, dateFormat } from '../../js/date';
 import styles from "../../styles/Modale.module.css";
 import { Xmark } from 'iconoir-react';
+import CustomConfirm from '../CustomConfirm';
 
 const ModalInfoEvent = ({ isOpen, onClose, event }) => {
   if (!isOpen || !event) return null;
 
   const [inscription, setInscription] = useState(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser } = useStore();
 
   const type = useMemo(() => typesEvent.find(e => e.id === event.eventtypeid) || {}, [typesEvent, event.eventtypeid]);
@@ -40,19 +42,33 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
     }
   }, [event.id, currentUser.id, addItem]);
 
-  const handleUnregister = useCallback(async () => {
+  const handleUnregister = useCallback(() => {
+    setIsConfirmOpen(true);
+  }, []);
+
+  const confirmUnregister = useCallback(async () => {
     try {
       await api.delete(`/inscription/${inscription.id}`);
       deleteItem('inscriptions', inscription.id);
+      setIsConfirmOpen(false);
+      setInscription(null); // Mise à jour locale de l'état d'inscription
     } catch (err) {
       console.error('Erreur:', err);
     }
   }, [inscription, deleteItem]);
 
-  const handleModalClick = useCallback((e) => e.stopPropagation(), []);
+  const handleModalClick = useCallback((e) => {
+    e.stopPropagation();
+  }, []);
+
+  const handleOverlayClick = useCallback((e) => {
+    if (e.target === e.currentTarget && !isConfirmOpen) {
+      onClose();
+    }
+  }, [onClose, isConfirmOpen]);
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={handleOverlayClick}>
       <div className={styles.modal} onClick={handleModalClick}>
         <button onClick={onClose} className={styles.closeButton}>
           <Xmark />
@@ -72,6 +88,14 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
             <button className={styles.unregisterButton} onClick={handleUnregister}>Se désinscrire</button>
           )}
         </div>
+        {isConfirmOpen && (
+          <CustomConfirm 
+            isOpen={isConfirmOpen}
+            message={`Êtes-vous sûr de vouloir supprimer votre inscription à ${event.label} ?`}
+            onConfirm={confirmUnregister}
+            onCancel={() => setIsConfirmOpen(false)}
+          />
+        )}
       </div>
     </div>
   );
