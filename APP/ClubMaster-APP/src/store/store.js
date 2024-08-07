@@ -14,6 +14,7 @@ const useStore = create((set) => ({
   login: [],
   typesEvent: [],
   events: [],
+  inscriptions: [],
   productTypes: [],
   products: [],
   panier: [],

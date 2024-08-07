@@ -13,6 +13,7 @@ const { getEventType, getEventTypeById, addEventType, updateEventType, deleteEve
 const { getEvent, getEventById, addEvent, updateEvent, deleteEvent } = require('../controllers/eventControllers');
 const { getProductType, getProductTypeById, addProductType, updateProductType, deleteProductType } = require('../controllers/productTypeControllers');
 const { getProduct, getProductById, addProduct, updateProduct, deleteProduct } = require('../controllers/productControllers');
+const { getInscription, getInscriptionById, addInscription, updateInscription, deleteInscription } = require('../controllers/inscriptionControllers');
 
 const { getGenerateImage } = require('../controllers/generateImageControllers');
 
@@ -95,6 +96,13 @@ router.get('/product/:id', getProductById);
 router.post('/product', authenticateToken, addProduct);
 router.put('/product/:id', authenticateToken, updateProduct);
 router.delete('/product/:id', authenticateToken, deleteProduct);
+
+// Routes pour le CRUD des inscriptions
+router.get('/inscription', getInscription);
+router.get('/inscription/:id', getInscriptionById);
+router.post('/inscription', authenticateToken, addInscription);
+router.put('/inscription/:id', authenticateToken, updateInscription);
+router.delete('/inscription/:id', authenticateToken, deleteInscription);
 
 // Routes pour générer une image 
 router.get('/generateImage', getGenerateImage);
