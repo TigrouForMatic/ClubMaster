@@ -17,24 +17,77 @@
   padding: 20px;
   margin-bottom: 24px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.mainEventCard h2 {
-  font-size: 22px;
+.mainEventCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mainEventCard.inscrit {
+  border-left: 4px solid #4CAF50;
+  background-color: #f1f8e9;
+}
+
+.mainEventCard.pasInscrit {
+  border-left: 4px solid #9E9E9E;
+  background-color: #f5f5f5;
+}
+
+.mainEventCard.inscrit:hover {
+  background-color: #e8f5e9;
+}
+
+.mainEventCard.pasInscrit:hover {
+  background-color: #eeeeee;
+}
+
+.mainEventHeader {
+  display: flex;
+  justify-content: flex-end;
   margin-bottom: 12px;
+}
+
+.mainEventTitle {
+  font-size: 24px;
+  margin: 0 0 16px 0;
+  text-align: center;
 }
 
 .mainEventDate {
   font-weight: bold;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .mainEventDescription {
   margin-bottom: 12px;
+  text-align: center;
 }
 
 .mainEventAddress {
   font-style: italic;
+  text-align: center;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.inscritBadge {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.pasInscritBadge {
+  background-color: #9E9E9E;
+  color: white;
 }
 
 .eventList {

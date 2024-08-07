@@ -5,11 +5,30 @@
   margin-bottom: 16px;
   padding: 16px;
   transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .card.inscrit {
   border-left: 4px solid #4CAF50;
   background-color: #f1f8e9;
+}
+
+.card.pasInscrit {
+  border-left: 4px solid #9E9E9E;
+  background-color: #f5f5f5;
+}
+
+.card.inscrit:hover {
+  background-color: #e8f5e9;
+}
+
+.card.pasInscrit:hover {
+  background-color: #eeeeee;
 }
 
 .header {
@@ -25,13 +44,21 @@
   color: #333;
 }
 
-.inscritBadge {
-  background-color: #4CAF50;
-  color: white;
+.badge {
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
   font-weight: bold;
+}
+
+.inscritBadge {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.pasInscritBadge {
+  background-color: #9E9E9E;
+  color: white;
 }
 
 .date {
