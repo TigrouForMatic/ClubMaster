@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../styles/UserView.module.css';
 import useStore from '../store/store';
 import { SystemShut } from 'iconoir-react';
+import UserImage from '../components/UserImage';
 
 function UserView() {
 
@@ -35,9 +36,7 @@ function UserView() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <div className={styles.profilePic}>
-          <span>J</span>
-        </div>
+        <UserImage name={currentUser.name} />
         <div className={styles.userInfo}>
           <h1>{currentUser.name}</h1>
           <p>{currentUser.country}</p>
