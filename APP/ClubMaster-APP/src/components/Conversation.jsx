@@ -4,28 +4,36 @@ import api from '../js/App/Api';
 import { dateFormat, dateToTimeFormat } from '../js/date';
 import styles from "../styles/Conversation.module.css";
 
-const Conversation = ({ conversation }) => {
-  const { currentUser, addMesToConv } = useStore();
+const Conversation = React.memo(({ conversation }) => {
+  const { currentUser, addMessageToConversation } = useStore();
   const [newMessage, setNewMessage] = useState('');
   const messagesContainerRef = useRef(null);
 
-  const messages = conversation[0]?.messages || [];
+  const messages = conversation?.messages || [];
 
   const handleSendMessage = useCallback(async () => {
     try {
       const messageResponse = await api.post('/message', {
         content: newMessage,
-        conversationid: conversation[0].conversationid,
-        personPhysicId: currentUser.id
+        conversationid: conversation.conversationid,
+        personPhysicId: currentUser.id,
       });
 
-      addMesToConv(conversation[0].id, messageResponse);
+      const newMessageData = {
+        content: messageResponse.content,
+        messageid:messageResponse.id,
+        personname: currentUser.name,
+        personphysicid: messageResponse.personphysicid,
+        sentat: messageResponse.dc
+      }
+
+      addMessageToConversation(conversation.conversationid, newMessageData);
       setNewMessage('');
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     } catch (err) {
       console.error('Erreur:', err);
     }
-  }, [conversation[0].conversationid, newMessage, currentUser.id, addMesToConv]);
+  }, [conversation.conversationid, newMessage, currentUser, addMessageToConversation]);
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -85,6 +93,6 @@ const Conversation = ({ conversation }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Conversation;

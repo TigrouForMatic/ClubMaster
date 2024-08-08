@@ -95,8 +95,9 @@
 }
 
 .sendButton.sendButtonSmall {
-    height: 32px;
+    height: 45px;
     padding: 4px 8px;
+    margin-top: 2px;
 }
 
 .messageAuthor {

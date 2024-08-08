@@ -13,6 +13,7 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
   const [inscription, setInscription] = useState(null);
   const [conversation, setConversation] = useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  
   const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser, conversations } = useStore();
 
   const type = useMemo(() => typesEvent.find(e => e.id === event.eventtypeid) || {}, [typesEvent, event.eventtypeid]);
@@ -23,36 +24,31 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
     [event.dd, event.df]
   );
 
-  useEffect(() => {
-    const fetchConversation = async () => {
-      try {
-        const conversationResponse = await api.get(`/conversation/event/${event.id}`);
-        addItem('conversations', conversationResponse);
-        setConversation(conversationResponse);
-      } catch (err) {
-        console.error('Erreur:', err);
-      }
-    };
-
-    if (conversation) {
-      return 0
-    }else {
-      const existingConversation = conversations.find(conv => conv.eventid === event.id);
-      if (existingConversation) {
-        setConversation(existingConversation);
-      } else {
-        fetchConversation();
-      }
-    }
-  }, [conversations, event.id, addItem]);
+  const findExistingConversation = useCallback(() => {
+    return conversations.flat().find(conv => conv.eventid === event.id);
+  }, [conversations, event.id]);
 
   useEffect(() => {
-    const inscriptionTmp = inscriptions.find(e => e.eventid == event.id);
-    if (inscriptionTmp) {
-      setInscription(inscriptionTmp);
+    const existingConversation = findExistingConversation();
+    if (existingConversation) {
+      setConversation(existingConversation);
     } else {
-      setInscription(null);
+      const fetchConversation = async () => {
+        try {
+          const conversationResponse = await api.get(`/conversation/event/${event.id}`);
+          addItem('conversations', conversationResponse);
+          setConversation(conversationResponse);
+        } catch (err) {
+          console.error('Erreur:', err);
+        }
+      };
+      fetchConversation();
     }
+  }, [findExistingConversation, addItem, event.id]);
+
+  useEffect(() => {
+    const inscriptionTmp = inscriptions.find(e => e.eventid === event.id);
+    setInscription(inscriptionTmp || null);
   }, [inscriptions, event.id]);
 
   const handleRegister = useCallback(async () => {
@@ -82,10 +78,6 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
     }
   }, [inscription, deleteItem]);
 
-  const handleModalClick = useCallback((e) => {
-    e.stopPropagation();
-  }, []);
-
   const handleOverlayClick = useCallback((e) => {
     if (e.target === e.currentTarget && !isConfirmOpen) {
       onClose();
@@ -94,8 +86,8 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
 
   return (
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>
-      <div className={styles.modal} onClick={handleModalClick}>
-      <button onClick={onClose} className={styles.closeButton}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className={styles.closeButton}>
           <Xmark />
         </button>
         <h2 className={styles.title}>{event.label}</h2>
