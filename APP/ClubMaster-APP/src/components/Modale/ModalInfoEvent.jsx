@@ -5,13 +5,15 @@ import { dateToTimeFormat, dateFormat } from '../../js/date';
 import styles from "../../styles/Modale.module.css";
 import { Xmark } from 'iconoir-react';
 import CustomConfirm from '../CustomConfirm';
+import Conversation from '../Conversation';
 
 const ModalInfoEvent = ({ isOpen, onClose, event }) => {
   if (!isOpen || !event) return null;
 
   const [inscription, setInscription] = useState(null);
+  const [conversation, setConversation] = useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser } = useStore();
+  const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser, conversations } = useStore();
 
   const type = useMemo(() => typesEvent.find(e => e.id === event.eventtypeid) || {}, [typesEvent, event.eventtypeid]);
   const address = useMemo(() => addresses.find(e => e.id === event.addressid) || {}, [addresses, event.addressid]);
@@ -20,6 +22,29 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
     `Le ${dateFormat(event.dd)} de ${dateToTimeFormat(event.dd)} à ${dateToTimeFormat(event.df)}`,
     [event.dd, event.df]
   );
+
+  useEffect(() => {
+    const fetchConversation = async () => {
+      try {
+        const conversationResponse = await api.get(`/conversation/event/${event.id}`);
+        addItem('conversations', conversationResponse);
+        setConversation(conversationResponse);
+      } catch (err) {
+        console.error('Erreur:', err);
+      }
+    };
+
+    if (conversation) {
+      return 0
+    }else {
+      const existingConversation = conversations.find(conv => conv.eventid === event.id);
+      if (existingConversation) {
+        setConversation(existingConversation);
+      } else {
+        fetchConversation();
+      }
+    }
+  }, [conversations, event.id, addItem]);
 
   useEffect(() => {
     const inscriptionTmp = inscriptions.find(e => e.eventid == event.id);
@@ -51,7 +76,7 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
       await api.delete(`/inscription/${inscription.id}`);
       deleteItem('inscriptions', inscription.id);
       setIsConfirmOpen(false);
-      setInscription(null); // Mise à jour locale de l'état d'inscription
+      setInscription(null);
     } catch (err) {
       console.error('Erreur:', err);
     }
@@ -70,7 +95,7 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
   return (
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>
       <div className={styles.modal} onClick={handleModalClick}>
-        <button onClick={onClose} className={styles.closeButton}>
+      <button onClick={onClose} className={styles.closeButton}>
           <Xmark />
         </button>
         <h2 className={styles.title}>{event.label}</h2>
@@ -88,6 +113,14 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
             <button className={styles.unregisterButton} onClick={handleUnregister}>Se désinscrire</button>
           )}
         </div>
+        
+        {conversation && (
+          <div className={styles.conversation}>
+            <h3 className={styles.conversationTitle}>Discussion</h3>
+            <Conversation conversation={conversation} />
+          </div>
+        )}
+        
         {isConfirmOpen && (
           <CustomConfirm 
             isOpen={isConfirmOpen}

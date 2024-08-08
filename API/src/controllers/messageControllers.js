@@ -1,8 +1,8 @@
 const { pool } = require('../../database');
 
-const TABLE_NAME = 'db.Conversation';
+const TABLE_NAME = 'db.Message';
 
-const getConversation = async (req, res) => {
+const getMessage = async (req, res) => {
     const { arrayClubId } = req.query;
     try {
         let queryString = `SELECT * FROM ${TABLE_NAME}`;
@@ -24,72 +24,7 @@ const getConversation = async (req, res) => {
     }
 };
 
-const getConversationByEvent = async (req, res) => {
-    try {
-      const eventId = req.params.id;
-  
-      const client = await pool.connect();
-      const result = await client.query(`
-        SELECT
-          c.Id AS ConversationId,
-          c.EventId,
-          c.Dc AS CreatedAt,
-          m.Id AS MessageId,
-          pp.Name AS PersonName,
-          pp.Id AS PersonPhysicId,
-          m.Content,
-          m.Dm AS SentAt
-        FROM db.Conversation c
-        LEFT JOIN db.Message m ON c.Id = m.ConversationId
-        LEFT JOIN db.PersonPhysic pp ON m.PersonPhysicId = pp.Id
-        WHERE c.EventId = $1
-      `, [eventId]);
-  
-      client.release();
-  
-      const conversations = {};
-  
-      result.rows.forEach(row => {
-        const { conversationid, eventid, createdat, messageid, personname, personphysicid, content, sentat } = row;
-
-        console.log(row)
-  
-        if (!conversations[conversationid]) {
-          conversations[conversationid] = {
-            conversationid,
-            eventid,
-            createdat,
-            messages: []
-          };
-        }
-  
-        if (messageid) {
-          conversations[conversationid].messages.push({
-            messageid,
-            personname,
-            personphysicid,
-            content,
-            sentat
-          });
-        }
-      });
-  
-      res.json(Object.values(conversations));
-    } catch (error) {
-      console.error('Error in getConversationByEvent:', error);
-      if (error.code === '22P02') {
-        // Error code for invalid input parameter
-        return res.status(400).send('Invalid event ID provided');
-      } else if (error.code === '23503') {
-        // Error code for foreign key violation
-        return res.status(400).send('Event ID does not exist in the database');
-      } else {
-        return res.status(500).send('An unexpected error occurred while fetching conversations');
-      }
-    }
-  };
-
-const getConversationById = async (req, res) => {
+const getMessageById = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
@@ -105,7 +40,7 @@ const getConversationById = async (req, res) => {
     }
 };
 
-const addConversation = async (req, res) => {
+const addMessage = async (req, res) => {
     const currentDate = new Date();
 
     // Vérification de l'authentification
@@ -126,12 +61,12 @@ const addConversation = async (req, res) => {
         client.release();
         res.status(201).json(result.rows[0]);
     } catch (err) {
-        console.error('Erreur lors de l\'ajout d\'une nouvelle conversation', err);
-        res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle conversation');
+        console.error('Erreur lors de l\'ajout d\'un nouveau message', err);
+        res.status(500).send('Erreur lors de l\'ajout d\'un nouveau message');
     }
 };
 
-const updateConversation = async (req, res) => {
+const updateMessage = async (req, res) => {
 
     // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
@@ -154,7 +89,7 @@ const updateConversation = async (req, res) => {
     }
 };
 
-const deleteConversation = async (req, res) => {
+const deleteMessage = async (req, res) => {
 
     // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
@@ -187,10 +122,9 @@ const prepareUpdateData = (body) => {
 };
 
 module.exports = {
-    getConversation,
-    getConversationByEvent,
-    getConversationById,
-    addConversation,
-    updateConversation,
-    deleteConversation
+    getMessage,
+    getMessageById,
+    addMessage,
+    updateMessage,
+    deleteMessage
 };

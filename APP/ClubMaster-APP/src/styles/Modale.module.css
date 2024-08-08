@@ -19,7 +19,7 @@
   border-radius: 12px;
   max-width: 550px;
   width: 90%;
-  max-height: 85vh;
+  max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
@@ -104,6 +104,20 @@
   color: #f44336;
 }
 
+/* Styles pour la conversation */
+.conversation {
+  margin-top: 2rem;
+  border-top: 2px solid #4285F4;
+  padding-top: 1.5rem;
+}
+
+.conversationTitle {
+  margin: 0 0 1rem;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
 @media (max-width: 600px) {
   .modal {
     padding: 1.5rem;
@@ -111,5 +125,9 @@
 
   .title {
     font-size: 1.5rem;
+  }
+
+  .conversationTitle {
+    font-size: 1.3rem;
   }
 }
