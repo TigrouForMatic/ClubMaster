@@ -70,6 +70,7 @@ const getClubById = async (req, res) => {
 };
 
 const addClub = async (req, res) => {
+    const currentDate = new Date();
 
     // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
@@ -78,8 +79,13 @@ const addClub = async (req, res) => {
 
     try {
         const client = await pool.connect();
-        const insertQuery = `INSERT INTO ${TABLE_NAME} (${columns}) VALUES (${values.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
-        const result = await client.query(insertQuery, values);
+        
+        const columnsWithDates = `${columns}, Dc, Dm`;
+        const valuesWithDates = [...values, currentDate, currentDate];
+
+        const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
+
+        const result = await client.query(insertQuery, valuesWithDates);
         client.release();
         res.status(201).json(result.rows[0]);
     } catch (err) {

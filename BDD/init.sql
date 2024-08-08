@@ -165,6 +165,30 @@ BEGIN
         FOREIGN KEY (RoleId) REFERENCES db.Role(Id)
     );
 
+    CREATE TABLE db.Conversation (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        EventId INT,
+        Person1Id INT,
+        Person2Id INT,
+        Type VARCHAR(50),
+        FOREIGN KEY (EventId) REFERENCES db.Event(Id),
+        FOREIGN KEY (Person1Id) REFERENCES db.PersonPhysic(Id),
+        FOREIGN KEY (Person2Id) REFERENCES db.PersonPhysic(Id)
+    );
+
+    CREATE TABLE db.Message (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        Content TEXT NOT NULL,
+        ConversationId INT,
+        PersonPhysicId INT,
+        FOREIGN KEY (ConversationId) REFERENCES db.Conversation(Id),
+        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+    );
+
     -- Insert test data
     INSERT INTO db.Address (Dc, Dm, Street, City, State, PostalCode, Country, ReferenceId, Private, Validate) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', '4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', null, false, true),
@@ -262,6 +286,12 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 9, 1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, 1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 2, 1);
+
+    INSERT INTO Conversation (Dc, Dm, EventId, Person1Id, Person2Id, Type) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, null, null, 'Event');
+
+    INSERT INTO Message (Dc, Dm, Content, ConversationId, PersonPhysicId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Message contenu pour le premier message', 1,1), ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Message contenu pour le deuxième message', 1,1);
     
 END
 $$;

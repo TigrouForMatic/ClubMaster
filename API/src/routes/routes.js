@@ -14,6 +14,7 @@ const { getEvent, getEventById, addEvent, updateEvent, deleteEvent } = require('
 const { getProductType, getProductTypeById, addProductType, updateProductType, deleteProductType } = require('../controllers/productTypeControllers');
 const { getProduct, getProductById, addProduct, updateProduct, deleteProduct } = require('../controllers/productControllers');
 const { getInscription, getInscriptionById, addInscription, updateInscription, deleteInscription } = require('../controllers/inscriptionControllers');
+const { getConversation, getConversationByEvent, getConversationById, addConversation, updateConversation, deleteConversation } = require('../controllers/conversationControllers');
 
 const { getGenerateImage } = require('../controllers/generateImageControllers');
 
@@ -103,6 +104,14 @@ router.get('/inscription/:id', getInscriptionById);
 router.post('/inscription', authenticateToken, addInscription);
 router.put('/inscription/:id', authenticateToken, updateInscription);
 router.delete('/inscription/:id', authenticateToken, deleteInscription);
+
+// Routes pour le CRUD des conversations
+router.get('/conversation', getConversation);
+router.get('/conversation/event/:id', getConversationByEvent);
+router.get('/conversation/:id', getConversationById);
+router.post('/conversation', authenticateToken, addConversation);
+router.put('/conversation/:id', authenticateToken, updateConversation);
+router.delete('/conversation/:id', authenticateToken, deleteConversation);
 
 // Routes pour générer une image 
 router.get('/generateImage', getGenerateImage);

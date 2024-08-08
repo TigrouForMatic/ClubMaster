@@ -18,6 +18,7 @@ const useStore = create((set) => ({
   productTypes: [],
   products: [],
   panier: [],
+  conversations: [],
   showApp: false,
 
   // ShowApp
