@@ -22,9 +22,16 @@ const useStore = create((set) => ({
   showApp: false,
 
   // ShowApp
-  setShowApp: () => set((state) => ({
-    showApp: !state.showApp
-  })),
+  setShowApp: () => set((state) => {
+    const newShowAppState = !state.showApp;
+
+    if (!newShowAppState) {
+      state.initialize();
+    }
+
+    return { showApp: newShowAppState };
+  }),
+
 
 
   // Notifications
@@ -73,6 +80,16 @@ const useStore = create((set) => ({
   deleteItems: (category, ids) => set((state) => ({
     [category]: state[category].filter(item => !ids.includes(item.id))
   })),
-}))
 
-export default useStore
+  initialize: () => set((state) => {
+    const emptyState = Object.keys(state).reduce((acc, key) => {
+      if (Array.isArray(state[key])) {
+        acc[key] = [];
+      }
+      return acc;
+    }, {});
+    return emptyState;
+  }),
+}));
+
+export default useStore;
