@@ -1,76 +1,34 @@
-import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
-import { dateFormat } from "../js/date";
+import React, { useMemo, useEffect } from "react";
+import useStore from '../store/store';
 import styles from "../styles/MatchsView.module.css";
-
-const MatchCard = ({ match }) => (
-  <div className={styles.matchCard}>
-    <div className={styles.matchHeader}>
-      <span className={styles.matchType}>{match.eventType}</span>
-      <span className={styles.matchDate}>{dateFormat(match.dd)}</span>
-    </div>
-    <h3 className={styles.matchTitle}>{match.label}</h3>
-    <p className={styles.matchDescription}>{match.description}</p>
-    <div className={styles.matchTeams}>
-      <span className={styles.homeTeam}>Équipe locale</span>
-      <span className={styles.vs}>VS</span>
-      <span className={styles.awayTeam}>Équipe visiteur</span>
-    </div>
-    <button className={styles.detailsButton}>Voir les détails</button>
-  </div>
-);
-
-const useMatchData = (clubId) => {
-  const [typeEvent, setTypeEvent] = useState([]);
-  const [event, setEvent] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [{ data: typeEventData }, { data: eventData }] = await Promise.all([
-          axios.get(`http://localhost:3200/api/eventType?clubid=${clubId}`),
-          axios.get("http://localhost:3200/api/event"),
-        ]);
-
-        setTypeEvent(typeEventData);
-        setEvent(eventData);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des données :", error);
-        setError(error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [clubId]);
-
-  return { typeEvent, event, isLoading, error };
-};
+import MatchCard from "../components/Match/MatchCard";
 
 function MatchsView() {
-  const [clubId] = useState(1);
-  const { typeEvent, event, isLoading, error } = useMatchData(clubId);
+  const { events, typesEvent, userClubs } = useStore();
+
+  useEffect(() => {
+    console.log(userClubs)
+  }, [userClubs]);
 
   const filteredAndSortedMatches = useMemo(() => {
     const now = new Date();
-    return event
-      .filter(
-        (e) =>
-          (e.eventtypeid === (clubId - 1) * 5 + 3 || e.eventtypeid === (clubId - 1) * 5 + 4) &&
-          new Date(e.dd) >= now
+    const matchTypes = typesEvent.filter(t => t.ismatch);
+    
+    return events
+      .filter(e => 
+        matchTypes.some(t => t.id === e.eventtypeid) &&
+        new Date(e.dd) >= now
       )
       .sort((a, b) => new Date(a.dd) - new Date(b.dd))
-      .map(e => ({
-        ...e,
-        eventType: typeEvent.find(t => t.id === e.eventtypeid)?.label || 'Inconnu'
-      }));
-  }, [event, typeEvent, clubId]);
-
-  if (isLoading) return <div className={styles.loading}>Chargement...</div>;
-  if (error) return <div className={styles.error}>Une erreur est survenue : {error.message}</div>;
+      .map(e => {
+        const eventType = typesEvent.find(t => t.id === e.eventtypeid);
+        return {
+          ...e,
+          eventType: eventType?.label || 'Inconnu',
+          clubLabel: userClubs.find(c => c.id === e.clubid)?.label || 'Inconnu'
+        };
+      });
+  }, [events, typesEvent, userClubs]);
 
   return (
     <div className={styles.matchsContainer}>

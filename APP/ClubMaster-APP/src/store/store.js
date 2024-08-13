@@ -32,8 +32,6 @@ const useStore = create((set) => ({
     return { showApp: newShowAppState };
   }),
 
-
-
   // Notifications
   deleteNotif: (index) => set((state) => ({
     notifications: state.notifications.filter((_, i) => i !== index)

@@ -101,6 +101,7 @@ BEGIN
         Dc TIMESTAMP,
         Dm TIMESTAMP,
         Label VARCHAR(255) NOT NULL,
+        IsMatch BOOLEAN,
         ClubId INT,
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
     );
@@ -228,17 +229,17 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'SweatShirt Vol en Pleuc', 'Taille M', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'SweatShirt Vol en Pleuc', 'Taille S', 6, '2023-09-01 08:00:00', '2024-08-31 00:00:00', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 20, 30);
 
-    INSERT INTO db.EventType (Dc, Dm, Label, ClubId) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Entrainement', 1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tournoi', 1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', 1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', 1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Entrainement', 2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tournoi', 2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', 2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', 2);
+    INSERT INTO db.EventType (Dc, Dm, Label, IsMatch, ClubId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Entrainement', false, 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', false, 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tournoi', true, 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', true, 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', false, 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Entrainement', false, 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', false, 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tournoi', true, 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', true, 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', false, 2);
 
     INSERT INTO db.Event (Dc, Dm, Label, Description, EventTypeId, Dd, Df, AddressId, MaxPerson) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 10/01 à 19h', 2, '2024-01-10 19:00:00', '2024-01-10 21:00:00', 3 ,  null),
