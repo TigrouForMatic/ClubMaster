@@ -1,15 +1,15 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import useStore from '../store/store';
 import styles from "../styles/MatchsView.module.css";
 import MatchCard from "../components/Match/MatchCard";
+import ModalInfoEvent from '../components/Modale/ModalInfoEvent';
 
 function MatchsView() {
-  const { events, typesEvent, userClubs } = useStore();
-
-  useEffect(() => {
-    console.log(userClubs)
-  }, [userClubs]);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  
+  const { events, typesEvent, userClubs, inscriptions } = useStore();
+  
   const filteredAndSortedMatches = useMemo(() => {
     const now = new Date();
     const matchTypes = typesEvent.filter(t => t.ismatch);
@@ -25,24 +25,37 @@ function MatchsView() {
         return {
           ...e,
           eventType: eventType?.label || 'Inconnu',
-          clubLabel: userClubs.find(c => c.id === e.clubid)?.label || 'Inconnu'
+          clubLabel: userClubs.find(c => c.id === eventType.clubid)?.label || 'Inconnu',
+          isInscrit: inscriptions.some(ins => ins.eventid === e.id)
         };
       });
-  }, [events, typesEvent, userClubs]);
+  }, [events, typesEvent, userClubs, inscriptions]);
+
+  const handleEventClick = useCallback((event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedEvent(null);
+  }, []);
 
   return (
     <div className={styles.matchsContainer}>
       <h1 className={styles.matchsTitle}>Matchs à venir</h1>
-
+      
       <div className={styles.matchsList}>
         {filteredAndSortedMatches.length > 0 ? (
           filteredAndSortedMatches.map((match) => (
-            <MatchCard key={match.id} match={match} />
+            <MatchCard key={match.id} match={match} onDetailClick={() => handleEventClick(match)} />
           ))
         ) : (
           <p className={styles.noMatches}>Aucun match prévu pour le moment.</p>
         )}
       </div>
+      
+      <ModalInfoEvent isOpen={isModalOpen} onClose={closeModal} event={selectedEvent} />
     </div>
   );
 }
