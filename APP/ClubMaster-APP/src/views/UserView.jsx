@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../js/App/Api';
 import useStore from '../store/store';
@@ -12,21 +12,7 @@ import ProgressBar from '../components/ProgressBar';
 
 function UserView() {
   const navigate = useNavigate();
-  const { currentUser, setItems, setShowApp } = useStore();
-  const [licences, setLicences] = useState([]);
-
-  useEffect(() => {
-    const fetchLicences = async () => {
-      try {
-        const licenceData = await api.get("/licence", { params: { personphysicid: currentUser.id } });
-        setLicences(licenceData);
-        setItems('licences', licenceData);
-      } catch (error) {
-        console.error("Error fetching licences:", error);
-      }
-    };
-    fetchLicences();
-  }, [currentUser, setItems]);
+  const { currentUser, userClubs, licences, licenceTypes, roles, setItems, setShowApp } = useStore();
 
   const handleEditProfile = () => {
     console.log("Edit profile");
@@ -51,7 +37,7 @@ function UserView() {
         <button className={styles.editButton} onClick={handleEditProfile}>Edit</button>
       </header>
 
-      <LicenceList licences={licences} />
+      <LicenceList />
 
       <section className={styles.levelSection}>
         <h2>My Level</h2>

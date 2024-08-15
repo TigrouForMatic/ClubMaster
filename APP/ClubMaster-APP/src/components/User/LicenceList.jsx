@@ -1,9 +1,24 @@
 import React from 'react';
-import styles from '../../styles/LicenceList.module.css';
+import useStore from '../../store/store';
 import ProgressBar from '../ProgressBar';
+import styles from '../../styles/LicenceList.module.css';
 
-const LicenceList = ({ licences }) => {
-    
+const LicenceList = () => {
+
+    const { currentUser, userClubs, licences, licenceTypes, roles } = useStore();
+
+    // Licence : {
+    //     dc: "2024-06-30T00:00:00.000Z"
+    //     dd: "2024-07-15T00:00:00.000Z"
+    //     df: "2024-08-31T00:00:00.000Z"
+    //     dm: "2024-06-30T00:00:00.000Z"
+    //     id: 1
+    //     label: "Licence Visiteur"
+    //     licencetypeid: 1
+    //     personphysicid: 1
+    //     roleid: 1
+    // }  
+
   return (
     <section className={styles.licenceSection}>
       <h2>My Licence(s)</h2>

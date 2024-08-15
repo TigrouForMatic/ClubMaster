@@ -3,18 +3,15 @@ const { pool } = require('../../database');
 const TABLE_NAME = 'db.LicenceType';
 
 const getLicenceType = async (req, res) => {
-    const filters = req.query;
-
+    const { arrayClubId } = req.query;
     try {
         let queryString = `SELECT * FROM ${TABLE_NAME}`;
         const values = [];
         
-        if (Object.keys(filters).length > 0) {
-            const filterConditions = Object.entries(filters).map(([key, value], index) => {
-                values.push(value);
-                return `${key} = $${index + 1}`;
-            });
-            queryString += ' AND ' + filterConditions.join(' AND ');
+        if (arrayClubId && Array.isArray(JSON.parse(arrayClubId))) {
+            const clubIds = JSON.parse(arrayClubId);
+            queryString += ` WHERE clubid = ANY($1)`;
+            values.push(clubIds);
         }
 
         const client = await pool.connect();
@@ -22,8 +19,8 @@ const getLicenceType = async (req, res) => {
         client.release();
         res.json(result.rows);
     } catch (err) {
-        console.error('Erreur lors de la récupération des types de licence', err);
-        res.status(500).send('Erreur lors de la récupération des types de licence');
+        console.error('Erreur lors de la récupération des types d\'événements', err);
+        res.status(500).send('Erreur lors de la récupération des types d\'événements');
     }
 };
 

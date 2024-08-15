@@ -32,6 +32,15 @@ const useEventData = () => {
         const addressData = await api.get("/address");
         setItems('addresses', addressData);
 
+        const licenceData = await api.get("/licence", { params: { personphysicid: currentUser.id } });
+        setItems('licences', licenceData);
+
+        const typeLicencesData = await api.get("/licenceType", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
+        setItems('licenceTypes', typeLicencesData);
+
+        const roleData = await api.get("/role", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
+        setItems('roles', roleData);
+
         setIsLoading(false);
       } catch (error) {
         console.error("Erreur lors de la récupération des données :", error);
