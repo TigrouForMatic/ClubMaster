@@ -1,42 +1,51 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import useStore from '../../store/store';
-import ProgressBar from '../ProgressBar';
 import styles from '../../styles/LicenceList.module.css';
+import LicenceItem from './LicenceItem';
 
 const LicenceList = () => {
+  const { licences, licenceTypes, userClubs, roles } = useStore();
 
-    const { currentUser, userClubs, licences, licenceTypes, roles } = useStore();
+  const filteredAndSortedLicences = useMemo(() => {
+    const now = new Date();
+    return licences
+      .sort((a, b) => new Date(a.dd) - new Date(b.dd))
+      .map(e => {
+        const licenceType = licenceTypes.find(t => t.id === e.licencetypeid);
+        const club = userClubs.find(c => c.id === licenceType.clubid);
+        const role = roles.find(r => r.id === e.roleid);
+        const startDate = new Date(e.dd);
+        const endDate = new Date(e.df);
+        const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
 
-    // Licence : {
-    //     dc: "2024-06-30T00:00:00.000Z"
-    //     dd: "2024-07-15T00:00:00.000Z"
-    //     df: "2024-08-31T00:00:00.000Z"
-    //     dm: "2024-06-30T00:00:00.000Z"
-    //     id: 1
-    //     label: "Licence Visiteur"
-    //     licencetypeid: 1
-    //     personphysicid: 1
-    //     roleid: 1
-    // }  
+        return {
+          ...e,
+          eventType: licenceType?.label || 'Unknown',
+          clubLabel: club?.label || 'Unknown',
+          role: role?.label || 'Aucun role',
+          startDate,
+          endDate,
+          daysLeft,
+        };
+      });
+  }, [licences, licenceTypes, userClubs, roles]);
+
+  if (filteredAndSortedLicences.length === 0) {
+    return (
+      <section className={styles.licenceSection}>
+        <h2>Mes Licence(s)</h2>
+        <p className={styles.noLicences}>Aucunes licences actives.</p>
+      </section>
+    );
+  }
 
   return (
     <section className={styles.licenceSection}>
       <h2>My Licence(s)</h2>
       <div className={styles.licenceList}>
-        {licences.length > 0 ? (
-          licences.map((licence, index) => (
-            <div key={index} className={styles.licenceItem}>
-              <div className={styles.licenceInfo}>
-                <p>Role: {licence.role}</p>
-                <p>Start Date: {new Date(licence.startDate).toLocaleDateString()}</p>
-              </div>
-              <ProgressBar value={licence.daysLeft} max={365} />
-              <p>{licence.daysLeft} days left</p>
-            </div>
-          ))
-        ) : (
-          <p className={styles.noLicences}>No licences found.</p>
-        )}
+        {filteredAndSortedLicences.map((licence) => (
+          <LicenceItem key={licence.id} licence={licence} />
+        ))}
       </div>
     </section>
   );

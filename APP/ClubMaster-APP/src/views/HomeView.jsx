@@ -25,7 +25,6 @@ const useEventData = () => {
 
       try {
         setIsLoading(true);
-        console.log("oui")
         const arrayClubId = userClubs.map(club => club.id);
 
         const typeEventData = await api.get("/eventType", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
