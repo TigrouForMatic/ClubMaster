@@ -20,6 +20,7 @@ const useStore = create((set) => ({
   panier: [],
   conversations: [],
   showApp: false,
+  lastFetchTime: null,
 
   // ShowApp
   setShowApp: () => set((state) => {
@@ -31,6 +32,8 @@ const useStore = create((set) => ({
 
     return { showApp: newShowAppState };
   }),
+
+  setLastFetchTime: (time) => set({ lastFetchTime: time }),
 
   // Notifications
   deleteNotif: (index) => set((state) => ({

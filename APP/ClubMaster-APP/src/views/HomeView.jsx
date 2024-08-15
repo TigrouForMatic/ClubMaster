@@ -10,12 +10,22 @@ import ModalInfoEvent from '../components/Modale/ModalInfoEvent';
 const useEventData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { userClubs, currentUser, setItems } = useStore();
+  const { userClubs, currentUser, lastFetchTime, setItems } = useStore();
 
   useEffect(() => {
     const fetchData = async () => {
+
+       // Vérifiez si les données ont été récupérées récemment (par exemple, dans les 20 dernières minutes)
+       const now = Date.now();
+       const minBeforeData = 20 * 60 * 1000;
+       if (lastFetchTime && now - lastFetchTime < minBeforeData) {
+         setIsLoading(false);
+         return;
+       }
+
       try {
         setIsLoading(true);
+        console.log("oui")
         const arrayClubId = userClubs.map(club => club.id);
 
         const typeEventData = await api.get("/eventType", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
@@ -40,6 +50,9 @@ const useEventData = () => {
 
         const roleData = await api.get("/role", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
         setItems('roles', roleData);
+
+        // Mettez à jour le temps de la dernière récupération
+        useStore.setState({ lastFetchTime: now });
 
         setIsLoading(false);
       } catch (error) {
