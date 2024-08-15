@@ -14,7 +14,7 @@ const getLicence = async (req, res) => {
                 values.push(value);
                 return `${key} = $${index + 1}`;
             });
-            queryString += ' AND ' + filterConditions.join(' AND ');
+            queryString += ' WHERE ' + filterConditions.join(' AND ');
         }
 
         const client = await pool.connect();

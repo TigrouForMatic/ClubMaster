@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import styles from "../styles/CalendarView.module.css";
 import useStore from '../store/store';
 import { dateToTimeFormat } from "../js/date";
+import { getColorFromString } from "../js/color";
 import { Calendar } from 'iconoir-react';
 import ModalInfoEvent from '../components/Modale/ModalInfoEvent';
 
@@ -91,7 +92,7 @@ const CalendarView = () => {
             <div 
               key={index} 
               className={styles.eventCard}
-              style={{ backgroundColor: getEventColor(e.eventtypeid) }}
+              style={{ backgroundColor: getColorFromString(e.label) }}
               onClick={() => handleEventClick(e)}
             >
               <div><strong>{e.label}</strong></div>
@@ -104,11 +105,6 @@ const CalendarView = () => {
 
     return days;
   }, [currentDate, filteredEvents]);
-
-  const getEventColor = (eventTypeId) => {
-    const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33F1', '#33FFF1'];
-    return colors[eventTypeId % colors.length];
-  };
 
   const handleEventClick = useCallback((event) => {
     setSelectedEvent(event);

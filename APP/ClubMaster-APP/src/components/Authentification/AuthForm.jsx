@@ -59,7 +59,7 @@ function AuthForm() {
   const fetchClub = useCallback(async (personPhysicId) => {
     try {
       const dataClub = await api.get(`/club/personnel/${personPhysicId}`);
-
+      
       if (dataClub.length) {
         setItems('userClubs', dataClub);
         setShowApp();
@@ -87,7 +87,7 @@ function AuthForm() {
       console.error('Erreur:', error);
       setError(error.message);
     }
-  }, [fetchClub, setItems]);
+  }, [fetchAdressCurrentUser, fetchClub, setItems]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -127,12 +127,6 @@ function AuthForm() {
     setError('');
     setShowPersonalInfo(false);
   };
-
-  // const continueWithoutLogin = () => {
-  //   if (window.confirm("Êtes-vous sûr de vouloir continuer sans être connecté ? La majorité des fonctionnalités de l'application requièrent une connexion.")) {
-  //     setShowApp();
-  //   }
-  // };
 
   const handlePersonalInformationSet = () => {
     setShowClubOptions(true);

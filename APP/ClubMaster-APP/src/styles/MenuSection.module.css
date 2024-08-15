@@ -1,0 +1,28 @@
+.menuSection {
+    margin-bottom: 20px;
+  }
+  
+  .menuItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .menuItem:last-child {
+    border-bottom: none;
+  }
+  
+  .menuItem h3 {
+    margin: 0;
+    font-size: 1em;
+  }
+  
+  .premium {
+    background-color: #000;
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.8em;
+  }

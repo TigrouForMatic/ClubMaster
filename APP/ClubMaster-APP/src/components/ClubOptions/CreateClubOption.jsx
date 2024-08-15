@@ -89,7 +89,7 @@ const CreateClubOption = ( ) => {
       }
 
       for(let role of roleData) {
-        addItem('licences',role);
+        addItem('roles',role);
       }
 
       // Création de la licence

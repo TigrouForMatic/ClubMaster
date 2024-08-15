@@ -1,0 +1,27 @@
+.licenceSection {
+    margin-bottom: 20px;
+  }
+  
+  .licenceList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .licenceItem {
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  .licenceInfo {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .noLicences {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+  }

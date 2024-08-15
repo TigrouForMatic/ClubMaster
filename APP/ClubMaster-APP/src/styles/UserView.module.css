@@ -1,121 +1,84 @@
 .container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    padding-bottom: 100px;
-  }
-  
-  .header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .profilePic {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #007bff;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    margin-right: 15px;
-  }
-  
-  .userInfo h1 {
-    margin: 0;
-    font-size: 24px;
-  }
-  
-  .userInfo p {
-    margin: 5px 0;
-    font-size: 14px;
-  }
-  
-  .settingsIcon {
-    margin-left: auto;
-    font-size: 24px;
-  }
-  
-  .membershipInfo, .badgesSection {
-    background-color: #f0f0f0;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .levelInfo {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  progress {
-    width: 100%;
-    height: 10px;
-  }
-  
-  .menuItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .premium {
-    background-color: black;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-  }
-  
-  .chatbotButton {
-    width: 100%;
-    padding: 15px;
-    background-color: #6200ee;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-top: 20px;
-  }
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 20px 100px;
+  font-family: Arial, sans-serif;
+}
 
-  .editButton {
-    background-color: #f0f0f0;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-left: auto;
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.userInfo {
+  flex-grow: 1;
+}
+
+.userInfo h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.userInfo p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.editButton, .chatbotButton, .logoutButton {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.editButton {
+  background-color: #f0f0f0;
+  margin-left: auto;
+}
+
+.editButton:hover {
+  background-color: #e0e0e0;
+}
+
+.chatbotButton, .logoutButton {
+  width: 100%;
+  margin-top: 20px;
+  color: white;
+}
+
+.chatbotButton {
+  background-color: #6200ee;
+}
+
+.logoutButton {
+  background-color: #ff3b30;
+}
+
+.chatbotButton:hover {
+  background-color: #5000c9;
+}
+
+.logoutButton:hover {
+  background-color: #d63029;
+}
+
+.levelSection, .badgesSection, .membershipInfo {
+  background-color: #f0f0f0;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.levelInfo {
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px 10px 100px;
   }
-  
-  .editButton:hover {
-    background-color: #e0e0e0;
-  }
-  
-  .logoutButton {
-    width: 100%;
-    padding: 15px;
-    background-color: #ff3b30;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-top: 20px;
-    cursor: pointer;
-  }
-  
-  .logoutButton:hover {
-    background-color: #d63029;
-  }
-  
-  @media (max-width: 768px) {
-    .container {
-      padding: 10px;
-      padding-bottom: 100px;
-    }
-  }
+}
