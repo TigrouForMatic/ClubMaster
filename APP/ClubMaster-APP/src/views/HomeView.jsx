@@ -50,6 +50,9 @@ const useEventData = () => {
         const roleData = await api.get("/role", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
         setItems('roles', roleData);
 
+        const userRoles = roleData.filter(role => licenceData.some(lic => lic.roleid === role.id));
+        setItems('currentUserRoles', userRoles);
+
         // Mettez à jour le temps de la dernière récupération
         useStore.setState({ lastFetchTime: now });
 

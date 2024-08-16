@@ -10,6 +10,7 @@ const useStore = create((set) => ({
   licenceTypes: [],
   notifications: [],
   currentUser: [],
+  currentUserRoles: [],
   roles: [],
   login: [],
   typesEvent: [],
