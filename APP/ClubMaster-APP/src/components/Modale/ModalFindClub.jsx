@@ -18,12 +18,13 @@ const ModalFindClub = ({ isOpen, onClose }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const clubsPerPage = 10;
 
-  const { userClubs, clubs, addresses, setItems, addItem, currentUser, setShowApp } = useStore((state) => ({
+  const { userClubs, clubs, addresses, setItems, addItem, addItems, currentUser } = useStore((state) => ({
     userClubs : state.userClubs || [],
     clubs: state.clubs || [],
     addresses: state.addresses || [],
     setItems: state.setItems,
     addItem: state.addItem,
+    addItems : state.addItems,
     currentUser: state.currentUser,
     setShowApp: state.setShowApp
   }));
@@ -40,12 +41,10 @@ const ModalFindClub = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     const fetchAllData = async () => {
-      const [clubsData, addressesData] = await Promise.all([
+      const [clubsData] = await Promise.all([
         fetchData('club'),
-        fetchData('address')
       ]);
       setItems('clubs', clubsData);
-      setItems('addresses', addressesData);
     };
     
     fetchAllData();
@@ -79,14 +78,14 @@ const ModalFindClub = ({ isOpen, onClose }) => {
 
       const roleData = await api.get("/role", { params: { arrayClubId: JSON.stringify([club.id])} });
       const roleId = roleData.find(role => role.clubid === club.id && role.level === 0)?.id;
-      setItems('roles', roleData);
+      addItems('roles', roleData);
       if (roleId === undefined) {
         console.error(`Aucun rôle trouvé pour le club ${club.id} avec le niveau 0`);
       }
 
       const typeLicencesData = await api.get("/licenceType", { params: { arrayClubId: JSON.stringify([club.id])} });
       const licenceTypeId = typeLicencesData.find(licTyp => licTyp.clubid === club.id && licTyp.label === "Licence Visiteur")?.id;
-      setItems('licenceTypes', typeLicencesData);
+      addItems('licenceTypes', typeLicencesData);
       if (licenceTypeId === undefined) {
         console.error(`Aucun type de licence trouvé pour le club ${club.id} avec le nom Licence Visiteur`);
       }
@@ -108,13 +107,16 @@ const ModalFindClub = ({ isOpen, onClose }) => {
       };
       addItem('notifications', createdClubNotif);
       addItem('userClubs', club);
-      setShowApp();
+
+      // Mettez à jour le temps de la dernière récupération
+      useStore.setState({ lastFetchTime: null });
+
       onClose();
     } catch (err) {
       console.error('Erreur lors de la création du club:', err.message);
       setError(err.message);
     }
-  }, [addItem, currentUser, setShowApp, onClose]);
+  }, [addItem, addItems, currentUser, onClose]);
 
   const locations = useMemo(() => {
     if (!addresses || addresses.length === 0) return [];

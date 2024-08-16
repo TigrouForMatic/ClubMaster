@@ -67,6 +67,13 @@ const useStore = create((set) => ({
   })),
 
   // Nouvelles fonctions pour manipuler tout un tableau
+
+  addItems: (category, items) => set((state) => ({
+  [category]: Array.isArray(items) 
+    ? [...state[category] || [], ...items]
+    : [...state[category] || [], items]
+  })),
+
   setItems: (category, items) => set(() => ({
     [category]: items
   })),
