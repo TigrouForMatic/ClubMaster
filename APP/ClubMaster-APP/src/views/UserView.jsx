@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../js/App/Api';
 import useStore from '../store/store';
 import styles from '../styles/UserView.module.css';
-import { SystemShut } from 'iconoir-react';
+import { SystemShut, Plus } from 'iconoir-react';
 
 import UserImage from '../components/UserImage';
 import LicenceList from '../components/User/LicenceList';
@@ -11,9 +11,12 @@ import BadgeSection from '../components/User/BadgeSection';
 import MenuSection from '../components/User/MenuSection';
 import ProgressBar from '../components/ProgressBar';
 
+import ModalFindClub from "../components/Modale/ModalFindClub";
+
 function UserView() {
   const navigate = useNavigate();
   const { currentUser, currentUserAddresses, userClubs, licences, licenceTypes, roles, setItems, setShowApp } = useStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const user = useMemo(() => {
     const { postalcode = '', city = '' } = currentUserAddresses[0] || {};
@@ -32,6 +35,14 @@ function UserView() {
     setItems('login', null);
     navigate('/');
     setShowApp();
+  };
+
+  const handleNewClub = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -58,12 +69,17 @@ function UserView() {
 
       <BadgeSection /> */}
 
+      <button className={styles.newClubButton} onClick={handleNewClub}>
+        <Plus className={styles.iconNewClub} />
+        Rejoindre un nouveau club
+      </button>
+
       <MenuSection />
 
       <button className={styles.chatbotButton}>CHATBOT & SERVICE</button>
 
       <section className={styles.membershipInfo}>
-        <h2>My Cards and Discounts</h2>
+        <h2>Mes Cartes et Réductions</h2>
         <div className={styles.levelInfo}>
           <p>Adidas - 10%</p>
           <p>Decathlon -30%</p>
@@ -76,6 +92,9 @@ function UserView() {
         <SystemShut className='icon--detail__modal' />
         Deconnexion
       </button>
+
+      <ModalFindClub isOpen={isModalOpen} onClose={handleCloseModal} />
+
     </div>
   );
 }

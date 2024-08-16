@@ -4,8 +4,6 @@ import api from '../../js/App/Api';
 import { dateToTimeFormat, dateFormat } from '../../js/date';
 import styles from "../../styles/Modale.module.css";
 import { Xmark } from 'iconoir-react';
-import CustomConfirm from '../CustomConfirm';
-import Conversation from '../Conversation';
 
 const ModalInfoEvent = ({ isOpen, onClose, event }) => {
   if (!isOpen || !event) return null;

@@ -8,11 +8,17 @@
 .header {
   display: flex;
   align-items: center;
+  justify-content:  space-evenly;
   margin-bottom: 20px;
+  background-color: #f0f0f0;
+  padding: 15px;
+  border-radius: 10px;
+  height: 100%;
 }
 
 .userInfo {
   flex-grow: 1;
+  margin-left: 15px;
 }
 
 .userInfo h1 {
@@ -25,7 +31,7 @@
   font-size: 14px;
 }
 
-.editButton, .chatbotButton, .logoutButton {
+.chatbotButton, .logoutButton, .newClubButton {
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
@@ -34,16 +40,7 @@
   transition: background-color 0.3s ease;
 }
 
-.editButton {
-  background-color: #f0f0f0;
-  margin-left: auto;
-}
-
-.editButton:hover {
-  background-color: #e0e0e0;
-}
-
-.chatbotButton, .logoutButton {
+.chatbotButton, .logoutButton, .newClubButton {
   width: 100%;
   margin-top: 20px;
   color: white;
@@ -57,12 +54,24 @@
   background-color: #ff3b30;
 }
 
+.newClubButton {
+  background-color: #ee8700;
+}
+
+.iconNewClub {
+  margin-right: 5px;
+}
+
 .chatbotButton:hover {
   background-color: #5000c9;
 }
 
 .logoutButton:hover {
   background-color: #d63029;
+}
+
+.newClubButton:hover {
+  background-color: #c98900;
 }
 
 .levelSection, .badgesSection, .membershipInfo {

@@ -21,7 +21,7 @@ const LicenceItem = ({ licence }) => (
       </div>
     </div>
     <div className={styles.licenceFooter}>
-      <ProgressBar value={365 - licence.daysLeft} max={365} />
+      <ProgressBar value={licence.duration - licence.daysLeft} max={licence.duration} />
       <p className={styles.licenceDaysLeft}>{licence.daysLeft} jours restants</p>
     </div>
   </div>

@@ -17,6 +17,7 @@ const LicenceList = () => {
         const startDate = new Date(e.dd);
         const endDate = new Date(e.df);
         const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+        const duration = (endDate - startDate) / 86400000;
 
         return {
           ...e,
@@ -26,6 +27,7 @@ const LicenceList = () => {
           startDate,
           endDate,
           daysLeft,
+          duration : duration || 365
         };
       });
   }, [licences, licenceTypes, userClubs, roles]);
