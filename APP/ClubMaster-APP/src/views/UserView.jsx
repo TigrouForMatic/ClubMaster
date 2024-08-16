@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../js/App/Api';
 import useStore from '../store/store';
 import styles from '../styles/UserView.module.css';
 import { SystemShut } from 'iconoir-react';
+
 import UserImage from '../components/UserImage';
 import LicenceList from '../components/User/LicenceList';
 import BadgeSection from '../components/User/BadgeSection';
@@ -12,11 +13,18 @@ import ProgressBar from '../components/ProgressBar';
 
 function UserView() {
   const navigate = useNavigate();
-  const { currentUser, userClubs, licences, licenceTypes, roles, setItems, setShowApp } = useStore();
+  const { currentUser, currentUserAddresses, userClubs, licences, licenceTypes, roles, setItems, setShowApp } = useStore();
 
-  const handleEditProfile = () => {
-    console.log("Edit profile");
-  };
+  const user = useMemo(() => {
+    const { postalcode = '', city = '' } = currentUserAddresses[0] || {};
+  
+    const addressLabel = postalcode && city ? `${postalcode} ${city}` : 'Aucune Adresse';
+  
+    return {
+      ...currentUser,
+      address: addressLabel
+    };
+  }, [currentUserAddresses, currentUser]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -29,17 +37,16 @@ function UserView() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <UserImage name={currentUser.name} />
+        <UserImage name={user.name} />
         <div className={styles.userInfo}>
-          <h1>{currentUser.name}</h1>
-          <p>{currentUser.country}</p>
+          <h1>{user.name}</h1>
+          <p>{user.address}</p>
         </div>
-        <button className={styles.editButton} onClick={handleEditProfile}>Edit</button>
       </header>
 
       <LicenceList />
 
-      <section className={styles.levelSection}>
+      {/* <section className={styles.levelSection}>
         <h2>My Level</h2>
         <div className={styles.levelInfo}>
           <p>Clubmaster LEVEL {currentUser.level}</p>
@@ -49,7 +56,7 @@ function UserView() {
         <p>251 CMP more to reach Level 2</p>
       </section>
 
-      <BadgeSection />
+      <BadgeSection /> */}
 
       <MenuSection />
 
@@ -67,7 +74,7 @@ function UserView() {
 
       <button className={styles.logoutButton} onClick={handleLogout}>
         <SystemShut className='icon--detail__modal' />
-        Log out
+        Deconnexion
       </button>
     </div>
   );

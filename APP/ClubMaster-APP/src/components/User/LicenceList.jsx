@@ -41,7 +41,7 @@ const LicenceList = () => {
 
   return (
     <section className={styles.licenceSection}>
-      <h2>My Licence(s)</h2>
+      <h2>Mes Licence(s)</h2>
       <div className={styles.licenceList}>
         {filteredAndSortedLicences.map((licence) => (
           <LicenceItem key={licence.id} licence={licence} />
