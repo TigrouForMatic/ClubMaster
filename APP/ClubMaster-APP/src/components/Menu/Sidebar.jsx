@@ -1,8 +1,20 @@
 import { NavLink } from 'react-router-dom';
+import useStore from '../../store/store';
 import '../../styles/navbarStyles.css';
 import { Menu, User, Home, ArcheryMatch, Calendar, Shop } from 'iconoir-react';
+import ClubIcon from './ClubIcon';
+
+const menuItems = [
+  { to: "/", icon: Home, text: "News" },
+  { to: "/match", icon: ArcheryMatch, text: "Matchs" },
+  { to: "/calendar", icon: Calendar, text: "Calendrier" },
+  { to: "/shop", icon: Shop, text: "Shop" },
+];
 
 function Sidebar({ onClose }) {
+  const { currentUserRoles } = useStore();
+
+  const isHighLevel = currentUserRoles.some(r => r.level >= 3);
 
   return (
     <div className="sidebar">
@@ -10,39 +22,25 @@ function Sidebar({ onClose }) {
         <Menu className='icon-detail' />
       </div>
       <hr />
-      <div className='menu-items'>
-        <NavLink to="/" exact activeClassName="active-link">
-          <div className="menu-item">
-            <Home className='icon-detail' />
-            <p>News</p>
-          </div>
-        </NavLink>
-        <NavLink to="/match" activeClassName="active-link">
-          <div className="menu-item">
-            <ArcheryMatch className='icon-detail' />
-            <p>Matchs</p>
-          </div>
-        </NavLink>
-        <NavLink to="/calendar" activeClassName="active-link">
-          <div className="menu-item">
-            <Calendar className='icon-detail' />
-            <p>Calendrier</p>
-          </div>
-        </NavLink>
-        {/* <NavLink to="/chat" className="menu-item" activeClassName="active-link">
-          <ChatBubble className='icon-detail' />
-          <p>Chat</p>
-        </NavLink> */}
-        <NavLink to="/shop" activeClassName="active-link">
-          <div className="menu-item">
-            <Shop className='icon-detail' />
-            <p>Shop</p>
-          </div>
-        </NavLink>
-      </div>
+      <nav className='menu-items'>
+        {menuItems.map(({ to, icon: Icon, text }) => (
+          <NavLink key={to} to={to} exact={to === "/"} activeClassName="active-link">
+            <div className="menu-item">
+              <Icon className='icon-detail' />
+              <p>{text}</p>
+            </div>
+          </NavLink>
+        ))}
+        {isHighLevel && (
+          <NavLink to="/manage" activeClassName="active-link">
+            <div className="menu-item">
+              <ClubIcon className='icon-detail' />
+            </div>
+          </NavLink>
+        )}
+      </nav>
       <hr />
-      <div className="menu-profileIcon" >
-        <hr />
+      <div className="menu-profileIcon">
         <NavLink to="/user" activeClassName="active-link">
           <div className="menu-item">
             <User className='icon-detail' />

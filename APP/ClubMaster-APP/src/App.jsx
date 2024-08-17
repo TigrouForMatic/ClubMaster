@@ -18,6 +18,7 @@ const CalendarView = lazy(() => import('./views/CalendarView'));
 const ShopView = lazy(() => import('./views/ShopView'));
 const UserView = lazy(() => import('./views/UserView'));
 const CartPage = lazy(() => import('./views/CartPage'));
+const ManageView = lazy(() => import('./views/ManageView'));
 
 // Constantes pour les routes
 const ROUTES = {
@@ -27,6 +28,7 @@ const ROUTES = {
   SHOP: '/shop',
   CART: '/cart',
   USER: '/user',
+  MANAGE: '/manage'
 };
 
 function AppContent() {
@@ -45,12 +47,13 @@ function AppContent() {
       <Suspense fallback={<LoadingSpinner />}>
         {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
         <Routes>
-          <Route path={ROUTES.HOME} element={<HomeView />} />
-          <Route path={ROUTES.MATCHS} element={<MatchsView />} />
-          <Route path={ROUTES.CALENDAR} element={<CalendarView />} />
-          <Route path={ROUTES.SHOP} element={<ShopView />} />
-          <Route path={ROUTES.CART} element={<CartPage />} />
-          <Route path={ROUTES.USER} element={<UserView />} />
+          <Route path={ROUTES.HOME}     element={<HomeView />}      />
+          <Route path={ROUTES.MATCHS}   element={<MatchsView />}    />
+          <Route path={ROUTES.CALENDAR} element={<CalendarView />}  />
+          <Route path={ROUTES.SHOP}     element={<ShopView />}      />
+          <Route path={ROUTES.CART}     element={<CartPage />}      />
+          <Route path={ROUTES.MANAGE}   element={<ManageView />}    />
+          <Route path={ROUTES.USER}     element={<UserView />}      />
           <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
       </Suspense>

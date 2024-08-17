@@ -131,7 +131,7 @@ function HomeView() {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const { isLoading, error } = useEventData();
-  const { events, typesEvent, addresses, inscriptions } = useStore();
+  const { events, typesEvent, addresses, inscriptions, currentUserRoles } = useStore();
 
   const filteredAndSortedEvents = useMemo(() => {
     const now = new Date();
