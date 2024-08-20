@@ -51,8 +51,6 @@ const getConversationByEvent = async (req, res) => {
   
       result.rows.forEach(row => {
         const { conversationid, eventid, createdat, messageid, personname, personphysicid, content, sentat } = row;
-
-        console.log(row)
   
         if (!conversations[conversationid]) {
           conversations[conversationid] = {

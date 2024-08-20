@@ -33,7 +33,6 @@ const ROUTES = {
 
 function AppContent() {
   const isMobile = useMobile();
-
   const showApp = useStore((state) => state.showApp);
 
   if (!showApp) {
