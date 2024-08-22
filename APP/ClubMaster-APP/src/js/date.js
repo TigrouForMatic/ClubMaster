@@ -440,16 +440,26 @@ export function daysToYearMonthDay(nbDays) {
 
 	return (years > 0 ? yearsLabel : '') + (months > 0 ? monthsLabel : '') + (days > 1 ? andLabel + days + ' jours' : '');
 }
-
 /**
- * Retourne la date de fin de licence (31 août de l'année en cours ou suivante)
+ * Retourne la date de fin de licence
+ * Si une durée est fournie, alors il renvoie la date en fonction de la durée
+ * Sinon il renvoie le 31 août de l'année en cours ou suivante
+ * @param {number} [duration] - Durée en jours (optionnel)
  * @returns {Date}
  */
-export function getDateEndLicence() {
-    const currentDate = new Date();
-    const year = currentDate.getMonth() > 7 ? currentDate.getFullYear() + 1 : currentDate.getFullYear();
-    return new Date(year, 7, 31);
-}
+export function getDateEndLicence(duration) {
+	const currentDate = new Date();
+	const currentYear = currentDate.getFullYear();
+	
+	if (duration) {
+	  const yearsDuration = Math.floor(duration / 365);
+	  const endYear = currentYear + yearsDuration;
+	  return new Date(endYear, 7, 31); // 7 représente août (les mois commencent à 0)
+	} else {
+	  const endYear = currentDate.getMonth() > 7 ? currentYear + 1 : currentYear;
+	  return new Date(endYear, 7, 31);
+	}
+  }
 
 /**
  * Formate une geure pour l'affichage.

@@ -135,6 +135,7 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
+        Duration INT,
         Label VARCHAR(255) NOT NULL,
         ClubId INT,
         Price FLOAT,
@@ -264,15 +265,15 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Amandine Moncoiffé','2003-10-25T00:00:00.000Z','0677332963','amandine@clubmaster.bzh',1);
 
 
-    INSERT INTO db.LicenceType (Dc, Dm, Label, ClubId, Price, Basic) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur',1, null, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Complete',1, 20, false),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Demi-Licence',1, 10, false),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Spécifique',1,null, false),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur',2, null, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Complete',2, 20, false),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Demi-Licence',2, 10, false),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Spécifique',2,null, false);
+    INSERT INTO db.LicenceType (Dc, Dm, Duration, Label, ClubId, Price, Basic) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 50, 'Licence Visiteur',1, null, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 364, 'Licence Complete',1, 20, false),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 182, 'Demi-Licence',1, 10, false),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 728, 'Licence Spécifique',1,null, false),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 50, 'Licence Visiteur',2, null, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 364, 'Licence Complete',2, 20, false),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 182, 'Demi-Licence',2, 10, false),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 728, 'Licence Spécifique',2,null, false);
 
     INSERT INTO db.Role (Dc, Dm, Label, Level, ClubId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Visiteur',0,1),
