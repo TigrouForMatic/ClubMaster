@@ -84,7 +84,7 @@ const ModalFindClub = ({ isOpen, onClose }) => {
       }
 
       const typeLicencesData = await api.get("/licenceType", { params: { arrayClubId: JSON.stringify([club.id])} });
-      const licenceTypeId = typeLicencesData.find(licTyp => licTyp.clubid === club.id && licTyp.label === "Licence Visiteur")?.id;
+      const licenceTypeId = typeLicencesData.find(licTyp => licTyp.clubid === club.id && licTyp.basic === true)?.id;
       addItems('licenceTypes', typeLicencesData);
       if (licenceTypeId === undefined) {
         console.error(`Aucun type de licence trouvé pour le club ${club.id} avec le nom Licence Visiteur`);
