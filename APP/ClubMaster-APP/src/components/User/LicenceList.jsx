@@ -1,10 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import useStore from '../../store/store';
 import styles from '../../styles/LicenceList.module.css';
 import LicenceItem from './LicenceItem';
+import { MdAdd } from 'react-icons/md';
+import ModalAddLicence from '../Modale/ModalAddLicence';
 
 const LicenceList = () => {
   const { licences, licenceTypes, userClubs, roles } = useStore();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const filteredAndSortedLicences = useMemo(() => {
     const now = new Date();
@@ -32,10 +36,24 @@ const LicenceList = () => {
       });
   }, [licences, licenceTypes, userClubs, roles]);
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   if (filteredAndSortedLicences.length === 0) {
     return (
       <section className={styles.licenceSection}>
-        <h2>Mes Licence(s)</h2>
+        <div className={styles.licenceListHeader}>
+          <h2>Mes Licence(s)</h2>
+          <button className={styles.addButton} onClick={handleOpenModal}>
+            Ajouter
+            <MdAdd />
+          </button>
+        </div>
         <p className={styles.noLicences}>Aucunes licences actives.</p>
       </section>
     );
@@ -43,12 +61,21 @@ const LicenceList = () => {
 
   return (
     <section className={styles.licenceSection}>
-      <h2>Mes Licence(s)</h2>
+      <div className={styles.licenceListHeader}>
+        <h2>Mes Licence(s)</h2>
+        <button className={styles.addButton} onClick={handleOpenModal}>
+          Ajouter
+          <MdAdd />
+        </button>
+      </div>
       <div className={styles.licenceList}>
         {filteredAndSortedLicences.map((licence) => (
           <LicenceItem key={licence.id} licence={licence} />
         ))}
       </div>
+
+      {/* La modale est affichée si isModalOpen est true */}
+      {isModalOpen && <ModalAddLicence isOpen={isModalOpen} onClose={closeModal} />}
     </section>
   );
 };

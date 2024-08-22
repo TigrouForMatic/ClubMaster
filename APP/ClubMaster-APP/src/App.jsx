@@ -16,9 +16,9 @@ const HomeView = lazy(() => import('./views/HomeView'));
 const MatchsView = lazy(() => import('./views/MatchsView'));
 const CalendarView = lazy(() => import('./views/CalendarView'));
 const ShopView = lazy(() => import('./views/ShopView'));
-const UserView = lazy(() => import('./views/UserView'));
-const CartPage = lazy(() => import('./views/CartPage'));
 const ManageView = lazy(() => import('./views/ManageView'));
+const CartPage = lazy(() => import('./views/CartPage'));
+const UserView = lazy(() => import('./views/UserView'));
 
 // Constantes pour les routes
 const ROUTES = {
