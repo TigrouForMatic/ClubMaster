@@ -28,7 +28,6 @@ const getLicence = async (req, res) => {
 };
 
 const getLicenceManage = async (req, res) => {
-    // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
 
     try {
@@ -41,9 +40,19 @@ const getLicenceManage = async (req, res) => {
         `;
         const values = [];
 
-        if (roleIds && Array.isArray(JSON.parse(roleIds))) {
-            queryString += ` WHERE l.roleid = ANY($1)`;
-            values.push(JSON.parse(roleIds));
+        let parsedRoleIds;
+        if (roleIds) {
+            try {
+                parsedRoleIds = typeof roleIds === 'string' ? JSON.parse(roleIds) : roleIds;
+            } catch (parseError) {
+                console.error('Erreur lors du parsing de roleIds:', parseError);
+                return res.status(400).send('Format de roleIds invalide');
+            }
+
+            if (Array.isArray(parsedRoleIds) && parsedRoleIds.length > 0) {
+                queryString += ` WHERE l.roleid = ANY($1)`;
+                values.push(parsedRoleIds);
+            }
         }
 
         const client = await pool.connect();
@@ -56,6 +65,37 @@ const getLicenceManage = async (req, res) => {
         res.status(500).send('Erreur lors de la récupération des licences');
     }
 };
+
+// const getLicenceManage = async (req, res) => {
+//     // Vérification de l'authentification
+//     if (!req.user) return res.sendStatus(401);
+
+//     try {
+//         const { roleIds } = req.query;
+
+//         let queryString = `
+//             SELECT l.*, pp.Name, pp.NaissanceDate, pp.PhoneNumber, pp.EmailAddress
+//             FROM db.Licence l
+//             JOIN db.PersonPhysic pp ON l.PersonPhysicId = pp.Id
+//         `;
+//         const values = [];
+
+//         // console.log(roleIds) --> [ '2', '9' ]
+//         if (roleIds && Array.isArray(JSON.parse(roleIds))) {
+//             queryString += ` WHERE l.roleid = ANY($1)`;
+//             values.push(JSON.parse(roleIds));
+//         }
+
+//         const client = await pool.connect();
+//         const result = await client.query(queryString, values);
+//         client.release();
+
+//         res.json(result.rows);
+//     } catch (err) {
+//         console.error('Erreur lors de la récupération des licences', err);
+//         res.status(500).send('Erreur lors de la récupération des licences');
+//     }
+// };
 
 const getLicenceById = async (req, res) => {
     const { id } = req.params;

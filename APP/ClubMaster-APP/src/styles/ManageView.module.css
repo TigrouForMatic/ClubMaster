@@ -17,6 +17,28 @@
     color: #444;
     margin-bottom: 15px;
   }
+
+  .clubList {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  
+  .clubItem {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .clubItem:hover, .clubItem.active {
+    background-color: #007bff;
+    color: white;
+  }
   
   .section {
     margin-bottom: 40px;
