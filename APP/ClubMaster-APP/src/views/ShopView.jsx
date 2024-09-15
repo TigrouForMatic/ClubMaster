@@ -61,7 +61,7 @@ function ShopView() {
     if (selectedType === "all") {
       return products;
     }
-    const selectedTypeIds = filteredTypes.find(type => type.ids.includes(selectedType))?.ids || [];
+    const selectedTypeIds = filteredTypes.find(type => type.label === selectedType)?.ids || [];
     return products.filter(prod => selectedTypeIds.includes(prod.producttypeid));
   }, [products, selectedType, filteredTypes]);
 
@@ -110,7 +110,7 @@ function ShopView() {
           <button
             key={type.id}
             className={`${styles.filterButton} ${selectedType === type.id ? styles.active : ""}`}
-            onClick={() => setSelectedType(type.id)}
+            onClick={() => setSelectedType(type.label)}
           >
             {type.label}
           </button>
