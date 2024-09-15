@@ -1,3 +1,3 @@
-FROM bigpapoo/r5a05-nginx:latest
+FROM nginx:alpine
 
 COPY /ClubMaster-APP/dist/ /usr/share/nginx/html/

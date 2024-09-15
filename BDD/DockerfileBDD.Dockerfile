@@ -1,4 +1,4 @@
-FROM bigpapoo/r5a05-postgres
+FROM postgres:16
 
 ENV POSTGRES_USER docker
 ENV POSTGRES_PASSWORD docker

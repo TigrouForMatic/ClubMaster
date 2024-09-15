@@ -2,9 +2,11 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import styles from "../styles/ManageView.module.css";
 import useStore from '../store/store';
 import api from "../js/App/Api";
-import { getDisplayFormatedDate, daysToYearMonthDay } from '../js/date';
-import UserImage from "../components/UserImage";
-import { BirthdayCake } from 'iconoir-react';
+import ClubList from "../components/Manager/ClubList";
+import LicenceList from "../components/Manager/LicenceList";
+import EventTypeList from "../components/Manager/EventTypeList";
+import LicenceTypeList from "../components/Manager/LicenceTypeList";
+import RoleList from "../components/Manager/RoleList";
 
 function ManageView() {
   const { userClubs, currentUserRoles, typesEvent, licenceTypes, productTypes, roles } = useStore();
@@ -29,10 +31,6 @@ function ManageView() {
   const highLevelRoleIds = useMemo(() => 
     currentUserRoles.filter(role => role.level >= 3).map(role => role.id),
   [currentUserRoles]);
-
-  useEffect(() => {
-    console.log(licenceTypes)
-  }, [licenceTypes]);
 
   useEffect(() => {
     fetchLicences(highLevelRoleIds);
@@ -106,113 +104,5 @@ function ManageView() {
     </div>
   );
 }
-
-const ClubList = React.memo(({ clubs, selectedClubId, onClubSelect }) => (
-  <div className={styles.section}>
-    <h2 className={styles.subtitle}>Clubs</h2>
-    <div className={styles.clubList}>
-      {clubs.map(club => (
-        <div
-          key={club.id}
-          className={`${styles.clubItem} ${selectedClubId === club.id ? styles.active : ""}`}
-          onClick={() => onClubSelect(club.id)}
-        >
-          {club.label}
-        </div>
-      ))}
-    </div>
-  </div>
-));
-
-const LicenceList = React.memo(({ licences }) => (
-  <div className={styles.section}>
-    <h2 className={styles.subtitle}>Licenciés</h2>
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          <th>Personne</th>
-          <th>Licence</th>
-          <th>Type</th>
-          <th>Date de début</th>
-          <th>Date de fin</th>
-          <th>Role</th>
-          <th>Contact</th>
-        </tr>
-      </thead>
-      <tbody>
-        {licences.map(licence => (
-          <tr key={licence.id}>
-            <td><UserImage name={licence.name} size={30} /> {licence.name} <BirthdayCake /> {getDisplayFormatedDate(new Date(licence.naissancedate))}</td>
-            <td>{licence.label}</td>
-            <td>{licence.type}</td>
-            <td>{getDisplayFormatedDate(new Date(licence.dd))}</td>
-            <td>{getDisplayFormatedDate(new Date(licence.df))}</td>
-            <td>{licence.role}</td>
-            <td>{licence.emailaddress} {licence.phonenumber}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-));
-
-const EventTypeList = React.memo(({ types }) => (
-  <div className={styles.section}>
-    <h2 className={styles.subtitle}>Types d'événements</h2>
-    <ul className={styles.list}>
-      {types.map(type => (
-        <li key={type.id}>{type.label}</li>
-      ))}
-    </ul>
-  </div>
-));
-
-const LicenceTypeList = React.memo(({ licenceTypes }) => (
-  <div className={styles.section}>
-    <h2 className={styles.subtitle}>Types de licences</h2>
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          <th>Label</th>
-          <th>Prix</th>
-          <th>Type</th>
-          <th>Durée</th>
-        </tr>
-      </thead>
-      <tbody>
-        {licenceTypes.map(type => (
-          <tr key={type.id}>
-            <td>{type.label}</td>
-            <td>{type.price !== null ? `${type.price} €` : 'Gratuit'}</td>
-            <td>{type.basic ? 'Basic' : 'Advanced'}</td>
-            <td>{daysToYearMonthDay(type.duration)}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-));
-
-const RoleList = React.memo(({ roles }) => (
-  <div className={styles.section}>
-    <h2 className={styles.subtitle}>Rôles</h2>
-    <table className={styles.table}>
-      <thead>
-        <tr>
-          <th>Label</th>
-          <th>Niveau</th>
-        </tr>
-      </thead>
-      <tbody>
-        {roles.map(role => (
-          <tr key={role.id}>
-            <td>{role.label}</td>
-            <td>{role.level}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-));
 
 export default ManageView;
