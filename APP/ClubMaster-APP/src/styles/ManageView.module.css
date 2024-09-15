@@ -33,6 +33,9 @@
   cursor: pointer;
   border-radius: 20px;
   transition: background-color 0.3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .clubItem:hover, .clubItem.active {
@@ -42,6 +45,39 @@
 
 .section {
   margin-bottom: 40px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.addButton {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.addButton:hover {
+  background-color: #218838;
+}
+
+.editButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  color: #007bff;
+}
+
+.editButton:hover {
+  color: #0056b3;
 }
 
 .table {
