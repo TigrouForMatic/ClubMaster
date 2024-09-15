@@ -49,12 +49,21 @@ function ShopView() {
   const updateItem = useStore((state) => state.updateItem);
   const panier = useStore((state) => state.panier);
 
+  const filteredTypes = useMemo(() => {
+    const uniqueLabels = Array.from(new Set(productTypes.map(type => type.label)));
+    return uniqueLabels.map(label => ({
+      label,
+      ids: productTypes.filter(type => type.label === label).map(type => type.id)
+    }));
+  }, [productTypes]);
+
   const filteredProducts = useMemo(() => {
     if (selectedType === "all") {
       return products;
     }
-    return products.filter(prod => prod.producttypeid == selectedType);
-  }, [products, selectedType]);
+    const selectedTypeIds = filteredTypes.find(type => type.ids.includes(selectedType))?.ids || [];
+    return products.filter(prod => selectedTypeIds.includes(prod.producttypeid));
+  }, [products, selectedType, filteredTypes]);
 
   const handleAddToCart = (product) => {
     let productWithQuantity = product;
@@ -97,7 +106,7 @@ function ShopView() {
         >
           Tous
         </button>
-        {productTypes.map((type) => (
+        {filteredTypes.map((type) => (
           <button
             key={type.id}
             className={`${styles.filterButton} ${selectedType === type.id ? styles.active : ""}`}

@@ -31,10 +31,6 @@ function ManageView() {
   [currentUserRoles]);
 
   useEffect(() => {
-    console.log(licenceTypes)
-  }, [licenceTypes]);
-
-  useEffect(() => {
     fetchLicences(highLevelRoleIds);
   }, [highLevelRoleIds, fetchLicences]);
 
@@ -142,13 +138,29 @@ const LicenceList = React.memo(({ licences }) => (
       <tbody>
         {licences.map(licence => (
           <tr key={licence.id}>
-            <td><UserImage name={licence.name} size={30} /> {licence.name} <BirthdayCake /> {getDisplayFormatedDate(new Date(licence.naissancedate))}</td>
+            <td>
+              <div className={styles.userInfo}>
+                <UserImage name={licence.name} size={30} />
+                <div className={styles.userDetails}>
+                  <span className={styles.userName}>{licence.name}</span>
+                  <div className={styles.userBirthday}>
+                    <BirthdayCake />
+                    <span>{getDisplayFormatedDate(new Date(licence.naissancedate))}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
             <td>{licence.label}</td>
             <td>{licence.type}</td>
             <td>{getDisplayFormatedDate(new Date(licence.dd))}</td>
             <td>{getDisplayFormatedDate(new Date(licence.df))}</td>
             <td>{licence.role}</td>
-            <td>{licence.emailaddress} {licence.phonenumber}</td>
+            <td>
+              <div className={styles.contactInfo}>
+                <span className={styles.email}>{licence.emailaddress}</span>
+                <span className={styles.phone}>{licence.phonenumber}</span>
+              </div>
+            </td>
           </tr>
         ))}
       </tbody>
