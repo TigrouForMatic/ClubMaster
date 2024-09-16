@@ -51,6 +51,19 @@ BEGIN
         Validate BOOLEAN
     );
 
+    CREATE TABLE db.CreditCard (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        PersonPhysicId INT,
+        EncryptedCardNumber TEXT,
+        EncryptedExpirationDate TEXT,
+        EncryptedCVV TEXT,
+        LastFourDigits VARCHAR(4),
+        CardType VARCHAR(50),
+        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+    );
+
     CREATE TABLE db.PersonMoral (
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,

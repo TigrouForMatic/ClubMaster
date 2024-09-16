@@ -18,12 +18,18 @@ function PaymentSection() {
       </div>
       <h4>Autres modes de paiement</h4>
       <div className={styles.paymentOption}>
-        <img src="/path-to-sepa-icon.png" alt="SEPA" />
-        <span>Ajouter un compte courant</span>
-      </div>
-      <div className={styles.paymentOption}>
         <img src="/path-to-bancontact-icon.png" alt="Bancontact" />
         <span>Payer avec Paypal</span>
+      </div>
+      <div>
+        <div className={styles.paymentOption}>
+          <img src="/path-to-apple-pay-icon.png" alt="Apple Pay" />
+          <span>Payer avec Apple Pay</span>
+        </div>
+        <div className={styles.paymentOption}>
+          <img src="/path-to-google-pay-icon.png" alt="Google Pay" />
+          <span>Payer avec Google Pay</span>
+        </div>
       </div>
       <div className={styles.promoCodeSection}>
         <h4>Codes cartes cadeaux et bons de réduction disponibles</h4>
