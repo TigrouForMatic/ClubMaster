@@ -9,7 +9,7 @@ const ModalInfoEvent = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const { licences, licenceTypes, clubs } = useStore();
+  const {licences, licenceTypes, clubs } = useStore();
   const [selectedClub, setSelectedClub] = useState(clubs[0]);
   const [selectedLicence, setSelectedLicence] = useState(null);
 
