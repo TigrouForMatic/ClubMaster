@@ -8,6 +8,7 @@ import { dateToTimeFormat } from "../js/date";
 import { getColorFromString } from "../js/color";
 import { Calendar } from 'iconoir-react';
 import ModalInfoEvent from '../components/Modale/ModalInfoEvent';
+import ModalCreateEvent from '../components/Modale/ModalCreateEvent';
 
 const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -16,8 +17,10 @@ const CalendarView = () => {
   const [selectedClub, setSelectedClub] = useState({ value: 0, label: "Tous les clubs" });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const { userClubs, addresses, events, typesEvent, inscriptions } = useStore();
+  const { userClubs, addresses,events, typesEvent, inscriptions, user, currentUserRoles } = useStore();
+  const updateItems = useStore((state) => state.updateItems);
 
   const getDataForSelectFromTypeEvent = useMemo(() => 
     typesEvent.map(type => ({ value: type.id, label: type.label })),
@@ -62,6 +65,7 @@ const CalendarView = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     return events.filter(e => {
+      if (!e || !e.dd) return false;
       const eventDate = new Date(e.dd);
       return eventDate.getMonth() === month && 
              eventDate.getFullYear() === year &&
@@ -112,13 +116,29 @@ const CalendarView = () => {
   }, []);
 
   const closeModal = useCallback(() => {
+    // Rafraîchissement des événements
+    updateItems('events', events);
     setIsModalOpen(false);
     setSelectedEvent(null);
+  }, []);
+
+  const openCreateModal = useCallback(() => {
+    setIsCreateModalOpen(true);
+  }, []);
+
+  const closeCreateModal = useCallback(() => {
+    setIsCreateModalOpen(false);
   }, []);
 
   return (
     <div className={styles.calendarContainer}>
       <h1 className={styles.title}>Le Calendrier</h1>
+
+      {currentUserRoles.some(role => role.level >= 3) && (
+        <button onClick={openCreateModal} className={styles.addEventButton}>
+          Ajouter un nouvel événement
+        </button>
+      )}
 
       <div className={styles.filters}>
         <div className={styles.filterSection}>
@@ -182,7 +202,7 @@ const CalendarView = () => {
       </div>
       
       <ModalInfoEvent isOpen={isModalOpen} onClose={closeModal} event={selectedEvent} />
-    
+      <ModalCreateEvent isOpen={isCreateModalOpen} onClose={closeCreateModal} />
     </div>
   );
 };

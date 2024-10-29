@@ -1,6 +1,6 @@
 .calendarContainer {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0;
   padding: 20px;
   font-family: Arial, sans-serif;
 }
@@ -117,6 +117,21 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.addEventButton {
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.addEventButton:hover {
+  background-color: darkgreen;
 }
 
 @media (max-width: 768px) {

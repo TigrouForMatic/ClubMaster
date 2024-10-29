@@ -51,6 +51,19 @@ BEGIN
         Validate BOOLEAN
     );
 
+    CREATE TABLE db.CreditCard (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        PersonPhysicId INT,
+        EncryptedCardNumber TEXT,
+        EncryptedExpirationDate TEXT,
+        EncryptedCVV TEXT,
+        LastFourDigits VARCHAR(4),
+        CardType VARCHAR(50),
+        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+    );
+
     CREATE TABLE db.PersonMoral (
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
@@ -254,7 +267,8 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', 'Repas de fin d année le 28/06 à 19h', 9, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , null),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', 'Rencontre avec Serent', 4, '2024-09-19 19:00:00', '2024-09-19 23:00:00', 1 , null),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tournois Amical', 'Tournois a Ploermel', 3, '2024-09-28 19:00:00', '2024-09-28 22:30:00', 5 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours de fin d année', 2, '2024-08-31 19:00:00', '2024-08-31 22:30:00', 3 , null);
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 14/11 à 19h', 2, '2024-11-14 19:00:00', '2024-11-14 21:00:00', 3 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', 'Rencontre à Malestroit', 4, '2024-10-30 19:30:00', '2024-10-30 22:00:00', 1 , null);
 
      INSERT INTO db.Login (Dc, Dm, Login, Password, Pseudo) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach'),

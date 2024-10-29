@@ -16,6 +16,7 @@ const { getProduct, getProductById, addProduct, updateProduct, deleteProduct } =
 const { getInscription, getInscriptionById, addInscription, updateInscription, deleteInscription } = require('../controllers/inscriptionControllers');
 const { getConversation, getConversationByEvent, getConversationById, addConversation, updateConversation, deleteConversation } = require('../controllers/conversationControllers');
 const { getMessage, getMessageById, addMessage, updateMessage, deleteMessage } = require('../controllers/messageControllers');
+const { getCreditCards, getCreditCardById, addCreditCard, updateCreditCard, deleteCreditCard } = require('../controllers/creditCardControllers');
 
 const { getGenerateImage } = require('../controllers/generateImageControllers');
 
@@ -131,5 +132,12 @@ router.get('/:table/:id', getEntryById);
 router.post('/:table', authenticateToken, addEntry);
 router.put('/:table/:id', authenticateToken, updateEntry);
 router.delete('/:table/:id', authenticateToken, deleteEntry);
+
+// Routes pour le CRUD des cartes de crédit
+router.get('/creditCard', authenticateToken, getCreditCards);
+router.get('/creditCard/:id', authenticateToken, getCreditCardById);
+router.post('/creditCard', authenticateToken, addCreditCard);
+router.put('/creditCard/:id', authenticateToken, updateCreditCard);
+router.delete('/creditCard/:id', authenticateToken, deleteCreditCard);
 
 module.exports = router;

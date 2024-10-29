@@ -19,8 +19,8 @@ const getEvent = async (req, res) => {
         client.release();
         res.json(result.rows);
     } catch (err) {
-        console.error('Erreur lors de la récupération des types d\'événements', err);
-        res.status(500).send('Erreur lors de la récupération des types d\'événements');
+        console.error('Erreur lors de la récupération des événements', err);
+        res.status(500).send('Erreur lors de la récupération des événements');
     }
 };
 
@@ -35,8 +35,8 @@ const getEventById = async (req, res) => {
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la récupération du roles avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la récupération du role avec l'ID ${id}`);
+        console.error(`Erreur lors de la récupération de l'événement avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la récupération de l'événement avec l'ID ${id}`);
     }
 };
 
@@ -58,10 +58,18 @@ const addEvent = async (req, res) => {
 
         const result = await client.query(insertQuery, valuesWithDates);
         client.release();
-        res.status(201).json(result.rows[0]);
+
+        // Récupérer les données insérées
+        const insertedEvent = result.rows[0];
+
+        // Effectuer une nouvelle requête pour obtenir toutes les données de l'événement
+        const selectQuery = `SELECT * FROM ${TABLE_NAME} WHERE id = $1`;
+        const selectResult = await client.query(selectQuery, [insertedEvent.id]);
+        
+        res.status(201).json(selectResult.rows[0]);
     } catch (err) {
-        console.error('Erreur lors de l\'ajout d\'un nouveau role', err);
-        res.status(500).send('Erreur lors de l\'ajout d\'un nouveau role');
+        console.error('Erreur lors de l\'ajout d\'un nouveau événement', err);
+        res.status(500).send('Erreur lors de l\'ajout d\'un nouveau événement');
     }
 };
 
@@ -83,8 +91,8 @@ const updateEvent = async (req, res) => {
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la mise à jour du role avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la mise à jour du role avec l'ID ${id}`);
+        console.error(`Erreur lors de la mise à jour de l'événement avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la mise à jour de l'événement avec l'ID ${id}`);
     }
 };
 
@@ -103,8 +111,8 @@ const deleteEvent = async (req, res) => {
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la suppression du role avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la suppression du role avec l'ID ${id}`);
+        console.error(`Erreur lors de la suppression de l'événement avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la suppression de l'événement avec l'ID ${id}`);
     }
 };
 
