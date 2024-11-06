@@ -40,24 +40,24 @@
     margin-bottom: 1.5rem;
   }
   
-  .date {
+  /* .date {
     font-weight: bold;
     color: #4285F4;
     margin-bottom: 1rem;
-  }
+  } */
   
-  .description {
+  /* .description {
     margin-bottom: 1rem;
     line-height: 1.5;
-  }
-  
+  } */
+/*   
   .info {
     margin-bottom: 0.5rem;
   }
   
   .info strong {
     color: #555;
-  }
+  } */
   
   .buttonContainer {
     display: flex;
@@ -283,6 +283,20 @@
   .toggleInput:checked + .toggleSlider::before {
     transform: translateX(26px);
   }
+
+  .dateTimeContainer {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .dateTimeContainer input[type="date"] {
+    flex: 2;
+  }
+
+  .dateTimeContainer input[type="time"] {
+    flex: 1;
+  }
+
   /* Responsive */
   
   @media (max-width: 600px) {
@@ -293,8 +307,61 @@
     .title {
       font-size: 1.5rem;
     }
-  
-    .conversationTitle {
-      font-size: 1.3rem;
+  }
+
+  .inputGroup {
+    flex: 1;
+  }
+
+  .inputGroup input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .dateInput {
+    margin-top: 0.6em;
+  }
+
+  .timeGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-left: 0.5em;
+  }
+
+  .timeInputs {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .timeInputs input[type="time"] {
+    width: 100px;
+  }
+
+  .timeSelectGroup {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .timeSelectGroup select {
+    width: auto;
+    padding: 0.5em;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
     }
+  }
+
+  /* Ajout des nouveaux styles */
+  .timeSelectGroup select option {
+    float: left;
+    width: 33.33%; /* Affiche 3 options par ligne */
+    box-sizing: border-box;
   }

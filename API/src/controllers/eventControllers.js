@@ -41,6 +41,10 @@ const getEventById = async (req, res) => {
 };
 
 const addEvent = async (req, res) => {
+
+    //Ajout de la récurrence
+    // const { recurrence } = req.body;
+    
     const currentDate = new Date();
 
     // Vérification de l'authentification
