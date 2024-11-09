@@ -10,9 +10,12 @@ function ModalCreateEvent({ isOpen, onClose }) {
   const [selectedClubId, setSelectedClubId] = useState(userClubs[0].id);
   const [hasMaxPerson, setHasMaxPerson] = useState(false);
   const [hasRecurrence, setHasRecurrence] = useState(false);
-  const [recurrenceType, setRecurrenceType] = useState('specific');
-  const [recurrenceDates, setRecurrenceDates] = useState([]);
-  const [recurrenceEndDate, setRecurrenceEndDate] = useState(null);
+  const [recurrenceEndDate, setRecurrenceEndDate] = useState('');
+  const [recurrenceInterval, setRecurrenceInterval] = useState(1);
+  const [recurrenceUnit, setRecurrenceUnit] = useState('jours');
+  const [startDate, setStartDate] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
 
   const [eventData, setEventData] = useState({
     Label: '',
@@ -49,29 +52,14 @@ function ModalCreateEvent({ isOpen, onClose }) {
     return { date, time };
   };
 
-  // Fonction pour mettre à jour Dd et Df
-  const updateDateTime = (type, value, field) => {
-    const currentDateTime = type === 'Dd' ? eventData.Dd : eventData.Df;
-    const { date, time } = splitDateTime(currentDateTime || '');
-    
-    const newDateTime = field === 'date' 
-      ? `${value}T${time || '00:00'}`
-      : `${date || new Date().toISOString().split('T')[0]}T${value}`;
-
-    setEventData(prevData => ({
-      ...prevData,
-      [type]: newDateTime
-    }));
-  };
-
   // Modifier le handleChange pour les nouveaux champs
   const handleChange = (e) => {
     const { name, value } = e.target;
     
-    if (name === 'startDate' || name === 'startTime') {
-      updateDateTime('Dd', value, name === 'startDate' ? 'date' : 'time');
-    } else if (name === 'endDate' || name === 'endTime') {
-      updateDateTime('Df', value, name === 'endDate' ? 'date' : 'time');
+    if (name === 'startTime') {
+      setStartTime(value);
+    } else if (name === 'endTime') {
+      setEndTime(value);
     } else {
       setEventData(prevData => ({ ...prevData, [name]: value }));
     }
@@ -80,26 +68,48 @@ function ModalCreateEvent({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const date = eventData.Dd.split('T')[0];
+      if (!endTime) {
+        setEndTime(startTime);
+      }
+
+      const date = startDate || new Date().toISOString().split('T')[0];
       const finalEventData = {
         ...eventData,
-        Dd: `${date}T${splitDateTime(eventData.Dd).time}`,
-        Df: `${date}T${splitDateTime(eventData.Df).time}`,
+        Dd: new Date(`${date}T${startTime}`).toISOString(),
+        Df: new Date(`${date}T${endTime}`).toISOString(),
         Recurrence: hasRecurrence ? {
-          type: recurrenceType,
-          dates: recurrenceDates,
+          interval: recurrenceInterval,
+          unit: recurrenceUnit,
           endDate: recurrenceEndDate
         } : null
       };
+
+      console.log(finalEventData);
 
       const response = await api.post('/event', finalEventData, {
         headers: { Authorization: `Bearer ${currentUser.token}` }
       });
       addItem('events', response);
-      onClose();
+      handleClose();
     } catch (error) {
       console.error('Erreur lors de la création de l\'événement:', error);
     }
+  };
+
+  const handleClose = () => {
+    // Reset the form
+    setEventData({
+      Label: '',
+      Description: '',
+      EventTypeId: null,
+      Dd: null,
+      Df: null,
+      AddressId: null,
+      MaxPerson: null,
+    });
+    setHasRecurrence(false);
+    setHasMaxPerson(false);
+    onClose();
   };
 
   const eventTypeSorted = filteredTypes.sort((a, b) => a.label.localeCompare(b.label));
@@ -111,70 +121,17 @@ function ModalCreateEvent({ isOpen, onClose }) {
     }
   };
 
-  const generateTimeOptions = () => {
-    const options = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 5) {
-        const formattedHour = hour.toString().padStart(2, '0');
-        const formattedMinute = minute.toString().padStart(2, '0');
-        const time = `${formattedHour}:${formattedMinute}`;
-        options.push(
-          <option key={time} value={time}>
-            {time}
-          </option>
-        );
-      }
-    }
-    return options;
-  };
-
-  const generateHourOptions = () => {
-    return Array.from({ length: 24 }, (_, i) => {
-      const hour = i.toString().padStart(2, '0');
-      return (
-        <option key={hour} value={hour}>
-          {hour}
-        </option>
-      );
-    });
-  };
-
-  const generateMinuteOptions = () => {
-    return Array.from({ length: 12 }, (_, i) => {
-      const minute = (i * 5).toString().padStart(2, '0');
-      return (
-        <option key={minute} value={minute}>
-          {minute}
-        </option>
-      );
-    });
-  };
-
-  const handleTimeChange = (e) => {
-    const { name, value } = e.target;
-    const isStart = name.startsWith('startTime');
-    const type = isStart ? 'Dd' : 'Df';
-    const currentTime = splitDateTime(eventData[type]).time || '00:00';
-    const [currentHour, currentMinute] = currentTime.split(':');
-    
-    let newTime;
-    if (name.endsWith('Hour')) {
-      newTime = `${value}:${currentMinute}`;
-    } else {
-      newTime = `${currentHour}:${value}`;
-    }
-
-    updateDateTime(type, newTime, 'time');
-  };
-
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
       className={styles.modal}
       overlayClassName={styles.modalOverlay}
     >
-      <h2 className={styles.title}>Créer un nouvel événement</h2>
+      <div className={styles.headerModal}>
+        <h2 className={styles.title}>Créer un nouvel événement</h2>
+        <button onClick={handleClose} className={styles.closeButton}>&times;</button>
+      </div>
 
       {filteredClubs.length > 1 && (
         <ClubList clubs={filteredClubs} selectedClubId={selectedClubId} onClubSelect={handleClubSelect} />
@@ -242,10 +199,11 @@ function ModalCreateEvent({ isOpen, onClose }) {
                 <div className={styles.dateInput}>
                   <input
                     type="date"
-                    name="Date"
-                    value={splitDateTime(eventData.Dd).date || new Date().toISOString().split('T')[0]}
-                    onChange={handleChange}
+                    name="startDate"
+                    value={startDate || new Date().toISOString().split('T')[0]}
+                    onChange={(e) => setStartDate(e.target.value)}
                     min={new Date().toLocaleDateString('fr-CA')}
+                    placeholder="Date de début"
                     required
                   />
                 </div>
@@ -255,9 +213,9 @@ function ModalCreateEvent({ isOpen, onClose }) {
                 <label>Horaires</label>
                 <div className={styles.timeInputs}>
                   <span>de</span>
-                  <input aria-label="Time" type="time" value={eventData.Dd} onChange={handleChange} />
+                  <input aria-label="Time" type="time" name="startTime" value={startTime} max={eventData.Df} onChange={handleChange} required/>
                   <span>à</span>
-                  <input aria-label="Time" type="time" value={eventData.Df} onChange={handleChange} />
+                  <input aria-label="Time" type="time" name="endTime" value={endTime} min={eventData.Dd} onChange={handleChange} />
                 </div>
               </div>
             </div>
@@ -278,50 +236,35 @@ function ModalCreateEvent({ isOpen, onClose }) {
           
           {hasRecurrence && (
             <div className={styles.recurrenceContainer}>
-              <select
-                value={recurrenceType}
-                onChange={(e) => setRecurrenceType(e.target.value)}
+              <span>Tous les</span>
+              <input 
+                type="number" 
+                value={recurrenceInterval} 
+                onChange={(e) => setRecurrenceInterval(parseInt(e.target.value) || 1)}
+                min="1" 
+              />
+              <select 
+                value={recurrenceUnit}
+                onChange={(e) => setRecurrenceUnit(e.target.value)}
               >
-                <option value="specific">Dates spécifiques</option>
-                <option value="weekly">Hebdomadaire</option>
+                <option value='jours'>jours</option>
+                <option value='semaines'>semaines</option>
+                <option value='mois'>mois</option>
               </select>
-              
-              {recurrenceType === 'specific' ? (
-                <div>
+
+              <div className={styles.inputGroup}>
+                <label>Date de fin</label>
+                <div className={styles.dateInput}>
                   <input
                     type="date"
-                    multiple
-                    onChange={(e) => {
-                      const dates = Array.from(e.target.selectedOptions).map(opt => opt.value);
-                      setRecurrenceDates(dates);
-                    }}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <select
-                    multiple
-                    onChange={(e) => {
-                      const days = Array.from(e.target.selectedOptions).map(opt => opt.value);
-                      setRecurrenceDates(days);
-                    }}
-                  >
-                    <option value="1">Lundi</option>
-                    <option value="2">Mardi</option>
-                    <option value="3">Mercredi</option>
-                    <option value="4">Jeudi</option>
-                    <option value="5">Vendredi</option>
-                    <option value="6">Samedi</option>
-                    <option value="0">Dimanche</option>
-                  </select>
-                  <input
-                    type="date"
+                    name="recurrenceEndDate"
                     value={recurrenceEndDate || ''}
                     onChange={(e) => setRecurrenceEndDate(e.target.value)}
-                    placeholder="Date de fin de récurrence"
+                    min={eventData.Dd ? eventData.Dd.split('T')[0] : new Date().toISOString().split('T')[0]}
+                    required={hasRecurrence}
                   />
                 </div>
-              )}
+              </div>
             </div>
           )}
         </div>
@@ -353,11 +296,10 @@ function ModalCreateEvent({ isOpen, onClose }) {
           )}
         </div>
         <div className={styles.buttonContainer}>
+          <button type="button" onClick={handleClose} className={styles.unregisterButton}>Annuler</button>
           <button type="submit" className={styles.registerButton}>Créer l'événement</button>
-          <button type="button" onClick={onClose} className={styles.unregisterButton}>Annuler</button>
         </div>
       </form>
-      <button onClick={onClose} className={styles.closeButton}>&times;</button>
     </Modal>
   );
 }
