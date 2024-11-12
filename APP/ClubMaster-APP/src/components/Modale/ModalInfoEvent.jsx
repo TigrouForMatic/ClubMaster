@@ -19,7 +19,9 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
   const address = useMemo(() => addresses.find(e => e.id === event.addressid) || {}, [addresses, event.addressid]);
 
   const displayDate = useMemo(() => 
-    `Le ${dateFormat(event.dd)} de ${dateToTimeFormat(event.dd)} à ${dateToTimeFormat(event.df)}`,
+    event.dd == event.df ?
+    `Le ${dateFormat(event.dd)} à partir de ${dateToTimeFormat(event.dd)}` :
+    `Du ${dateFormat(event.dd)} de ${dateToTimeFormat(event.dd)} à ${dateToTimeFormat(event.df)}`,
     [event.dd, event.df]
   );
 

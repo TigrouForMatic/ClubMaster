@@ -68,23 +68,18 @@ function ModalCreateEvent({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!endTime) {
-        setEndTime(startTime);
-      }
 
       const date = startDate || new Date().toISOString().split('T')[0];
       const finalEventData = {
         ...eventData,
         Dd: new Date(`${date}T${startTime}`).toISOString(),
-        Df: new Date(`${date}T${endTime}`).toISOString(),
+        Df: new Date(`${date}T${endTime === '' ? startTime : endTime}`).toISOString(),
         Recurrence: hasRecurrence ? {
           interval: recurrenceInterval,
           unit: recurrenceUnit,
           endDate: recurrenceEndDate
         } : null
       };
-
-      console.log(finalEventData);
 
       const response = await api.post('/event', finalEventData, {
         headers: { Authorization: `Bearer ${currentUser.token}` }
@@ -107,8 +102,14 @@ function ModalCreateEvent({ isOpen, onClose }) {
       AddressId: null,
       MaxPerson: null,
     });
+    setStartDate('');
+    setStartTime('');
+    setEndTime('');
     setHasRecurrence(false);
     setHasMaxPerson(false);
+    setRecurrenceEndDate('');
+    setRecurrenceInterval(1);
+    setRecurrenceUnit('jours');
     onClose();
   };
 

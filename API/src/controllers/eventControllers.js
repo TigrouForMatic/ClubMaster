@@ -41,16 +41,24 @@ const getEventById = async (req, res) => {
 };
 
 const addEvent = async (req, res) => {
-
-    //Ajout de la récurrence
-    // const { recurrence } = req.body;
-    
     const currentDate = new Date();
-
-    // Vérification de l'authentification
+    
     if (!req.user) return res.sendStatus(401);
 
-    const { columns, values } = prepareInsertData(req.body);
+    // Extraire récurrence et filtrer les données de l'événement
+    const { recurrence, ...rawEventData } = req.body;
+
+    // Créer un nouvel objet en excluant explicitement le champ recurrence
+    const eventData = Object.fromEntries(
+        Object.entries(rawEventData).filter(([key]) => key !== 'Recurrence')
+    );
+    
+    if (recurrence !== null && recurrence !== undefined) {
+        console.log('Récurrence:', recurrence);
+        // Logique de récurrence à implémenter ici
+    }
+    
+    const { columns, values } = prepareInsertData(eventData);
 
     try {
         const client = await pool.connect();

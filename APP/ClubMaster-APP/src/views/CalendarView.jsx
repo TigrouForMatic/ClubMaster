@@ -100,7 +100,13 @@ const CalendarView = () => {
               onClick={() => handleEventClick(e)}
             >
               <div><strong>{e.label}</strong></div>
-              <div>{dateToTimeFormat(e.dd)} à {dateToTimeFormat(e.df)}</div>
+              {e.dd != e.df && (
+                <div>{dateToTimeFormat(e.dd)} à {dateToTimeFormat(e.df)}</div>
+              )}
+              {e.dd == e.df && (
+                <div>{dateToTimeFormat(e.dd)}</div>
+                )
+              }
             </div>
           ))}
         </div>
