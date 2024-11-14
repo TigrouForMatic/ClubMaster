@@ -372,3 +372,29 @@
     width: 33.33%; /* Affiche 3 options par ligne */
     box-sizing: border-box;
   }
+
+  .recurrenceInputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .recurrenceText {
+    margin-right: 0.5rem;
+  }
+
+  .recurrenceInput {
+    width: 10%;
+  }
+
+  .recurrenceSelect {
+    width: 25%;
+  }
+
+  .recurrenceEndDateInput {
+    max-width: 52%;
+  }
+
+  .recurrenceResume {
+    margin-left: 0.5rem;
+  }

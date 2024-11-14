@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
 import styles from "../../styles/ModaleCreateEvent.module.css";
+import { dateFormat } from '../../js/date';
 
 function ModalCreateEvent({ isOpen, onClose }) {
   const { currentUser, currentUserRoles, userClubs, addresses, typesEvent } = useStore();
@@ -121,6 +122,34 @@ function ModalCreateEvent({ isOpen, onClose }) {
     }
   };
 
+  const getRecurrenceResume = () => {
+    if (!recurrenceEndDate) {
+      return '';
+    }
+    const endDate = dateFormat(recurrenceEndDate);
+    const dayOfWeek = new Date(recurrenceEndDate).toLocaleDateString('fr-FR', { weekday: 'long' });
+    const displayEndDate = `${dayOfWeek} ${endDate}`;
+    if (recurrenceUnit === 'jours') {
+      if (recurrenceInterval === 1) {
+        return `Tous les jours jusqu'au ${displayEndDate}`;
+      } else {
+        return `Tous les ${recurrenceInterval} jours jusqu'au ${displayEndDate}`;
+      }
+    } else if (recurrenceUnit === 'semaines') {
+      if (recurrenceInterval === 1) {
+        return `Tous les semaines jusqu'au ${displayEndDate}`;
+      } else {
+        return `Tous les ${recurrenceInterval} semaines jusqu'au ${displayEndDate}`;
+      }
+    } else if (recurrenceUnit === 'mois') {
+      if (recurrenceInterval === 1) {
+        return `Tous les mois jusqu'au ${displayEndDate}`;
+      } else {
+        return `Tous les ${recurrenceInterval} mois jusqu'au ${displayEndDate}`;
+      }
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -236,24 +265,28 @@ function ModalCreateEvent({ isOpen, onClose }) {
           
           {hasRecurrence && (
             <div className={styles.recurrenceContainer}>
-              <span>Tous les</span>
-              <input 
-                type="number" 
-                value={recurrenceInterval} 
-                onChange={(e) => setRecurrenceInterval(parseInt(e.target.value) || 1)}
-                min="1" 
-              />
-              <select 
-                value={recurrenceUnit}
-                onChange={(e) => setRecurrenceUnit(e.target.value)}
-              >
-                <option value='jours'>jours</option>
-                <option value='semaines'>semaines</option>
-                <option value='mois'>mois</option>
-              </select>
+              <div className={styles.recurrenceInputs}>
+                <span className={styles.recurrenceText}>Tous les</span>
+                <input 
+                  type="number" 
+                  value={recurrenceInterval} 
+                  onChange={(e) => setRecurrenceInterval(parseInt(e.target.value) || 1)}
+                  min="1" 
+                  className={styles.recurrenceInput}
+                />
+                <select 
+                  value={recurrenceUnit}
+                  onChange={(e) => setRecurrenceUnit(e.target.value)}
+                  className={styles.recurrenceSelect}
+                >
+                  <option value='jours'>jours</option>
+                  <option value='semaines'>semaines</option>
+                  <option value='mois'>mois</option>
+                </select>
+              </div>
 
               <div className={styles.inputGroup}>
-                <label>Date de fin</label>
+                <label>Date du dernier événement</label>
                 <div className={styles.dateInput}>
                   <input
                     type="date"
@@ -262,9 +295,13 @@ function ModalCreateEvent({ isOpen, onClose }) {
                     onChange={(e) => setRecurrenceEndDate(e.target.value)}
                     min={eventData.Dd ? eventData.Dd.split('T')[0] : new Date().toISOString().split('T')[0]}
                     required={hasRecurrence}
+                    className={styles.recurrenceEndDateInput}
                   />
                 </div>
               </div>
+              { getRecurrenceResume() && (
+                <span className={styles.recurrenceResume}> {getRecurrenceResume()}</span>
+              )}
             </div>
           )}
         </div>
