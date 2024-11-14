@@ -45,43 +45,88 @@ const addEvent = async (req, res) => {
     
     if (!req.user) return res.sendStatus(401);
 
-    // Extraire récurrence et filtrer les données de l'événement
-    const { recurrence, ...rawEventData } = req.body;
-
-    // Créer un nouvel objet en excluant explicitement le champ recurrence
-    const eventData = Object.fromEntries(
-        Object.entries(rawEventData).filter(([key]) => key !== 'Recurrence')
-    );
+    const { Recurrence, ...eventData } = req.body;
     
-    if (recurrence !== null && recurrence !== undefined) {
-        console.log('Récurrence:', recurrence);
-        // Logique de récurrence à implémenter ici
-    }
+    if (Recurrence && Recurrence.interval && Recurrence.unit && Recurrence.endDate) {
+        try {
+            const client = await pool.connect();
+            const results = [];
+            const endDate = new Date(Recurrence.endDate);
+            let currentEventDate = new Date(eventData.Dd);
+            
+            // Boucle de création des événements récurrents
+            while (new Date(currentEventDate.toDateString()) <= new Date(endDate.toDateString())) {
+                
+                const eventCopy = { ...eventData };
+                eventCopy.Dd = new Date(currentEventDate);
+                
+                // Ajuster la date de fin si elle existe
+                if (eventCopy.Df) {
+                    const duration = new Date(eventData.Df) - new Date(eventData.Dd);
+                    eventCopy.Df = new Date(currentEventDate.getTime() + duration);
+                }
+
+                const { columns, values } = prepareInsertData(eventCopy);
+                const columnsWithDates = `${columns}, Dc, Dm`;
+                const valuesWithDates = [...values, currentDate, currentDate];
+                
+                const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) 
+                    VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) 
+                    RETURNING *`;
+                
+                const result = await client.query(insertQuery, valuesWithDates);
+                results.push(result.rows[0]);
+
+                // Calculer la prochaine date selon l'unité de récurrence
+                switch (Recurrence.unit.toLowerCase()) {
+                    case 'jours':
+                        currentEventDate.setDate(currentEventDate.getDate() + Recurrence.interval);
+                        break;
+                    case 'semaines':
+                        currentEventDate.setDate(currentEventDate.getDate() + (Recurrence.interval * 7));
+                        break;
+                    case 'mois':
+                        currentEventDate.setMonth(currentEventDate.getMonth() + Recurrence.interval);
+                        break;
+                    case 'ans':
+                        currentEventDate.setFullYear(currentEventDate.getFullYear() + Recurrence.interval);
+                        break;
+                }
+            }
+            
+            client.release();
+            res.status(201).json(results);
+            
+        } catch (err) {
+            console.error('Erreur lors de la création des événements récurrents', err);
+            res.status(500).send('Erreur lors de la création des événements récurrents');
+        }
+    } else {
+        const { columns, values } = prepareInsertData(eventData);
+
+        try {
+            const client = await pool.connect();
     
-    const { columns, values } = prepareInsertData(eventData);
-
-    try {
-        const client = await pool.connect();
-
-        const columnsWithDates = `${columns}, Dc, Dm`;
-        const valuesWithDates = [...values, currentDate, currentDate];
-
-        const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
-
-        const result = await client.query(insertQuery, valuesWithDates);
-        client.release();
-
-        // Récupérer les données insérées
-        const insertedEvent = result.rows[0];
-
-        // Effectuer une nouvelle requête pour obtenir toutes les données de l'événement
-        const selectQuery = `SELECT * FROM ${TABLE_NAME} WHERE id = $1`;
-        const selectResult = await client.query(selectQuery, [insertedEvent.id]);
-        
-        res.status(201).json(selectResult.rows[0]);
-    } catch (err) {
-        console.error('Erreur lors de l\'ajout d\'un nouveau événement', err);
-        res.status(500).send('Erreur lors de l\'ajout d\'un nouveau événement');
+            const columnsWithDates = `${columns}, Dc, Dm`;
+            const valuesWithDates = [...values, currentDate, currentDate];
+    
+            const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
+    
+            const result = await client.query(insertQuery, valuesWithDates);
+            client.release();
+    
+            // Récupérer les données insérées
+            const insertedEvent = result.rows[0];
+    
+            // Effectuer une nouvelle requête pour obtenir toutes les données de l'événement
+            const selectQuery = `SELECT * FROM ${TABLE_NAME} WHERE id = $1`;
+            const selectResult = await client.query(selectQuery, [insertedEvent.id]);
+            
+            res.status(201).json(selectResult.rows[0]);
+        } catch (err) {
+            console.error('Erreur lors de l\'ajout d\'un nouveau événement', err);
+            res.status(500).send('Erreur lors de l\'ajout d\'un nouveau événement');
+        }  
     }
 };
 

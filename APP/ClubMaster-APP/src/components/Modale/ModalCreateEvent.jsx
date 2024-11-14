@@ -7,6 +7,7 @@ import styles from "../../styles/ModaleCreateEvent.module.css";
 function ModalCreateEvent({ isOpen, onClose }) {
   const { currentUser, currentUserRoles, userClubs, addresses, typesEvent } = useStore();
   const addItem = useStore((state) => state.addItem);
+  const addItems = useStore((state) => state.addItems);
   const [selectedClubId, setSelectedClubId] = useState(userClubs[0].id);
   const [hasMaxPerson, setHasMaxPerson] = useState(false);
   const [hasRecurrence, setHasRecurrence] = useState(false);
@@ -45,13 +46,6 @@ function ModalCreateEvent({ isOpen, onClose }) {
     setSelectedClubId(clubId);
   };
 
-  // Fonction pour extraire la date et l'heure d'un datetime
-  const splitDateTime = (datetime) => {
-    if (!datetime) return { date: '', time: '' };
-    const [date, time] = datetime.split('T');
-    return { date, time };
-  };
-
   // Modifier le handleChange pour les nouveaux champs
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,7 +78,12 @@ function ModalCreateEvent({ isOpen, onClose }) {
       const response = await api.post('/event', finalEventData, {
         headers: { Authorization: `Bearer ${currentUser.token}` }
       });
-      addItem('events', response);
+
+      if (Array.isArray(response) && response.length > 0) {
+        addItems('events', response);
+      } else if (response && typeof response === 'object') {
+        addItem('events', response);
+      }
       handleClose();
     } catch (error) {
       console.error('Erreur lors de la création de l\'événement:', error);

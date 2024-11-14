@@ -69,6 +69,10 @@ const useStore = create((set) => ({
 
   // Nouvelles fonctions pour manipuler tout un tableau
 
+  // Cette fonction permet d'ajouter un ou plusieurs éléments à une catégorie spécifique du state
+  // Si items est un tableau, elle ajoute tous les éléments du tableau
+  // Si items est un objet unique, elle l'ajoute comme un seul élément
+  // La catégorie est créée si elle n'existe pas encore (|| [])
   addItems: (category, items) => set((state) => ({
   [category]: Array.isArray(items) 
     ? [...state[category] || [], ...items]
