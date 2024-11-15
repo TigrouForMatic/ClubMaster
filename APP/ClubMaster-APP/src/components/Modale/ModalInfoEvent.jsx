@@ -2,8 +2,8 @@ import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { dateToTimeFormat, dateFormat } from '../../js/date';
-import styles from "../../styles/Modale.module.css";
-import { Xmark } from 'iconoir-react';
+import styles from "../../styles/ModaleInfoEvent.module.css";
+import { Xmark, EditPencil } from 'iconoir-react';
 import Conversation from '../Conversation';
 
 const ModalInfoEvent = ({ isOpen, onClose, event }) => {
@@ -13,7 +13,7 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
   const [conversation, setConversation] = useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   
-  const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser, conversations } = useStore();
+  const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser, conversations, currentUserRoles } = useStore();
 
   const type = useMemo(() => typesEvent.find(e => e.id === event.eventtypeid) || {}, [typesEvent, event.eventtypeid]);
   const address = useMemo(() => addresses.find(e => e.id === event.addressid) || {}, [addresses, event.addressid]);
@@ -85,13 +85,24 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
     }
   }, [onClose, isConfirmOpen]);
 
+  const handleEdit = useCallback(() => {
+    console.log("Édition de l'événement:", event.id);
+  }, [event.id]);
+
   return (
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className={styles.closeButton}>
           <Xmark />
         </button>
-        <h2 className={styles.title}>{event.label}</h2>
+        <div className={styles.titleContainer}>
+          <h2 className={styles.title}>{event.label}</h2>
+          {currentUserRoles.some(role => role.level >= 3) && (
+            <button className={styles.editButton} onClick={handleEdit}>
+              <EditPencil />
+            </button>
+          )}
+        </div>
         <div className={styles.content}>
           <p className={styles.date}>{displayDate}</p>
           <p className={styles.description}>{event.description}</p>
