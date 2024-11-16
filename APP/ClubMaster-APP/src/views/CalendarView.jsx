@@ -138,7 +138,7 @@ const CalendarView = () => {
 
   return (
     <div className={styles.calendarContainer}>
-      <h1 className={styles.title}>Le Calendrier</h1>
+      <h1 className={styles.title}>Calendrier</h1>
 
       {currentUserRoles.some(role => role.level >= 3) && (
         <button onClick={openCreateModal} className={styles.addEventButton}>
