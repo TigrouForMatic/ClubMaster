@@ -6,7 +6,7 @@ import styles from "../../styles/ModaleCreateEvent.module.css";
 import { dateFormat } from '../../js/date';
 
 function ModalCreateEvent({ isOpen, onClose }) {
-  const { currentUser, currentUserRoles, userClubs, addresses, typesEvent } = useStore();
+  const { currentUserRoles, userClubs, addresses, typesEvent } = useStore();
   const addItem = useStore((state) => state.addItem);
   const addItems = useStore((state) => state.addItems);
   const [selectedClubId, setSelectedClubId] = useState(userClubs[0].id);
@@ -76,14 +76,31 @@ function ModalCreateEvent({ isOpen, onClose }) {
         } : null
       };
 
-      const response = await api.post('/event', finalEventData, {
-        headers: { Authorization: `Bearer ${currentUser.token}` }
-      });
+      const response = await api.post('/event', finalEventData);
 
       if (Array.isArray(response) && response.length > 0) {
         addItems('events', response);
+        const eventIds = response.map(event => event.id);
+        try {
+          const responseConversations = await api.post('/conversation', {
+            eventIds: eventIds,
+            type: 'Event'
+          });
+          addItems('conversations', responseConversations);
+        } catch (error) {
+          console.error('Erreur lors de la création des conversations:', error);
+        }
       } else if (response && typeof response === 'object') {
         addItem('events', response);
+        try {
+          const responseConversations = await api.post('/conversation', {
+            eventId: response.id,
+            type: 'Event'
+          });
+          addItem('conversations', responseConversations);
+        } catch (error) {
+          console.error('Erreur lors de la création des conversations:', error);
+        }
       }
       handleClose();
     } catch (error) {

@@ -2,16 +2,18 @@ import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { dateToTimeFormat, dateFormat } from '../../js/date';
-import styles from "../../styles/ModaleInfoEvent.module.css";
+import styles from "../../styles/InfoEvent.module.css";
 import { Xmark, EditPencil } from 'iconoir-react';
 import Conversation from '../Conversation';
+import ModalEditEvent from '../Modale/ModalEditEvent';
 
-const ModalInfoEvent = ({ isOpen, onClose, event }) => {
+const InfoEvent = ({ isOpen, onClose, event }) => {
   if (!isOpen || !event) return null;
 
   const [inscription, setInscription] = useState(null);
   const [conversation, setConversation] = useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   
   const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser, conversations, currentUserRoles } = useStore();
 
@@ -85,20 +87,24 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
     }
   }, [onClose, isConfirmOpen]);
 
-  const handleEdit = useCallback(() => {
-    console.log("Édition de l'événement:", event.id);
-  }, [event.id]);
+  const openEditModal = useCallback(() => {
+    setIsEditOpen(true);
+  }, []);
+
+  const closeEditModal = useCallback(() => {
+    setIsEditOpen(false);
+  }, []);
 
   return (
-    <div className={styles.modalOverlay} onClick={handleOverlayClick}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+    <div className={styles.eventOverlay} onClick={handleOverlayClick}>
+      <div className={styles.overlay} onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className={styles.closeButton}>
           <Xmark />
         </button>
         <div className={styles.titleContainer}>
           <h2 className={styles.title}>{event.label}</h2>
           {currentUserRoles.some(role => role.level >= 3) && (
-            <button className={styles.editButton} onClick={handleEdit}>
+            <button className={styles.editButton} onClick={openEditModal}>
               <EditPencil />
             </button>
           )}
@@ -133,9 +139,10 @@ const ModalInfoEvent = ({ isOpen, onClose, event }) => {
             onCancel={() => setIsConfirmOpen(false)}
           />
         )}
+        <ModalEditEvent isOpen={isEditOpen} onClose={closeEditModal} event={event} />
       </div>
     </div>
   );
 };
 
-export default React.memo(ModalInfoEvent);
+export default React.memo(InfoEvent);

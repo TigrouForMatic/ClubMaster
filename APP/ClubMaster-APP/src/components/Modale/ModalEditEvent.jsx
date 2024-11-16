@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import api from '../../js/App/Api';
-import { useStore } from '../../store/store';
+import useStore from '../../store/store';
 import styles from "../../styles/Modale.module.css";
 
 function ModalEditEvent({ isOpen, onClose, eventId }) {
@@ -26,9 +26,7 @@ function ModalEditEvent({ isOpen, onClose, eventId }) {
 
   const fetchEventData = async () => {
     try {
-      const response = await api.get(`/event/${eventId}`, {
-        headers: { Authorization: `Bearer ${login.token}` }
-      });
+      const response = await api.get(`/event/${eventId}`);
       setEventData(response.data);
     } catch (error) {
       console.error('Erreur lors de la récupération des données de l\'événement:', error);
@@ -43,9 +41,7 @@ function ModalEditEvent({ isOpen, onClose, eventId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const editedEventData = await api.put(`/event/${eventId}`, eventData, {
-        headers: { Authorization: `Bearer ${login.token}` }
-      });
+      const editedEventData = await api.put(`/event/${eventId}`, eventData);
       updateItem('events', editedEventData);
       onClose();
     } catch (error) {

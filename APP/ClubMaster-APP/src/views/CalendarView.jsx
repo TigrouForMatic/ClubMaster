@@ -7,7 +7,7 @@ import useStore from '../store/store';
 import { dateToTimeFormat } from "../js/date";
 import { getColorFromString } from "../js/color";
 import { Calendar } from 'iconoir-react';
-import ModalInfoEvent from '../components/Modale/ModalInfoEvent';
+import InfoEvent from '../components/Event/InfoEvent';
 import ModalCreateEvent from '../components/Modale/ModalCreateEvent';
 
 const CalendarView = () => {
@@ -207,7 +207,7 @@ const CalendarView = () => {
         </div>
       </div>
       
-      <ModalInfoEvent isOpen={isModalOpen} onClose={closeModal} event={selectedEvent} />
+      <InfoEvent isOpen={isModalOpen} onClose={closeModal} event={selectedEvent} />
       <ModalCreateEvent isOpen={isCreateModalOpen} onClose={closeCreateModal} />
     </div>
   );
