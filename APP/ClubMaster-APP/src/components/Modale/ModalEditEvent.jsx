@@ -5,7 +5,6 @@ import useStore from '../../store/store';
 import styles from "../../styles/Modale.module.css";
 
 function ModalEditEvent({ isOpen, onClose, eventId }) {
-  const login = useStore((state) => state.login);
   const updateItem = useStore((state) => state.updateItem);
 
   const [eventData, setEventData] = useState({
