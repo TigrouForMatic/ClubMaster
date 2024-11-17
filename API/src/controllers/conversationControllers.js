@@ -109,15 +109,14 @@ const addConversation = async (req, res) => {
     // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
 
-    const { eventIds, eventId, type } = req.body;
+    const { eventIds, eventId, teamId } = req.body;
 
-    if (type === 'Event') {
-      if (eventId) {
+    if (eventId) {
         try {
             const client = await pool.connect();
 
-            const columnsWithDates = `EventId, Dc, Dm, Type`;
-            const valuesWithDates = [eventId, currentDate, currentDate, type];
+            const columnsWithDates = `EventId, Dc, Dm`;
+            const valuesWithDates = [eventId, currentDate, currentDate];
 
             const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
 
@@ -129,15 +128,14 @@ const addConversation = async (req, res) => {
             console.error('Erreur lors de l\'ajout d\'une nouvelle conversation', err);
             res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle conversation');
         }
-      }
-      if (eventIds) {
+    } else if (eventIds) {
         const conversations = [];
         for (const eventId of eventIds) {
           try {
             const client = await pool.connect();
 
-            const columnsWithDates = `EventId, Dc, Dm, Type`;
-            const valuesWithDates = [eventId, currentDate, currentDate, type];
+            const columnsWithDates = `EventId, Dc, Dm`;
+            const valuesWithDates = [eventId, currentDate, currentDate];
 
             const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
 
@@ -151,7 +149,23 @@ const addConversation = async (req, res) => {
           }
         }
         res.status(201).json(conversations);
-      }
+    } else if (teamId) {
+        try {
+          const client = await pool.connect();
+
+            const columnsWithDates = `TeamId, Dc, Dm`;
+            const valuesWithDates = [teamId, currentDate, currentDate];
+
+            const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
+
+          const result = await client.query(insertQuery, valuesWithDates);
+
+          client.release();
+          res.status(201).json(result.rows[0]);
+        } catch (err) {
+            console.error('Erreur lors de l\'ajout d\'une nouvelle conversation', err);
+            res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle conversation');
+        }
     }
 };
 

@@ -181,17 +181,31 @@ BEGIN
         FOREIGN KEY (RoleId) REFERENCES db.Role(Id)
     );
 
+    CREATE TABLE db.Team (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        Label VARCHAR(255) NOT NULL
+    );
+
+    CREATE TABLE db.TeamMember (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        TeamId INT,
+        PersonPhysicId INT,
+        FOREIGN KEY (TeamId) REFERENCES db.Team(Id),
+        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+    );
+
     CREATE TABLE db.Conversation (
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
         EventId INT,
-        Person1Id INT,
-        Person2Id INT,
-        Type VARCHAR(50),
+        TeamId INT,
         FOREIGN KEY (EventId) REFERENCES db.Event(Id),
-        FOREIGN KEY (Person1Id) REFERENCES db.PersonPhysic(Id),
-        FOREIGN KEY (Person2Id) REFERENCES db.PersonPhysic(Id)
+        FOREIGN KEY (TeamId) REFERENCES db.Team(Id)
     );
 
     CREATE TABLE db.Message (
@@ -272,11 +286,11 @@ BEGIN
 
      INSERT INTO db.Login (Dc, Dm, Login, Password, Pseudo) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'amandine@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle');
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', 'constance@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle');
 
     INSERT INTO db.PersonPhysic (Dc, Dm, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Amandine Moncoiffé','2003-10-25T00:00:00.000Z','0677332963','amandine@clubmaster.bzh',1);
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', 'Constance Le Ray','1991-04-27T00:00:00.000Z','0677332963','constance@clubmaster.bzh',2);
 
 
     INSERT INTO db.LicenceType (Dc, Dm, Duration, Label, ClubId, Price, Basic) VALUES
@@ -313,18 +327,18 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, 1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 2, 1);
 
-    INSERT INTO Conversation (Dc, Dm, EventId, Person1Id, Person2Id, Type) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 1, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 2, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 3, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 4, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 5, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 6, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 7, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 8, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 9, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 10, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, null, null, 'Event');
+    INSERT INTO Conversation (Dc, Dm, EventId, TeamId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 1, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 2, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 3, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 4, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 5, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 6, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 7, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 8, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 9, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 10, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, null);
 
     INSERT INTO Message (Dc, Dm, Content, ConversationId, PersonPhysicId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Hello', 11,1),

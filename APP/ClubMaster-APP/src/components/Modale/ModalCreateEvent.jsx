@@ -82,10 +82,7 @@ function ModalCreateEvent({ isOpen, onClose }) {
         addItems('events', response);
         const eventIds = response.map(event => event.id);
         try {
-          const responseConversations = await api.post('/conversation', {
-            eventIds: eventIds,
-            type: 'Event'
-          });
+          const responseConversations = await api.post('/conversation', { eventIds: eventIds });
           addItems('conversations', responseConversations);
         } catch (error) {
           console.error('Erreur lors de la création des conversations:', error);
@@ -93,10 +90,7 @@ function ModalCreateEvent({ isOpen, onClose }) {
       } else if (response && typeof response === 'object') {
         addItem('events', response);
         try {
-          const responseConversations = await api.post('/conversation', {
-            eventId: response.id,
-            type: 'Event'
-          });
+          const responseConversations = await api.post('/conversation', { eventId: response.id });
           addItem('conversations', responseConversations);
         } catch (error) {
           console.error('Erreur lors de la création des conversations:', error);
