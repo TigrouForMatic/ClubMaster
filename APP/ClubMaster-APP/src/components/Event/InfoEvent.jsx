@@ -3,9 +3,10 @@ import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { dateToTimeFormat, dateFormat } from '../../js/date';
 import styles from "../../styles/InfoEvent.module.css";
-import { Xmark, EditPencil } from 'iconoir-react';
+import { Xmark, EditPencil, Trash } from 'iconoir-react';
 import Conversation from '../Conversation';
 import ModalEditEvent from '../Modale/ModalEditEvent';
+import CustomConfirm from '../CustomConfirm';
 
 const InfoEvent = ({ isOpen, onClose, event }) => {
   if (!isOpen || !event) return null;
@@ -14,7 +15,8 @@ const InfoEvent = ({ isOpen, onClose, event }) => {
   const [conversation, setConversation] = useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
   const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser, conversations, currentUserRoles } = useStore();
 
   const type = useMemo(() => typesEvent.find(e => e.id === event.eventtypeid) || {}, [typesEvent, event.eventtypeid]);
@@ -95,20 +97,39 @@ const InfoEvent = ({ isOpen, onClose, event }) => {
     setIsEditOpen(false);
   }, []);
 
+  const handleDelete = useCallback(() => {
+    setIsDeleteOpen(true);
+  }, []);
+
+  const confirmDelete = useCallback(async () => {
+    try {
+      await api.delete(`/event/${event.id}`);
+      deleteItem('events', event.id);
+      onClose();
+    } catch (err) {
+        console.error('Erreur:', err);
+    }
+  }, [event, deleteItem]);
+
   return (
     <div className={styles.eventOverlay} onClick={handleOverlayClick}>
       <div className={styles.overlay} onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className={styles.closeButton}>
-          <Xmark />
-        </button>
-        <div className={styles.titleContainer}>
-          <h2 className={styles.title}>{event.label}</h2>
+        <div className={styles.buttonActionsContainer}>
+          <button onClick={onClose} className={styles.closeButton}>
+            <Xmark />
+          </button>
           {currentUserRoles.some(role => role.level >= 3) && (
-            <button className={styles.editButton} onClick={openEditModal}>
-              <EditPencil />
-            </button>
+            <>
+              <button className={styles.editButton} onClick={openEditModal}>
+                <EditPencil />
+              </button>
+              <button className={styles.deleteButton} onClick={handleDelete}>
+                <Trash />
+              </button>
+            </>
           )}
         </div>
+        <h2 className={styles.title}>{event.label}</h2>
         <div className={styles.content}>
           <p className={styles.date}>{displayDate}</p>
           <p className={styles.description}>{event.description}</p>
@@ -139,6 +160,16 @@ const InfoEvent = ({ isOpen, onClose, event }) => {
             onCancel={() => setIsConfirmOpen(false)}
           />
         )}
+
+        {isDeleteOpen && (
+          <CustomConfirm 
+            isOpen={isDeleteOpen}
+            message={`Êtes-vous sûr de vouloir supprimer l'événement ${event.label} du ${dateFormat(event.dd)} ?`}
+            onConfirm={confirmDelete}
+            onCancel={() => setIsDeleteOpen(false)}
+          />
+        )}
+
         <ModalEditEvent isOpen={isEditOpen} onClose={closeEditModal} event={event} />
       </div>
     </div>

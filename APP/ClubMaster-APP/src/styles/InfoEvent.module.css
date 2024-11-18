@@ -33,35 +33,12 @@
     }
   }
   
-  .titleContainer {
-    display: flex;
-    align-items: center;
-    border-bottom: 2px solid #4285F4;
-    gap: 1em;
-    justify-content: center;
-  }
-  
   .title {
+    border-bottom: 2px solid #4285F4;
     margin-left: 1rem;
     color: #333;
     font-size: 1.8rem;
     padding-bottom: 0.5rem;
-  }
-
-  .editButton {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    color: #4285F4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 10px;
-  }
-  
-  .editButton:hover {
-    color: #3367d6;
   }
   
   hr {
@@ -124,11 +101,16 @@
   .unregisterButton:hover {
     background-color: #707070;
   }
-  
-  .closeButton {
+
+  .buttonActionsContainer {
     position: absolute;
     top: 1rem;
     right: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .closeButton {
     background: none;
     border: none;
     cursor: pointer;
@@ -138,6 +120,34 @@
   
   .closeButton:hover {
     color: #f44336;
+  }
+
+  .editButton {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #4285F4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 10px;
+  }
+
+  .editButton:hover {
+    color: #3367d6;
+  }
+
+  .deleteButton {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #f44336;
+  }
+  
+  .deleteButton:hover {
+    color: #d32f2f;
   }
   
   /* Styles pour la conversation */

@@ -10,8 +10,10 @@ const getEvent = async (req, res) => {
         
         if (arrayEventTypeId && Array.isArray(JSON.parse(arrayEventTypeId))) {
             const eventTypeId = JSON.parse(arrayEventTypeId);
-            queryString += ` WHERE eventtypeid = ANY($1)`;
+            queryString += ` WHERE eventtypeid = ANY($1) AND Bin = false`;
             values.push(eventTypeId);
+        } else {
+            queryString += ` WHERE Bin = false`;
         }
 
         const client = await pool.connect();
@@ -28,7 +30,7 @@ const getEventById = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1`, [id]);
+        const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1 AND Bin = false`, [id]);
         client.release();
         if (result.rows.length === 0) {
             return res.status(404).send('Role non trouvée');
@@ -67,8 +69,8 @@ const addEvent = async (req, res) => {
                 }
 
                 const { columns, values } = prepareInsertData(eventCopy);
-                const columnsWithDates = `${columns}, Dc, Dm`;
-                const valuesWithDates = [...values, currentDate, currentDate];
+                const columnsWithDates = `${columns}, Dc, Dm, Bin`;
+                const valuesWithDates = [...values, currentDate, currentDate, false];
                 
                 const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) 
                     VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) 
@@ -107,8 +109,8 @@ const addEvent = async (req, res) => {
         try {
             const client = await pool.connect();
     
-            const columnsWithDates = `${columns}, Dc, Dm`;
-            const valuesWithDates = [...values, currentDate, currentDate];
+            const columnsWithDates = `${columns}, Dc, Dm, Bin`;
+            const valuesWithDates = [...values, currentDate, currentDate, false];
     
             const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
     
@@ -144,7 +146,7 @@ const updateEvent = async (req, res) => {
         const result = await client.query(updateQuery, [...values, id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Role non trouvée');
+            return res.status(404).send('Événement non trouvé');
         }
         res.json(result.rows[0]);
     } catch (err) {
@@ -161,10 +163,10 @@ const deleteEvent = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM ${TABLE_NAME} WHERE id = $1 RETURNING *`, [id]);
+        const result = await client.query(`UPDATE ${TABLE_NAME} SET Bin = true WHERE id = $1 RETURNING *`, [id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Role non trouvée');
+            return res.status(404).send('Événement non trouvé');
         }
         res.json(result.rows[0]);
     } catch (err) {
