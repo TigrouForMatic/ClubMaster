@@ -52,6 +52,9 @@ const useStore = create((set) => ({
     )
   })),
 
+  // Récupérer un élément
+  getItem: (category, id) => (state) => state[category].find(item => item.id === id),
+
   // Ajouter un élément
   addItem: (category, newItem) => set((state) => ({
     [category]: [...state[category], newItem]

@@ -55,7 +55,9 @@ function MatchsView() {
         )}
       </div>
       
-      <InfoEvent isOpen={isModalOpen} onClose={closeModal} event={selectedEvent} />
+      {selectedEvent && (
+        <InfoEvent isOpen={isModalOpen} onClose={closeModal} eventId={selectedEvent.id} />
+      )}
     </div>
   );
 }

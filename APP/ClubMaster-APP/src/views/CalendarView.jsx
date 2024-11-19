@@ -207,7 +207,9 @@ const CalendarView = () => {
         </div>
       </div>
       
-      <InfoEvent isOpen={isModalOpen} onClose={closeModal} event={selectedEvent} />
+      {selectedEvent && (
+        <InfoEvent isOpen={isModalOpen} onClose={closeModal} eventId={selectedEvent.id} />
+      )}
       <ModalCreateEvent isOpen={isCreateModalOpen} onClose={closeCreateModal} />
     </div>
   );

@@ -16,6 +16,7 @@
     bottom: 0;
     background-color: white;
     padding: 2rem;
+    padding-top: 1rem;
     width: 40%;
     height: 100vh;
     overflow-y: auto;
@@ -101,16 +102,11 @@
   .unregisterButton:hover {
     background-color: #707070;
   }
-
-  .buttonActionsContainer {
+  
+  .closeButton {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .closeButton {
     background: none;
     border: none;
     cursor: pointer;
@@ -122,6 +118,15 @@
     color: #f44336;
   }
 
+  .buttonActionsContainer {
+    position: absolute;
+    top: 6.5em;
+    right: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   .editButton {
     background: none;
     border: none;
@@ -131,7 +136,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-bottom: 10px;
+    padding-bottom: 15px;
   }
 
   .editButton:hover {
