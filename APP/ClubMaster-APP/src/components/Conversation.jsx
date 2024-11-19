@@ -13,26 +13,32 @@ const Conversation = React.memo(({ conversation }) => {
   const messages = conversation?.messages || [];
 
   const handleSendMessage = useCallback(async () => {
+    if (!newMessage.trim()) return;
+    
     try {
       const messageResponse = await api.post('/message', {
-        content: newMessage,
+        content: newMessage.trim(),
         conversationid: conversation.conversationid,
         personPhysicId: currentUser.id,
       });
 
-      const newMessageData = {
-        content: messageResponse.content,
-        messageid: messageResponse.id,
-        personname: currentUser.name,
-        personphysicid: messageResponse.personphysicid,
-        sentat: messageResponse.dc
-      }
+      if (messageResponse && messageResponse.id) {
+        const newMessageData = {
+          content: messageResponse.content,
+          messageid: messageResponse.id,
+          personname: currentUser.name,
+          personphysicid: messageResponse.personphysicid,
+          sentat: messageResponse.dc
+        }
 
-      addMessageToConversation(conversation.conversationid, newMessageData);
-      setNewMessage('');
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        addMessageToConversation(conversation.conversationid, newMessageData);
+        setNewMessage('');
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        }
+      }
     } catch (err) {
-      console.error('Erreur:', err);
+      console.error('Erreur lors de l\'envoi du message:', err);
     }
   }, [conversation.conversationid, newMessage, currentUser, addMessageToConversation]);
 

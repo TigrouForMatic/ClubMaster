@@ -109,23 +109,63 @@ const addConversation = async (req, res) => {
     // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
 
-    const { columns, values } = prepareInsertData(req.body);
+    const { eventIds, eventId, teamId } = req.body;
 
-    try {
-        const client = await pool.connect();
+    if (eventId) {
+        try {
+            const client = await pool.connect();
 
-        const columnsWithDates = `${columns}, Dc, Dm`;
-        const valuesWithDates = [...values, currentDate, currentDate];
+            const columnsWithDates = `EventId, Dc, Dm`;
+            const valuesWithDates = [eventId, currentDate, currentDate];
 
-        const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
+            const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
 
-        const result = await client.query(insertQuery, valuesWithDates);
+            const result = await client.query(insertQuery, valuesWithDates);
 
-        client.release();
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        console.error('Erreur lors de l\'ajout d\'une nouvelle conversation', err);
-        res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle conversation');
+            client.release();
+            res.status(201).json(result.rows[0]);
+        } catch (err) {
+            console.error('Erreur lors de l\'ajout d\'une nouvelle conversation', err);
+            res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle conversation');
+        }
+    } else if (eventIds) {
+        const conversations = [];
+        for (const eventId of eventIds) {
+          try {
+            const client = await pool.connect();
+
+            const columnsWithDates = `EventId, Dc, Dm`;
+            const valuesWithDates = [eventId, currentDate, currentDate];
+
+            const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
+
+            const result = await client.query(insertQuery, valuesWithDates);
+
+            client.release();
+            conversations.push(result.rows[0]);
+          } catch (err) {
+              console.error('Erreur lors de l\'ajout d\'une nouvelle conversation', err);
+              res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle conversation');
+          }
+        }
+        res.status(201).json(conversations);
+    } else if (teamId) {
+        try {
+          const client = await pool.connect();
+
+            const columnsWithDates = `TeamId, Dc, Dm`;
+            const valuesWithDates = [teamId, currentDate, currentDate];
+
+            const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
+
+          const result = await client.query(insertQuery, valuesWithDates);
+
+          client.release();
+          res.status(201).json(result.rows[0]);
+        } catch (err) {
+            console.error('Erreur lors de l\'ajout d\'une nouvelle conversation', err);
+            res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle conversation');
+        }
     }
 };
 

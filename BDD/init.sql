@@ -123,6 +123,7 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
+        Bin BOOLEAN,
         Label VARCHAR(255) NOT NULL,
         Description TEXT,
         EventTypeId INT,
@@ -181,17 +182,31 @@ BEGIN
         FOREIGN KEY (RoleId) REFERENCES db.Role(Id)
     );
 
+    CREATE TABLE db.Team (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        Label VARCHAR(255) NOT NULL
+    );
+
+    CREATE TABLE db.TeamMember (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        TeamId INT,
+        PersonPhysicId INT,
+        FOREIGN KEY (TeamId) REFERENCES db.Team(Id),
+        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+    );
+
     CREATE TABLE db.Conversation (
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
         EventId INT,
-        Person1Id INT,
-        Person2Id INT,
-        Type VARCHAR(50),
+        TeamId INT,
         FOREIGN KEY (EventId) REFERENCES db.Event(Id),
-        FOREIGN KEY (Person1Id) REFERENCES db.PersonPhysic(Id),
-        FOREIGN KEY (Person2Id) REFERENCES db.PersonPhysic(Id)
+        FOREIGN KEY (TeamId) REFERENCES db.Team(Id)
     );
 
     CREATE TABLE db.Message (
@@ -256,27 +271,27 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', true, 2),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', false, 2);
 
-    INSERT INTO db.Event (Dc, Dm, Label, Description, EventTypeId, Dd, Df, AddressId, MaxPerson) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 10/01 à 19h', 2, '2024-01-10 19:00:00', '2024-01-10 21:00:00', 3 ,  null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 12/02 à 19h', 7, '2024-02-12 19:00:00', '2024-02-12 21:00:00', 2 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 13/03 à 19h', 2, '2024-03-13 19:00:00', '2024-03-13 21:00:00', 3 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 15/04 à 19h', 7, '2024-04-15 19:00:00', '2024-04-15 21:00:00', 2 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 15/05 à 19h', 2, '2024-05-15 19:00:00', '2024-05-15 21:00:00', 3 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 17/06 à 19h', 7, '2024-06-17 19:00:00', '2024-06-17 21:00:00', 1 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', 'Repas de fin d année le 28/06 à 19h', 4, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Repas', 'Repas de fin d année le 28/06 à 19h', 9, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', 'Rencontre avec Serent', 4, '2024-09-19 19:00:00', '2024-09-19 23:00:00', 1 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tournois Amical', 'Tournois a Ploermel', 3, '2024-09-28 19:00:00', '2024-09-28 22:30:00', 5 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Cours', 'Cours le 14/11 à 19h', 2, '2024-11-14 19:00:00', '2024-11-14 21:00:00', 3 , null),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rencontre', 'Rencontre à Malestroit', 4, '2024-10-30 19:30:00', '2024-10-30 22:00:00', 1 , null);
+    INSERT INTO db.Event (Dc, Dm, Bin, Label, Description, EventTypeId, Dd, Df, AddressId, MaxPerson) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Cours', 'Cours le 10/01 à 19h', 2, '2024-01-10 19:00:00', '2024-01-10 21:00:00', 3 ,  null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Cours', 'Cours le 12/02 à 19h', 7, '2024-02-12 19:00:00', '2024-02-12 21:00:00', 2 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Cours', 'Cours le 13/03 à 19h', 2, '2024-03-13 19:00:00', '2024-03-13 21:00:00', 3 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Cours', 'Cours le 15/04 à 19h', 7, '2024-04-15 19:00:00', '2024-04-15 21:00:00', 2 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Cours', 'Cours le 15/05 à 19h', 2, '2024-05-15 19:00:00', '2024-05-15 21:00:00', 3 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Cours', 'Cours le 17/06 à 19h', 7, '2024-06-17 19:00:00', '2024-06-17 21:00:00', 1 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Repas', 'Repas de fin d année le 28/06 à 19h', 4, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Repas', 'Repas de fin d année le 28/06 à 19h', 9, '2024-06-28 19:00:00', '2024-06-28 21:00:00', 3 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Rencontre', 'Rencontre avec Serent', 4, '2024-09-19 19:00:00', '2024-09-19 23:00:00', 1 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Tournois Amical', 'Tournois a Ploermel', 3, '2024-09-28 19:00:00', '2024-09-28 22:30:00', 5 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Cours', 'Cours le 14/11 à 19h', 2, '2024-11-14 19:00:00', '2024-11-14 21:00:00', 3 , null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Rencontre', 'Rencontre à Malestroit', 4, '2024-10-30 19:30:00', '2024-10-30 22:00:00', 1 , null);
 
      INSERT INTO db.Login (Dc, Dm, Login, Password, Pseudo) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'amandine@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle');
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', 'constance@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle');
 
     INSERT INTO db.PersonPhysic (Dc, Dm, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Amandine Moncoiffé','2003-10-25T00:00:00.000Z','0677332963','amandine@clubmaster.bzh',1);
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', 'Constance Le Ray','1991-04-27T00:00:00.000Z','0677332963','constance@clubmaster.bzh',2);
 
 
     INSERT INTO db.LicenceType (Dc, Dm, Duration, Label, ClubId, Price, Basic) VALUES
@@ -313,18 +328,18 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, 1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 2, 1);
 
-    INSERT INTO Conversation (Dc, Dm, EventId, Person1Id, Person2Id, Type) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 1, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 2, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 3, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 4, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 5, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 6, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 7, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 8, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 9, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 10, null, null, 'Event'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, null, null, 'Event');
+    INSERT INTO Conversation (Dc, Dm, EventId, TeamId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 1, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 2, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 3, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 4, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 5, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 6, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 7, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 8, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 9, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 10, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, null);
 
     INSERT INTO Message (Dc, Dm, Content, ConversationId, PersonPhysicId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Hello', 11,1),

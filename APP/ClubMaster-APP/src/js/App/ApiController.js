@@ -1,5 +1,6 @@
 //ApiController.js
 import axios from "axios";
+import useStore from "../../store/store";
 
 export class APIController {
   constructor(options = {}) {
@@ -18,6 +19,26 @@ export class APIController {
   }
 
   setupInterceptors() {
+    this.axios.interceptors.request.use(
+      config => {
+        // Ajouter le token Bearer pour les méthodes POST, PUT et DELETE
+        const methodsRequiringAuth = ['post', 'put', 'delete'];
+        if (methodsRequiringAuth.includes(config.method?.toLowerCase())) {
+          const { currentUser } = useStore.getState();
+          const token = currentUser.token;
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+        }
+
+        for (const interceptor of this.interceptors.request) {
+          config = interceptor(config);
+        }
+        return config;
+      },
+      error => Promise.reject(error)
+    );
+
     this.axios.interceptors.request.use(
       config => {
         for (const interceptor of this.interceptors.request) {

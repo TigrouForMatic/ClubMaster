@@ -31,6 +31,7 @@
 
 .select {
   width: 100%;
+  min-height: 0.2em;
 }
 
 .datePickerWrapper {
@@ -42,7 +43,7 @@
 }
 
 .iconDetail {
-  padding: 4px;
+  padding-left: 1em;
   color: #555;
   background-color: #f8f8f8;
 }
@@ -50,8 +51,7 @@
 .datePicker {
   flex-grow: 1;
   border: none;
-  height: 32px;
-  padding: 2px 8px;
+  max-height: 0.2em;
   font-size: 14px;
   line-height: 1.5;
   color: #333;

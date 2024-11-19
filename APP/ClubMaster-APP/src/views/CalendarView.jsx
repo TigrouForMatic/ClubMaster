@@ -7,7 +7,7 @@ import useStore from '../store/store';
 import { dateToTimeFormat } from "../js/date";
 import { getColorFromString } from "../js/color";
 import { Calendar } from 'iconoir-react';
-import ModalInfoEvent from '../components/Modale/ModalInfoEvent';
+import InfoEvent from '../components/Event/InfoEvent';
 import ModalCreateEvent from '../components/Modale/ModalCreateEvent';
 
 const CalendarView = () => {
@@ -100,7 +100,13 @@ const CalendarView = () => {
               onClick={() => handleEventClick(e)}
             >
               <div><strong>{e.label}</strong></div>
-              <div>{dateToTimeFormat(e.dd)} à {dateToTimeFormat(e.df)}</div>
+              {e.dd != e.df && (
+                <div>{dateToTimeFormat(e.dd)} à {dateToTimeFormat(e.df)}</div>
+              )}
+              {e.dd == e.df && (
+                <div>{dateToTimeFormat(e.dd)}</div>
+                )
+              }
             </div>
           ))}
         </div>
@@ -132,7 +138,7 @@ const CalendarView = () => {
 
   return (
     <div className={styles.calendarContainer}>
-      <h1 className={styles.title}>Le Calendrier</h1>
+      <h1 className={styles.title}>Calendrier</h1>
 
       {currentUserRoles.some(role => role.level >= 3) && (
         <button onClick={openCreateModal} className={styles.addEventButton}>
@@ -201,7 +207,9 @@ const CalendarView = () => {
         </div>
       </div>
       
-      <ModalInfoEvent isOpen={isModalOpen} onClose={closeModal} event={selectedEvent} />
+      {selectedEvent && (
+        <InfoEvent isOpen={isModalOpen} onClose={closeModal} eventId={selectedEvent.id} />
+      )}
       <ModalCreateEvent isOpen={isCreateModalOpen} onClose={closeCreateModal} />
     </div>
   );

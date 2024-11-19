@@ -5,7 +5,7 @@ import styles from "../styles/HomeView.module.css";
 import useStore from '../store/store';
 import api from '../js/App/Api';
 import { dateFormat, dateToTimeFormat } from "../js/date";
-import ModalInfoEvent from '../components/Modale/ModalInfoEvent';
+import InfoEvent from '../components/Event/InfoEvent';
 
 const useEventData = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -182,8 +182,9 @@ function HomeView() {
         inscriptions={inscriptions}
         onEventClick={handleEventClick}
       />
-
-      <ModalInfoEvent isOpen={isModalOpen} onClose={closeModal} event={selectedEvent} />
+      {selectedEvent && (
+        <InfoEvent isOpen={isModalOpen} onClose={closeModal} eventId={selectedEvent.id} />
+      )}
     </div>
   );
 }

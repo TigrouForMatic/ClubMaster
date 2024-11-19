@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback } from "react";
 import useStore from '../store/store';
 import styles from "../styles/MatchsView.module.css";
 import MatchCard from "../components/Match/MatchCard";
-import ModalInfoEvent from '../components/Modale/ModalInfoEvent';
+import InfoEvent from '../components/Event/InfoEvent';
 
 function MatchsView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,7 +55,9 @@ function MatchsView() {
         )}
       </div>
       
-      <ModalInfoEvent isOpen={isModalOpen} onClose={closeModal} event={selectedEvent} />
+      {selectedEvent && (
+        <InfoEvent isOpen={isModalOpen} onClose={closeModal} eventId={selectedEvent.id} />
+      )}
     </div>
   );
 }

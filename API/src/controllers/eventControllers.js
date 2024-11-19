@@ -10,8 +10,10 @@ const getEvent = async (req, res) => {
         
         if (arrayEventTypeId && Array.isArray(JSON.parse(arrayEventTypeId))) {
             const eventTypeId = JSON.parse(arrayEventTypeId);
-            queryString += ` WHERE eventtypeid = ANY($1)`;
+            queryString += ` WHERE eventtypeid = ANY($1) AND Bin = false`;
             values.push(eventTypeId);
+        } else {
+            queryString += ` WHERE Bin = false`;
         }
 
         const client = await pool.connect();
@@ -28,7 +30,7 @@ const getEventById = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1`, [id]);
+        const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1 AND Bin = false`, [id]);
         client.release();
         if (result.rows.length === 0) {
             return res.status(404).send('Role non trouvée');
@@ -42,34 +44,91 @@ const getEventById = async (req, res) => {
 
 const addEvent = async (req, res) => {
     const currentDate = new Date();
-
-    // Vérification de l'authentification
+    
     if (!req.user) return res.sendStatus(401);
 
-    const { columns, values } = prepareInsertData(req.body);
+    const { Recurrence, ...eventData } = req.body;
+    
+    if (Recurrence && Recurrence.interval && Recurrence.unit && Recurrence.endDate) {
+        try {
+            const client = await pool.connect();
+            const results = [];
+            const endDate = new Date(Recurrence.endDate);
+            let currentEventDate = new Date(eventData.Dd);
+            
+            // Boucle de création des événements récurrents
+            while (new Date(currentEventDate.toDateString()) <= new Date(endDate.toDateString())) {
+                
+                const eventCopy = { ...eventData };
+                eventCopy.Dd = new Date(currentEventDate);
+                
+                // Ajuster la date de fin si elle existe
+                if (eventCopy.Df) {
+                    const duration = new Date(eventData.Df) - new Date(eventData.Dd);
+                    eventCopy.Df = new Date(currentEventDate.getTime() + duration);
+                }
 
-    try {
-        const client = await pool.connect();
+                const { columns, values } = prepareInsertData(eventCopy);
+                const columnsWithDates = `${columns}, Dc, Dm, Bin`;
+                const valuesWithDates = [...values, currentDate, currentDate, false];
+                
+                const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) 
+                    VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) 
+                    RETURNING *`;
+                
+                const result = await client.query(insertQuery, valuesWithDates);
+                results.push(result.rows[0]);
 
-        const columnsWithDates = `${columns}, Dc, Dm`;
-        const valuesWithDates = [...values, currentDate, currentDate];
+                // Calculer la prochaine date selon l'unité de récurrence
+                switch (Recurrence.unit.toLowerCase()) {
+                    case 'jours':
+                        currentEventDate.setDate(currentEventDate.getDate() + Recurrence.interval);
+                        break;
+                    case 'semaines':
+                        currentEventDate.setDate(currentEventDate.getDate() + (Recurrence.interval * 7));
+                        break;
+                    case 'mois':
+                        currentEventDate.setMonth(currentEventDate.getMonth() + Recurrence.interval);
+                        break;
+                    case 'ans':
+                        currentEventDate.setFullYear(currentEventDate.getFullYear() + Recurrence.interval);
+                        break;
+                }
+            }
+            
+            client.release();
+            res.status(201).json(results);
+            
+        } catch (err) {
+            console.error('Erreur lors de la création des événements récurrents', err);
+            res.status(500).send('Erreur lors de la création des événements récurrents');
+        }
+    } else {
+        const { columns, values } = prepareInsertData(eventData);
 
-        const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
-
-        const result = await client.query(insertQuery, valuesWithDates);
-        client.release();
-
-        // Récupérer les données insérées
-        const insertedEvent = result.rows[0];
-
-        // Effectuer une nouvelle requête pour obtenir toutes les données de l'événement
-        const selectQuery = `SELECT * FROM ${TABLE_NAME} WHERE id = $1`;
-        const selectResult = await client.query(selectQuery, [insertedEvent.id]);
-        
-        res.status(201).json(selectResult.rows[0]);
-    } catch (err) {
-        console.error('Erreur lors de l\'ajout d\'un nouveau événement', err);
-        res.status(500).send('Erreur lors de l\'ajout d\'un nouveau événement');
+        try {
+            const client = await pool.connect();
+    
+            const columnsWithDates = `${columns}, Dc, Dm, Bin`;
+            const valuesWithDates = [...values, currentDate, currentDate, false];
+    
+            const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
+    
+            const result = await client.query(insertQuery, valuesWithDates);
+            client.release();
+    
+            // Récupérer les données insérées
+            const insertedEvent = result.rows[0];
+    
+            // Effectuer une nouvelle requête pour obtenir toutes les données de l'événement
+            const selectQuery = `SELECT * FROM ${TABLE_NAME} WHERE id = $1`;
+            const selectResult = await client.query(selectQuery, [insertedEvent.id]);
+            
+            res.status(201).json(selectResult.rows[0]);
+        } catch (err) {
+            console.error('Erreur lors de l\'ajout d\'un nouveau événement', err);
+            res.status(500).send('Erreur lors de l\'ajout d\'un nouveau événement');
+        }  
     }
 };
 
@@ -87,7 +146,7 @@ const updateEvent = async (req, res) => {
         const result = await client.query(updateQuery, [...values, id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Role non trouvée');
+            return res.status(404).send('Événement non trouvé');
         }
         res.json(result.rows[0]);
     } catch (err) {
@@ -104,10 +163,10 @@ const deleteEvent = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM ${TABLE_NAME} WHERE id = $1 RETURNING *`, [id]);
+        const result = await client.query(`UPDATE ${TABLE_NAME} SET Bin = true WHERE id = $1 RETURNING *`, [id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Role non trouvée');
+            return res.status(404).send('Événement non trouvé');
         }
         res.json(result.rows[0]);
     } catch (err) {

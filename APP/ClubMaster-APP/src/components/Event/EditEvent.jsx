@@ -1,32 +1,25 @@
-import React, { useState, useMemo } from 'react';
-import Modal from 'react-modal';
+import React, { useState, useMemo } from 'react';   
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
 import styles from "../../styles/ModaleCreateEvent.module.css";
-import { dateFormat } from '../../js/date';
 
-function ModalCreateEvent({ isOpen, onClose }) {
+function EditEvent({ event, onClose }) {    
   const { currentUserRoles, userClubs, addresses, typesEvent } = useStore();
-  const addItem = useStore((state) => state.addItem);
-  const addItems = useStore((state) => state.addItems);
-  const [selectedClubId, setSelectedClubId] = useState(userClubs[0].id);
-  const [hasMaxPerson, setHasMaxPerson] = useState(false);
-  const [hasRecurrence, setHasRecurrence] = useState(false);
-  const [recurrenceEndDate, setRecurrenceEndDate] = useState('');
-  const [recurrenceInterval, setRecurrenceInterval] = useState(1);
-  const [recurrenceUnit, setRecurrenceUnit] = useState('jours');
-  const [startDate, setStartDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const updateItem = useStore((state) => state.updateItem);
+  const [selectedClubId, setSelectedClubId] = useState(typesEvent.find(type => type.id === event.eventtypeid)?.clubid);
+  const [startDate, setStartDate] = useState(event.dd.split('T')[0]);
+  const [startTime, setStartTime] = useState(event.dd.split('T')[1].slice(0, 5));
+  const [endTime, setEndTime] = useState(event.df.split('T')[1].slice(0, 5));
+  const [hasMaxPerson, setHasMaxPerson] = useState(event.maxperson ? true : false);
 
   const [eventData, setEventData] = useState({
-    Label: '',
-    Description: '',
-    EventTypeId: null,
-    Dd: null,
-    Df: null,
-    AddressId: null,
-    MaxPerson: null,
+    Label: event.label,
+    Description: event.description,
+    EventTypeId: event.eventtypeid,
+    Dd: event.dd,
+    Df: event.df,
+    AddressId: event.addressid,
+    MaxPerson: event.maxperson,
   });
 
   const filteredClubs = useMemo(() => {
@@ -69,33 +62,10 @@ function ModalCreateEvent({ isOpen, onClose }) {
         ...eventData,
         Dd: new Date(`${date}T${startTime}`).toISOString(),
         Df: new Date(`${date}T${endTime === '' ? startTime : endTime}`).toISOString(),
-        Recurrence: hasRecurrence ? {
-          interval: recurrenceInterval,
-          unit: recurrenceUnit,
-          endDate: recurrenceEndDate
-        } : null
       };
 
-      const response = await api.post('/event', finalEventData);
-
-      if (Array.isArray(response) && response.length > 0) {
-        addItems('events', response);
-        const eventIds = response.map(event => event.id);
-        try {
-          const responseConversations = await api.post('/conversation', { eventIds: eventIds });
-          addItems('conversations', responseConversations);
-        } catch (error) {
-          console.error('Erreur lors de la création des conversations:', error);
-        }
-      } else if (response && typeof response === 'object') {
-        addItem('events', response);
-        try {
-          const responseConversations = await api.post('/conversation', { eventId: response.id });
-          addItem('conversations', responseConversations);
-        } catch (error) {
-          console.error('Erreur lors de la création des conversations:', error);
-        }
-      }
+      const response = await api.put(`/event/${event.id}`, finalEventData);
+      updateItem('events', event.id, response);
       handleClose();
     } catch (error) {
       console.error('Erreur lors de la création de l\'événement:', error);
@@ -116,11 +86,6 @@ function ModalCreateEvent({ isOpen, onClose }) {
     setStartDate('');
     setStartTime('');
     setEndTime('');
-    setHasRecurrence(false);
-    setHasMaxPerson(false);
-    setRecurrenceEndDate('');
-    setRecurrenceInterval(1);
-    setRecurrenceUnit('jours');
     onClose();
   };
 
@@ -133,46 +98,8 @@ function ModalCreateEvent({ isOpen, onClose }) {
     }
   };
 
-  const getRecurrenceResume = () => {
-    if (!recurrenceEndDate) {
-      return '';
-    }
-    const endDate = dateFormat(recurrenceEndDate);
-    const dayOfWeek = new Date(recurrenceEndDate).toLocaleDateString('fr-FR', { weekday: 'long' });
-    const displayEndDate = `${dayOfWeek} ${endDate}`;
-    if (recurrenceUnit === 'jours') {
-      if (recurrenceInterval === 1) {
-        return `Tous les jours jusqu'au ${displayEndDate}`;
-      } else {
-        return `Tous les ${recurrenceInterval} jours jusqu'au ${displayEndDate}`;
-      }
-    } else if (recurrenceUnit === 'semaines') {
-      if (recurrenceInterval === 1) {
-        return `Tous les semaines jusqu'au ${displayEndDate}`;
-      } else {
-        return `Tous les ${recurrenceInterval} semaines jusqu'au ${displayEndDate}`;
-      }
-    } else if (recurrenceUnit === 'mois') {
-      if (recurrenceInterval === 1) {
-        return `Tous les mois jusqu'au ${displayEndDate}`;
-      } else {
-        return `Tous les ${recurrenceInterval} mois jusqu'au ${displayEndDate}`;
-      }
-    }
-  };
-
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={handleClose}
-      className={styles.modal}
-      overlayClassName={styles.modalOverlay}
-    >
-      <div className={styles.headerModal}>
-        <h2 className={styles.title}>Créer un nouvel événement</h2>
-        <button onClick={handleClose} className={styles.closeButton}>&times;</button>
-      </div>
-
+    <div style={{margin: "2em"}}>
       {filteredClubs.length > 1 && (
         <ClubList clubs={filteredClubs} selectedClubId={selectedClubId} onClubSelect={handleClubSelect} />
       )}
@@ -230,7 +157,6 @@ function ModalCreateEvent({ isOpen, onClose }) {
             ))}
           </select>
         </div>
-        <hr />
         <div className={styles.dateTimeSection}>
           <div className={styles.dateTimeBlock}>
             <div className={styles.dateTimeContainer}>
@@ -261,62 +187,6 @@ function ModalCreateEvent({ isOpen, onClose }) {
             </div>
           </div>
         </div>
-
-        <div className={styles.maxPersonContainer}>
-          <label className={styles.toggleLabel}>
-            <input
-              type="checkbox"
-              checked={hasRecurrence}
-              onChange={() => setHasRecurrence(!hasRecurrence)}
-              className={styles.toggleInput}
-            />
-            <span className={styles.toggleSlider}></span>
-            Événement récurrent
-          </label>
-          
-          {hasRecurrence && (
-            <div className={styles.recurrenceContainer}>
-              <div className={styles.recurrenceInputs}>
-                <span className={styles.recurrenceText}>Tous les</span>
-                <input 
-                  type="number" 
-                  value={recurrenceInterval} 
-                  onChange={(e) => setRecurrenceInterval(parseInt(e.target.value) || 1)}
-                  min="1" 
-                  className={styles.recurrenceInput}
-                />
-                <select 
-                  value={recurrenceUnit}
-                  onChange={(e) => setRecurrenceUnit(e.target.value)}
-                  className={styles.recurrenceSelect}
-                >
-                  <option value='jours'>jours</option>
-                  <option value='semaines'>semaines</option>
-                  <option value='mois'>mois</option>
-                </select>
-              </div>
-
-              <div className={styles.inputGroup}>
-                <label>Date du dernier événement</label>
-                <div className={styles.dateInput}>
-                  <input
-                    type="date"
-                    name="recurrenceEndDate"
-                    value={recurrenceEndDate || ''}
-                    onChange={(e) => setRecurrenceEndDate(e.target.value)}
-                    min={eventData.Dd ? eventData.Dd.split('T')[0] : new Date().toISOString().split('T')[0]}
-                    required={hasRecurrence}
-                    className={styles.recurrenceEndDateInput}
-                  />
-                </div>
-              </div>
-              { getRecurrenceResume() && (
-                <span className={styles.recurrenceResume}> {getRecurrenceResume()}</span>
-              )}
-            </div>
-          )}
-        </div>
-        <hr />
         <div className={styles.maxPersonContainer}>
           <label className={styles.toggleLabel}>
             <input
@@ -345,10 +215,10 @@ function ModalCreateEvent({ isOpen, onClose }) {
         </div>
         <div className={styles.buttonContainer}>
           <button type="button" onClick={handleClose} className={styles.unregisterButton}>Annuler</button>
-          <button type="submit" className={styles.registerButton}>Créer l'événement</button>
+          <button type="submit" className={styles.registerButton}>Modifier l'événement</button>
         </div>
       </form>
-    </Modal>
+    </div>
   );
 }
 
@@ -371,10 +241,4 @@ const ClubList = React.memo(({ clubs, selectedClubId, onClubSelect }) => (
   </div>
 ));
 
-export default ModalCreateEvent;
-
-
-// <ModalCreateEvent 
-//   isOpen={modalIsOpen} 
-//   onClose={() => setModalIsOpen(false)}
-// />
+export default EditEvent;
