@@ -1,3 +1,3 @@
 # ClubMaster
 
-Application de gestion pour les clubs
+Application de gestion d'evenement pour les clubs
