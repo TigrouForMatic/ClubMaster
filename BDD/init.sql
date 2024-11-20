@@ -362,22 +362,7 @@ BEGIN
     ('2024-07-30T00:00:00.000Z', '2024-07-30T00:00:00.000Z', 'Chaud pour un petit Bad?', 11,1),
     ('2024-08-08T00:00:00.000Z', '2024-08-08T00:00:00.000Z', 'Pourquoi pas :)', 11,2);
 
-     CREATE TABLE db.InfoBanner (
-        Id SERIAL PRIMARY KEY,
-        Dc TIMESTAMP NOT NULL,
-        Dm TIMESTAMP,
-        Title VARCHAR(255) NOT NULL,
-        Description TEXT,
-        Dd TIMESTAMP NOT NULL,
-        Df TIMESTAMP NOT NULL,
-        HeaderImage VARCHAR(255),
-        ClubId INTEGER NOT NULL,
-        CreatedBy INTEGER NOT NULL,
-        FOREIGN KEY (ClubId) REFERENCES db.Club(Id),
-        FOREIGN KEY (CreatedBy) REFERENCES db.PersonPhysic(Id)
-    );
-
-     INSERT INTO db.InfoBanner (Dc, Dm, Bin, Title, Description, Dd, Df, HeaderImage, ClubId, CreatedBy) VALUES
+    INSERT INTO db.InfoBanner (Dc, Dm, Bin, Title, Description, Dd, Df, HeaderImage, ClubId, CreatedBy) VALUES
     ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 1, 1),
     ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 2, 1);
     
