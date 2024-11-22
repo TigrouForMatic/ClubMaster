@@ -1,11 +1,12 @@
 import styles from '../../styles/InfoBannerCard.module.css';
 import { useCallback } from 'react';
 import { dateFormat } from '../../js/date';
-import { EditPencil } from 'iconoir-react';
+import { EditPencil, Trash } from 'iconoir-react';
 import useStore from '../../store/store';
+import api from '../../js/App/Api';
 
 const InfoBannerCard = ({ infoBanner, onEdit }) => {
-    const { currentUserRoles } = useStore();
+    const { currentUserRoles, deleteItem } = useStore();
     const getDateDisplay = useCallback((date) => dateFormat(date), []);
 
     const currentRole = currentUserRoles.find(role => role.level >= 3 && role.clubid === infoBanner.clubid);
@@ -14,12 +15,27 @@ const InfoBannerCard = ({ infoBanner, onEdit }) => {
         onEdit(infoBanner);
     }, [onEdit, infoBanner]);
 
+    const handleDelete = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await api.delete(`/infobanner/${infoBanner.id}`);
+            deleteItem('infoBanners', response.id);
+        } catch (error) {
+          console.error('Erreur lors de la création/modification de l\'infoBanner:', error);
+        }
+      };
+
     return (
         <div className={styles.infoBannerCard} key={infoBanner.id}>
             {currentRole && (
-                <button className={styles.editButton} onClick={handleEdit}>
-                    <EditPencil />
-                </button>
+                <>
+                    <button className={styles.editButton} onClick={handleEdit}>
+                        <EditPencil />
+                    </button>
+                    <button className={styles.deleteButton} onClick={handleDelete}>
+                        <Trash />
+                    </button>
+                </>
             )}
 
             {/* <div className={styles.infoBannerImage}>
