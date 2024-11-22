@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Modal from 'react-modal';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
 import styles from "../../styles/ModaleCreateEvent.module.css";
 
 function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
-  const { currentUserRoles, userClubs } = useStore();
+  const { currentUserRoles, userClubs, currentUser } = useStore();
   const addItem = useStore((state) => state.addItem);
   const updateItem = useStore((state) => state.updateItem);
   const [selectedClubId, setSelectedClubId] = useState(infoBanner?.clubid || userClubs[0]?.id);
@@ -42,6 +42,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
       const finalBannerData = {
         ...bannerData,
         clubid: selectedClubId,
+        createdby: infoBanner?.createdby || currentUser.id,
       };
 
       let response;
@@ -60,8 +61,27 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
   };
 
   const handleClose = () => {
+    setBannerData({
+        title: '',
+        description: '',
+        headerimage: '',
+        dd: '',
+        df: '',
+    });
     onClose();
   };
+
+  useEffect(() => {
+    if (infoBanner) {
+      setBannerData({
+        title: infoBanner?.title || '',
+        description: infoBanner?.description || '',
+        headerimage: infoBanner?.headerimage || '',
+        dd: infoBanner?.dd ? new Date(infoBanner.dd).toISOString().split('T')[0] : '',
+        df: infoBanner?.df ? new Date(infoBanner.df).toISOString().split('T')[0] : '',
+      });
+    }
+  }, [infoBanner]);
 
   return (
     <Modal

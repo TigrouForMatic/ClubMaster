@@ -11,6 +11,20 @@ Carousel de Banniere d'information
   padding-left: 0;
 }
 
+.headerCarouselInfoBanner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.createInfoBannerButton {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 /* Pour personnaliser les flèches et les points */
 :global(.slick-prev),
 :global(.slick-next) {

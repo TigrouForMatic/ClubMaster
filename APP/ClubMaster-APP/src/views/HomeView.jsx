@@ -7,6 +7,7 @@ import api from '../js/App/Api';
 import { dateFormat, dateToTimeFormat } from "../js/date";
 import InfoEvent from '../components/Event/InfoEvent';
 import CarouselInfoBanner from '../components/InfoBanner/CarouselInfoBanner';
+import ModaleInfoBanner from '../components/Modale/ModaleInfoBanner';
 
 const useEventData = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -170,8 +171,8 @@ function HomeView() {
     <div className={styles.container}>
       <h1 className={styles.title}>Événements à venir</h1>
 
-      <CarouselInfoBanner infoBanners={infoBanners} />
-      
+      <CarouselInfoBanner />
+
       {nextEvent && (
         <MainEventCard 
           event={nextEvent}
