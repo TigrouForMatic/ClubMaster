@@ -17,6 +17,7 @@ const { getInscription, getInscriptionById, addInscription, updateInscription, d
 const { getConversation, getConversationByEvent, getConversationById, addConversation, updateConversation, deleteConversation } = require('../controllers/conversationControllers');
 const { getMessage, getMessageById, addMessage, updateMessage, deleteMessage } = require('../controllers/messageControllers');
 const { getCreditCards, getCreditCardById, addCreditCard, updateCreditCard, deleteCreditCard } = require('../controllers/creditCardControllers');
+const { getInfoBanner, getInfoBannerById, addInfoBanner, updateInfoBanner, deleteInfoBanner } = require('../controllers/infoBannerControllers');
 
 const { getGenerateImage } = require('../controllers/generateImageControllers');
 
@@ -122,6 +123,13 @@ router.get('/message/:id', getMessageById);
 router.post('/message', authenticateToken, addMessage);
 router.put('/message/:id', authenticateToken, updateMessage);
 router.delete('/message/:id', authenticateToken, deleteMessage);
+
+// Routes pour le CRUD des infoBanners
+router.get('/infoBanner', getInfoBanner);
+router.get('/infoBanner/:id', getInfoBannerById);
+router.post('/infoBanner', authenticateToken, addInfoBanner);
+router.put('/infoBanner/:id', authenticateToken, updateInfoBanner);
+router.delete('/infoBanner/:id', authenticateToken, deleteInfoBanner);
 
 // Routes pour générer une image 
 router.get('/generateImage', getGenerateImage);

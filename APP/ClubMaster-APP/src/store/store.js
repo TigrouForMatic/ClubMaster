@@ -20,6 +20,7 @@ const useStore = create((set) => ({
   products: [],
   panier: [],
   conversations: [],
+  infoBanners: [],
   showApp: false,
   lastFetchTime: null,
 
