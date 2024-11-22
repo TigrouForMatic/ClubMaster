@@ -17,11 +17,16 @@ const CarouselInfoBanner = ({ infoBanners }) => {
 
   return (
     <div className={styles.carouselInfoBanner}>
-      <Slider {...settings}>
-        {infoBanners.map((infoBanner) => (
-          <InfoBannerCard key={infoBanner.id} infoBanner={infoBanner} />
-        ))}
-      </Slider>
+        {infoBanners.length > 1 && (
+            <Slider {...settings}>
+                {infoBanners.map((infoBanner) => (
+                <InfoBannerCard key={infoBanner.id} infoBanner={infoBanner} />
+                ))}
+            </Slider>
+        )}
+        {infoBanners.length === 1 && (
+            <InfoBannerCard key={infoBanners[0].id} infoBanner={infoBanners[0]} />
+        )}
     </div>
   );
 };
