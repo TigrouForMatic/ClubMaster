@@ -6,6 +6,7 @@ import useStore from '../store/store';
 import api from '../js/App/Api';
 import { dateFormat, dateToTimeFormat } from "../js/date";
 import InfoEvent from '../components/Event/InfoEvent';
+import CarouselInfoBanner from '../components/InfoBanner/CarouselInfoBanner';
 
 const useEventData = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +30,9 @@ const useEventData = () => {
 
         const typeEventData = await api.get("/eventType", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
         setItems('typesEvent', typeEventData);
+
+        const infoBannerData = await api.get("/infoBanner", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
+        setItems('infoBanners', infoBannerData);
 
         const arrayEventTypeId = typeEventData.map(type => type.id);
         const eventData = await api.get("/event", { params: { arrayEventTypeId: JSON.stringify(arrayEventTypeId) } });
@@ -131,7 +135,7 @@ function HomeView() {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const { isLoading, error } = useEventData();
-  const { events, typesEvent, addresses, inscriptions, currentUserRoles } = useStore();
+  const { events, typesEvent, addresses, inscriptions, infoBanners, currentUserRoles } = useStore();
 
   const filteredAndSortedEvents = useMemo(() => {
     const now = new Date();
@@ -165,6 +169,9 @@ function HomeView() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Événements à venir</h1>
+
+      <CarouselInfoBanner infoBanners={infoBanners} />
+      
       {nextEvent && (
         <MainEventCard 
           event={nextEvent}

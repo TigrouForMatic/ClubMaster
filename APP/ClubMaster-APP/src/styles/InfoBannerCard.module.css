@@ -1,0 +1,102 @@
+/* 
+----------------------------------
+Carousel de Banniere d'information
+----------------------------------
+*/
+.carouselInfoBanner {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-left: 0;
+}
+
+/* Pour personnaliser les flèches et les points */
+:global(.slick-prev),
+:global(.slick-next) {
+  z-index: 1;
+}
+
+:global(.slick-prev) {
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+:global(.slick-next) {
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+:global(.slick-dots) {
+  bottom: 35px;
+}
+
+:global(.slick-prev:before),
+:global(.slick-next:before) {
+  color: #000;
+  font-size: 24px; 
+}
+
+/*
+----------------------
+Banniere d'information
+----------------------
+*/
+.infoBannerCard {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    padding-bottom: 40px;
+    min-width: 600px; 
+  }
+  
+  .infoBannerHeader {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+  }
+  
+  .infoBannerTitle {
+    font-size: 24px;
+    margin: 0 0 16px 0;
+    text-align: center;
+  }
+  
+  .infoBannerDate {
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  
+  .infoBannerDescription {
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .infoBannerClubBadge {
+    position: absolute;
+    bottom: 5px;
+    left: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+  }
+
+  .infoBannerCreatedBy {
+    position: absolute;
+    bottom: 5px;
+    right: 12px;
+    font-size: 10px;
+    margin-top: 0;
+    font-style: italic;
+    color: #666666;
+  }
