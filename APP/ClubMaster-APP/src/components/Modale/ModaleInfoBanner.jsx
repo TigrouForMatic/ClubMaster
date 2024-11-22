@@ -51,6 +51,8 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
         updateItem('infoBanners', response);
       } else {
         response = await api.post('/infobanner', finalBannerData);
+        response.clublabel = userClubs.find(club => club.id === selectedClubId).label;
+        response.createdbyname = currentUser.name;
         addItem('infoBanners', response);
       }
 
@@ -169,7 +171,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
             name="df"
             value={bannerData.df}
             onChange={handleChange}
-            min={new Date().toISOString().split('T')[0]}
+            min={bannerData.dd}
             required
           />
         </div>
