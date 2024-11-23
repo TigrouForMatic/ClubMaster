@@ -32,6 +32,11 @@
   .authForm button:hover {
     background-color: #0056b3;
   }
+
+  .authForm button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
   
   .toggleButton {
     margin-top: 10px;
@@ -96,16 +101,37 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: rgba(0, 123, 255, 0.05);
+    border-radius: 8px;
   }
   
   .checkboxText {
     margin-left: 8px;
     margin-right: 8px;
+    font-size: 14px;
+    line-height: 1.4;
   }
   
   .iconDetail {
     background-color: rgba(162, 162, 162, 0.1);
     flex-shrink: 0;
+  }
+
+  .privacyLink {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .privacyLink:hover {
+    color: #0056b3;
+  }
+
+  .submitButtonDisabled {
+    background-color: #cccccc !important;
+    cursor: not-allowed !important;
   }
 
   /* PrivacyPolicyModal */
@@ -163,6 +189,9 @@
   .modalButtonContainer {
     text-align: center;
     margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
   }
   
   .modalButton {
@@ -178,4 +207,9 @@
   
   .modalButton:hover {
     background-color: #0056b3;
+  }
+
+  .modalSeparator {
+    margin: 20px 0;
+    border: 1px solid #0056b3;
   }

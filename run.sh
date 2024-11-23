@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Clear the terminal
+if [ "$1" = "-c" ]; then
+  clear
+fi
+
 cd ./APP/ClubMaster-APP
 
 npm run build

@@ -4,6 +4,7 @@ import api from '../../js/App/Api';
 import styles from '../../styles/AuthForm.module.css';
 import { OpenInWindow } from 'iconoir-react';
 import PrivacyPolicyModal from '../Modale/PrivacyPolicyModal';
+import GeneralConditionModal from '../Modale/GeneralConditionModal';
 
 function PersonalInfoForm({ handlePersonalInformationSet }) {
   const [personalInfo, setPersonalInfo] = useState({
@@ -21,9 +22,11 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
     country: ''
   });
 
-  const [consentGiven, setConsentGiven] = useState(false);
+  const [consentGivenPolitique, setConsentGivenPolitique] = useState(false);
+  const [consentGivenConditions, setConsentGivenConditions] = useState(false);
   const [error, setError] = useState('');
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalIsOpenPolitique, setModalIsOpenPolitique] = useState(false);
+  const [modalIsOpenConditions, setModalIsOpenConditions] = useState(false);
 
   const setItems = useStore((state) => state.setItems);
   const login = useStore((state) => state.login);
@@ -84,12 +87,30 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
     }
   };
 
-  const openModal = () => {
-    setModalIsOpen(true);
+  const openModalPolitique = () => {
+    setModalIsOpenPolitique(true);
   };
 
-  const closeModal = () => {
-    setModalIsOpen(false);
+  const closeModalPolitique = () => {
+    setModalIsOpenPolitique(false);
+  };
+
+  const openModalConditions = () => {
+    setModalIsOpenConditions(true);
+  };
+
+  const closeModalConditions = () => {
+    setModalIsOpenConditions(false);
+  };
+
+  const handleAcceptPolitique = () => {
+    setConsentGivenPolitique(true);
+    closeModalPolitique();
+  };
+
+  const handleAcceptConditions = () => {
+    setConsentGivenConditions(true);
+    closeModalConditions();
   };
 
   return (
@@ -140,32 +161,47 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
         />
       ))}
       
-      <label className={styles.checkboxLabel}>
+      <div className={styles.checkboxLabel}>
         <div className={styles.checkboxContainer}>
           <input
             type="checkbox"
-            checked={consentGiven}
-            onChange={(e) => setConsentGiven(e.target.checked)}
+            checked={consentGivenPolitique}
+            onChange={(e) => setConsentGivenPolitique(e.target.checked)}
           />
           <span className={styles.checkboxText}>
-            J'accepte la politique de confidentialité et le traitement de mes données personnelles
+            J'ai lu et j'accepte la politique de confidentialité
           </span>
+          
           <OpenInWindow 
             className={styles.iconDetail} 
-            onClick={openModal} 
+            onClick={openModalPolitique} 
             style={{ cursor: 'pointer', width: '16px', height: '16px' }} 
           />
         </div>
-      </label>
-      <button type="submit" disabled={!consentGiven}>
+
+        <div className={styles.checkboxContainer}>
+          <input
+            type="checkbox"
+            checked={consentGivenConditions}
+            onChange={(e) => setConsentGivenConditions(e.target.checked)}
+          />
+          <span className={styles.checkboxText}>
+            J'ai lu et j'accepte les conditions générales d'utilisation
+          </span>
+          
+          <OpenInWindow 
+            className={styles.iconDetail} 
+            onClick={openModalConditions} 
+            style={{ cursor: 'pointer', width: '16px', height: '16px' }} 
+          />
+        </div>
+      </div>
+      <button className={styles.submitButton} type="submit" disabled={!consentGivenPolitique || !consentGivenConditions}>
         Enregistrer et continuer
       </button>
-      
-      {/* <button type="button" onClick={onAuthenticate} className={styles.skipButton}>
-        Passer pour le moment
-      </button> */}
 
-      <PrivacyPolicyModal isOpen={modalIsOpen} onRequestClose={closeModal} />
+      <PrivacyPolicyModal isOpen={modalIsOpenPolitique} onRequestClose={closeModalPolitique} onAccept={handleAcceptPolitique} />
+      <GeneralConditionModal isOpen={modalIsOpenConditions} onRequestClose={closeModalConditions} onAccept={handleAcceptConditions} />
     </form>
   );
 }

@@ -189,9 +189,6 @@ function AuthForm() {
           <button onClick={toggleForm} className={styles.toggleButton}>
             {isLogin ? 'Créer un compte' : 'Se connecter'}
           </button>
-          {/* <button onClick={continueWithoutLogin} className={styles.skipButton}>
-            Continuer sans être connecté
-          </button> */}
         </>
       )}
       {/* {showClubOptions && <ClubOptions />} */}
