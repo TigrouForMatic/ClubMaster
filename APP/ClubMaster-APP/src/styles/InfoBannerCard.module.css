@@ -131,6 +131,9 @@ Banniere d'information
   .infoBannerDescription {
     margin-bottom: 12px;
     text-align: center;
+    min-height: 50px;
+    width: 80%;
+    margin: 0 auto;
   }
 
   .infoBannerClubBadge {
