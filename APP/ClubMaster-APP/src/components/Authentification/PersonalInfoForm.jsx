@@ -160,10 +160,6 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
       <button type="submit" disabled={!consentGiven}>
         Enregistrer et continuer
       </button>
-      
-      {/* <button type="button" onClick={onAuthenticate} className={styles.skipButton}>
-        Passer pour le moment
-      </button> */}
 
       <PrivacyPolicyModal isOpen={modalIsOpen} onRequestClose={closeModal} />
     </form>
