@@ -3,7 +3,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import styles from '../../styles/AuthForm.module.css';
 
-function PrivacyPolicyModal({ isOpen, onRequestClose }) {
+function PrivacyPolicyModal({ isOpen, onRequestClose, onAccept }) {
   return (
     <Modal
       isOpen={isOpen}
@@ -43,8 +43,10 @@ function PrivacyPolicyModal({ isOpen, onRequestClose }) {
           <h3>5. Sécurité</h3>
           <p>Nous mettons en place des mesures de sécurité appropriées pour protéger vos données contre tout accès non autorisé ou toute perte accidentelle.</p>
         </div>
+        <hr className={styles.modalSeparator} />
         <div className={styles.modalButtonContainer}>
           <button onClick={onRequestClose} className={styles.modalButton}>Fermer</button>
+          <button onClick={onAccept} className={styles.modalButton}>Accepter</button>
         </div>
       </div>
     </Modal>
