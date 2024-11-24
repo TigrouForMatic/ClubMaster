@@ -45,7 +45,7 @@ function Sidebar({ onClose }) {
         <NavLink to="/user" activeClassName="active-link">
           <div className="menu-item">
             <User className='icon-detail' />
-            <p>User</p>
+            <p>Profil</p>
           </div>
         </NavLink>
       </div>

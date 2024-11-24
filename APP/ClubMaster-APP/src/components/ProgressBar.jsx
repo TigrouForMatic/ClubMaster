@@ -7,7 +7,7 @@ const ProgressBar = ({ value, max }) => {
   return (
     <div className={styles.progressBarContainer}>
       <div 
-        className={styles.progressBar} 
+        className={`${styles.progressBar} ${percentage >= 100 ? styles.progressBarFull : ''}`} 
         style={{ width: `${percentage}%` }}
       ></div>
     </div>
