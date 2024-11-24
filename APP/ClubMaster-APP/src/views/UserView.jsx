@@ -19,6 +19,13 @@ function UserView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const user = useMemo(() => {
+    // Vérifier si currentUserAddresses existe
+    if (!currentUserAddresses || currentUserAddresses.length === 0) {
+      return {
+        ...currentUser,
+        address: 'Aucune Adresse'
+      };
+    }
     const { postalcode = '', city = '' } = currentUserAddresses[0] || {};
   
     const addressLabel = postalcode && city ? `${postalcode} ${city}` : 'Aucune Adresse';
@@ -31,6 +38,7 @@ function UserView() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    
     setItems('currentUser', null);
     setItems('login', null);
     navigate('/');

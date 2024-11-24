@@ -103,7 +103,7 @@ function AuthForm() {
       }
 
       const data = await api.post(endpoint, body);
-
+      
       localStorage.setItem('token', data.token);
       setItems('login', { id: data.user.id, login: data.user.login, pseudo: data.user.pseudo });
       setShowLoginForm(false);

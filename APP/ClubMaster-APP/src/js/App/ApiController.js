@@ -23,7 +23,11 @@ export class APIController {
       config => {
         // Ajouter le token Bearer pour les méthodes POST, PUT et DELETE
         const methodsRequiringAuth = ['post', 'put', 'delete'];
-        if (methodsRequiringAuth.includes(config.method?.toLowerCase())) {
+        const noAuthRoutes = ['auth/login', 'auth/create-account'];
+        
+        // Vérifie si la méthode nécessite une authentification et si la route n'est pas dans les exceptions
+        if (methodsRequiringAuth.includes(config.method?.toLowerCase()) && 
+            !noAuthRoutes.some(route => config.url?.includes(route))) {
           const { currentUser } = useStore.getState();
           const token = currentUser.token;
           if (token) {
