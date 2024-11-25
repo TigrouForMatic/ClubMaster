@@ -41,6 +41,7 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
+        Bin BOOLEAN,
         Street VARCHAR(255),
         City VARCHAR(255),
         State VARCHAR(255),
@@ -237,12 +238,12 @@ BEGIN
     );
 
     -- Insert test data
-    INSERT INTO db.Address (Dc, Dm, Street, City, State, PostalCode, Country, ReferenceId, Private, Validate) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', '4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', null, false, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', 2, false, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', 1, false, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', '29 rue saint roch','Ploermel','Bretagne','56800','France', 1, true, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
+    INSERT INTO db.Address (Dc, Dm, Bin, Street, City, State, PostalCode, Country, ReferenceId, Private, Validate) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', null, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', 2, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', 1, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '29 rue saint roch','Ploermel','Bretagne','56800','France', 1, true, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
 
     INSERT INTO db.PersonMoral (Dc, Dm, Name, Rib, RnaNumber, Siren, Siret) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Vol en Oust', null, null, null, null);
