@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
@@ -6,8 +6,7 @@ import styles from "../../styles/ModaleEditpersonnalData.module.css";
 import AddressForm from '../User/AdressesForm';
 
 function ModalEditPersonnalData({ isOpen, onClose }) {
-  const { currentUser, currentUserAddresses, login } = useStore();
-  const updateItem = useStore((state) => state.updateItem);
+  const { currentUser, login, setCurrentUser, setLogin } = useStore();
 
   const [personnalData, setPersonnalData] = useState({
     name: currentUser.name || '',
@@ -21,35 +20,53 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
     pseudo: login.pseudo,
   });
 
-  const handleChange = (e) => {
+  const handleChangePersonnalData = (e) => {
     const { name, value } = e.target;
     setPersonnalData(prevData => ({ ...prevData, [name]: value }));
+  };
+
+  const handleChangeLogin = (e) => {
+    const { name, value } = e.target;
+    if (name === 'login') {
+      setLoginData(prevData => ({ ...prevData, [name]: value }));
+      setPersonnalData(prevData => ({ ...prevData, ['emailaddress']: value }));
+    } else {
+      setLoginData(prevData => ({ ...prevData, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-
+      // Mise à jour des données de connexion
       if (loginData.login !== login.login || loginData.pseudo !== login.pseudo) {
-        const loginData = {
+        const loginPayload = {
           ...login,
           login: loginData.login,
           pseudo: loginData.pseudo,
         };
-        const response = await api.put(`/login/${currentUser.id}`, loginData);
-        updateItem('login', response);
+        const loginResponse = await api.put(`/login/${login.id}`, loginPayload);
+        setLogin(loginResponse);
       }
 
-      const finalPersonnalData = {
-        name: personnalData.name || '',
-        emailaddress: loginData.login || '',
-        phonenumber: personnalData.phonenumber || '',
-        naissancedate: personnalData.naissancedate || '',
-      };
+      // Mise à jour des données personnelles
+      if (personnalData.name !== currentUser.name || 
+          personnalData.emailaddress !== currentUser.emailaddress || 
+          personnalData.phonenumber !== currentUser.phonenumber || 
+          personnalData.naissancedate !== currentUser.naissancedate) {
 
-      const response = await api.put(`/personphysic/${currentUser.id}`, finalPersonnalData);
-      updateItem('currentUser', response);
+        const personalPayload = {
+          ...currentUser,
+          name: personnalData.name,
+          emailaddress: personnalData.emailaddress,
+          phonenumber: personnalData.phonenumber,
+          naissancedate: personnalData.naissancedate,
+        };
 
+        const personalResponse = await api.put(`/personphysic/${currentUser.id}`, personalPayload);
+        setCurrentUser(personalResponse);
+      }
+      
       handleClose();
     } catch (error) {
       console.error('Erreur lors de la création/modification de l\'utilisateur:', error);
@@ -87,7 +104,7 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
             id="name"
             name="name"
             value={personnalData.name}
-            onChange={handleChange}
+            onChange={handleChangePersonnalData}
             required
           />
         </div>
@@ -99,7 +116,7 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
             id="pseudo"
             name="pseudo"
             value={loginData.pseudo}
-            onChange={handleChange}
+            onChange={handleChangeLogin}
           />
         </div>
 
@@ -110,7 +127,7 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
             id="naissancedate" 
             name="naissancedate"
             value={personnalData.naissancedate ? new Date(personnalData.naissancedate).toISOString().split('T')[0] : ''}
-            onChange={handleChange}
+            onChange={handleChangePersonnalData}
             max={new Date().toISOString().split('T')[0]}
           />
         </div>
@@ -122,7 +139,7 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
             id="phonenumber"
             name="phonenumber"
             value={personnalData.phonenumber}
-            onChange={handleChange}
+            onChange={handleChangePersonnalData}
           />
         </div>
 
@@ -143,7 +160,7 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
             id="login"
             name="login"
             value={loginData.login}
-            onChange={handleChange}
+            onChange={handleChangeLogin}
           />
         </div>
 

@@ -98,6 +98,15 @@ const useStore = create((set) => ({
     [category]: state[category].filter(item => !ids.includes(item.id))
   })),
 
+
+  setLogin: (login) => set(() => ({
+    login: login
+  })),
+
+  setCurrentUser: (currentUser) => set(() => ({
+    currentUser: currentUser
+  })),
+
   initialize: () => set((state) => {
     const emptyState = Object.keys(state).reduce((acc, key) => {
       if (Array.isArray(state[key])) {
