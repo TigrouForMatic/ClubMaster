@@ -55,7 +55,7 @@ const testLogin = async (req, res) => {
         const client = await pool.connect();
 
         try {
-            const getUserQuery = 'SELECT * FROM db.Login WHERE Login = $1';
+            const getUserQuery = 'SELECT * FROM db.Login WHERE Login = $1 AND Bin = false';
             const getUserResult = await client.query(getUserQuery, [login]);
 
             if (getUserResult.rows.length === 0) {

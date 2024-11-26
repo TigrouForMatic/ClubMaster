@@ -1,12 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-modal';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
 import styles from "../../styles/ModaleEditpersonnalData.module.css";
 import AddressForm from '../User/AdressesForm';
+import CustomConfirm from '../CustomConfirm';
+
+import { useNavigate } from 'react-router-dom';
 
 function ModalEditPersonnalData({ isOpen, onClose }) {
-  const { currentUser, login, setCurrentUser, setLogin } = useStore();
+  const navigate = useNavigate();
+
+  const { currentUser, login, setCurrentUser, setLogin, setShowApp } = useStore();
+
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const [personnalData, setPersonnalData] = useState({
     name: currentUser.name || '',
@@ -74,11 +81,24 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
   };
 
   const handleClose = () => {
+    setConfirmDeleteOpen(false);
     onClose();
   };
 
   const changePassword = () => {
     console.log('changePassword');
+  };
+
+  const handleDelete = async () => {
+    await api.delete(`/login/${login.id}`);
+    await api.delete(`/personphysic/${currentUser.id}`);
+
+    localStorage.removeItem('token');
+    
+    setCurrentUser(null);
+    setLogin(null);
+    navigate('/');
+    setShowApp();
   };
 
   return (
@@ -167,6 +187,17 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
         <button type="button" onClick={changePassword} className={styles.changePasswordButton}>
             Changer mon mot de passe
         </button>
+
+        <button type="button" onClick={() => setConfirmDeleteOpen(true)} className={styles.deleteAccountButton}>
+          Supprimer mon compte
+        </button>
+
+        <CustomConfirm
+          isOpen={confirmDeleteOpen}
+          onClose={() => setConfirmDeleteOpen(false)}
+          onConfirm={handleDelete}
+          message="Voulez-vous vraiment supprimer votre compte ?"
+        />
 
         <hr />
 

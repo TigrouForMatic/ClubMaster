@@ -129,6 +129,17 @@ input:focus {
     color: #0056b3;
 }
 
+.deleteAccountButton {
+    width: 100%;
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
     .modal {
