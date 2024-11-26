@@ -14,7 +14,11 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
     emailaddress: currentUser.emailaddress || '',
     phonenumber: currentUser.phonenumber || '',
     naissancedate: currentUser.naissancedate || '',
-    address: currentUserAddresses[0] || '',
+  });
+
+  const [loginData, setLoginData] = useState({
+    login: login.login,
+    pseudo: login.pseudo,
   });
 
   const handleChange = (e) => {
@@ -25,20 +29,23 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const finalPersonnalData = {
-        ...personnalData,
-      };
 
-      if (personnalData.login !== login.login) {
+      if (loginData.login !== login.login || loginData.pseudo !== login.pseudo) {
         const loginData = {
           ...login,
-          login: personnalData.login,
-          password: personnalData.password,
-          pseudo: personnalData.pseudo,
+          login: loginData.login,
+          pseudo: loginData.pseudo,
         };
         const response = await api.put(`/login/${currentUser.id}`, loginData);
         updateItem('login', response);
       }
+
+      const finalPersonnalData = {
+        name: personnalData.name || '',
+        emailaddress: loginData.login || '',
+        phonenumber: personnalData.phonenumber || '',
+        naissancedate: personnalData.naissancedate || '',
+      };
 
       const response = await api.put(`/personphysic/${currentUser.id}`, finalPersonnalData);
       updateItem('currentUser', response);
@@ -91,7 +98,7 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
             type="text"
             id="pseudo"
             name="pseudo"
-            value={login.pseudo}
+            value={loginData.pseudo}
             onChange={handleChange}
           />
         </div>
@@ -135,7 +142,7 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
             type="text"
             id="login"
             name="login"
-            value={login.login}
+            value={loginData.login}
             onChange={handleChange}
           />
         </div>

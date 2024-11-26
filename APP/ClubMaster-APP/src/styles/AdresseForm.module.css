@@ -18,13 +18,21 @@
 }
 
 .addButton {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    color: #007bff;
+    /* border: none; */
+    background: none;
     cursor: pointer;
-    margin-top: 10px;
+    margin: 10px auto;
+    display: block;
+    text-align: center;
+    border: 1px solid #007bff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.addButton:hover {
+    color: white;
+    background-color: #007bff;
 }
 
 .addressForm {
