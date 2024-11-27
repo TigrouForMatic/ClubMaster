@@ -98,7 +98,7 @@ function ManageView() {
         <ClubList clubs={filteredClubs} selectedClubId={selectedClubId} onClubSelect={handleClubSelect} />
       )}
 
-      <LicenceList licences={filteredLicences} />
+      <LicenceList licences={filteredLicences} licenceTypes={filteredLicenceTypes} roles={filteredRoles} />
       <LicenceTypeList licenceTypes={filteredLicenceTypes} />
       <RoleList roles={filteredRoles} />
       <EventTypeList types={filteredTypes} />
