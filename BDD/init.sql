@@ -71,11 +71,13 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
+        Bin BOOLEAN,
         Name VARCHAR(255),
         Rib VARCHAR(255),
         RnaNumber VARCHAR(11),
         Siren VARCHAR(10),
-        Siret VARCHAR(15)
+        Siret VARCHAR(15),
+        Plan VARCHAR(255) NOT NULL DEFAULT 'Basique' -- 'Basique', 'Pro', 'Buisness'
     );
 
     CREATE TABLE db.Club (
@@ -248,12 +250,12 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '29 rue saint roch','Ploermel','Bretagne','56800','France', 1, true, true),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
 
-    INSERT INTO db.PersonMoral (Dc, Dm, Name, Rib, RnaNumber, Siren, Siret) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Vol en Oust', null, null, null, null);
+    INSERT INTO db.PersonMoral (Dc, Dm, Bin, Name, Rib, RnaNumber, Siren, Siret, Plan) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust', null, null, null, null, 'Buisness');
 
     INSERT INTO db.Club (Dc, Dm, Label, PersonMoralId, OldLabel, CreationDate) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'La Claie', null, null, '2022-08-01T00:00:00.000Z'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Vol en Pleuc', null, null, '2022-08-01T00:00:00.000Z');
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'La Claie', 1, null, '2022-08-01T00:00:00.000Z'),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Vol en Pleuc', 1, null, '2022-08-01T00:00:00.000Z');
 
     INSERT INTO db.ProductType (Dc, Dm, Label, ClubId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt', 1),

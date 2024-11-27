@@ -3,6 +3,7 @@ import useStore from '../../store/store';
 import '../../styles/navbarStyles.css';
 import { Menu, User, Home, ArcheryMatch, Calendar, Shop } from 'iconoir-react';
 import ClubIcon from './ClubIcon';
+import { useEffect } from 'react';
 
 const menuItems = [
   { to: "/", icon: Home, text: "News" },
@@ -12,9 +13,11 @@ const menuItems = [
 ];
 
 function Sidebar({ onClose }) {
-  const { currentUserRoles } = useStore();
+  const { currentUserRoles, userClubs } = useStore();
 
   const isHighLevel = currentUserRoles.some(r => r.level >= 3);
+
+  const isBuisness = userClubs.some(c => c.personmoralplan === 'Buisness');
 
   return (
     <div className="sidebar">
@@ -31,7 +34,7 @@ function Sidebar({ onClose }) {
             </div>
           </NavLink>
         ))}
-        {isHighLevel && (
+        {isHighLevel && isBuisness && (
           <NavLink to="/manage" activeClassName="active-link">
             <div className="menu-item">
               <ClubIcon className='icon-detail' />
