@@ -63,9 +63,7 @@ function UserView() {
         </div>
       </header>
 
-      <LicenceList />
-
-      {/* <section className={styles.levelSection}>
+      <section className={styles.levelSection}>
         <h2>My Level</h2>
         <div className={styles.levelInfo}>
           <p>Clubmaster LEVEL {currentUser.level}</p>
@@ -75,7 +73,9 @@ function UserView() {
         <p>251 CMP more to reach Level 2</p>
       </section>
 
-      <BadgeSection /> */}
+      <LicenceList />
+
+      <BadgeSection />
 
       <button className={styles.newClubButton} onClick={handleNewClub}>
         <Plus className={styles.iconNewClub} />
