@@ -20,7 +20,6 @@ const LicenceList = React.memo(({ licences }) => (
           <th>Date de fin</th>
           <th>Role</th>
           <th>Contact</th>
-          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -49,9 +48,9 @@ const LicenceList = React.memo(({ licences }) => (
                 <span className={styles.phone}>{licence.phonenumber}</span>
               </div>
             </td>
-            <td>
+            {/* <td>
               <button className={styles.editButton}><EditPencil /></button>
-            </td>
+            </td> */}
           </tr>
         ))}
       </tbody>

@@ -90,10 +90,14 @@ function ManageView() {
       <h1 className={styles.title}>Tableau de bord</h1>
       {filteredClubs.length === 1 && (
         <div className={styles.selectedClub}>
-          Club sélectionné : {filteredClubs[0].label}
+          <span className={styles.selectedClubName}>{filteredClubs[0].label}</span>
         </div>
       )}
-      <ClubList clubs={filteredClubs} selectedClubId={selectedClubId} onClubSelect={handleClubSelect} />
+
+      {filteredClubs.length > 1 && (
+        <ClubList clubs={filteredClubs} selectedClubId={selectedClubId} onClubSelect={handleClubSelect} />
+      )}
+
       <LicenceList licences={filteredLicences} />
       <LicenceTypeList licenceTypes={filteredLicenceTypes} />
       <RoleList roles={filteredRoles} />
