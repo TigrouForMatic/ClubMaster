@@ -270,3 +270,17 @@
   outline: none;
   border-color: #007bff;
 }
+
+.countLicencesContainer {
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px 0;
+  background-color: transparent;
+}
+
+.countLicences {
+  text-align: left;
+  margin-bottom: 0;
+  font-size: 1.2em;
+  color: #666;
+}

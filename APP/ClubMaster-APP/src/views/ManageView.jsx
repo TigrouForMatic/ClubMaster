@@ -99,6 +99,12 @@ function ManageView() {
       )}
 
       <LicenceList licences={filteredLicences} licenceTypes={filteredLicenceTypes} roles={filteredRoles} />
+
+      {filteredLicences && filteredLicences.length > 0 && (
+        <div className={styles.countLicencesContainer}>
+          <span className={styles.countLicences}>{filteredLicences.length} adhérents</span>
+        </div>
+      )}
       <LicenceTypeList licenceTypes={filteredLicenceTypes} />
       <RoleList roles={filteredRoles} />
       <EventTypeList types={filteredTypes} />

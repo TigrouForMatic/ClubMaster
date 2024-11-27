@@ -88,7 +88,8 @@ const LicenceList = () => {
           <LicenceItem key={licence.id} licence={licence} />
           ))}
         </div>
-      )} : {(
+      )}  
+      {filteredAndSortedLicences.length === 0 &&(
         <p className={styles.noLicences}>Aucunes licences actives.</p>
       )}
 

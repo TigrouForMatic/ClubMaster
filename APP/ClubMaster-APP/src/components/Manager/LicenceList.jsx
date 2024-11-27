@@ -45,7 +45,7 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
   return (
     <div className={styles.section}>
       <div className={styles.sectionHeader}>
-        <h2 className={styles.subtitle}>Licenciés</h2>
+        <h2 className={styles.subtitle}>Adhérents</h2>
         <button className={styles.addButton}>Ajouter</button>
       </div>
       <div className={styles.tableContainer}>
@@ -89,7 +89,7 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
             </tr>
           </thead>
           <tbody>
-            {filteredLicences.map(licence => (
+            {filteredLicences.length > 0 && filteredLicences.map(licence => (
               <tr key={licence.id}>
                 <td>
                   <div className={styles.userInfo}>
@@ -117,6 +117,9 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
               </tr>
             ))}
           </tbody>
+          {filteredLicences.length === 0 && (
+            <p className={styles.noLicences}>Aucunes licences actives.</p>
+          )}
         </table>
       </div>
     </div>
