@@ -17,7 +17,7 @@ function Sidebar({ onClose }) {
 
   const isHighLevel = currentUserRoles.some(r => r.level >= 3);
 
-  const isBuisness = userClubs.some(c => c.personmoralplan === 'Buisness');
+  const isPro = userClubs.some(c => c.personmoralplan === 'Pro');
 
   return (
     <div className="sidebar">
@@ -34,7 +34,7 @@ function Sidebar({ onClose }) {
             </div>
           </NavLink>
         ))}
-        {isHighLevel && isBuisness && (
+        {isHighLevel && isPro && (
           <NavLink to="/manage" activeClassName="active-link">
             <div className="menu-item">
               <ClubIcon className='icon-detail' />

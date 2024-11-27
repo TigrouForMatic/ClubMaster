@@ -77,7 +77,7 @@ BEGIN
         RnaNumber VARCHAR(11),
         Siren VARCHAR(10),
         Siret VARCHAR(15),
-        Plan VARCHAR(255) NOT NULL DEFAULT 'Basique' -- 'Basique', 'Pro', 'Buisness'
+        Plan VARCHAR(255) NOT NULL DEFAULT 'Basique' -- 'Basique', 'Essentiel', 'Pro'
     );
 
     CREATE TABLE db.Club (
@@ -251,10 +251,11 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
 
     INSERT INTO db.PersonMoral (Dc, Dm, Bin, Name, Rib, RnaNumber, Siren, Siret, Plan) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust', null, null, null, null, 'Buisness');
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust', null, null, null, null, 'Basique'),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust - Pro', null, null, null, null, 'Pro');
 
     INSERT INTO db.Club (Dc, Dm, Label, PersonMoralId, OldLabel, CreationDate) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'La Claie', 1, null, '2022-08-01T00:00:00.000Z'),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'La Claie', 2, null, '2022-08-01T00:00:00.000Z'),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Vol en Pleuc', 1, null, '2022-08-01T00:00:00.000Z');
 
     INSERT INTO db.ProductType (Dc, Dm, Label, ClubId) VALUES
