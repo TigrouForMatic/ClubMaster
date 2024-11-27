@@ -19,6 +19,7 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
+        Bin BOOLEAN,
         Login VARCHAR(255) NOT NULL,
         Password VARCHAR(255) NOT NULL,
         Pseudo VARCHAR(255)
@@ -29,6 +30,7 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
+        Bin BOOLEAN,
         Name VARCHAR(255) NOT NULL,
         NaissanceDate DATE,
         PhoneNumber VARCHAR(20),
@@ -41,6 +43,7 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
+        Bin BOOLEAN,
         Street VARCHAR(255),
         City VARCHAR(255),
         State VARCHAR(255),
@@ -161,6 +164,7 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
+        Bin BOOLEAN,
         Label VARCHAR(255) NOT NULL,
         Level INT,
         ClubId INT,
@@ -237,12 +241,12 @@ BEGIN
     );
 
     -- Insert test data
-    INSERT INTO db.Address (Dc, Dm, Street, City, State, PostalCode, Country, ReferenceId, Private, Validate) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', '4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', null, false, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', 2, false, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', 1, false, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', '29 rue saint roch','Ploermel','Bretagne','56800','France', 1, true, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
+    INSERT INTO db.Address (Dc, Dm, Bin, Street, City, State, PostalCode, Country, ReferenceId, Private, Validate) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', null, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', 2, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', 1, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '29 rue saint roch','Ploermel','Bretagne','56800','France', 1, true, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
 
     INSERT INTO db.PersonMoral (Dc, Dm, Name, Rib, RnaNumber, Siren, Siret) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Vol en Oust', null, null, null, null);
@@ -301,13 +305,13 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Cours', 'Cours le 14/11 à 19h', 2, '2024-11-14 19:00:00', '2024-11-14 21:00:00', 3 , null),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Rencontre', 'Rencontre à Malestroit', 4, '2024-10-30 19:30:00', '2024-10-30 22:00:00', 1 , null);
 
-     INSERT INTO db.Login (Dc, Dm, Login, Password, Pseudo) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach'),
-    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', 'constance@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle');
+     INSERT INTO db.Login (Dc, Dm, Bin, Login, Password, Pseudo) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach'),
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, 'constance@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle');
 
-    INSERT INTO db.PersonPhysic (Dc, Dm, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1),
-    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', 'Constance Le Ray','1991-04-27T00:00:00.000Z','0677332963','constance@clubmaster.bzh',2);
+    INSERT INTO db.PersonPhysic (Dc, Dm, Bin, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1),
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, 'Constance Le Ray','1991-04-27T00:00:00.000Z','0677332963','constance@clubmaster.bzh',2);
 
 
     INSERT INTO db.LicenceType (Dc, Dm, Duration, Label, ClubId, Price, Basic) VALUES
@@ -320,19 +324,19 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 182, 'Demi-Licence',2, 10, false),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 728, 'Licence Spécifique',2,null, false);
 
-    INSERT INTO db.Role (Dc, Dm, Label, Level, ClubId) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Visiteur',0,1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Président',4,1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Secrétaire',3,1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Trésorier',3,1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Coach',2,1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Adhérent',1,1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Visiteur',0,2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Président',4,2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Secrétaire',3,2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Trésorier',3,2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Coach',2,2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Adhérent',1,2);
+    INSERT INTO db.Role (Dc, Dm, Bin, Label, Level, ClubId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Visiteur',0,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Président',4,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Secrétaire',3,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Trésorier',3,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Coach',2,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Adhérent',1,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Visiteur',0,2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Président',4,2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Secrétaire',3,2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Trésorier',3,2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Coach',2,2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Adhérent',1,2);
 
     INSERT INTO db.Licence (Dc, Dm, Label, Dd, Df, LicenceTypeId, PersonPhysicId, RoleId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Président','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',4,1,2),

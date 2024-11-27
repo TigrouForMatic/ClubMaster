@@ -1,0 +1,112 @@
+.addressOption {
+    position: relative;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.addressOption:hover {
+    background-color: #e9ecef;
+}
+
+.addressOption p {
+    margin: 5px 0;
+}
+
+.addButton {
+    color: #007bff;
+    /* border: none; */
+    background: none;
+    cursor: pointer;
+    margin: 10px auto;
+    display: block;
+    text-align: center;
+    border: 1px solid #007bff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.addButton:hover {
+    color: white;
+    background-color: #007bff;
+}
+
+.addressForm {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.addressForm input {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.addressForm button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancelButton {
+    background-color: #808080 !important;
+}
+  
+.cancelButton:hover {
+    background-color: #707070;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.editButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #007bff;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.editButton:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.deleteButton {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ff0000;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.deleteButton:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}

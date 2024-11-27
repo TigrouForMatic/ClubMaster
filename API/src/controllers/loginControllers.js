@@ -1,12 +1,12 @@
 const { pool } = require('../../database');
 
-const TABLE_NAME = 'db.Address';
+const TABLE_NAME = 'db.Login';
 
-const getAddresses = async (req, res) => {
+const getLogin = async (req, res) => {
     const filters = req.query;
 
     try {
-        let queryString = `SELECT * FROM ${TABLE_NAME} WHERE private = false AND validate = true AND Bin = false`;
+        let queryString = `SELECT * FROM ${TABLE_NAME}`;
         const values = [];
         
         if (Object.keys(filters).length > 0) {
@@ -14,7 +14,7 @@ const getAddresses = async (req, res) => {
                 values.push(value);
                 return `${key} = $${index + 1}`;
             });
-            queryString += ' AND ' + filterConditions.join(' AND ');
+            queryString += ' WHERE ' + filterConditions.join(' AND ');
         }
 
         const client = await pool.connect();
@@ -22,60 +22,33 @@ const getAddresses = async (req, res) => {
         client.release();
         res.json(result.rows);
     } catch (err) {
-        console.error('Erreur lors de la récupération des adresses', err);
-        res.status(500).send('Erreur lors de la récupération des adresses');
+        console.error('Erreur lors de la récupération des personnes physiques', err);
+        res.status(500).send('Erreur lors de la récupération des personnes physiques');
     }
 };
 
-const getAddressByPerson = async (req, res) => {
-    
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-    
-    const { idPersonnel } = req.params;
-
-    try {
-
-        let queryString = `SELECT * FROM ${TABLE_NAME} WHERE private = true AND validate = true AND referenceid = $1 AND Bin = false`;
-
-        const client = await pool.connect();
-        try {
-            const result = await client.query(queryString, [idPersonnel]);
-            res.json(result.rows);
-        } finally {
-            client.release();
-        }
-    } catch (err) {
-        console.error('Erreur lors de la récupération des clubs', err);
-        res.status(500).send('Erreur lors de la récupération des clubs');
-    }
-};
-
-const getAddressById = async (req, res) => {
-
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-    
+const getLoginById = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1 AND Bin = false`, [id]);
+        const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1`, [id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Adresse non trouvée');
+            return res.status(404).send('Personne physique non trouvée');
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la récupération de l'adresse avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la récupération de l'adresse avec l'ID ${id}`);
+        console.error(`Erreur lors de la récupération de la personne physique avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la récupération de la personne physique avec l'ID ${id}`);
     }
 };
 
-const addAddress = async (req, res) => {
+const addLogin = async (req, res) => {
     const currentDate = new Date();
 
     // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
+
 
     const { columns, values } = prepareInsertData(req.body);
 
@@ -91,15 +64,16 @@ const addAddress = async (req, res) => {
         client.release();
         res.status(201).json(result.rows[0]);
     } catch (err) {
-        console.error('Erreur lors de l\'ajout d\'une nouvelle adresse', err);
-        res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle adresse');
+        console.error('Erreur lors de l\'ajout d\'une nouvelle personne physique', err);
+        res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle personne physique');
     }
 };
 
-const updateAddress = async (req, res) => {
+const updateLogin = async (req, res) => {
 
     // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
+
 
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
@@ -110,19 +84,20 @@ const updateAddress = async (req, res) => {
         const result = await client.query(updateQuery, [...values, id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Adresse non trouvée');
+            return res.status(404).send('Personne physique non trouvée');
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la mise à jour de l'adresse avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la mise à jour de l'adresse avec l'ID ${id}`);
+        console.error(`Erreur lors de la mise à jour de la personne physique avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la mise à jour de la personne physique avec l'ID ${id}`);
     }
 };
 
-const deleteAddress = async (req, res) => {
+const deleteLogin = async (req, res) => {
 
     // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
+
 
     const { id } = req.params;
     try {
@@ -130,12 +105,12 @@ const deleteAddress = async (req, res) => {
         const result = await client.query(`UPDATE ${TABLE_NAME} SET Bin = true WHERE id = $1 RETURNING *`, [id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Adresse non trouvée');
+            return res.status(404).send('Personne physique non trouvée');
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la suppression de l'adresse avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la suppression de l'adresse avec l'ID ${id}`);
+        console.error(`Erreur lors de la suppression de la personne physique avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la suppression de la personne physique avec l'ID ${id}`);
     }
 };
 
@@ -152,10 +127,9 @@ const prepareUpdateData = (body) => {
 };
 
 module.exports = {
-    getAddresses,
-    getAddressByPerson,
-    getAddressById,
-    addAddress,
-    updateAddress,
-    deleteAddress
+    getLogin,
+    getLoginById,
+    addLogin,
+    updateLogin,
+    deleteLogin
 };

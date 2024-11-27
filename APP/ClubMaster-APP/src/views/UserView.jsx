@@ -63,9 +63,7 @@ function UserView() {
         </div>
       </header>
 
-      <LicenceList />
-
-      {/* <section className={styles.levelSection}>
+      <section className={styles.levelSection}>
         <h2>My Level</h2>
         <div className={styles.levelInfo}>
           <p>Clubmaster LEVEL {currentUser.level}</p>
@@ -75,7 +73,9 @@ function UserView() {
         <p>251 CMP more to reach Level 2</p>
       </section>
 
-      <BadgeSection /> */}
+      <LicenceList />
+
+      <BadgeSection />
 
       <button className={styles.newClubButton} onClick={handleNewClub}>
         <Plus className={styles.iconNewClub} />
@@ -84,16 +84,20 @@ function UserView() {
 
       <MenuSection />
 
+      <section className={styles.membershipInfo}>
+        <h2>Entrainement et Diététique</h2>
+      </section>
+
       <button className={styles.chatbotButton}>CHATBOT & SERVICE</button>
 
       <section className={styles.membershipInfo}>
         <h2>Mes Cartes et Réductions</h2>
-        <div className={styles.levelInfo}>
+        {/* <div className={styles.levelInfo}>
           <p>Adidas - 10%</p>
           <p>Decathlon -30%</p>
         </div>
         <ProgressBar value={500} max={1000} />
-        <p>1 month left to enjoy</p>
+        <p>1 month left to enjoy</p> */}
       </section>
 
       <button className={styles.logoutButton} onClick={handleLogout}>

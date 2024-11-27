@@ -65,3 +65,29 @@
   margin: 15px 0 5px;
   color: #444;
 }
+
+.headerWithButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.editButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #007bff;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.editButton:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}

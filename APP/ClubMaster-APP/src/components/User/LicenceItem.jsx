@@ -3,9 +3,9 @@ import ProgressBar from '../ProgressBar';
 import styles from '../../styles/LicenceList.module.css';
 import { getDisplayFormatedDate } from '../../js/date';
 
-const LicenceItem = ({ licence }) => (
+const LicenceItem = ({ licence, isOld }) => (
   <div className={styles.licenceCard}>
-    <div className={styles.licenceHeader}>
+    <div className={`${styles.licenceHeader} ${isOld ? styles.licenceHeaderOld : ''}`}>
       <h3>{licence.eventType}</h3>
       <span className={styles.licenceRole}>{licence.role}</span>
     </div>
@@ -22,7 +22,12 @@ const LicenceItem = ({ licence }) => (
     </div>
     <div className={styles.licenceFooter}>
       <ProgressBar value={licence.duration - licence.daysLeft} max={licence.duration} />
-      <p className={styles.licenceDaysLeft}>{licence.daysLeft} jours restants</p>
+      {!isOld && (
+        <p className={styles.licenceDaysLeft}>{licence.daysLeft} jours restants</p>
+      )}
+      {isOld && (
+        <p className={styles.licenceDaysLeft}>Licence expirée depuis {-licence.daysLeft} jours</p>
+      )}
     </div>
   </div>
 );

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import useStore from '../../store/store';
 import styles from '../../styles/MenuSection.module.css';
 import { getDisplayFormatedDate } from "../../js/date";
+import { EditPencil } from 'iconoir-react';
+import ModalEditPersonnalData from '../Modale/ModalEditPersonnalData';
 
 const MenuItem = ({ title, content, isOpen, toggleItem }) => (
   <div className={styles.menuItemWrapper}>
@@ -18,9 +20,18 @@ const MenuItem = ({ title, content, isOpen, toggleItem }) => (
 const MenuSection = () => {
   const { currentUser, currentUserAddresses, userClubs } = useStore();
   const [openItem, setOpenItem] = useState(null);
+  const [isModalPersonnalDataOpen, setIsModalPersonnalDataOpen] = useState(false);
 
   const toggleItem = (index) => {
     setOpenItem(openItem === index ? null : index);
+  };
+
+  const handleEditPersonalInfo = () => {
+    setIsModalPersonnalDataOpen(true);
+  };
+
+  const closeModalPersonnalData = () => {
+    setIsModalPersonnalDataOpen(false);
   };
 
   const menuItems = [
@@ -52,6 +63,12 @@ const MenuSection = () => {
       title: "Informations Personnelles",
       content: (
         <div>
+          <div className={styles.headerWithButton}>
+            <h4>Informations</h4>
+            <button className={styles.editButton} onClick={handleEditPersonalInfo}>
+              <EditPencil />
+            </button>
+          </div>
           <p><strong>Nom :</strong> {currentUser.name}</p>
           <p><strong>Date de naissance :</strong> {new Date(currentUser.naissancedate).toLocaleDateString()}</p>
           <p><strong>Téléphone :</strong> {currentUser.phonenumber}</p>
@@ -89,6 +106,10 @@ const MenuSection = () => {
           toggleItem={() => toggleItem(index)}
         />
       ))}
+      <ModalEditPersonnalData
+        isOpen={isModalPersonnalDataOpen}
+        onClose={closeModalPersonnalData}
+      />
     </section>
   );
 };

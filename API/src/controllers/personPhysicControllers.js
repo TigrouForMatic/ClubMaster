@@ -15,6 +15,7 @@ const getPersonPhysic = async (req, res) => {
                 return `${key} = $${index + 1}`;
             });
             queryString += ' WHERE ' + filterConditions.join(' AND ');
+            queryString += ' AND Bin = false';
         }
 
         const client = await pool.connect();
@@ -31,7 +32,7 @@ const getPersonPhysicById = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1`, [id]);
+        const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1 AND Bin = false`, [id]);
         client.release();
         if (result.rows.length === 0) {
             return res.status(404).send('Personne physique non trouvée');
@@ -55,8 +56,8 @@ const addPersonPhysic = async (req, res) => {
     try {
         const client = await pool.connect();
 
-        const columnsWithDates = `${columns}, Dc, Dm`;
-        const valuesWithDates = [...values, currentDate, currentDate];
+        const columnsWithDates = `${columns}, Dc, Dm, Bin`;
+        const valuesWithDates = [...values, currentDate, currentDate, false];
 
         const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
 
@@ -102,7 +103,7 @@ const deletePersonPhysic = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM ${TABLE_NAME} WHERE id = $1 RETURNING *`, [id]);
+        const result = await client.query(`UPDATE ${TABLE_NAME} SET Bin = true WHERE id = $1 RETURNING *`, [id]);
         client.release();
         if (result.rows.length === 0) {
             return res.status(404).send('Personne physique non trouvée');

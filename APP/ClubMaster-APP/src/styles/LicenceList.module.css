@@ -28,6 +28,10 @@
   align-items: center;
 }
 
+.licenceHeaderOld {
+  background-color: #8d817f;
+}
+
 .licenceHeader h2 {
   margin: 0;
   font-size: 1.2rem;
@@ -112,4 +116,26 @@
 
 .addButton svg {
   margin-left: 5px;
+}
+
+.noLicences {
+  color: #7f8c8d;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: -50px;
+}
+
+.showOldLicences {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+  display: block;
+  width: 100%;
+  text-align: end;
 }

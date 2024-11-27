@@ -5,6 +5,7 @@ const { createAccount, testLogin } = require('../controllers/authControllers');
 const { authenticateToken } = require('../middleware/auth');
 const { getAddresses, getAddressById, getAddressByPerson, addAddress, updateAddress, deleteAddress } = require('../controllers/addressControllers');
 const { getPersonPhysic, getPersonPhysicById, addPersonPhysic, updatePersonPhysic, deletePersonPhysic } = require('../controllers/personPhysicControllers');
+const { getLogin, getLoginById, addLogin, updateLogin, deleteLogin } = require('../controllers/loginControllers');
 const { getClub, getClubByPerson, getClubById, addClub, updateClub, deleteClub } = require('../controllers/clubControllers');
 const { getLicenceType, getLicenceTypeById, addLicenceType, addLicenceTypeFromNewClub, updateLicenceType, deleteLicenceType } = require('../controllers/licenceTypeControllers');
 const { getLicence, getLicenceManage, getLicenceById, addLicence, updateLicence, deleteLicence } = require('../controllers/licenceControllers');
@@ -41,6 +42,13 @@ router.get('/personPhysic/:id', getPersonPhysicById);
 router.post('/personPhysic', authenticateToken, addPersonPhysic);
 router.put('/personPhysic/:id', authenticateToken, updatePersonPhysic);
 router.delete('/personPhysic/:id', authenticateToken, deletePersonPhysic);
+
+// Routes pour le CRUD des logins
+router.get('/login', getLogin);
+router.get('/login/:id', getLoginById);
+router.post('/login', authenticateToken, addLogin);
+router.put('/login/:id', authenticateToken, updateLogin);
+router.delete('/login/:id', authenticateToken, deleteLogin);
 
 // Routes pour le CRUD des clubs
 router.get('/club', getClub);
