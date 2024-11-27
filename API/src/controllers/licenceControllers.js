@@ -31,27 +31,28 @@ const getLicenceManage = async (req, res) => {
     if (!req.user) return res.sendStatus(401);
 
     try {
-        const { roleIds } = req.query;
+        const { arrayClubId } = req.query;
 
         let queryString = `
-            SELECT l.*, pp.Name, pp.NaissanceDate, pp.PhoneNumber, pp.EmailAddress
+            SELECT l.*, pp.Name, pp.NaissanceDate, pp.PhoneNumber, pp.EmailAddress, lt.Label AS TypeLabel
             FROM db.Licence l
             JOIN db.PersonPhysic pp ON l.PersonPhysicId = pp.Id
+            JOIN db.LicenceType lt ON l.LicenceTypeId = lt.Id
         `;
         const values = [];
 
-        let parsedRoleIds;
-        if (roleIds) {
+        let parsedArrayClubId;
+        if (arrayClubId) {
             try {
-                parsedRoleIds = typeof roleIds === 'string' ? JSON.parse(roleIds) : roleIds;
+                parsedArrayClubId = typeof arrayClubId === 'string' ? JSON.parse(arrayClubId) : arrayClubId;
             } catch (parseError) {
-                console.error('Erreur lors du parsing de roleIds:', parseError);
-                return res.status(400).send('Format de roleIds invalide');
+                console.error('Erreur lors du parsing de arrayClubId:', parseError);
+                return res.status(400).send('Format de arrayClubId invalide');
             }
 
-            if (Array.isArray(parsedRoleIds) && parsedRoleIds.length > 0) {
-                queryString += ` WHERE l.roleid = ANY($1)`;
-                values.push(parsedRoleIds);
+            if (Array.isArray(parsedArrayClubId) && parsedArrayClubId.length > 0) {
+                queryString += ` WHERE lt.clubid = ANY($1)`;
+                values.push(parsedArrayClubId);
             }
         }
 

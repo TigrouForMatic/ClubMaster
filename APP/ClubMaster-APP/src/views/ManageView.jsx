@@ -15,10 +15,11 @@ function ManageView() {
   const [error, setError] = useState(null);
   const [selectedClubId, setSelectedClubId] = useState(userClubs[0].id);
 
-  const fetchLicences = useCallback(async (arrayRolesId) => {
+  const fetchLicences = useCallback(async (filteredClubs) => {
     try {
       setIsLoading(true);
-      const licenceData = await api.get("/licence/manage", { params: { roleIds: arrayRolesId } });
+      const arrayClubId = filteredClubs.map(club => club.id);
+      const licenceData = await api.get("/licence/manage", { params: { arrayClubId: JSON.stringify(arrayClubId)}});
       setLicences(licenceData);
     } catch (error) {
       console.error("Erreur lors de la récupération des données :", error);
@@ -28,14 +29,6 @@ function ManageView() {
     }
   }, []);
 
-  const highLevelRoleIds = useMemo(() => 
-    currentUserRoles.filter(role => role.level >= 3).map(role => role.id),
-  [currentUserRoles]);
-
-  useEffect(() => {
-    fetchLicences(highLevelRoleIds);
-  }, [highLevelRoleIds, fetchLicences]);
-
   const filteredClubs = useMemo(() => {
     const highLevelClubIds = new Set(
       currentUserRoles
@@ -43,8 +36,12 @@ function ManageView() {
         .map(role => role.clubid)
     );
 
-    return userClubs.filter(club => highLevelClubIds.has(club.id));
+    return userClubs.filter(club => highLevelClubIds.has(club.id) && club.personmoralplan === 'Pro');
   }, [userClubs, currentUserRoles]);
+
+  useEffect(() => {
+    fetchLicences(filteredClubs); 
+  }, [filteredClubs, fetchLicences]);
 
   const filteredTypes = useMemo(() => {
     return typesEvent.filter(type => selectedClubId ? type.clubid === selectedClubId : true);
@@ -93,11 +90,21 @@ function ManageView() {
       <h1 className={styles.title}>Tableau de bord</h1>
       {filteredClubs.length === 1 && (
         <div className={styles.selectedClub}>
-          Club sélectionné : {filteredClubs[0].label}
+          <span className={styles.selectedClubName}>{filteredClubs[0].label}</span>
         </div>
       )}
-      <ClubList clubs={filteredClubs} selectedClubId={selectedClubId} onClubSelect={handleClubSelect} />
-      <LicenceList licences={filteredLicences} />
+
+      {filteredClubs.length > 1 && (
+        <ClubList clubs={filteredClubs} selectedClubId={selectedClubId} onClubSelect={handleClubSelect} />
+      )}
+
+      <LicenceList licences={filteredLicences} licenceTypes={filteredLicenceTypes} roles={filteredRoles} />
+
+      {filteredLicences && filteredLicences.length > 0 && (
+        <div className={styles.countLicencesContainer}>
+          <span className={styles.countLicences}>{filteredLicences.length} adhérents</span>
+        </div>
+      )}
       <LicenceTypeList licenceTypes={filteredLicenceTypes} />
       <RoleList roles={filteredRoles} />
       <EventTypeList types={filteredTypes} />
