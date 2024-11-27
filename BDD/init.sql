@@ -310,11 +310,31 @@ BEGIN
 
      INSERT INTO db.Login (Dc, Dm, Bin, Login, Password, Pseudo) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach'),
-    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, 'constance@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle');
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, 'constance@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle'),
+    ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, 'user1@clubmaster.bzh', '$2b$10$examplehash1', 'User One'),
+    ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, 'user2@clubmaster.bzh', '$2b$10$examplehash2', 'User Two'),
+    ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, 'user3@clubmaster.bzh', '$2b$10$examplehash3', 'User Three'),
+    ('2024-12-04T00:00:00.000Z', '2024-12-04T00:00:00.000Z', false, 'user4@clubmaster.bzh', '$2b$10$examplehash4', 'User Four'),
+    ('2024-12-05T00:00:00.000Z', '2024-12-05T00:00:00.000Z', false, 'user5@clubmaster.bzh', '$2b$10$examplehash5', 'User Five'),
+    ('2024-12-06T00:00:00.000Z', '2024-12-06T00:00:00.000Z', false, 'user6@clubmaster.bzh', '$2b$10$examplehash6', 'User Six'),
+    ('2024-12-07T00:00:00.000Z', '2024-12-07T00:00:00.000Z', false, 'user7@clubmaster.bzh', '$2b$10$examplehash7', 'User Seven'),
+    ('2024-12-08T00:00:00.000Z', '2024-12-08T00:00:00.000Z', false, 'user8@clubmaster.bzh', '$2b$10$examplehash8', 'User Eight'),
+    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'user9@clubmaster.bzh', '$2b$10$examplehash9', 'User Nine'),
+    ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, 'user10@clubmaster.bzh', '$2b$10$examplehash10', 'User Ten');
 
     INSERT INTO db.PersonPhysic (Dc, Dm, Bin, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1),
-    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, 'Constance Le Ray','1991-04-27T00:00:00.000Z','0677332963','constance@clubmaster.bzh',2);
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, 'Constance Le Ray','1991-04-27T00:00:00.000Z','0677332963','constance@clubmaster.bzh',2),
+    ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, 'User One', '1990-01-01T00:00:00.000Z', '0600000001', 'user1@clubmaster.bzh', 3),
+    ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, 'User Two', '1991-02-02T00:00:00.000Z', '0600000002', 'user2@clubmaster.bzh', 4),
+    ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, 'User Three', '1992-03-03T00:00:00.000Z', '0600000003', 'user3@clubmaster.bzh', 5),
+    ('2024-12-04T00:00:00.000Z', '2024-12-04T00:00:00.000Z', false, 'User Four', '1993-04-04T00:00:00.000Z', '0600000004', 'user4@clubmaster.bzh', 6),
+    ('2024-12-05T00:00:00.000Z', '2024-12-05T00:00:00.000Z', false, 'User Five', '1994-05-05T00:00:00.000Z', '0600000005', 'user5@clubmaster.bzh', 7),
+    ('2024-12-06T00:00:00.000Z', '2024-12-06T00:00:00.000Z', false, 'User Six', '1995-06-06T00:00:00.000Z', '0600000006', 'user6@clubmaster.bzh', 8),
+    ('2024-12-07T00:00:00.000Z', '2024-12-07T00:00:00.000Z', false, 'User Seven', '1996-07-07T00:00:00.000Z', '0600000007', 'user7@clubmaster.bzh', 9),
+    ('2024-12-08T00:00:00.000Z', '2024-12-08T00:00:00.000Z', false, 'User Eight', '1997-08-08T00:00:00.000Z', '0600000008', 'user8@clubmaster.bzh', 10),
+    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'User Nine', '1998-09-09T00:00:00.000Z', '0600000009', 'user9@clubmaster.bzh', 11),
+    ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, 'User Ten', '1999-10-10T00:00:00.000Z', '0600000010', 'user10@clubmaster.bzh', 12);
 
 
     INSERT INTO db.LicenceType (Dc, Dm, Duration, Label, ClubId, Price, Basic) VALUES
@@ -343,7 +363,17 @@ BEGIN
 
     INSERT INTO db.Licence (Dc, Dm, Label, Dd, Df, LicenceTypeId, PersonPhysicId, RoleId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Président','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',4,1,2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Secrétaire','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',8,1,9);
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Secrétaire','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',8,1,9),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,3,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,4,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,5,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,6,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,7,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,8,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,9,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,10,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,11,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Licence Visiteur','2024-07-15T00:00:00.000Z','2024-08-31T00:00:00.000Z',1,12,1);
 
     INSERT INTO db.Inscription (Dc, Dm, EventId, PersonPhysicId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 7, 1),
@@ -370,8 +400,8 @@ BEGIN
     ('2024-08-08T00:00:00.000Z', '2024-08-08T00:00:00.000Z', 'Pourquoi pas :)', 11,2);
 
     INSERT INTO db.InfoBanner (Dc, Dm, Bin, Title, Description, Dd, Df, HeaderImage, ClubId, CreatedBy) VALUES
-    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-11-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 1, 1),
-    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-11-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 2, 1);
+    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 1, 1),
+    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 2, 1);
     
 END
 $$;
