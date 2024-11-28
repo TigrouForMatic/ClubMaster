@@ -72,6 +72,18 @@
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+  position: relative;
+}
+
+.calendarWrapper {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-x;
+}
+
+.swipeTransition {
+  transition: transform 0.3s ease-out;
 }
 
 .weekdays {

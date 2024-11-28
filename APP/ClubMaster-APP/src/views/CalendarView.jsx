@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import DatePicker from "react-datepicker";
 import Select from 'react-select';
 import "react-datepicker/dist/react-datepicker.css";
@@ -19,6 +19,9 @@ const CalendarView = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const calendarRef = useRef(null);
 
   const { userClubs, addresses,events, typesEvent, inscriptions, user, currentUserRoles } = useStore();
   const updateItems = useStore((state) => state.updateItems);
@@ -152,6 +155,35 @@ const CalendarView = () => {
     setIsCreateModalOpen(false);
   }, []);
 
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      const nextMonth = new Date(currentDate);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      setCurrentDate(nextMonth);
+    }
+    
+    if (isRightSwipe) {
+      const prevMonth = new Date(currentDate);
+      prevMonth.setMonth(prevMonth.getMonth() - 1);
+      setCurrentDate(prevMonth);
+    }
+  };
+
   return (
     <div className={styles.calendarContainer}>
       <h1 className={styles.title}>Calendrier</h1>
@@ -212,14 +244,22 @@ const CalendarView = () => {
         </div>
       </div>
 
-      <div className={styles.monthlyCalendar}>
-        <div className={styles.weekdays}>
-          {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => (
-            <div key={day}>{day}</div>
-          ))}
-        </div>
-        <div className={styles.days}>
-          {renderCalendar()}
+      <div 
+        className={styles.calendarWrapper}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        ref={calendarRef}
+      >
+        <div className={styles.monthlyCalendar}>
+          <div className={styles.weekdays}>
+            {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => (
+              <div key={day}>{day}</div>
+            ))}
+          </div>
+          <div className={styles.days}>
+            {renderCalendar()}
+          </div>
         </div>
       </div>
       
