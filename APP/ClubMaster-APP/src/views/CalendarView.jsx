@@ -13,6 +13,7 @@ import ModalCreateEvent from '../components/Modale/ModalCreateEvent';
 const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTypes, setSelectedTypes] = useState([]);
+  const [selectedTypesId, setSelectedTypesId] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState({ value: 0, label: "Tous les lieux" });
   const [selectedClub, setSelectedClub] = useState({ value: 0, label: "Tous les clubs" });
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +24,15 @@ const CalendarView = () => {
   const updateItems = useStore((state) => state.updateItems);
 
   const getDataForSelectFromTypeEvent = useMemo(() => 
-    typesEvent.map(type => ({ value: type.id, label: type.label })),
+    typesEvent.reduce((acc, type) => {
+      const existingType = acc.find(t => t.label === type.label);
+      if (existingType) {
+        existingType.value.push(type.id);
+      } else {
+        acc.push({ value: [type.id], label: type.label });
+      }
+      return acc;
+    }, []),
   [typesEvent]);
 
   const locationOptions = useMemo(() => [
@@ -47,6 +56,13 @@ const CalendarView = () => {
   [userClubs]);
 
   const handleTypeChange = useCallback((selectedOptions) => {
+    const typesId = [];
+    for (let option of selectedOptions) {
+      for (let typeId of option.value) {
+        typesId.push(typeId);
+      }
+    }
+    setSelectedTypesId(typesId);
     setSelectedTypes(selectedOptions.map(option => option.value));
   }, []);
 
@@ -67,11 +83,11 @@ const CalendarView = () => {
     return events.filter(e => {
       if (!e || !e.dd) return false;
       const eventDate = new Date(e.dd);
-      return eventDate.getMonth() === month && 
+      return eventDate.getMonth() === month &&
              eventDate.getFullYear() === year &&
-             (!selectedTypes.length || selectedTypes.includes(e.eventtypeid)) &&
-             (selectedLocation.value === 0 || e.id === addresses.find(add => add.id === selectedLocation.value)?.referenceid) &&
-             (selectedClub.value === 0 || e.clubid === selectedClub.value);
+             (!selectedTypes.length || selectedTypesId.includes(e.eventtypeid)) &&
+             (selectedLocation.value === 0 || e.addressid === selectedLocation.value) &&
+             (selectedClub.value === 0 || selectedClub.value === typesEvent.find(type => type.id === e.eventtypeid).clubid);
     });
   }, [events, currentDate, selectedTypes, selectedLocation, selectedClub, addresses]);
 
