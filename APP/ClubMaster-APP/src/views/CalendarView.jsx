@@ -78,7 +78,10 @@ const CalendarView = () => {
   }, []);
 
   const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
-  const getFirstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
+  const getFirstDayOfMonth = (year, month) => {
+    let day = new Date(year, month, 1).getDay();
+    return day === 0 ? 6 : day - 1;
+  };
 
   const filteredEvents = useMemo(() => {
     const year = currentDate.getFullYear();
@@ -253,7 +256,7 @@ const CalendarView = () => {
       >
         <div className={styles.monthlyCalendar}>
           <div className={styles.weekdays}>
-            {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => (
+            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(day => (
               <div key={day}>{day}</div>
             ))}
           </div>
