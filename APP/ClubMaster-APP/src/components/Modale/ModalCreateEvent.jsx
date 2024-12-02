@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Modal from 'react-modal';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
 import styles from "../../styles/ModaleCreateEvent.module.css";
 import { dateFormat } from '../../js/date';
 
-function ModalCreateEvent({ isOpen, onClose }) {
+function ModalCreateEvent({ isOpen, onClose, date }) {
   const { currentUserRoles, userClubs, addresses, typesEvent } = useStore();
   const addItem = useStore((state) => state.addItem);
   const addItems = useStore((state) => state.addItems);
@@ -28,6 +28,12 @@ function ModalCreateEvent({ isOpen, onClose }) {
     AddressId: null,
     MaxPerson: null,
   });
+
+  useEffect(() => {
+    if(date) {
+      setStartDate(date.toISOString().split('T')[0]);
+    }
+  }, [date]);
 
   const filteredClubs = useMemo(() => {
     const highLevelClubIds = new Set(

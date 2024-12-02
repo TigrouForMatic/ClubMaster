@@ -107,11 +107,39 @@
   position: relative;
 }
 
+.dayHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 24px;
+  margin-bottom: 2px;
+}
+
 .dayNumber {
-  position: absolute;
-  top: 5px;
-  left: 5px;
+  position: static;
   font-weight: bold;
+  font-size: 14px;
+}
+
+.addDayEventButton {
+  background: none;
+  border: 1px solid green;
+  color: dark;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 3px;
+  height: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.addDayEventButton:hover {
+  background-color: darkgreen;
+  color: white;
 }
 
 .emptyDay {
@@ -123,7 +151,7 @@
   color: white;
   padding: 2px 5px;
   border-radius: 3px;
-  margin-top: 20px;
+  margin-top: 5px;
   font-size: 0.8em;
   cursor: pointer;
   overflow: hidden;
@@ -136,7 +164,7 @@
   color: white;
   padding: 2px 5px;
   border-radius: 3px;
-  margin-top: 20px;
+  margin-top: 5px;
   font-size: 0.8em;
   cursor: pointer;
   overflow: hidden;

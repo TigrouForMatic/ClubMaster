@@ -12,6 +12,7 @@ import ModalCreateEvent from '../components/Modale/ModalCreateEvent';
 
 const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDateForCreate, setCurrentDateForCreate] = useState(null);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedTypesId, setSelectedTypesId] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState({ value: 0, label: "Tous les lieux" });
@@ -113,7 +114,17 @@ const CalendarView = () => {
 
       days.push(
         <div key={day} className={styles.day}>
-          <span className={styles.dayNumber}>{day}</span>
+          <div className={styles.dayHeader}>
+            <span className={styles.dayNumber}>{day}</span>
+            {currentUserRoles.some(role => role.level >= 3) && (
+              <button 
+                className={styles.addDayEventButton}
+                onClick={() => openCreateModal(new Date(year, month, day))}
+              >
+                +
+              </button>
+            )}
+          </div>
           {eventsForDay.map((e, index) => (
             <div 
               key={index} 
@@ -150,12 +161,18 @@ const CalendarView = () => {
     setSelectedEvent(null);
   }, []);
 
-  const openCreateModal = useCallback(() => {
+  const openCreateModal = useCallback((date) => {
+    if(date) {
+      const dateForCreate = new Date(date);
+      dateForCreate.setDate(dateForCreate.getDate() + 1);
+      setCurrentDateForCreate(dateForCreate);
+    }
     setIsCreateModalOpen(true);
   }, []);
 
   const closeCreateModal = useCallback(() => {
     setIsCreateModalOpen(false);
+    setCurrentDateForCreate(null);
   }, []);
 
   const handleTouchStart = (e) => {
@@ -269,7 +286,7 @@ const CalendarView = () => {
       {selectedEvent && (
         <InfoEvent isOpen={isModalOpen} onClose={closeModal} eventId={selectedEvent.id} />
       )}
-      <ModalCreateEvent isOpen={isCreateModalOpen} onClose={closeCreateModal} />
+      <ModalCreateEvent isOpen={isCreateModalOpen} onClose={closeCreateModal} date={currentDateForCreate} />
     </div>
   );
 };
