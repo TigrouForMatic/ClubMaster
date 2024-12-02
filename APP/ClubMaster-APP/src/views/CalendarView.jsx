@@ -117,7 +117,7 @@ const CalendarView = () => {
           {eventsForDay.map((e, index) => (
             <div 
               key={index} 
-              className={styles.eventCard}
+              className={ inscriptions.find(inscription => inscription.eventid === e.id) ? styles.eventCardInscription : styles.eventCard }
               style={{ backgroundColor: getColorFromString(e.label) }}
               onClick={() => handleEventClick(e)}
             >
@@ -136,7 +136,7 @@ const CalendarView = () => {
     }
 
     return days;
-  }, [currentDate, filteredEvents]);
+  }, [currentDate, filteredEvents, inscriptions]);
 
   const handleEventClick = useCallback((event) => {
     setSelectedEvent(event);
