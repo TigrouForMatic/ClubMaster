@@ -9,6 +9,7 @@ import { getColorFromString } from "../js/color";
 import { Calendar } from 'iconoir-react';
 import InfoEvent from '../components/Event/InfoEvent';
 import ModalCreateEvent from '../components/Modale/ModalCreateEvent';
+import ModalExportPlanning from '../components/Modale/ModaleExportPlanning';
 
 const CalendarView = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -22,6 +23,7 @@ const CalendarView = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [isOpenPlanningModal, setIsOpenPlanningModal] = useState(false);
   const calendarRef = useRef(null);
 
   const { userClubs, addresses,events, typesEvent, inscriptions, user, currentUserRoles } = useStore();
@@ -175,6 +177,14 @@ const CalendarView = () => {
     setCurrentDateForCreate(null);
   }, []);
 
+  const openPlanningModal = useCallback(() => {
+    setIsOpenPlanningModal(true);
+  }, []);
+
+  const closePlanningModal = useCallback(() => {
+    setIsOpenPlanningModal(false);
+  }, []);
+
   const handleTouchStart = (e) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
@@ -213,6 +223,10 @@ const CalendarView = () => {
           Ajouter un nouvel événement
         </button>
       )}
+
+      <button onClick={openPlanningModal} className={styles.exportPlanningButton}>
+        Exporter le planning
+      </button>
 
       <div className={styles.filters}>
         <div className={styles.filterSection}>
@@ -287,6 +301,8 @@ const CalendarView = () => {
         <InfoEvent isOpen={isModalOpen} onClose={closeModal} eventId={selectedEvent.id} />
       )}
       <ModalCreateEvent isOpen={isCreateModalOpen} onClose={closeCreateModal} date={currentDateForCreate} />
+
+      <ModalExportPlanning isOpen={isOpenPlanningModal} onClose={closePlanningModal} />
     </div>
   );
 };
