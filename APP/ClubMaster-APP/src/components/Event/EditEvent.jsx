@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';   
+import React, { useState, useMemo, useEffect } from 'react';   
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
 import styles from "../../styles/ModaleCreateEvent.module.css";
@@ -8,8 +8,8 @@ function EditEvent({ event, onClose }) {
   const updateItem = useStore((state) => state.updateItem);
   const [selectedClubId, setSelectedClubId] = useState(typesEvent.find(type => type.id === event.eventtypeid)?.clubid);
   const [startDate, setStartDate] = useState(event.dd.split('T')[0]);
-  const [startTime, setStartTime] = useState(event.dd.split('T')[1].slice(0, 5));
-  const [endTime, setEndTime] = useState(event.df.split('T')[1].slice(0, 5));
+  const [startTime, setStartTime] = useState(new Date(new Date(event.dd).getTime()+60*60*1000).toISOString().split('T')[1].slice(0, 5));
+  const [endTime, setEndTime] = useState(new Date(new Date(event.df).getTime()+60*60*1000).toISOString().split('T')[1].slice(0, 5));
   const [hasMaxPerson, setHasMaxPerson] = useState(event.maxperson ? true : false);
 
   const [eventData, setEventData] = useState({

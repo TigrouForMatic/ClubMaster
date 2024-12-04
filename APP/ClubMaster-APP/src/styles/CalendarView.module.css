@@ -119,6 +119,8 @@
   position: static;
   font-weight: bold;
   font-size: 14px;
+  text-align: center;
+  width: 100%;
 }
 
 .addDayEventButton {
@@ -178,8 +180,8 @@
 .eventCardInscription::before {
   content: "✓";
   position: absolute;
-  top: 3px;
-  right: 3px;
+  bottom: 1px;
+  right: 0;
   background-color: #4285F4;
   color: white;
   border-radius: 50%;

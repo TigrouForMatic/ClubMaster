@@ -116,16 +116,8 @@ const CalendarView = () => {
 
       days.push(
         <div key={day} className={styles.day}>
-          <div className={styles.dayHeader}>
+          <div className={styles.dayHeader} onClick={() => openCreateModal(new Date(year, month, day))}>
             <span className={styles.dayNumber}>{day}</span>
-            {currentUserRoles.some(role => role.level >= 3) && (
-              <button 
-                className={styles.addDayEventButton}
-                onClick={() => openCreateModal(new Date(year, month, day))}
-              >
-                +
-              </button>
-            )}
           </div>
           {eventsForDay.map((e, index) => (
             <div 
@@ -164,12 +156,14 @@ const CalendarView = () => {
   }, []);
 
   const openCreateModal = useCallback((date) => {
+    if (currentUserRoles.some(role => role.level >= 3)) {
     if(date) {
       const dateForCreate = new Date(date);
       dateForCreate.setDate(dateForCreate.getDate() + 1);
-      setCurrentDateForCreate(dateForCreate);
+        setCurrentDateForCreate(dateForCreate);
+      }
+      setIsCreateModalOpen(true);
     }
-    setIsCreateModalOpen(true);
   }, []);
 
   const closeCreateModal = useCallback(() => {
