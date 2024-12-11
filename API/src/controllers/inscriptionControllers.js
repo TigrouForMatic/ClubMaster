@@ -3,7 +3,7 @@ const { pool } = require('../../database');
 const TABLE_NAME = 'db.Inscription';
 
 const getInscription = async (req, res) => {
-    const { arrayEventId } = req.query;
+    const { arrayEventId, personPhysicId } = req.query;
     try {
         let queryString = `SELECT * FROM ${TABLE_NAME}`;
         const values = [];
@@ -14,13 +14,23 @@ const getInscription = async (req, res) => {
             values.push(eventId);
         }
 
+        if (personPhysicId) {
+            if (arrayEventId && Array.isArray(JSON.parse(arrayEventId))) {
+                queryString += ` AND PersonPhysicId = $2`;
+                values.push(personPhysicId);
+            } else {
+                queryString += ` WHERE PersonPhysicId = $2`;
+                values.push(personPhysicId);
+            }
+        }
+
         const client = await pool.connect();
         const result = await client.query(queryString, values);
         client.release();
         res.json(result.rows);
     } catch (err) {
-        console.error('Erreur lors de la récupération des types d\'événements', err);
-        res.status(500).send('Erreur lors de la récupération des types d\'événements');
+        console.error('Erreur lors de la récupération des inscriptions', err);
+        res.status(500).send('Erreur lors de la récupération des inscriptions');
     }
 };
 
@@ -35,8 +45,8 @@ const getInscriptionById = async (req, res) => {
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la récupération du roles avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la récupération du role avec l'ID ${id}`);
+        console.error(`Erreur lors de la récupération des inscriptions avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la récupération des inscriptions avec l'ID ${id}`);
     }
 };
 
@@ -83,8 +93,8 @@ const updateInscription = async (req, res) => {
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la mise à jour du role avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la mise à jour du role avec l'ID ${id}`);
+        console.error(`Erreur lors de la mise à jour des inscriptions avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la mise à jour des inscriptions avec l'ID ${id}`);
     }
 };
 
@@ -103,8 +113,8 @@ const deleteInscription = async (req, res) => {
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la suppression du role avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la suppression du role avec l'ID ${id}`);
+        console.error(`Erreur lors de la suppression des inscriptions avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la suppression des inscriptions avec l'ID ${id}`);
     }
 };
 

@@ -7,7 +7,6 @@ import api from '../js/App/Api';
 import { dateFormat, dateToTimeFormat } from "../js/date";
 import InfoEvent from '../components/Event/InfoEvent';
 import CarouselInfoBanner from '../components/InfoBanner/CarouselInfoBanner';
-import ModaleInfoBanner from '../components/Modale/ModaleInfoBanner';
 
 const useEventData = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -40,7 +39,7 @@ const useEventData = () => {
         setItems('events', eventData);
 
         const arrayEventId = eventData.map(evnt => evnt.id);
-        const inscriptionData = await api.get("/inscription", { params: { arrayEventId: JSON.stringify(arrayEventId), PersonPhysicId : currentUser.id } });
+        const inscriptionData = await api.get("/inscription", { params: { arrayEventId: JSON.stringify(arrayEventId), personPhysicId : currentUser.id } });
         setItems('inscriptions', inscriptionData);
         
         const addressData = await api.get("/address");
