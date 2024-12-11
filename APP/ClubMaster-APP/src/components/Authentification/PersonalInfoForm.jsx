@@ -65,7 +65,7 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
         naissanceDate: personalInfo.bornDate,
         phoneNumber: personalInfo.phoneNumber,
         loginId: login.id,
-        emailaddress: login,
+        emailaddress: login.login,
         generalConditions: consentGivenConditions,
         privacyPolicy: consentGivenPolitique
       });
