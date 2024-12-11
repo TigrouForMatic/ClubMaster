@@ -36,6 +36,8 @@ BEGIN
         PhoneNumber VARCHAR(20),
         EmailAddress VARCHAR(255),
         LoginId INT,
+        GeneralConditions BOOLEAN,
+        PrivacyPolicy BOOLEAN,
         FOREIGN KEY (LoginId) REFERENCES db.Login(Id)
     );
 
@@ -322,19 +324,19 @@ BEGIN
     ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'user9@clubmaster.bzh', '$2b$10$examplehash9', 'User Nine'),
     ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, 'user10@clubmaster.bzh', '$2b$10$examplehash10', 'User Ten');
 
-    INSERT INTO db.PersonPhysic (Dc, Dm, Bin, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1),
-    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, 'Constance Le Ray','1991-04-27T00:00:00.000Z','0677332963','constance@clubmaster.bzh',2),
-    ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, 'User One', '1990-01-01T00:00:00.000Z', '0600000001', 'user1@clubmaster.bzh', 3),
-    ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, 'User Two', '1991-02-02T00:00:00.000Z', '0600000002', 'user2@clubmaster.bzh', 4),
-    ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, 'User Three', '1992-03-03T00:00:00.000Z', '0600000003', 'user3@clubmaster.bzh', 5),
-    ('2024-12-04T00:00:00.000Z', '2024-12-04T00:00:00.000Z', false, 'User Four', '1993-04-04T00:00:00.000Z', '0600000004', 'user4@clubmaster.bzh', 6),
-    ('2024-12-05T00:00:00.000Z', '2024-12-05T00:00:00.000Z', false, 'User Five', '1994-05-05T00:00:00.000Z', '0600000005', 'user5@clubmaster.bzh', 7),
-    ('2024-12-06T00:00:00.000Z', '2024-12-06T00:00:00.000Z', false, 'User Six', '1995-06-06T00:00:00.000Z', '0600000006', 'user6@clubmaster.bzh', 8),
-    ('2024-12-07T00:00:00.000Z', '2024-12-07T00:00:00.000Z', false, 'User Seven', '1996-07-07T00:00:00.000Z', '0600000007', 'user7@clubmaster.bzh', 9),
-    ('2024-12-08T00:00:00.000Z', '2024-12-08T00:00:00.000Z', false, 'User Eight', '1997-08-08T00:00:00.000Z', '0600000008', 'user8@clubmaster.bzh', 10),
-    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'User Nine', '1998-09-09T00:00:00.000Z', '0600000009', 'user9@clubmaster.bzh', 11),
-    ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, 'User Ten', '1999-10-10T00:00:00.000Z', '0600000010', 'user10@clubmaster.bzh', 12);
+    INSERT INTO db.PersonPhysic (Dc, Dm, Bin, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId, GeneralConditions, PrivacyPolicy) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1, true, true),
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, 'Constance Le Ray','1991-04-27T00:00:00.000Z','0677332963','constance@clubmaster.bzh',2, true, true),
+    ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, 'User One', '1990-01-01T00:00:00.000Z', '0600000001', 'user1@clubmaster.bzh', 3, true, true),
+    ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, 'User Two', '1991-02-02T00:00:00.000Z', '0600000002', 'user2@clubmaster.bzh', 4, true, true),
+    ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, 'User Three', '1992-03-03T00:00:00.000Z', '0600000003', 'user3@clubmaster.bzh', 5, true, true),
+    ('2024-12-04T00:00:00.000Z', '2024-12-04T00:00:00.000Z', false, 'User Four', '1993-04-04T00:00:00.000Z', '0600000004', 'user4@clubmaster.bzh', 6, true, true),
+    ('2024-12-05T00:00:00.000Z', '2024-12-05T00:00:00.000Z', false, 'User Five', '1994-05-05T00:00:00.000Z', '0600000005', 'user5@clubmaster.bzh', 7, true, true),
+    ('2024-12-06T00:00:00.000Z', '2024-12-06T00:00:00.000Z', false, 'User Six', '1995-06-06T00:00:00.000Z', '0600000006', 'user6@clubmaster.bzh', 8, true, true),
+    ('2024-12-07T00:00:00.000Z', '2024-12-07T00:00:00.000Z', false, 'User Seven', '1996-07-07T00:00:00.000Z', '0600000007', 'user7@clubmaster.bzh', 9, true, true),
+    ('2024-12-08T00:00:00.000Z', '2024-12-08T00:00:00.000Z', false, 'User Eight', '1997-08-08T00:00:00.000Z', '0600000008', 'user8@clubmaster.bzh', 10, true, true),
+    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'User Nine', '1998-09-09T00:00:00.000Z', '0600000009', 'user9@clubmaster.bzh', 11, true, true),
+    ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, 'User Ten', '1999-10-10T00:00:00.000Z', '0600000010', 'user10@clubmaster.bzh', 12, true, true);
 
 
     INSERT INTO db.LicenceType (Dc, Dm, Duration, Label, ClubId, Price, Basic) VALUES

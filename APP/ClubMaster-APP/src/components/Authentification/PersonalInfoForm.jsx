@@ -49,8 +49,8 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!consentGiven) {
-      setError("Veuillez accepter la politique de confidentialité pour continuer.");
+    if (!consentGivenPolitique || !consentGivenConditions) {
+      setError("Veuillez accepter la politique de confidentialité et les conditions générales pour continuer.");
       return;
     }
 
@@ -65,7 +65,9 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
         naissanceDate: personalInfo.bornDate,
         phoneNumber: personalInfo.phoneNumber,
         loginId: login.id,
-        emailaddress: login
+        emailaddress: login,
+        generalConditions: consentGivenConditions,
+        privacyPolicy: consentGivenPolitique
       });
 
       setItems('currentUser', personalInfoResponse);
@@ -83,7 +85,6 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
     } catch (err) {
       console.error('Erreur:', err);
       setError('Une erreur est survenue. Veuillez réessayer.');
-      setConsentGiven(false);
     }
   };
 
