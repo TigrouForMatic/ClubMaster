@@ -1,7 +1,6 @@
 .calendarContainer {
   max-width: 1200px;
   margin: 0;
-  padding: 20px;
   font-family: Arial, sans-serif;
 }
 
@@ -102,9 +101,11 @@
 
 .day {
   border: 1px solid #e0e0e0;
-  min-height: 100px;
+  min-height: 130px;
+  max-height: 130px;
   padding: 5px;
   position: relative;
+  overflow: hidden;
 }
 
 .dayHeader {
@@ -202,11 +203,51 @@
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  margin-bottom: 20px;
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
 }
 
 .addEventButton:hover {
   background-color: darkgreen;
+}
+
+.headerActions {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.exportPlanningButton {
+  background-color: #4285F4;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moreEventsButton {
+  background-color: #f0f0f0;
+  color: #666;
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-top: 5px;
+  font-size: 0.8em;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+}
+
+.moreEventsButton:hover {
+  background-color: #e0e0e0;
 }
 
 @media (max-width: 768px) {

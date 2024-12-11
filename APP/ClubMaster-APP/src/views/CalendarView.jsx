@@ -6,7 +6,7 @@ import styles from "../styles/CalendarView.module.css";
 import useStore from '../store/store';
 import { dateToTimeFormat } from "../js/date";
 import { getColorFromString } from "../js/color";
-import { Calendar } from 'iconoir-react';
+import { Calendar, Plus } from 'iconoir-react';
 import InfoEvent from '../components/Event/InfoEvent';
 import ModalCreateEvent from '../components/Modale/ModalCreateEvent';
 import ModalExportPlanning from '../components/Modale/ModaleExportPlanning';
@@ -28,6 +28,8 @@ const CalendarView = () => {
 
   const { userClubs, addresses,events, typesEvent, inscriptions, user, currentUserRoles } = useStore();
   const updateItems = useStore((state) => state.updateItems);
+
+  const [eventStartIndices, setEventStartIndices] = useState({});
 
   const getDataForSelectFromTypeEvent = useMemo(() => 
     typesEvent.reduce((acc, type) => {
@@ -100,6 +102,14 @@ const CalendarView = () => {
     });
   }, [events, currentDate, selectedTypes, selectedLocation, selectedClub, addresses]);
 
+  const handleEventViewMore = useCallback((day, totalEvents) => {
+    setEventStartIndices(prev => {
+      const currentIndex = prev[day] || 0;
+      const nextIndex = (currentIndex + 2) % totalEvents;
+      return { ...prev, [day]: nextIndex };
+    });
+  }, []);
+
   const renderCalendar = useCallback(() => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -113,16 +123,18 @@ const CalendarView = () => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const eventsForDay = filteredEvents.filter(e => new Date(e.dd).getDate() === day);
+      const startIndex = eventStartIndices[day] || 0;
+      const visibleEvents = eventsForDay.slice(startIndex, startIndex + 2);
 
       days.push(
         <div key={day} className={styles.day}>
           <div className={styles.dayHeader} onClick={() => openCreateModal(new Date(year, month, day))}>
             <span className={styles.dayNumber}>{day}</span>
           </div>
-          {eventsForDay.map((e, index) => (
+          {visibleEvents.map((e, index) => (
             <div 
               key={index} 
-              className={ inscriptions.find(inscription => inscription.eventid === e.id) ? styles.eventCardInscription : styles.eventCard }
+              className={inscriptions.find(inscription => inscription.eventid === e.id) ? styles.eventCardInscription : styles.eventCard}
               style={{ backgroundColor: getColorFromString(e.label) }}
               onClick={() => handleEventClick(e)}
             >
@@ -132,16 +144,23 @@ const CalendarView = () => {
               )}
               {e.dd == e.df && (
                 <div>{dateToTimeFormat(e.dd)}</div>
-                )
-              }
+              )}
             </div>
           ))}
+          {eventsForDay.length > 2 && (
+            <div 
+              className={styles.moreEventsButton}
+              onClick={() => handleEventViewMore(day, eventsForDay.length)}
+            >
+              +{eventsForDay.length - 2} autres 
+            </div>
+          )}
         </div>
       );
     }
 
     return days;
-  }, [currentDate, filteredEvents, inscriptions]);
+  }, [currentDate, filteredEvents, inscriptions, eventStartIndices]);
 
   const handleEventClick = useCallback((event) => {
     setSelectedEvent(event);
@@ -212,15 +231,18 @@ const CalendarView = () => {
     <div className={styles.calendarContainer}>
       <h1 className={styles.title}>Calendrier</h1>
 
-      {currentUserRoles.some(role => role.level >= 3) && (
-        <button onClick={openCreateModal} className={styles.addEventButton}>
-          Ajouter un nouvel événement
+      <div className={styles.headerActions}>
+        {currentUserRoles.some(role => role.level >= 3) && (
+          <button onClick={openCreateModal} className={styles.addEventButton}>
+             <Plus className={styles.buttonIcon} />
+             Evénement
+          </button>
+        )}
+        <button onClick={openPlanningModal} className={styles.exportPlanningButton}>
+          <Calendar className={styles.buttonIcon} />
+          Exporter
         </button>
-      )}
-
-      <button onClick={openPlanningModal} className={styles.exportPlanningButton}>
-        Exporter le planning
-      </button>
+      </div>
 
       <div className={styles.filters}>
         <div className={styles.filterSection}>
