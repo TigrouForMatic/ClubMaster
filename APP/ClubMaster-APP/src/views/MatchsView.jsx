@@ -8,15 +8,15 @@ function MatchsView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   
-  const { events, typesEvent, userClubs, inscriptions } = useStore();
+  const { events, typesEvent, userClubs, inscriptions, matchTeams, matchScores, teams, teamMembers } = useStore();
   
   const filteredAndSortedMatches = useMemo(() => {
     const now = new Date();
-    const matchTypes = typesEvent.filter(t => t.ismatch);
     
     return events
       .filter(e => 
-        matchTypes.some(t => t.id === e.eventtypeid) &&
+        (matchScores.some(s => s.eventid === e.id) ||
+        matchTeams.some(t => t.eventid === e.id)) &&
         new Date(e.dd) >= now
       )
       .sort((a, b) => new Date(a.dd) - new Date(b.dd))
@@ -26,10 +26,16 @@ function MatchsView() {
           ...e,
           eventType: eventType?.label || 'Inconnu',
           clubLabel: userClubs.find(c => c.id === eventType.clubid)?.label || 'Inconnu',
-          isInscrit: inscriptions.some(ins => ins.eventid === e.id)
+          isInscrit: inscriptions.some(ins => ins.eventid === e.id),
+          matchScores: matchScores.filter(s => s.eventid === e.id),
+          matchTeams: matchTeams.filter(t => t.eventid === e.id).map(t => ({
+            ...t,
+            teamMembers: teamMembers.filter(tm => tm.teamid === t.teamid),
+            teamLabel: teams.find(team => team.id === t.teamid)?.label || 'Inconnu'
+          })),
         };
       });
-  }, [events, typesEvent, userClubs, inscriptions]);
+  }, [events, typesEvent, userClubs, inscriptions, matchScores, matchTeams, teamMembers, teams]);
 
   const handleEventClick = useCallback((event) => {
     setSelectedEvent(event);

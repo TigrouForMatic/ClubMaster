@@ -19,6 +19,10 @@ const { getConversation, getConversationByEvent, getConversationById, addConvers
 const { getMessage, getMessageById, addMessage, updateMessage, deleteMessage } = require('../controllers/messageControllers');
 const { getCreditCards, getCreditCardById, addCreditCard, updateCreditCard, deleteCreditCard } = require('../controllers/creditCardControllers');
 const { getInfoBanner, getInfoBannerById, addInfoBanner, updateInfoBanner, deleteInfoBanner } = require('../controllers/infoBannerControllers');
+const { getMatchTeam, getMatchTeamById, addMatchTeam, updateMatchTeam, deleteMatchTeam } = require('../controllers/matchTeamControllers');
+const { getMatchScore, getMatchScoreById, addMatchScore, updateMatchScore, deleteMatchScore } = require('../controllers/matchScoreControllers');
+const { getTeam, getTeamById, addTeam, updateTeam, deleteTeam } = require('../controllers/teamControllers');
+const { getTeamMember, getTeamMemberById, addTeamMember, updateTeamMember, deleteTeamMember } = require('../controllers/teamMemberControllers');
 
 const { getGenerateImage } = require('../controllers/generateImageControllers');
 
@@ -138,6 +142,34 @@ router.get('/infoBanner/:id', getInfoBannerById);
 router.post('/infoBanner', authenticateToken, addInfoBanner);
 router.put('/infoBanner/:id', authenticateToken, updateInfoBanner);
 router.delete('/infoBanner/:id', authenticateToken, deleteInfoBanner);
+
+// Routes pour le CRUD des équipes de match
+router.get('/matchTeam', getMatchTeam);
+router.get('/matchTeam/:id', getMatchTeamById);
+router.post('/matchTeam', authenticateToken, addMatchTeam);
+router.put('/matchTeam/:id', authenticateToken, updateMatchTeam);
+router.delete('/matchTeam/:id', authenticateToken, deleteMatchTeam);
+
+// Routes pour le CRUD des scores de match
+router.get('/matchScore', getMatchScore);
+router.get('/matchScore/:id', getMatchScoreById);
+router.post('/matchScore', authenticateToken, addMatchScore);
+router.put('/matchScore/:id', authenticateToken, updateMatchScore);
+router.delete('/matchScore/:id', authenticateToken, deleteMatchScore);
+
+// Routes pour le CRUD des équipes
+router.get('/team', getTeam);
+router.get('/team/:id', getTeamById);
+router.post('/team', authenticateToken, addTeam);
+router.put('/team/:id', authenticateToken, updateTeam);
+router.delete('/team/:id', authenticateToken, deleteTeam);
+
+// Routes pour le CRUD des membres d'équipe
+router.get('/teamMember', getTeamMember);
+router.get('/teamMember/:id', getTeamMemberById);
+router.post('/teamMember', authenticateToken, addTeamMember);
+router.put('/teamMember/:id', authenticateToken, updateTeamMember);
+router.delete('/teamMember/:id', authenticateToken, deleteTeamMember);
 
 // Routes pour générer une image 
 router.get('/generateImage', getGenerateImage);

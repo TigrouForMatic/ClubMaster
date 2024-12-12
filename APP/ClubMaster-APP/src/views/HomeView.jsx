@@ -31,12 +31,24 @@ const useEventData = () => {
         const typeEventData = await api.get("/eventType", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
         setItems('typesEvent', typeEventData);
 
+        const teamData = await api.get("/team", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
+        setItems('teams', teamData);
+
+        const teamMemberData = await api.get("/teamMember", { params: { arrayTeamId: JSON.stringify(teamData.map(team => team.id)) } });
+        setItems('teamMembers', teamMemberData);
+
         const infoBannerData = await api.get("/infoBanner", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
         setItems('infoBanners', infoBannerData);
 
         const arrayEventTypeId = typeEventData.map(type => type.id);
         const eventData = await api.get("/event", { params: { arrayEventTypeId: JSON.stringify(arrayEventTypeId) } });
         setItems('events', eventData);
+
+        const matchTeamData = await api.get("/matchTeam", { params: { arrayTeamId: JSON.stringify(teamData.map(team => team.id)) } });
+        setItems('matchTeams', matchTeamData);
+
+        const matchScoreData = await api.get("/matchScore", { params: { arrayMatchTeamId: JSON.stringify(matchTeamData.map(matchTeam => matchTeam.id)) } });
+        setItems('matchScores', matchScoreData);
 
         const arrayEventId = eventData.map(evnt => evnt.id);
         const inscriptionData = await api.get("/inscription", { params: { arrayEventId: JSON.stringify(arrayEventId), personPhysicId : currentUser.id } });
@@ -87,7 +99,7 @@ const MainEventCard = ({ event, getDateDisplay, getTimeDisplay, addresses, onCli
       </div>
       <h2 className={styles.mainEventTitle}>{event.label}</h2>
       <p className={styles.mainEventDate}>
-        Le {getDateDisplay(event.dd)} de {getTimeDisplay(event.dd)} à {getTimeDisplay(event.df)}
+        Le {getDateDisplay(event.dd)} de {getTimeDisplay(new Date(new Date(event.dd).getTime() - 3600000))} à {getTimeDisplay(new Date(new Date(event.df).getTime() - 3600000))}
       </p>
       <p className={styles.mainEventDescription}>{event.description}</p>
       {address && (

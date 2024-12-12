@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { dateFormat } from "../../js/date";
 import { getColorFromString } from '../../js/color';
@@ -7,7 +7,14 @@ import styles from '../../styles/MatchCard.module.css';
 const MatchCard = ({ match, onDetailClick }) => {
   const clubColor = getColorFromString(match.clubLabel);
   const cardClassName = `${styles.matchCard} ${match.isInscrit ? styles.inscrit : styles.pasInscrit}`;
-  
+
+  useEffect(() => {
+    console.log(match);
+    console.log(inProgress);
+  }, [match]);
+
+  const inProgress = (new Date(match.dd).getTime() < (new Date().getTime()-3600000) && new Date(match.df).getTime() > (new Date().getTime()-3600000));
+
   return (
     <div className={cardClassName}>
       <div className={styles.matchHeader}>
@@ -17,14 +24,15 @@ const MatchCard = ({ match, onDetailClick }) => {
             {match.clubLabel}
           </span>
         </div>
+        {inProgress && <span className={styles.matchDate}>En cours</span>}
         <span className={styles.matchDate}>{dateFormat(match.dd)}</span>
       </div>
       <h3 className={styles.matchTitle}>{match.label}</h3>
       <p className={styles.matchDescription}>{match.description}</p>
       <div className={styles.matchTeams}>
-        <span className={styles.homeTeam}>{match.homeTeam || 'Équipe locale'}</span>
+        <span className={styles.homeTeam}>{match.matchTeams[0].teamLabel || 'Équipe locale'}</span>
         <span className={styles.vs}>VS</span>
-        <span className={styles.awayTeam}>{match.awayTeam || 'Équipe visiteur'}</span>
+        <span className={styles.awayTeam}>{match.matchTeams[1].teamLabel || 'Équipe visiteur'}</span>
       </div>
       <div className={styles.cardFooter}>
         <div className={styles.buttonWrapper}>
