@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from '../../styles/AuthForm.module.css';
 import PersonalInfoForm from './PersonalInfoForm';
-// import ClubOptions from '../ClubOptions/ClubOptions';
 import FindClubOption from '../ClubOptions/FindClubOption';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
@@ -114,8 +113,13 @@ function AuthForm() {
         setShowPersonalInfo(true);
       }
     } catch (err) {
-      console.error('Erreur:', err);
-      setError(err.message || `Erreur lors de ${isLogin ? 'la connexion' : 'la création du compte'}`);
+      if (err.status === 401) {
+        setError('Utilisateur ou mot de passe incorrect');
+      } else if (err.status === 400) {
+        setError('Ce nom d\'utilisateur existe déjà');
+      }else {
+        setError(`Erreur lors de ${isLogin ? 'la connexion' : 'la création du compte'}`);
+      }
     }
   };
 

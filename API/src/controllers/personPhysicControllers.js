@@ -50,8 +50,24 @@ const addPersonPhysic = async (req, res) => {
     // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
 
-
+    
     const { columns, values } = prepareInsertData(req.body);
+    
+    if (columns.includes('phoneNumber') && values[2] !== '') {
+        try {
+            let queryString = `SELECT * FROM ${TABLE_NAME} WHERE PhoneNumber = $1 AND Bin = false`;
+
+            const client = await pool.connect();
+            const result = await client.query(queryString, [values[2]]);
+            client.release();
+            if (result.rows.length > 0) {
+                return res.status(400).send('Ce numéro de téléphone existe déjà');
+            }
+        } catch (err) {
+            console.error('Erreur lors de la vérification de l\'existence du numéro de téléphone', err);
+            res.status(500).send('Erreur lors de la vérification de l\'existence du numéro de téléphone');
+        }
+    }
 
     try {
         const client = await pool.connect();
@@ -116,8 +132,19 @@ const deletePersonPhysic = async (req, res) => {
 };
 
 const prepareInsertData = (body) => {
-    const columns = Object.keys(body).join(', ');
-    const values = Object.values(body);
+    // Filtrer les valeurs vides pour les champs de type date
+    const filteredBody = Object.fromEntries(
+        Object.entries(body).map(([key, value]) => {
+            // Si la valeur est une chaîne vide et que le champ est une date, la remplacer par null
+            if (value === '' && (key.toLowerCase().includes('date') || key.toLowerCase().includes('dt'))) {
+                return [key, null];
+            }
+            return [key, value];
+        })
+    );
+
+    const columns = Object.keys(filteredBody).join(', ');
+    const values = Object.values(filteredBody);
     return { columns, values };
 };
 

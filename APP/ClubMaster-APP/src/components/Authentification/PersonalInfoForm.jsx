@@ -83,8 +83,11 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
 
       handlePersonalInformationSet();
     } catch (err) {
-      console.error('Erreur:', err);
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      if (err.status === 400) {
+        setError('Un compte est deja lié à ce numéro de téléphone');
+      } else {
+        setError('Une erreur est survenue. Veuillez réessayer.');
+      }
     }
   };
 
