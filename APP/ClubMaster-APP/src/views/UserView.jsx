@@ -15,7 +15,7 @@ import ModalFindClub from "../components/Modale/ModalFindClub";
 
 function UserView() {
   const navigate = useNavigate();
-  const { currentUser, currentUserAddresses, userClubs, licences, licenceTypes, roles, setItems, setShowApp } = useStore();
+  const { currentUser, currentUserAddresses, userClubs, licences, licenceTypes, roles, setItems, setShowApp, setLastFetchTime } = useStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const user = useMemo(() => {
@@ -39,8 +39,9 @@ function UserView() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     
-    setItems('currentUser', null);
+    setItems('currentUser', null); 
     setItems('login', null);
+    setLastFetchTime(null);
     navigate('/');
     setShowApp();
   };
