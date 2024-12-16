@@ -11,13 +11,14 @@ function MatchsView() {
   const { events, typesEvent, userClubs, inscriptions, matchTeams, matchScores, teams, teamMembers } = useStore();
   
   const filteredAndSortedMatches = useMemo(() => {
+    console.log(teamMembers);
     const now = new Date();
     
     return events
       .filter(e => 
         (matchScores.some(s => s.eventid === e.id) ||
-        matchTeams.some(t => t.eventid === e.id)) &&
-        new Date(e.dd) >= now
+        matchTeams.some(t => t.eventid === e.id))
+        // && new Date(e.dd) >= now
       )
       .sort((a, b) => new Date(a.dd) - new Date(b.dd))
       .map(e => {

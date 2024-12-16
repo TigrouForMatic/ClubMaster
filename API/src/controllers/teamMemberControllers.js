@@ -5,15 +5,25 @@ const TABLE_NAME = 'db.TeamMember';
 const getTeamMember = async (req, res) => {
     const { arrayTeamId } = req.query;
     try {
-        let queryString = `SELECT * FROM ${TABLE_NAME}`;
         const values = [];
+    
+        // Construction de la requête avec les JOIN directement
+        let queryString = `
+            SELECT 
+                db.TeamMember.*,
+                db.PersonPhysic.Name,
+                db.Login.Pseudo
+            FROM ${TABLE_NAME}
+            JOIN db.PersonPhysic ON db.TeamMember.PersonPhysicId = db.PersonPhysic.Id
+            JOIN db.Login ON db.PersonPhysic.LoginId = db.Login.Id
+        `;
         
         if (arrayTeamId && Array.isArray(JSON.parse(arrayTeamId))) {
             const teamId = JSON.parse(arrayTeamId);
-            queryString += ` WHERE teamid = ANY($1) AND Bin = false`;
+            queryString += ` WHERE teamid = ANY($1) AND db.TeamMember.Bin = false`;
             values.push(teamId);
         } else {
-            queryString += ` WHERE Bin = false`;
+            queryString += ` WHERE db.TeamMember.Bin = false`;
         }
 
         const client = await pool.connect();
