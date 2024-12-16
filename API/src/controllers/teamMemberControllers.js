@@ -6,8 +6,7 @@ const getTeamMember = async (req, res) => {
     const { arrayTeamId } = req.query;
     try {
         const values = [];
-    
-        // Construction de la requête avec les JOIN directement
+
         let queryString = `
             SELECT 
                 db.TeamMember.*,

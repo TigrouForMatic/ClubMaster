@@ -134,6 +134,24 @@
   color: #333;
 }
 
+.homeTeamMember {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.awayTeamMember {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.listTeamMember {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .vs {
   font-size: 0.8rem;
   color: #666;
