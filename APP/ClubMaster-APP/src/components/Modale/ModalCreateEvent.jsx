@@ -69,7 +69,6 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-
       const date = startDate || new Date().toISOString().split('T')[0];
       const finalEventData = {
         ...eventData,

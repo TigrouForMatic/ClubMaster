@@ -26,6 +26,7 @@ const CalendarView = () => {
   const [isOpenPlanningModal, setIsOpenPlanningModal] = useState(false);
   const calendarRef = useRef(null);
 
+  
   const { userClubs, addresses,events, typesEvent, inscriptions, user, currentUserRoles } = useStore();
   const updateItems = useStore((state) => state.updateItems);
 
@@ -175,12 +176,14 @@ const CalendarView = () => {
   }, []);
 
   const openCreateModal = useCallback((date) => {
-    if (currentUserRoles.some(role => role.level >= 3)) {
-    if(date) {
-      const dateForCreate = new Date(date);
-      dateForCreate.setDate(dateForCreate.getDate() + 1);
+    if (currentUserRoles.some(role => role.level >= 3)) { 
+      
+      if(date && (typeof date === 'string' || date instanceof Date)) {
+        const dateForCreate = new Date(date);
+        dateForCreate.setDate(dateForCreate.getDate() + 1);
         setCurrentDateForCreate(dateForCreate);
       }
+
       setIsCreateModalOpen(true);
     }
   }, []);
