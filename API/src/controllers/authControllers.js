@@ -77,10 +77,15 @@ const testLogin = async (req, res) => {
                 { expiresIn: '1h' }
             );
 
+            const currentDate = new Date(); 
+
+            const updateLastLoginQuery = 'UPDATE db.Login SET LastLogin = $1 WHERE Id = $2';
+            await client.query(updateLastLoginQuery, [currentDate, user.id]);
+
             res.status(200).json({ 
                 message: "Login réussi", 
                 token,
-                user: { id: user.id, login: user.login, pseudo : user.pseudo }
+                user: { id: user.id, login: user.login, pseudo : user.pseudo, lastLogin: user.lastLogin }
             });
         } finally {
             client.release();
