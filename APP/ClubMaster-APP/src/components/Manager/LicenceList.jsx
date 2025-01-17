@@ -103,7 +103,7 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
                     </div>
                   </div>
                 </td>
-                <td>{licence.number}</td>
+                <td>{licence.licencefederation}</td>
                 <td>{licence.label}</td>
                 <td>{getDisplayFormatedDate(licence.dd)}</td>
                 <td>{getDisplayFormatedDate(licence.df)}</td>
