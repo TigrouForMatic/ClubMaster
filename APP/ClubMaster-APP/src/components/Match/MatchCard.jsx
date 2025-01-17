@@ -39,9 +39,11 @@ const MatchCard = ({ match, onDetailClick }) => {
       <p className={styles.matchDescription}>{match.description}</p>
       <div className={styles.matchTeams}>
         <div>
-          <span className={styles.homeTeam}>{match.matchTeams[0].teamLabel || 'Équipe locale'}</span>
+          <span className={styles.homeTeam}>
+            {match.matchTeams?.[0]?.label || 'Équipe locale'}
+          </span>
           <div className={styles.listTeamMember}>
-            {match.matchTeams[0].teamMembers.map((member) => (
+            {match.matchTeams?.[0]?.members?.map((member) => (
               <div key={member.id} className={styles.homeTeamMember}>
                 <UserImage name={nameReturn(member)} size={20} />
                 <span className={styles.homeTeamName}>{nameReturn(member)}</span>
@@ -51,9 +53,11 @@ const MatchCard = ({ match, onDetailClick }) => {
         </div>
         <span className={styles.vs}>VS</span>
         <div>
-          <span className={styles.awayTeam}>{match.matchTeams[1].teamLabel || 'Équipe visiteur'}</span>
+          <span className={styles.awayTeam}>
+            {match.matchTeams?.[1]?.label || 'Équipe visiteur'}
+          </span>
           <div className={styles.listTeamMember}>
-            {match.matchTeams[1].teamMembers.map((member) => (
+            {match.matchTeams?.[1]?.members?.map((member) => (
               <div key={member.id} className={styles.awayTeamMember}>
                 <span className={styles.awayTeamName}>{nameReturn(member)}</span>
                 <UserImage name={nameReturn(member)} size={20} />
@@ -81,13 +85,23 @@ MatchCard.propTypes = {
     eventType: PropTypes.string.isRequired,
     clubLabel: PropTypes.string.isRequired,
     dd: PropTypes.string.isRequired,
+    df: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    homeTeam: PropTypes.string,
-    awayTeam: PropTypes.string,
+    matchTeams: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string,
+        teamMembers: PropTypes.arrayOf(
+          PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            name: PropTypes.string,
+            pseudo: PropTypes.string
+          })
+        ).isRequired
+      })
+    ).isRequired,
     isInscrit: PropTypes.bool.isRequired,
   }).isRequired,
   onDetailClick: PropTypes.func.isRequired,
 };
-
 export default React.memo(MatchCard);

@@ -5,16 +5,42 @@ const TABLE_NAME = 'db.MatchTeam';
 const getMatchTeam = async (req, res) => {
     const { arrayEventId } = req.query;
     try {
-        let queryString = `SELECT * FROM ${TABLE_NAME}`;
+        let queryString = `
+            SELECT 
+                db.MatchTeam.Id,
+                db.MatchTeam.EventId,
+                db.Team.Id as teamId,
+                db.Team.Label,
+                db.Team.Public,
+                db.Team.Dc,
+                db.Team.Dm,
+                db.Team.Bin,
+                json_agg(
+                    CASE WHEN db.TeamMember.Id IS NOT NULL THEN
+                        json_build_object(
+                            'memberId', db.TeamMember.Id,
+                            'name', db.PersonPhysic.Name,
+                            'pseudo', db.Login.Pseudo
+                        )
+                    ELSE NULL END
+                ) FILTER (WHERE db.TeamMember.Id IS NOT NULL) as members
+            FROM db.MatchTeam
+            LEFT JOIN db.Team ON db.MatchTeam.TeamId = db.Team.Id
+            LEFT JOIN db.TeamMember ON db.Team.Id = db.TeamMember.TeamId AND db.TeamMember.Bin = false
+            LEFT JOIN db.PersonPhysic ON db.TeamMember.PersonPhysicId = db.PersonPhysic.Id
+            LEFT JOIN db.Login ON db.PersonPhysic.LoginId = db.Login.Id
+            WHERE db.MatchTeam.Bin = false
+        `;
+
         const values = [];
         
         if (arrayEventId && Array.isArray(JSON.parse(arrayEventId))) {
             const eventId = JSON.parse(arrayEventId);
-            queryString += ` WHERE eventid = ANY($1) AND Bin = false`;
+            queryString += ` AND db.MatchTeam.eventid = ANY($1)`;
             values.push(eventId);
-        } else {
-            queryString += ` WHERE Bin = false`;
         }
+
+        queryString += ` GROUP BY db.MatchTeam.Id, db.MatchTeam.EventId, db.Team.Id, db.Team.Label, db.Team.Public, db.Team.Dc, db.Team.Dm, db.Team.Bin, db.Team.Bin`;
 
         const client = await pool.connect();
         const result = await client.query(queryString, values);

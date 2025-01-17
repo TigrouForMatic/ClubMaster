@@ -34,9 +34,6 @@ const useEventData = () => {
         const teamData = await api.get("/team", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
         setItems('teams', teamData);
 
-        const teamMemberData = await api.get("/teamMember", { params: { arrayTeamId: JSON.stringify(teamData.map(team => team.id)) } });
-        setItems('teamMembers', teamMemberData);
-
         const infoBannerData = await api.get("/infoBanner", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
         setItems('infoBanners', infoBannerData);
 

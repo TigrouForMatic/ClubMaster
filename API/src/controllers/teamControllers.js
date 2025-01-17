@@ -5,16 +5,32 @@ const TABLE_NAME = 'db.Team';
 const getTeam = async (req, res) => {
     const { arrayClubId } = req.query;
     try {
-        let queryString = `SELECT * FROM ${TABLE_NAME}`;
+        let queryString = `
+            SELECT 
+                db.Team.*,
+                json_agg(
+                    json_build_object(
+                        'memberId', db.TeamMember.Id,
+                        'name', db.PersonPhysic.Name,
+                        'pseudo', db.Login.Pseudo
+                    )
+                ) as members
+            FROM ${TABLE_NAME}
+            LEFT JOIN db.TeamMember ON db.Team.Id = db.TeamMember.TeamId
+            LEFT JOIN db.PersonPhysic ON db.TeamMember.PersonPhysicId = db.PersonPhysic.Id
+            LEFT JOIN db.Login ON db.PersonPhysic.LoginId = db.Login.Id
+            WHERE db.TeamMember.Bin = false AND db.Team.Public = true
+        `;
+
         const values = [];
         
         if (arrayClubId && Array.isArray(JSON.parse(arrayClubId))) {
             const clubId = JSON.parse(arrayClubId);
-            queryString += ` WHERE clubid = ANY($1) AND Bin = false`;
+            queryString += ` AND db.Team.ClubId = ANY($1)`;
             values.push(clubId);
-        } else {
-            queryString += ` WHERE Bin = false`;
         }
+
+        queryString += ` GROUP BY db.Team.Id`;
 
         const client = await pool.connect();
         const result = await client.query(queryString, values);
