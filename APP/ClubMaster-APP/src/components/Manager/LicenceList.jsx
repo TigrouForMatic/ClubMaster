@@ -11,9 +11,9 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
   const [filterEndDate, setFilterEndDate] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    console.log('licences', licences);
-  }, [licences]);
+  // useEffect(() => {
+  //   console.log('licences', licences);
+  // }, [licences]);
 
   const filteredLicences = React.useMemo(() => {
     return licences.filter(licence => {

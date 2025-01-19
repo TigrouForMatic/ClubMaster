@@ -41,18 +41,16 @@ const getLicenceTypeById = async (req, res) => {
 };
 
 const addLicenceType = async (req, res) => {
-    const currentDate = new Date();
 
-    
     // Vérification de l'authentification
     if (!req.user) return res.sendStatus(401);
     
     const { columns, values } = prepareInsertData(req.body);
-    
+    const currentDate = new Date();    
     try {
         const client = await pool.connect();
-        const columnsWithDates = `${columns}, Dc, Dm`;
-        const valuesWithDates = [...values, currentDate, currentDate];
+        const columnsWithDates = `${columns}, Dc, Dm, Bin`;
+        const valuesWithDates = [...values, currentDate, currentDate, false];
     
         const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
     
@@ -91,11 +89,14 @@ const updateLicenceType = async (req, res) => {
 
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
-
+    const currentDate = new Date();
     try {
         const client = await pool.connect();
-        const updateQuery = `UPDATE ${TABLE_NAME} SET ${updates} WHERE id = $${values.length + 1} RETURNING *`;
-        const result = await client.query(updateQuery, [...values, id]);
+        const columnsWithDates = `${updates}, Dm = $${values.length + 1}`;
+        const valuesWithDates = [...values, currentDate];
+
+        const updateQuery = `UPDATE ${TABLE_NAME} SET ${columnsWithDates} WHERE id = $${valuesWithDates.length + 1} RETURNING *`;
+        const result = await client.query(updateQuery, [...valuesWithDates, id]);
         client.release();
         if (result.rows.length === 0) {
             return res.status(404).send('Type de licence non trouvée');
@@ -113,9 +114,10 @@ const deleteLicenceType = async (req, res) => {
     if (!req.user) return res.sendStatus(401);
 
     const { id } = req.params;
+    const currentDate = new Date();
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM ${TABLE_NAME} WHERE id = $1 RETURNING *`, [id]);
+        const result = await client.query(`UPDATE ${TABLE_NAME} SET Dm = $1, Bin = true WHERE id = $2 RETURNING *`, [currentDate, id]);
         client.release();
         if (result.rows.length === 0) {
             return res.status(404).send('Type de licence non trouvée');

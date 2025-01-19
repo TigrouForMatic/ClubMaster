@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import styles from '../../styles/ModaleFormLicenceType.module.css';
 import Modal from 'react-modal';
 
-const FormLicenceType = ({ isOpen, onClose, licenceType = null }) => {
+const FormLicenceType = ({ isOpen, onClose, selectedClubId, licenceType }) => {
     const [formData, setFormData] = useState({
         label: licenceType?.label || '',
         duration: licenceType?.duration || 365,
-        clubId: licenceType?.clubid || '',
+        clubId: selectedClubId,
+        private: licenceType?.private || false,
         price: licenceType?.price || null,
         basic: licenceType?.basic || false
     });
+
+    useEffect(() => {
+        setFormData({
+            label: licenceType?.label || '',
+            duration: licenceType?.duration || 365,
+            clubId: selectedClubId,
+            private: licenceType?.private || false,
+            price: licenceType?.price || null,
+            basic: licenceType?.basic || false
+        });
+    }, [licenceType]);
+
+    const addItem = useStore(state => state.addItem);
+    const updateItem = useStore(state => state.updateItem);
+
+    const typeLicence = useStore(state => state.licenceTypes);
+    const basicTypeLicenceExist = typeLicence.find(type => type.basic === true);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -28,15 +47,19 @@ const FormLicenceType = ({ isOpen, onClose, licenceType = null }) => {
                 duration: parseInt(formData.duration),
                 clubid: parseInt(formData.clubId),
                 price: formData.price ? parseFloat(formData.price) : null,
-                basic: formData.basic
+                basic: formData.basic,
+                private: formData.private
             };
 
             if (licenceType) {
+                console.log('payload', licenceType);
                 // Mode modification
                 await api.put(`/licenceType/${licenceType.id}`, payload);
+                updateItem('licenceTypes', licenceType.id, payload);
             } else {
                 // Mode création
                 await api.post('/licenceType', payload);
+                addItem('licenceTypes', payload);
             }
 
             onClose();
@@ -99,18 +122,50 @@ const FormLicenceType = ({ isOpen, onClose, licenceType = null }) => {
                     />
                 </div>
 
-                <div className={styles.checkboxContainer}>
-                    <label>
-                        <input
-                            type="checkbox"
-                            name="basic"
-                            checked={formData.basic}
-                            onChange={handleChange}
-                        />
-                        Licence de base
-                    </label>
+                <div className={styles.switchContainer}>
+                    <label htmlFor="private">VIsible par tous ?</label>
+                    <div className={styles.switchWrapper}>
+                        <label className={styles.switch}>
+                            <input
+                                type="checkbox"
+                                id="private"
+                                name="private"
+                                checked={formData.private}
+                                onChange={handleChange}
+                            />
+                            <span className={styles.slider}></span>
+                        </label>
+                        <span className={styles.switchLabel}>
+                            {formData.private ? 'Oui' : 'Non'}
+                        </span>
+                    </div>
                 </div>
 
+                {!basicTypeLicenceExist ? (
+                    <div className={styles.switchContainer}>
+                        <label htmlFor="basic">Licence de base</label>
+                        <div className={styles.switchWrapper}>
+                            <label className={styles.switch}>
+                                <input
+                                    type="checkbox"
+                                    id="basic"
+                                    name="basic"
+                                    checked={formData.basic}
+                                    onChange={handleChange}
+                                    disabled={basicTypeLicenceExist}
+                                />
+                                <span className={styles.slider}></span>
+                            </label>
+                            <span className={styles.switchLabel}>
+                                {formData.basic ? 'Oui' : 'Non'}
+                            </span>
+                        </div>
+                        <span className={styles.helpText}>
+                            Faire en sorte que cette licence soit sélectionnée par défaut lors de l'arrivée d'un nouveau membre.
+                        </span>
+                    </div>
+                ) : null}
+                
                 <div className={styles.buttonContainer}>
                     <button type="button" onClick={onClose} className={styles.unregisterButton}>
                         Annuler

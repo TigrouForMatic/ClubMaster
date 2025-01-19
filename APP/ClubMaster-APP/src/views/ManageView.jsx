@@ -105,7 +105,7 @@ function ManageView() {
           <span className={styles.countLicences}>{filteredLicences.length} adhérents</span>
         </div>
       )}
-      <LicenceTypeList licenceTypes={filteredLicenceTypes} />
+      <LicenceTypeList licenceTypes={filteredLicenceTypes} selectedClubId={selectedClubId} />
       <RoleList roles={filteredRoles} />
       <EventTypeList types={filteredTypes} />
     </div>
