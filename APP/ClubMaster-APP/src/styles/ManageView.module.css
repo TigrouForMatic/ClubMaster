@@ -95,6 +95,18 @@
   color: #0056b3;
 }
 
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  color: #dc3545;
+}
+
+.deleteButton:hover {
+  color: #c82333;
+}
+
 .table {
   width: 100%;
   min-width: 800px;

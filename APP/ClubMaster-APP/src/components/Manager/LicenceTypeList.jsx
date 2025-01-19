@@ -60,6 +60,7 @@ const LicenceTypeList = React.memo(({ licenceTypes, selectedClubId }) => {
             <th>Type</th>
             <th>Durée</th>
             <th>Visible par tous</th>
+            <th style={{ width: '50px' }}></th>
           </tr>
         </thead>
         <tbody>
@@ -70,7 +71,13 @@ const LicenceTypeList = React.memo(({ licenceTypes, selectedClubId }) => {
               <td>{type.basic ? 'Basic' : 'Advanced'}</td>
               <td>{daysToYearMonthDay(type.duration)}</td>
               <td>{type.private ? 'Oui' : 'Non'}</td>
-              <td>
+              <td style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                gap: '5px',
+                padding: '5px 0'
+              }}>
                 <button className={styles.editButton} onClick={() => handleOpenForm(type)}><EditPencil /></button>
                 <button className={styles.deleteButton} onClick={() => handleDeleteClick(type)}><Trash /></button>
               </td>
