@@ -106,7 +106,9 @@ function ManageView() {
         </div>
       )}
       <LicenceTypeList licenceTypes={filteredLicenceTypes} selectedClubId={selectedClubId} />
-      <RoleList roles={filteredRoles} />
+      
+      {/* TODO: Ajouter les Droit puis afficher les Roles */}
+      {/* <RoleList roles={filteredRoles} /> */}
       <EventTypeList types={filteredTypes} />
     </div>
   );

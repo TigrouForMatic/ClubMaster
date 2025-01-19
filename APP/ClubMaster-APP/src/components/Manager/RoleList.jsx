@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../../styles/ManageView.module.css";
-import { EditPencil } from 'iconoir-react';
+import { EditPencil, Trash } from 'iconoir-react';
 
 const RoleList = React.memo(({ roles }) => (
   <div className={styles.section}>
@@ -13,7 +13,8 @@ const RoleList = React.memo(({ roles }) => (
         <tr>
           <th>Label</th>
           <th>Niveau</th>
-          <th>Actions</th>
+          <th></th>
+          <th style={{ width: '50px' }}></th>
         </tr>
       </thead>
       <tbody>
@@ -21,8 +22,15 @@ const RoleList = React.memo(({ roles }) => (
           <tr key={role.id}>
             <td>{role.label}</td>
             <td>{role.level}</td>
-            <td>
+            <td style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center',
+              gap: '5px',
+              padding: '5px 0'
+            }}>
               <button className={styles.editButton}><EditPencil /></button>
+              <button className={styles.deleteButton}><Trash /></button>
             </td>
           </tr>
         ))}
