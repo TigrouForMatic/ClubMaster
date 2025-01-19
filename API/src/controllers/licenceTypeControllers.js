@@ -10,8 +10,10 @@ const getLicenceType = async (req, res) => {
         
         if (arrayClubId && Array.isArray(JSON.parse(arrayClubId))) {
             const clubIds = JSON.parse(arrayClubId);
-            queryString += ` WHERE clubid = ANY($1)`;
+            queryString += ` WHERE clubid = ANY($1) AND Bin = false`;
             values.push(clubIds);
+        } else {
+            queryString += ` WHERE Bin = false`;
         }
 
         const client = await pool.connect();

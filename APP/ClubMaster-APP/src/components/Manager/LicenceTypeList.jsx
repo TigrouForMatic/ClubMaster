@@ -5,6 +5,7 @@ import { daysToYearMonthDay } from '../../js/date';
 import FormLicenceType from '../Modale/FormLicenceType';
 import api from '../../js/App/Api';
 import useStore from "../../store/store";
+import CustomConfirm from '../CustomConfirm';
 
 const LicenceTypeList = React.memo(({ licenceTypes, selectedClubId }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,15 +23,27 @@ const LicenceTypeList = React.memo(({ licenceTypes, selectedClubId }) => {
     setSelectedLicenceType(null);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Voulez-vous vraiment supprimer ce type de licence ?')) {
-      try {
-        await api.delete(`/licenceType/${id}`);
-        deleteItem('licenceTypes', id);
-      } catch (error) {
-        console.error('Erreur lors de la suppression du type de licence:', error);
-      }
+  const [isOpenConfirm, setIsOpenConfirm] = useState(false);
+
+  const handleCloseConfirm = () => {
+    setIsOpenConfirm(false);
+    setSelectedLicenceType(null);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await api.delete(`/licenceType/${selectedLicenceType.id}`);
+      deleteItem('licenceTypes', selectedLicenceType.id);
+    } catch (error) {
+      console.error('Erreur lors de la suppression du type de licence:', error);
     }
+    setIsOpenConfirm(false);
+    setSelectedLicenceType(null);
+  };
+
+  const handleDeleteClick = (licenceType) => {
+    setIsOpenConfirm(true);
+    setSelectedLicenceType(licenceType);
   };
 
   return (
@@ -59,7 +72,7 @@ const LicenceTypeList = React.memo(({ licenceTypes, selectedClubId }) => {
               <td>{type.private ? 'Oui' : 'Non'}</td>
               <td>
                 <button className={styles.editButton} onClick={() => handleOpenForm(type)}><EditPencil /></button>
-                <button className={styles.deleteButton} onClick={() => handleDelete(type.id)}><Trash /></button>
+                <button className={styles.deleteButton} onClick={() => handleDeleteClick(type)}><Trash /></button>
               </td>
             </tr>
           ))}
@@ -67,6 +80,8 @@ const LicenceTypeList = React.memo(({ licenceTypes, selectedClubId }) => {
       </table>
 
       <FormLicenceType isOpen={isOpen} onClose={handleCloseForm} selectedClubId={selectedClubId} licenceType={selectedLicenceType} />
+
+      <CustomConfirm isOpen={isOpenConfirm} onCancel={handleCloseConfirm} onConfirm={handleDelete} message="Voulez-vous vraiment supprimer ce type de licence ?" />
     </div>
   );
 });

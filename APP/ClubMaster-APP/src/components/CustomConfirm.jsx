@@ -9,8 +9,8 @@ const CustomConfirm = ({ isOpen, message, onConfirm, onCancel }) => {
       <div className={styles.customConfirmModal}>
         <p>{message}</p>
         <div className={styles.customConfirmButtons}>
-          <button onClick={onConfirm}>Confirmer</button>
           <button onClick={onCancel}>Annuler</button>
+          <button onClick={onConfirm}>Confirmer</button>
         </div>
       </div>
     </div>
