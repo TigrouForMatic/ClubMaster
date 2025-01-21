@@ -7,6 +7,7 @@ import LicenceList from "../components/Manager/LicenceList";
 import EventTypeList from "../components/Manager/EventTypeList";
 import LicenceTypeList from "../components/Manager/LicenceTypeList";
 import RoleList from "../components/Manager/RoleList";
+import EventList from "../components/Manager/EventList";
 
 function ManageView() {
   const { userClubs, currentUserRoles, typesEvent, licenceTypes, productTypes, roles } = useStore();
@@ -109,7 +110,11 @@ function ManageView() {
       
       {/* TODO: Ajouter les Droit puis afficher les Roles */}
       {/* <RoleList roles={filteredRoles} /> */}
-      <EventTypeList types={filteredTypes} />
+
+      <div className={styles.sectionEvents}>
+        <EventTypeList types={filteredTypes} />
+        <EventList clubId={selectedClubId} />
+      </div>
     </div>
   );
 }
