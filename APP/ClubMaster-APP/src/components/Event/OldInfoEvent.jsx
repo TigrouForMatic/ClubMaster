@@ -143,7 +143,7 @@ const InfoEvent = ({ isOpen, onClose, eventId }) => {
         </button>
         {!isEdit && event && (
           <>
-            <h2 className={styles.title}>{event.label} OUI </h2>
+            <h2 className={styles.title}>{event.label}</h2>
             {currentUserRoles.some(role => role.level >= 3) && (
               <div className={styles.buttonActionsContainer}>
                 <button className={styles.editButton} onClick={handleEdit}>
