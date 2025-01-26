@@ -48,3 +48,26 @@
     --ring: 224.3 76.3% 48%;
   }
 }
+
+/* Styles globaux pour le carousel */
+.slick-prev,
+.slick-next {
+    @apply z-10;
+}
+
+.slick-prev {
+    @apply left-2;
+}
+
+.slick-next {
+    @apply right-2;
+}
+
+.slick-dots {
+    @apply bottom-4;
+}
+
+.slick-prev:before,
+.slick-next:before {
+    color: hsl(var(--primary));
+}
