@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { dateToTimeFormat, dateFormat } from '../../js/date';
-import styles from "../../styles/InfoEvent.module.css";
 import { Xmark, EditPencil, Trash } from 'iconoir-react';
 import Conversation from '../Conversation';
 import CustomConfirm from '../CustomConfirm';
@@ -136,70 +135,111 @@ const InfoEvent = ({ isOpen, onClose, eventId }) => {
   }, []);
 
   return (
-    <div className={styles.eventOverlay} onClick={handleOverlayClick}>
-      <div className={styles.overlay} onClick={(e) => e.stopPropagation()}>
-      <button onClick={onClose} className={styles.closeButton}>
-          <Xmark />
-        </button>
-        {!isEdit && event && (
-          <>
-            <h2 className={styles.title}>{event.label} OUI </h2>
-            {currentUserRoles.some(role => role.level >= 3) && (
-              <div className={styles.buttonActionsContainer}>
-                <button className={styles.editButton} onClick={handleEdit}>
-                  <EditPencil />
-                </button>
-                <button className={styles.deleteButton} onClick={handleDelete}>
-                  <Trash />
-                </button>
-              </div>
-            )}
-          <div className={styles.content}>
-            <p className={styles.date}>{displayDate}</p>
-            <p className={styles.description}>{event.description}</p>
-            <p className={styles.info}><strong>Type d'événement:</strong> {type.label}</p>
-            <p className={styles.info}><strong>Adresse:</strong> {`${address.street}, ${address.postalcode} ${address.city}`}</p>
-            <p className={styles.info}><strong>Maximum d'inscriptions:</strong> {event.MaxPerson || "Aucune limite"}</p>
-          </div>
-          <div className={styles.buttonContainer}>
-            {!inscription ? (
-              <button className={styles.registerButton} onClick={handleRegister}>S'inscrire</button>
-            ) : (
-              <button className={styles.unregisterButton} onClick={handleUnregister}>Se désinscrire</button>
-            )}
-            </div>
-          </>
-        )}
-        {isEdit && event && (
-          <>
-            <h2 className={styles.title}>Modification de l'événement</h2>
-            <EditEvent event={event} onClose={handleEditClose} />
-          </>
-        )}
-        {conversation && (
-          <div className={styles.conversation}>
-            <h3 className={styles.conversationTitle}>Discussion</h3>
-            <Conversation conversation={conversation} />
-          </div>
-        )}
-        
-        {isConfirmOpen && (
-          <CustomConfirm 
-            isOpen={isConfirmOpen}
-            message={`Êtes-vous sûr de vouloir supprimer votre inscription à ${event.label} ?`}
-            onConfirm={confirmUnregister}
-            onCancel={() => setIsConfirmOpen(false)}
-          />
-        )}
+    <div className="fixed inset-0 bg-black/30 z-50 flex justify-end">
+      <div className="bg-white w-full max-w-xl h-full overflow-y-auto animate-slide-in-right" onClick={(e) => e.stopPropagation()}>
+        <div className="relative p-6">
+          <button 
+            onClick={onClose}
+            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+          >
+            <Xmark className="h-4 w-4" />
+            <span className="sr-only">Fermer</span>
+          </button>
 
-        {isDeleteOpen && (
-          <CustomConfirm 
-            isOpen={isDeleteOpen}
-            message={`Êtes-vous sûr de vouloir supprimer l'événement ${event.label} du ${dateFormat(event.dd)} ?`}
-            onConfirm={confirmDelete}
-            onCancel={() => setIsDeleteOpen(false)}
-          />
-        )}
+          {!isEdit && event && (
+            <>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-semibold tracking-tight">{event.label}</h2>
+                {currentUserRoles.some(role => role.level >= 3) && (
+                  <div className="absolute right-14 top-4 flex items-center gap-2">
+                    <button 
+                      onClick={handleEdit}
+                      className="rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                    >
+                      <EditPencil className="h-4 w-4 text-blue-500" />
+                    </button>
+                    <button 
+                      onClick={handleDelete}
+                      className="rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                    >
+                      <Trash className="h-4 w-4 text-red-500" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-6 space-y-4">
+                <p className="text-sm font-medium text-blue-600">{displayDate}</p>
+                <p className="text-sm text-slate-500">{event.description}</p>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Type d'événement:</span>
+                    <span>{type.label}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Adresse:</span>
+                    <span>{`${address.street}, ${address.postalcode} ${address.city}`}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Maximum d'inscriptions:</span>
+                    <span>{event.MaxPerson || "Aucune limite"}</span>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex justify-center">
+                  {!inscription ? (
+                    <button 
+                      onClick={handleRegister}
+                      className="inline-flex items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    >
+                      S'inscrire
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={handleUnregister}
+                      className="inline-flex items-center justify-center rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    >
+                      Se désinscrire
+                    </button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          {isEdit && event && (
+            <>
+              <h2 className="text-2xl font-semibold tracking-tight">Modification de l'événement</h2>
+              <EditEvent event={event} onClose={handleEditClose} />
+            </>
+          )}
+
+          {conversation && (
+            <div className="mt-8 pt-6 border-t border-slate-200">
+              <h3 className="text-lg font-semibold mb-4">Discussion</h3>
+              <Conversation conversation={conversation} />
+            </div>
+          )}
+
+          {isConfirmOpen && (
+            <CustomConfirm 
+              isOpen={isConfirmOpen}
+              message={`Êtes-vous sûr de vouloir supprimer votre inscription à ${event.label} ?`}
+              onConfirm={confirmUnregister}
+              onCancel={() => setIsConfirmOpen(false)}
+            />
+          )}
+
+          {isDeleteOpen && (
+            <CustomConfirm 
+              isOpen={isDeleteOpen}
+              message={`Êtes-vous sûr de vouloir supprimer l'événement ${event.label} du ${dateFormat(event.dd)} ?`}
+              onConfirm={confirmDelete}
+              onCancel={() => setIsDeleteOpen(false)}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
