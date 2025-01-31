@@ -21,8 +21,8 @@ const MatchCard = ({ match, onDetailClick }) => {
 
   return (
     <div className={`bg-white rounded-lg shadow-md p-6 transition-all duration-300 hover:shadow-lg 
-                    hover:-translate-y-1 ${match.isInscrit ? 'border-l-4 border-green-500' : 'border-l-4 border-gray-400'}`}>
-      <div className="flex justify-between items-center mb-4">
+                    hover:-translate-y-1 ${match.isInscrit ? 'border-l-4 border-green-500' : 'border-l-4 border-gray-400'}`} onClick={onDetailClick}>
+      <div className="flex justify-between items-center mb-1">
         <div className="space-y-1">
           <span className="text-sm font-medium text-gray-600">{match.eventType}</span>
           <span className="ml-2 px-2 py-1 text-xs rounded-full text-white" 
@@ -35,6 +35,10 @@ const MatchCard = ({ match, onDetailClick }) => {
             <span className="text-green-500 font-semibold text-sm mb-1 block">En cours</span>
           }
           <span className="text-gray-500 text-sm">{dateFormat(match.dd)}</span>
+          <span className={`block text-sm font-medium mt-1
+                        ${match.isInscrit ? 'text-green-600' : 'text-gray-600'}`}>
+            {match.isInscrit ? '✓ Inscrit' : 'Non inscrit'}
+          </span>
         </div>
       </div>
 
@@ -70,20 +74,6 @@ const MatchCard = ({ match, onDetailClick }) => {
               </div>
             ))}
           </div>
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <button onClick={onDetailClick}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 
-                         rounded-md transition-colors duration-200">
-          Afficher les détails
-        </button>
-        <div className="text-center">
-          <span className={`inline-flex items-center text-sm font-medium
-                        ${match.isInscrit ? 'text-green-600' : 'text-gray-600'}`}>
-            {match.isInscrit ? '✓ Inscrit' : 'Non inscrit'}
-          </span>
         </div>
       </div>
     </div>
