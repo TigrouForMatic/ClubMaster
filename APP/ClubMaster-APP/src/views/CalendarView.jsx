@@ -128,33 +128,41 @@ const CalendarView = () => {
       const visibleEvents = eventsForDay.slice(startIndex, startIndex + 2);
 
       days.push(
-        <div key={day} className={styles.day}>
-          <div className={styles.dayHeader} onClick={() => openCreateModal(new Date(year, month, day))}>
-            <span className={styles.dayNumber}>{day}</span>
+        <div key={day} className="min-h-[130px] border border-gray-200 p-2 relative">
+          <div 
+            className="flex justify-between items-center mb-1 cursor-pointer hover:bg-gray-50 rounded"
+            onClick={() => openCreateModal(new Date(year, month, day))}
+          >
+            <span className="font-semibold text-gray-700">{day}</span>
           </div>
           {visibleEvents.map((e, index) => (
             <div 
-              key={index} 
-              className={inscriptions.find(inscription => inscription.eventid === e.id) ? styles.eventCardInscription : styles.eventCard}
+              key={index}
+              className={`${
+                inscriptions.find(inscription => inscription.eventid === e.id)
+                  ? 'border-2 border-white shadow-sm'
+                  : ''
+              } p-1 rounded mb-1 cursor-pointer text-white text-sm overflow-hidden`}
               style={{ backgroundColor: getColorFromString(e.label) }}
               onClick={() => handleEventClick(e)}
             >
-              <div><strong>{e.label}</strong></div>
-              {e.dd != e.df && (
-                <div>{dateToTimeFormat(e.dd)} à {dateToTimeFormat(e.df)}</div>
-              )}
-              {e.dd == e.df && (
-                <div>{dateToTimeFormat(e.dd)}</div>
-              )}
+              <div className="font-semibold">{e.label}</div>
+              <div className="text-xs">
+                {e.dd !== e.df ? (
+                  `${dateToTimeFormat(e.dd)} à ${dateToTimeFormat(e.df)}`
+                ) : (
+                  dateToTimeFormat(e.dd)
+                )}
+              </div>
             </div>
           ))}
           {eventsForDay.length > 2 && (
-            <div 
-              className={styles.moreEventsButton}
+            <button 
+              className="w-full text-center text-sm text-gray-600 hover:bg-gray-100 rounded py-1 mt-1"
               onClick={() => handleEventViewMore(day, eventsForDay.length)}
             >
-              +{eventsForDay.length - 2} autres 
-            </div>
+              +{eventsForDay.length - 2} autres
+            </button>
           )}
         </div>
       );
@@ -231,96 +239,116 @@ const CalendarView = () => {
   };
 
   return (
-    <div className={styles.calendarContainer}>
-      <h1 className={styles.title}>Calendrier</h1>
-
-      <div className={styles.headerActions}>
-        {currentUserRoles.some(role => role.level >= 3) && (
-          <button onClick={openCreateModal} className={styles.addEventButton}>
-             <Plus className={styles.buttonIcon} />
-             Evénement
-          </button>
-        )}
-        <button onClick={openPlanningModal} className={styles.exportPlanningButton}>
-          <Calendar className={styles.buttonIcon} />
-          Exporter
-        </button>
-      </div>
-
-      <div className={styles.filters}>
-        <div className={styles.filterSection}>
-          <h3>Type d'événement</h3>
-          <Select
-            isMulti
-            name="types"
-            options={getDataForSelectFromTypeEvent}
-            className={styles.select}
-            onChange={handleTypeChange}
-            placeholder="Sélectionner les types"
-          />
+    <div className="container mx-auto px-4 py-8 max-w-7xl pb-24">
+      <div className="space-y-8">
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-900">
+            Calendrier
+          </h1>
+          <p className="mt-3 text-lg text-gray-600 max-w-2xl text-center">
+            Consultez et gérez tous les événements
+          </p>
         </div>
 
-        <div className={styles.filterSection}>
-          <h3>Mois</h3>
-          <div className={styles.datePickerWrapper}>
-            <Calendar className={styles.iconDetail} />
-            <DatePicker
-              selected={currentDate}
-              onChange={setCurrentDate}
-              dateFormat="MM/yyyy"
-              showMonthYearPicker
-              className={styles.datePicker}
+        <div className="flex justify-end gap-4 mb-6">
+          {currentUserRoles.some(role => role.level >= 3) && (
+            <button 
+              onClick={openCreateModal}
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Événement
+            </button>
+          )}
+          <button 
+            onClick={openPlanningModal}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            <Calendar className="w-5 h-5 mr-2" />
+            Exporter
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-700">Type d'événement</h3>
+            <Select
+              isMulti
+              name="types"
+              options={getDataForSelectFromTypeEvent}
+              onChange={handleTypeChange}
+              placeholder="Sélectionner les types"
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-gray-700">Mois</h3>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10" />
+              <DatePicker
+                selected={currentDate}
+                onChange={setCurrentDate}
+                dateFormat="MM/yyyy"
+                showMonthYearPicker
+                className="w-full pl-10 pr-4 py-1.5 bg-white rounded-md cursor-default react-select-container"
+                calendarClassName="react-select-container"
+                wrapperClassName="react-select-container"
+                popperClassName="react-select-container"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-700">Lieu</h3>
+            <Select
+              options={locationOptions}
+              onChange={handleLocationChange}
+              placeholder="Sélectionner un lieu"
+              value={selectedLocation}
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-700">Club</h3>
+            <Select
+              options={clubOptions}
+              onChange={handleClubChange}
+              placeholder="Sélectionner un club"
+              value={selectedClub}
+              className="react-select-container"
+              classNamePrefix="react-select"
             />
           </div>
         </div>
 
-        <div className={styles.filterSection}>
-          <h3>Lieu</h3>
-          <Select
-            options={locationOptions}
-            className={styles.select}
-            onChange={handleLocationChange}
-            placeholder="Sélectionner un lieu"
-            value={selectedLocation}
-          />
-        </div>
-
-        <div className={styles.filterSection}>
-          <h3>Club</h3>
-          <Select
-            options={clubOptions}
-            className={styles.select}
-            onChange={handleClubChange}
-            placeholder="Sélectionner un club"
-            value={selectedClub}
-          />
-        </div>
-      </div>
-
-      <div 
-        className={styles.calendarWrapper}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        ref={calendarRef}
-      >
-        <div className={styles.monthlyCalendar}>
-          <div className={styles.weekdays}>
+        <div 
+          className="bg-white rounded-lg shadow-md overflow-hidden"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          ref={calendarRef}
+        >
+          <div className="grid grid-cols-7 bg-gray-50 border-b">
             {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(day => (
-              <div key={day}>{day}</div>
+              <div key={day} className="py-2 text-center font-semibold text-gray-600">
+                {day}
+              </div>
             ))}
           </div>
-          <div className={styles.days}>
+          <div className="grid grid-cols-7">
             {renderCalendar()}
           </div>
         </div>
       </div>
-      
+
       {selectedEvent && (
         <InfoEvent isOpen={isModalOpen} onClose={closeModal} eventId={selectedEvent.id} />
       )}
       <ModalCreateEvent isOpen={isCreateModalOpen} onClose={closeCreateModal} date={currentDateForCreate} />
-
       <ModalExportPlanning isOpen={isOpenPlanningModal} onClose={closePlanningModal} />
     </div>
   );
