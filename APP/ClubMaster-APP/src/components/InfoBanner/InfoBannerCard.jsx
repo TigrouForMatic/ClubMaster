@@ -26,7 +26,7 @@ const InfoBannerCard = ({ infoBanner, onEdit }) => {
     };
 
     return (
-        <div className="relative p-6 bg-card text-card-foreground rounded-lg shadow-md transition-all hover:shadow-lg" key={infoBanner.id}>
+        <div className="relative p-6 bg-card text-card-foreground rounded-lg transition-all min-h-[200px] w-full" key={infoBanner.id}>
             {currentRole && (
                 <div className="absolute right-4 top-4 flex flex-col gap-2">
                     <button 
@@ -44,35 +44,41 @@ const InfoBannerCard = ({ infoBanner, onEdit }) => {
                 </div>
             )}
 
-            {infoBanner.headerimage && (
-                <div className="relative w-full h-32 mb-4 rounded-md overflow-hidden">
-                    <img 
-                        src={infoBanner.headerimage} 
-                        alt={infoBanner.title}
-                        className="object-cover w-full h-full"
-                    />
-                </div>
-            )}
+            <div className="flex flex-col h-full">
+                {infoBanner.headerimage && (
+                    <div className="relative w-full h-32 mb-4 rounded-md overflow-hidden">
+                        <img 
+                            src={infoBanner.headerimage} 
+                            alt={infoBanner.title}
+                            className="object-cover w-full h-full"
+                        />
+                    </div>
+                )}
 
-            <h2 className="text-2xl font-semibold text-center mb-4">{infoBanner.title}</h2>
-            <p className="text-muted-foreground text-center mb-6">{infoBanner.description}</p>
-            
-            <div className="absolute bottom-4 left-4">
-                <span 
-                    className="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
-                    style={{
-                        backgroundColor: `${getColorFromString(infoBanner.clublabel)}20`,
-                        color: getColorFromString(infoBanner.clublabel),
-                        borderColor: `${getColorFromString(infoBanner.clublabel)}40`
-                    }}
-                >
-                    {infoBanner.clublabel}
-                </span>
+                <div className="flex-grow">
+                    <h2 className="text-xl font-bold text-center mb-4">{infoBanner.title}</h2>
+                    <p className="text-muted-foreground text-center text-base mb-6">{infoBanner.description}</p>
+                </div>
+
+                <div className="mt-auto">
+                    <div className="absolute bottom-4 left-4">
+                        <span 
+                            className="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                            style={{
+                                backgroundColor: `${getColorFromString(infoBanner.clublabel)}20`,
+                                color: getColorFromString(infoBanner.clublabel),
+                                borderColor: `${getColorFromString(infoBanner.clublabel)}40`
+                            }}
+                        >
+                            {infoBanner.clublabel}
+                        </span>
+                    </div>
+                    
+                    <p className="absolute bottom-4 right-4 text-xs text-muted-foreground italic">
+                        Créé par : {infoBanner.createdbyname} le {getDateDisplay(infoBanner.dd)}
+                    </p>
+                </div>
             </div>
-            
-            <p className="absolute bottom-4 right-4 text-xs text-muted-foreground italic">
-                Créé par : {infoBanner.createdbyname} le {getDateDisplay(infoBanner.dd)}
-            </p>
         </div>
     );
 };

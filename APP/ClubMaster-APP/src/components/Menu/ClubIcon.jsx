@@ -4,7 +4,7 @@ const ClubIcon = () => (
 <svg 
 version="1.0" 
 xmlns="http://www.w3.org/2000/svg"
-fill="white"
+fill="black"
  width="35px" 
  height="35px" 
  viewBox="0 0 512.000000 512.000000"
@@ -12,7 +12,7 @@ fill="white"
  >
 
 <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
-fill="white" stroke="none">
+fill="black" stroke="none">
 <path d="M43 4560 c-40 -16 -43 -38 -43 -303 0 -236 1 -257 19 -278 l19 -24
 471 -3 471 -3 0 -164 0 -165 -115 0 c-129 0 -159 -9 -175 -53 -6 -18 -10 -127
 -10 -267 l0 -236 -88 -59 c-108 -73 -290 -254 -357 -355 -307 -462 -311 -1043
