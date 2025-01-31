@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
-import styles from "../styles/ManageView.module.css";
 import useStore from '../store/store';
 import api from "../js/App/Api";
 import ClubList from "../components/Manager/ClubList";
@@ -83,37 +82,94 @@ function ManageView() {
     setSelectedClubId(clubId);
   };
 
-  if (isLoading) return <div className={styles.loading}>Chargement...</div>;
-  if (error) return <div className={styles.error}>Erreur : {error.message}</div>;
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[200px]">
+      <div className="text-lg text-gray-600">Chargement...</div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex items-center justify-center min-h-[200px]">
+      <div className="text-lg text-red-600">Une erreur est survenue : {error.message}</div>
+    </div>
+  );
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Tableau de bord</h1>
-      {filteredClubs.length === 1 && (
-        <div className={styles.selectedClub}>
-          <span className={styles.selectedClubName}>{filteredClubs[0].label}</span>
+    <div className="container mx-auto px-4 py-8 max-w-7xl pb-24">
+      <div className="space-y-8">
+        {/* En-tête */}
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-900">
+            Tableau de bord
+          </h1>
+          <p className="mt-3 text-lg text-gray-600 max-w-2xl text-center">
+            Gérez vos clubs et leurs adhérents
+          </p>
         </div>
-      )}
 
-      {filteredClubs.length > 1 && (
-        <ClubList clubs={filteredClubs} selectedClubId={selectedClubId} onClubSelect={handleClubSelect} />
-      )}
+        {/* Sélection du club */}
+        {filteredClubs.length === 1 ? (
+          <div className="flex justify-center">
+            <span className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md">
+              {filteredClubs[0].label}
+            </span>
+          </div>
+        ) : (
+          <div className="flex flex-wrap justify-center gap-2">
+            {filteredClubs.map(club => (
+              <button
+                key={club.id}
+                onClick={() => handleClubSelect(club.id)}
+                className={`px-4 py-2 rounded-md transition-all duration-300 ${
+                  selectedClubId === club.id
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {club.label}
+              </button>
+            ))}
+          </div>
+        )}
 
-      <LicenceList licences={filteredLicences} licenceTypes={filteredLicenceTypes} roles={filteredRoles} />
+        {/* Liste des licences */}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <LicenceList 
+            licences={filteredLicences} 
+            licenceTypes={filteredLicenceTypes} 
+            roles={filteredRoles} 
+          />
 
-      {filteredLicences && filteredLicences.length > 0 && (
-        <div className={styles.countLicencesContainer}>
-          <span className={styles.countLicences}>{filteredLicences.length} adhérents</span>
+          {filteredLicences?.length > 0 && (
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <span className="text-sm text-gray-600">
+                {filteredLicences.length} adhérents
+              </span>
+            </div>
+          )}
         </div>
-      )}
-      <LicenceTypeList licenceTypes={filteredLicenceTypes} selectedClubId={selectedClubId} />
-      
-      {/* TODO: Ajouter les Droit puis afficher les Roles */}
-      {/* <RoleList roles={filteredRoles} /> */}
 
-      <div className={styles.sectionEvents}>
-        <EventTypeList types={filteredTypes} />
-        <EventList clubId={selectedClubId} />
+        {/* Types de licences */}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <LicenceTypeList 
+            licenceTypes={filteredLicenceTypes} 
+            selectedClubId={selectedClubId} 
+          />
+        </div>
+
+        {/* Section événements */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <EventTypeList types={filteredTypes} />
+            </div>
+          </div>
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <EventList clubId={selectedClubId} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
