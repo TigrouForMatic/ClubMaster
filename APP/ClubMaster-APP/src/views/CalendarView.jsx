@@ -89,19 +89,18 @@ const CalendarView = () => {
     return day === 0 ? 6 : day - 1;
   };
 
-  const filteredEvents = useMemo(() => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+  const getEventsForDate = useCallback((year, month, day) => {
     return events.filter(e => {
       if (!e || !e.dd) return false;
       const eventDate = new Date(e.dd);
-      return eventDate.getMonth() === month &&
+      return eventDate.getDate() === day &&
+             eventDate.getMonth() === month &&
              eventDate.getFullYear() === year &&
              (!selectedTypes.length || selectedTypesId.includes(e.eventtypeid)) &&
              (selectedLocation.value === 0 || e.addressid === selectedLocation.value) &&
              (selectedClub.value === 0 || selectedClub.value === typesEvent.find(type => type.id === e.eventtypeid).clubid);
     });
-  }, [events, currentDate, selectedTypes, selectedLocation, selectedClub, addresses]);
+  }, [events, selectedTypes, selectedTypesId, selectedLocation, selectedClub, typesEvent]);
 
   const handleEventViewMore = useCallback((day, totalEvents) => {
     setEventStartIndices(prev => {
@@ -116,14 +115,61 @@ const CalendarView = () => {
     const month = currentDate.getMonth();
     const daysInMonth = getDaysInMonth(year, month);
     const firstDayOfMonth = getFirstDayOfMonth(year, month);
-
+    
+    const prevMonth = month === 0 ? 11 : month - 1;
+    const prevYear = month === 0 ? year - 1 : year;
+    const daysInPrevMonth = getDaysInMonth(prevYear, prevMonth);
+    
     const days = [];
+    
+    // Ajout des jours du mois précédent
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(<div key={`empty-${i}`} className={styles.emptyDay}></div>);
+      const day = daysInPrevMonth - firstDayOfMonth + i + 1;
+      const eventsForDay = getEventsForDate(prevYear, prevMonth, day);
+      const startIndex = eventStartIndices[day] || 0;
+      const visibleEvents = eventsForDay.slice(startIndex, startIndex + 2);
+
+      days.push(
+        <div key={`prev-${i}`} className="min-h-[130px] border border-gray-200 p-2 relative opacity-50 bg-gray-50">
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-semibold text-gray-400">{day}</span>
+          </div>
+          {visibleEvents.map((e, index) => (
+            <div 
+              key={index}
+              className={`${
+                inscriptions.find(inscription => inscription.eventid === e.id)
+                  ? 'border-2 border-white shadow-sm'
+                  : ''
+              } p-1 rounded mb-1 cursor-pointer text-white text-sm overflow-hidden`}
+              style={{ backgroundColor: getColorFromString(e.label) }}
+              onClick={() => handleEventClick(e)}
+            >
+              <div className="font-semibold">{e.label}</div>
+              <div className="text-xs">
+                {e.dd !== e.df ? (
+                  `${dateToTimeFormat(e.dd)} à ${dateToTimeFormat(e.df)}`
+                ) : (
+                  dateToTimeFormat(e.dd)
+                )}
+              </div>
+            </div>
+          ))}
+          {eventsForDay.length > 2 && (
+            <button 
+              className="w-full text-center text-sm text-gray-600 hover:bg-gray-100 rounded py-1 mt-1"
+              onClick={() => handleEventViewMore(day, eventsForDay.length)}
+            >
+              +{eventsForDay.length - 2} autres
+            </button>
+          )}
+        </div>
+      );
     }
 
+    // Jours du mois actuel
     for (let day = 1; day <= daysInMonth; day++) {
-      const eventsForDay = filteredEvents.filter(e => new Date(e.dd).getDate() === day);
+      const eventsForDay = getEventsForDate(year, month, day);
       const startIndex = eventStartIndices[day] || 0;
       const visibleEvents = eventsForDay.slice(startIndex, startIndex + 2);
 
@@ -168,8 +214,60 @@ const CalendarView = () => {
       );
     }
 
+    // Calcul du nombre exact de jours nécessaires pour compléter la dernière ligne
+    const totalDays = firstDayOfMonth + daysInMonth;
+    const remainingDays = 7 - (totalDays % 7);
+    const remainingDaysToAdd = remainingDays === 7 ? 0 : remainingDays;
+    
+    const nextMonth = month === 11 ? 0 : month + 1;
+    const nextYear = month === 11 ? year + 1 : year;
+    
+    // Ajout des jours du mois suivant uniquement pour compléter la dernière ligne
+    for (let i = 1; i <= remainingDaysToAdd; i++) {
+      const eventsForDay = getEventsForDate(nextYear, nextMonth, i);
+      const startIndex = eventStartIndices[i] || 0;
+      const visibleEvents = eventsForDay.slice(startIndex, startIndex + 2);
+
+      days.push(
+        <div key={`next-${i}`} className="min-h-[130px] border border-gray-200 p-2 relative opacity-50 bg-gray-50">
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-semibold text-gray-400">{i}</span>
+          </div>
+          {visibleEvents.map((e, index) => (
+            <div 
+              key={index}
+              className={`${
+                inscriptions.find(inscription => inscription.eventid === e.id)
+                  ? 'border-2 border-white shadow-sm'
+                  : ''
+              } p-1 rounded mb-1 cursor-pointer text-white text-sm overflow-hidden`}
+              style={{ backgroundColor: getColorFromString(e.label) }}
+              onClick={() => handleEventClick(e)}
+            >
+              <div className="font-semibold">{e.label}</div>
+              <div className="text-xs">
+                {e.dd !== e.df ? (
+                  `${dateToTimeFormat(e.dd)} à ${dateToTimeFormat(e.df)}`
+                ) : (
+                  dateToTimeFormat(e.dd)
+                )}
+              </div>
+            </div>
+          ))}
+          {eventsForDay.length > 2 && (
+            <button 
+              className="w-full text-center text-sm text-gray-600 hover:bg-gray-100 rounded py-1 mt-1"
+              onClick={() => handleEventViewMore(i, eventsForDay.length)}
+            >
+              +{eventsForDay.length - 2} autres
+            </button>
+          )}
+        </div>
+      );
+    }
+
     return days;
-  }, [currentDate, filteredEvents, inscriptions, eventStartIndices]);
+  }, [currentDate, events, inscriptions, eventStartIndices, getEventsForDate]);
 
   const handleEventClick = useCallback((event) => {
     setSelectedEvent(event);
