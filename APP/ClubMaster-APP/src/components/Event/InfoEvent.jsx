@@ -8,17 +8,32 @@ import CustomConfirm from '../CustomConfirm';
 import EditEvent from './EditEvent';
 
 const InfoEvent = ({ isOpen, onClose, eventId }) => {
-  if (!isOpen || !eventId) return null;
-
-  const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser, conversations, currentUserRoles } = useStore();
-  const getItem = useStore(state => state.getItem);
-
-  const [inscription, setInscription] = useState(null);
-  const [conversation, setConversation] = useState(null);
+  const [isClosing, setIsClosing] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [event, setEvent] = useState(null);
+  const [inscription, setInscription] = useState(null);
+  const [conversation, setConversation] = useState(null);
+  
+  const handleClose = useCallback(() => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, 300);
+  }, [onClose]);
+
+  const handleOverlayClick = useCallback((e) => {
+    if (e.target === e.currentTarget && !isConfirmOpen) {
+      handleClose();
+    }
+  }, [handleClose, isConfirmOpen]);
+
+  if (!isOpen || !eventId) return null;
+
+  const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser, conversations, currentUserRoles } = useStore();
+  const getItem = useStore(state => state.getItem);
 
   useEffect(() => {
     const eventData = getItem('events', eventId)(useStore.getState());
@@ -102,12 +117,6 @@ const InfoEvent = ({ isOpen, onClose, eventId }) => {
     }
   }, [inscription, deleteItem]);
 
-  const handleOverlayClick = useCallback((e) => {
-    if (e.target === e.currentTarget && !isConfirmOpen) {
-      onClose();
-    }
-  }, [onClose, isConfirmOpen]);
-
   const handleDelete = useCallback(() => {
     if (!event) return;
     setIsDeleteOpen(true);
@@ -135,11 +144,16 @@ const InfoEvent = ({ isOpen, onClose, eventId }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-black/30 z-50 flex justify-end">
-      <div className="bg-white w-full max-w-xl h-full overflow-y-auto animate-slide-in-right" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/30 z-50 flex justify-end" onClick={handleOverlayClick}>
+      <div 
+        className={`bg-white w-full max-w-3xl h-full overflow-y-auto ${
+          isClosing ? 'slide-out' : 'slide-in'
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="relative p-6">
           <button 
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
           >
             <Xmark className="h-4 w-4" />
