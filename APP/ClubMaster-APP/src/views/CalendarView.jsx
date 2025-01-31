@@ -2,7 +2,6 @@ import React, { useState, useMemo, useCallback, useRef } from "react";
 import DatePicker from "react-datepicker";
 import Select from 'react-select';
 import "react-datepicker/dist/react-datepicker.css";
-import styles from "../styles/CalendarView.module.css";
 import useStore from '../store/store';
 import { dateToTimeFormat } from "../js/date";
 import { getColorFromString } from "../js/color";
@@ -343,12 +342,18 @@ const CalendarView = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-900">
             Calendrier
           </h1>
-          <p className="mt-3 text-lg text-gray-600 max-w-2xl text-center">
-            Consultez et gérez tous les événements
-          </p>
+          {currentUserRoles.some(role => role.level >= 3) ? (
+            <p className="mt-3 text-lg text-gray-600 max-w-2xl text-center">
+              Consultez et gérez tous les événements
+            </p>
+          ) : (
+            <p className="mt-3 text-lg text-gray-600 max-w-2xl text-center">
+              Consultez tous les événements
+            </p>
+          )}
         </div>
 
-        <div className="flex justify-end gap-4 mb-6">
+        <div className="flex justify-end gap-4 mb-4">
           {currentUserRoles.some(role => role.level >= 3) && (
             <button 
               onClick={openCreateModal}
