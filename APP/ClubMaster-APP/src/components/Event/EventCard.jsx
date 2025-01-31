@@ -3,29 +3,34 @@ import PropTypes from 'prop-types';
 
 const EventCard = ({ event, isInscrit, getDateDisplay, getTimeDisplay, onClick }) => (
   <div 
-    className="relative p-6 bg-card text-card-foreground rounded-lg shadow-md transition-all hover:shadow-lg hover:-translate-y-1 cursor-pointer"
+    className="relative p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer border-l-4"
+    style={{
+      borderLeftColor: isInscrit ? '#4CAF50' : '#9E9E9E',
+      backgroundColor: isInscrit ? '#f1f8e9' : '#f5f5f5'
+    }}
     onClick={() => onClick(event)}
   >
-    <div className="flex justify-between items-center mb-4">
-      <h3 className="text-2xl font-semibold">{event.label}</h3>
-      {isInscrit ? (
-        <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-          Inscrit
-        </span>
-      ) : (
-        <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-          Pas Inscrit
-        </span>
-      )}
+    <div className="absolute top-4 right-4">
+      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
+        isInscrit 
+          ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20' 
+          : 'bg-gray-50 text-gray-600 ring-1 ring-inset ring-gray-500/10'
+      }`}>
+        {isInscrit ? 'Inscrit' : 'Pas Inscrit'}
+      </span>
     </div>
 
-    <p className="text-sm text-muted-foreground mb-4">
-      Le {getDateDisplay(event.dd)} de {getTimeDisplay(event.dd)} à {getTimeDisplay(event.df)}
-    </p>
+    <div className="space-y-4">
+      <h3 className="text-2xl font-semibold text-center text-gray-900 mt-4">{event.label}</h3>
 
-    <p className="text-sm text-card-foreground">
-      {event.description}
-    </p>
+      <p className="text-sm font-medium text-center text-gray-600">
+        Le {getDateDisplay(event.dd)} de {getTimeDisplay(event.dd)} à {getTimeDisplay(event.df)}
+      </p>
+
+      <p className="text-base text-center text-gray-700 leading-relaxed">
+        {event.description}
+      </p>
+    </div>
   </div>
 );
 

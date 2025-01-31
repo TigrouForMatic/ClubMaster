@@ -29,7 +29,7 @@ const CarouselInfoBanner = () => {
     };
 
     return (
-        <div className="w-full max-w-3xl mx-auto px-4 py-6">
+        <div className="w-full max-w-6xl mx-auto px-4 py-6">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold tracking-tight">Annonces</h2>
                 {currentRole && (

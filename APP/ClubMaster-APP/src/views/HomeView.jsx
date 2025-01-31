@@ -183,7 +183,7 @@ function HomeView() {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const { isLoading, error } = useEventData();
-  const { events, typesEvent, addresses, inscriptions, infoBanners, currentUserRoles } = useStore();
+  const { events, typesEvent, addresses, inscriptions } = useStore();
 
   const filteredAndSortedEvents = useMemo(() => {
     const now = new Date();
@@ -232,7 +232,7 @@ function HomeView() {
       <CarouselInfoBanner />
 
       {nextEvent && (
-        <div className="mb-8">
+        <div className="w-full max-w-6xl mx-auto px-4 pt-6">
           <MainEventCard 
             event={nextEvent}
             getDateDisplay={getDateDisplay}
@@ -244,7 +244,7 @@ function HomeView() {
         </div>
       )}
 
-      <div className="space-y-6">
+      <div className="w-full max-w-6xl mx-auto px-4">
         <EventList 
           events={filteredAndSortedEvents.slice(1)}
           getDateDisplay={getDateDisplay}
