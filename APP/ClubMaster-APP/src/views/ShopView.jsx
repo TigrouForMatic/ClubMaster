@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import useStore from '../store/store';
 import api from '../js/App/Api';
-import styles from "../styles/ShopView.module.css";
 import ProductCard from "../components/Shop/ProductCard";
 import CartBar from "../components/Shop/CartBar";
 
@@ -44,7 +43,6 @@ const useShopData = () => {
 function ShopView() {
   const { productTypes, products, isLoading, error } = useShopData();
   const [selectedType, setSelectedType] = useState("all");
-
   const addItem = useStore((state) => state.addItem);
   const updateItem = useStore((state) => state.updateItem);
   const panier = useStore((state) => state.panier);
@@ -88,42 +86,71 @@ function ShopView() {
     addItem('notifications', createdClubNotif);
   };
 
-  if (isLoading) return <div className={styles.loading}>Chargement...</div>;
-  if (error) return <div className={styles.error}>Une erreur est survenue : {error.message}</div>;
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[200px]">
+      <div className="text-lg text-gray-600">Chargement...</div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex items-center justify-center min-h-[200px]">
+      <div className="text-lg text-red-600">Une erreur est survenue : {error.message}</div>
+    </div>
+  );
 
   return (
-    <div className={styles.shopContainer}>
-      <h1 className={styles.shopTitle}>La Boutique</h1>
+    <div className="container mx-auto px-4 py-8 max-w-7xl pb-24">
+      <div className="space-y-8">
+        {/* En-tête */}
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-900">
+            La Boutique
+          </h1>
+          <p className="mt-3 text-lg text-gray-600 max-w-2xl text-center">
+            Découvrez notre sélection de produits
+          </p>
+        </div>
 
-      {panier.length > 0 && (
-        <CartBar />
-      )}
+        {/* Panier */}
+        {panier.length > 0 && <CartBar />}
 
-      <div className={styles.categoryFilter}>
-        <button
-          className={`${styles.filterButton} ${selectedType === "all" ? styles.active : ""}`}
-          onClick={() => setSelectedType("all")}
-        >
-          Tous
-        </button>
-        {filteredTypes.map((type) => (
+        {/* Filtres */}
+        <div className="flex flex-wrap justify-center gap-2 py-4">
           <button
-            key={type.id}
-            className={`${styles.filterButton} ${selectedType === type.id ? styles.active : ""}`}
-            onClick={() => setSelectedType(type.label)}
+            onClick={() => setSelectedType("all")}
+            className={`px-4 py-2 rounded-full transition-all duration-300 ${
+              selectedType === "all"
+                ? "bg-blue-600 text-white shadow-md"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
           >
-            {type.label}
+            Tous
           </button>
-        ))}
-      </div>
+          {filteredTypes.map((type) => (
+            <button
+              key={type.label}
+              onClick={() => setSelectedType(type.label)}
+              className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                selectedType === type.label
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {type.label}
+            </button>
+          ))}
+        </div>
 
-      <div className={styles.productGrid}>
-        {filteredProducts.map((prod) => (
-          <ProductCard 
-            key={prod.id} 
-            product={prod}
-            onAddToCart={handleAddToCart}  />
-        ))}
+        {/* Grille de produits */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredProducts.map((prod) => (
+            <ProductCard 
+              key={prod.id} 
+              product={prod}
+              onAddToCart={handleAddToCart} 
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

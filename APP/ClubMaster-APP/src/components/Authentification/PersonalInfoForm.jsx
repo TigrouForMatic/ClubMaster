@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
-import styles from '../../styles/AuthForm.module.css';
 import { OpenInWindow } from 'iconoir-react';
 import PrivacyPolicyModal from '../Modale/PrivacyPolicyModal';
 import GeneralConditionModal from '../Modale/GeneralConditionModal';
@@ -118,95 +117,133 @@ function PersonalInfoForm({ handlePersonalInformationSet }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.authForm}>
-      {error && <p className={styles.error}>{error}</p>}
-      
-      <h2>Informations personnelles</h2>
-      <input
-        type="text"
-        name="firstName"
-        placeholder="Prénom"
-        value={personalInfo.firstName}
-        onChange={handlePersonalInfoChange}
-        required
-      />
-      <input
-        type="text"
-        name="lastName"
-        placeholder="Nom"
-        value={personalInfo.lastName}
-        onChange={handlePersonalInfoChange}
-        required
-      />
-      <input
-        type="tel"
-        name="phoneNumber"
-        placeholder="Numéro de téléphone"
-        value={personalInfo.phoneNumber}
-        onChange={handlePersonalInfoChange}
-      />
-      <input
-        type="date"
-        name="bornDate"
-        placeholder="Date de naissance"
-        value={personalInfo.bornDate}
-        onChange={handlePersonalInfoChange}
-      />
+    <div className="mx-auto flex w-full flex-col space-y-6">
+      <div className="flex flex-col space-y-2">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Informations personnelles
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Complétez vos informations pour finaliser votre inscription
+        </p>
 
-      <h2>Adresse</h2>
-      {Object.entries(addressInfo).map(([key, value]) => (
-        <input
-          key={key}
-          type="text"
-          name={key}
-          placeholder={key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
-          value={value}
-          onChange={handleAddressChange}
-        />
-      ))}
-      
-      <div className={styles.checkboxLabel}>
-        <div className={styles.checkboxContainer}>
-          <input
-            type="checkbox"
-            checked={consentGivenPolitique}
-            onChange={(e) => setConsentGivenPolitique(e.target.checked)}
-          />
-          <span className={styles.checkboxText}>
-            J'ai lu et j'accepte la politique de confidentialité
-          </span>
-          
-          <OpenInWindow 
-            className={styles.iconDetail} 
-            onClick={openModalPolitique} 
-            style={{ cursor: 'pointer', width: '16px', height: '16px' }} 
-          />
-        </div>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            {error}
+          </div>
+        )}
 
-        <div className={styles.checkboxContainer}>
-          <input
-            type="checkbox"
-            checked={consentGivenConditions}
-            onChange={(e) => setConsentGivenConditions(e.target.checked)}
-          />
-          <span className={styles.checkboxText}>
-            J'ai lu et j'accepte les conditions générales d'utilisation
-          </span>
-          
-          <OpenInWindow 
-            className={styles.iconDetail} 
-            onClick={openModalConditions} 
-            style={{ cursor: 'pointer', width: '16px', height: '16px' }} 
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="firstName"
+                placeholder="Prénom"
+                value={personalInfo.firstName}
+                onChange={handlePersonalInfoChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                required
+              />
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Nom"
+                value={personalInfo.lastName}
+                onChange={handlePersonalInfoChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                required
+              />
+            </div>
+
+            <input
+              type="tel"
+              name="phoneNumber"
+              placeholder="Numéro de téléphone"
+              value={personalInfo.phoneNumber}
+              onChange={handlePersonalInfoChange}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+            />
+
+            <input
+              type="date"
+              name="bornDate"
+              placeholder="Date de naissance"
+              value={personalInfo.bornDate}
+              onChange={handlePersonalInfoChange}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+            />
+
+            <div className="space-y-2 mt-6">
+              <h2 className="text-lg font-medium">Adresse</h2>
+              {Object.entries(addressInfo).map(([key, value]) => (
+                <input
+                  key={key}
+                  type="text"
+                  name={key}
+                  placeholder={key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+                  value={value}
+                  onChange={handleAddressChange}
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                />
+              ))}
+            </div>
+
+            <div className="space-y-4 mt-6">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={consentGivenPolitique}
+                  onChange={(e) => setConsentGivenPolitique(e.target.checked)}
+                  className="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+                />
+                <span className="text-sm">
+                  J'ai lu et j'accepte la politique de confidentialité
+                </span>
+                <OpenInWindow
+                  onClick={openModalPolitique}
+                  className="h-4 w-4 cursor-pointer text-zinc-500 hover:text-zinc-900"
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={consentGivenConditions}
+                  onChange={(e) => setConsentGivenConditions(e.target.checked)}
+                  className="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+                />
+                <span className="text-sm">
+                  J'ai lu et j'accepte les conditions générales d'utilisation
+                </span>
+                <OpenInWindow
+                  onClick={openModalConditions}
+                  className="h-4 w-4 cursor-pointer text-zinc-500 hover:text-zinc-900"
+                />
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!consentGivenPolitique || !consentGivenConditions}
+            className="w-full py-2 bg-zinc-900 text-white rounded-md hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Enregistrer et continuer
+          </button>
+        </form>
       </div>
-      <button className={styles.submitButton} type="submit" disabled={!consentGivenPolitique || !consentGivenConditions}>
-        Enregistrer et continuer
-      </button>
 
-      <PrivacyPolicyModal isOpen={modalIsOpenPolitique} onRequestClose={closeModalPolitique} onAccept={handleAcceptPolitique} />
-      <GeneralConditionModal isOpen={modalIsOpenConditions} onRequestClose={closeModalConditions} onAccept={handleAcceptConditions} />
-    </form>
+      <PrivacyPolicyModal 
+        isOpen={modalIsOpenPolitique} 
+        onRequestClose={closeModalPolitique} 
+        onAccept={handleAcceptPolitique} 
+      />
+      <GeneralConditionModal 
+        isOpen={modalIsOpenConditions} 
+        onRequestClose={closeModalConditions} 
+        onAccept={handleAcceptConditions} 
+      />
+    </div>
   );
 }
 

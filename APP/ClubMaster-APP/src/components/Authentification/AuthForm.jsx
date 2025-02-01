@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import styles from '../../styles/AuthForm.module.css';
 import PersonalInfoForm from './PersonalInfoForm';
 import FindClubOption from '../ClubOptions/FindClubOption';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
+import { FacebookIcon } from 'lucide-react';
 
 const passwordRules = [
   { message: "Une lettre minuscule.", regex: /[a-z]+/ },
@@ -138,65 +138,139 @@ function AuthForm() {
   }
 
   return (
-    <div className={styles.authContainer}>
-      {error && <p className={styles.error}>{error}</p>}
-      {showLoginForm && (
-        <form onSubmit={handleSubmit} className={styles.authForm}>
-          <h2>{isLogin ? 'Connexion' : 'Création de compte'}</h2>
-            <input
-              type="email"
-              placeholder="Email"
-              value={login}
-              onChange={(e) => setLogin(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Mot de passe"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            {!isLogin && (
-              <>
-                <input
-                  type="password"
-                  placeholder="Confirmer le mot de passe"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-                <div className={styles.passwordValidationCard}>
-                  {passwordValidation.errors.map((error, index) => (
-                    <div 
-                      key={index} 
-                      className={`${styles.validationRule} ${error.successId ? styles.validRule : styles.invalidRule}`}
-                    >
-                      {error.successId ? '✓' : '✗'} {error.message}
-                    </div>
-                  ))}
+    <div className="container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="relative hidden h-full flex-col bg-zinc-900 p-10 text-white dark:border-r lg:flex">
+        <div className="absolute inset-0 bg-zinc-900" />
+        <div className="relative z-20 flex items-center text-lg font-medium">
+          <img src="@/assets/photos/logo_ClubMaster.jpg" alt="ClubMaster" className="h-8 w-8 mr-2" />
+          ClubMaster
+        </div>
+        <div className="relative z-20 mt-auto">
+          <blockquote className="space-y-2">
+            <p className="text-lg">
+              "Cette application m'a permis de gérer mon club de sport plus efficacement que jamais."
+            </p>
+            <footer className="text-sm">Sophie Martin</footer>
+          </blockquote>
+        </div>
+      </div>
+      
+      <div className="lg:p-8">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+              {error}
+            </div>
+          )}
+          
+          {showLoginForm && (
+            <div className="flex flex-col space-y-2">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                {isLogin ? 'Connexion' : 'Créer un compte'}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                {isLogin ? 'Connectez-vous à votre compte' : 'Créez votre compte pour commencer'}
+              </p>
+              
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={login}
+                    onChange={(e) => setLogin(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    required
+                  />
+                  
+                  <input
+                    type="password"
+                    placeholder="Mot de passe"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    required
+                  />
+                  
+                  {!isLogin && (
+                    <>
+                      <input
+                        type="password"
+                        placeholder="Confirmer le mot de passe"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                        required
+                      />
+                      
+                      <div className="bg-zinc-50 p-4 rounded-lg space-y-2">
+                        {passwordValidation.errors.map((error, index) => (
+                          <div 
+                            key={index}
+                            className={`text-sm flex items-center space-x-2 ${
+                              error.successId ? 'text-green-600' : 'text-red-600'
+                            }`}
+                          >
+                            <span>{error.successId ? '✓' : '✗'}</span>
+                            <span>{error.message}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
-              </>
-            )}
-            <button type="submit" disabled={!isLogin && !passwordValidation.valid}>
-              {isLogin ? 'Se connecter' : 'Créer un compte'}
-            </button>
-        </form>
-      )}
-      {showPersonalInfo && (
-        <PersonalInfoForm  
-          handlePersonalInformationSet={handlePersonalInformationSet} 
-        />
-      )}
-      {showLoginForm && (
-        <>
-          <button onClick={toggleForm} className={styles.toggleButton}>
-            {isLogin ? 'Créer un compte' : 'Se connecter'}
-          </button>
-        </>
-      )}
-      {/* {showClubOptions && <ClubOptions />} */}
-      {showClubOptions && <FindClubOption />}
+
+                <button
+                  type="submit"
+                  disabled={!isLogin && !passwordValidation.valid}
+                  className="w-full py-2 bg-zinc-900 text-white rounded-md hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLogin ? 'Se connecter' : 'Créer un compte'}
+                </button>
+              </form>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-2 text-muted-foreground">
+                    Ou continuer avec
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="w-full py-2 border rounded-md flex items-center justify-center gap-2 hover:bg-zinc-50"
+              >
+                <span className="font-bold">G</span>
+                Google
+              </button>
+              <button
+                type="button"
+                className="w-full py-2 border rounded-md flex items-center justify-center gap-2 hover:bg-zinc-50"
+              >
+                <FacebookIcon className="h-4 w-4" />
+                Facebook
+              </button>
+
+              <button
+                onClick={toggleForm}
+                className="w-full text-sm text-zinc-600 hover:text-zinc-900"
+              >
+                {isLogin ? 'Créer un compte' : 'Se connecter'}
+              </button>
+            </div>
+          )}
+
+          {showPersonalInfo && (
+            <PersonalInfoForm handlePersonalInformationSet={handlePersonalInformationSet} />
+          )}
+
+          {showClubOptions && <FindClubOption />}
+        </div>
+      </div>
     </div>
   );
 }

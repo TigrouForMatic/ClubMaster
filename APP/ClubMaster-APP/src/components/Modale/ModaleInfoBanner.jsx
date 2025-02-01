@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Modal from 'react-modal';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
-import styles from "../../styles/ModaleCreateEvent.module.css";
 
 function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
   const { currentUserRoles, userClubs, currentUser } = useStore();
@@ -88,124 +87,141 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={handleClose}
-      className={styles.modal}
-      overlayClassName={styles.modalOverlay}
+      onRequestClose={onClose}
+      contentLabel="Gestion des annonces"
+      className="relative bg-white rounded-lg shadow-lg w-full max-w-3xl mx-auto mt-10 max-h-[90vh] overflow-y-auto p-6"
+      overlayClassName="fixed inset-0 bg-black/50 z-50 flex items-start justify-center"
     >
-      <div className={styles.headerModal}>
-        <h2 className={styles.title}>
-          {infoBanner ? "Modifier l'annonce" : "Créer une nouvelle annonce"}
-        </h2>
-        <button onClick={handleClose} className={styles.closeButton}>&times;</button>
-      </div>
-
-      {filteredClubs.length > 1 && (
-        <ClubList clubs={filteredClubs} selectedClubId={selectedClubId} onClubSelect={handleClubSelect} />
-      )}
-
-      <form onSubmit={handleSubmit} className={styles.content}>
-        <div>
-          <label htmlFor="title">Titre :</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={bannerData.title}
-            onChange={handleChange}
-            required
-          />
+      <div className="space-y-6">
+        <div className="flex items-center justify-between border-b pb-4">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            {infoBanner ? "Modifier l'annonce" : "Créer une nouvelle annonce"}
+          </h2>
+          <button 
+            onClick={onClose}
+            className="text-zinc-500 hover:text-zinc-900 transition-colors"
+          >
+            <span className="text-2xl">&times;</span>
+          </button>
         </div>
 
-        <div>
-          <label htmlFor="description">Description :</label>
-          <textarea
-            id="description"
-            name="description"
-            value={bannerData.description}
-            onChange={handleChange}
-          />
-        </div>
+        {filteredClubs.length > 1 && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Sélectionner un club</h3>
+            <div className="flex flex-wrap gap-2">
+              {filteredClubs.map(club => (
+                <button
+                  key={club.id}
+                  onClick={() => handleClubSelect(club.id)}
+                  className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                    selectedClubId === club.id
+                      ? 'bg-black text-white'
+                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                  }`}
+                >
+                  {club.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
-        <div>
-          <label htmlFor="headerimage">Image d'en-tête (URL) :</label>
-          <input
-            type="url"
-            id="headerimage"
-            name="headerimage"
-            value={bannerData.headerimage}
-            onChange={handleChange}
-          />
-        </div>
-
-        {infoBanner ? 
-        <div>
-          <label htmlFor="dd">Date d'annonce :</label>
-          <input
-            type="date"
-            id="dd"
-            name="dd"
-            value={bannerData.dd}
-            onChange={handleChange}
-            required
-          />
-        </div> : 
-        <div>
-            <label htmlFor="dd">Date d'annonce :</label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="title" className="text-sm font-medium">
+              Titre
+            </label>
             <input
-              type="date"
-              id="dd"
-              name="dd"
-              value={bannerData.dd}
+              type="text"
+              id="title"
+              name="title"
+              value={bannerData.title}
               onChange={handleChange}
-              min={new Date().toISOString().split('T')[0]}
               required
+              className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
             />
           </div>
-        }
 
-        <div>
-          <label htmlFor="df">Date de fin :</label>
-          <input
-            type="date"
-            id="df"
-            name="df"
-            value={bannerData.df}
-            onChange={handleChange}
-            min={bannerData.dd}
-            required
-          />
-        </div>
+          <div className="space-y-2">
+            <label htmlFor="description" className="text-sm font-medium">
+              Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={bannerData.description}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm min-h-[100px]"
+            />
+          </div>
 
-        <div className={styles.buttonContainer}>
-          <button type="button" onClick={handleClose} className={styles.unregisterButton}>
-            Annuler
-          </button>
-          <button type="submit" className={styles.registerButton}>
-            {infoBanner ? "Modifier" : "Créer"}
-          </button>
-        </div>
-      </form>
+          <div className="space-y-2">
+            <label htmlFor="headerimage" className="text-sm font-medium">
+              Image d'en-tête (URL)
+            </label>
+            <input
+              type="url"
+              id="headerimage"
+              name="headerimage"
+              value={bannerData.headerimage}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label htmlFor="dd" className="text-sm font-medium">
+                Date d'annonce
+              </label>
+              <input
+                type="date"
+                id="dd"
+                name="dd"
+                value={bannerData.dd}
+                onChange={handleChange}
+                min={!infoBanner ? new Date().toISOString().split('T')[0] : undefined}
+                required
+                className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="df" className="text-sm font-medium">
+                Date de fin
+              </label>
+              <input
+                type="date"
+                id="df"
+                name="df"
+                value={bannerData.df}
+                onChange={handleChange}
+                min={bannerData.dd}
+                required
+                className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-4 pt-4 border-t">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-md text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-md text-sm font-medium bg-black text-white hover:bg-black/90"
+            >
+              {infoBanner ? "Modifier" : "Créer"}
+            </button>
+          </div>
+        </form>
+      </div>
     </Modal>
   );
 }
-
-const ClubList = React.memo(({ clubs, selectedClubId, onClubSelect }) => (
-  <div className={styles.section}>
-    <div className={styles.sectionHeader}>
-      <h2 className={styles.subtitle}>Clubs</h2>
-    </div>
-    <div className={styles.clubList}>
-      {clubs.map(club => (
-        <div
-          key={club.id}
-          className={`${styles.clubItem} ${selectedClubId === club.id ? styles.active : ""}`}
-          onClick={() => onClubSelect(club.id)}
-        >
-          {club.label}
-        </div>
-      ))}
-    </div>
-  </div>
-));
 
 export default ModaleInfoBanner;
