@@ -12,11 +12,12 @@ import MenuSection from '../components/User/MenuSection';
 import ProgressBar from '../components/ProgressBar';
 
 import ModalFindClub from "../components/Modale/ModalFindClub";
-
+import ChatbotModale from "../components/User/ChatbotModale";
 function UserView() {
   const navigate = useNavigate();
   const { currentUser, currentUserAddresses, userClubs, licences, licenceTypes, roles, setItems, setShowApp, setLastFetchTime } = useStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   const user = useMemo(() => {
     // Vérifier si currentUserAddresses existe
@@ -54,6 +55,14 @@ function UserView() {
     setIsModalOpen(false);
   };
 
+  const handleOpenChatbot = () => {
+    setIsChatbotOpen(true);
+  };
+
+  const handleCloseChatbot = () => {
+    setIsChatbotOpen(false);
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -89,7 +98,7 @@ function UserView() {
         <h2>Entrainement et Diététique</h2>
       </section>
 
-      <button className={styles.chatbotButton}>CHATBOT & SERVICE</button>
+      <button className={styles.chatbotButton} onClick={handleOpenChatbot}>CHATBOT & SERVICE</button>
 
       <section className={styles.membershipInfo}>
         <h2>Mes Cartes et Réductions</h2>
@@ -107,6 +116,8 @@ function UserView() {
       </button>
 
       <ModalFindClub isOpen={isModalOpen} onClose={handleCloseModal} />
+
+      <ChatbotModale isOpen={isChatbotOpen} onClose={handleCloseChatbot} />
 
     </div>
   );
