@@ -1,19 +1,14 @@
 import React from "react";
-import styles from "../../styles/ManageView.module.css";
 import UserImage from "../UserImage";
 import { BirthdayCake, EditPencil, Trash } from 'iconoir-react';
 import { getDisplayFormatedDate } from '../../js/date';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
   const [filterType, setFilterType] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-
-  // useEffect(() => {
-  //   console.log('licences', licences);
-  // }, [licences]);
 
   const filteredLicences = React.useMemo(() => {
     return licences.filter(licence => {
@@ -37,90 +32,113 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
     });
   }, [licences, filterType, filterRole, filterEndDate, searchQuery]);
 
-  const handleSearchChange = (e) => setSearchQuery(e.target.value);
-  const handleTypeChange = (e) => setFilterType(e.target.value);
-  const handleRoleChange = (e) => setFilterRole(e.target.value);
-  const handleEndDateChange = (e) => setFilterEndDate(e.target.value);
-
   return (
-    <div className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <h2 className={styles.subtitle}>Adhérents</h2>
-        <button className={styles.addButton}>Ajouter</button>
+    <div className="space-y-4 p-4 bg-white rounded-lg shadow-sm">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-semibold tracking-tight">Adhérents</h2>
+        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-black text-white hover:bg-gray-800 h-10 px-4 py-2">
+          Ajouter
+        </button>
       </div>
-      <div className={styles.tableContainer}>
-        <div className={styles.filterTable}>
-          <input 
-            type="text" 
-            placeholder="Rechercher" 
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-          <select value={filterType} onChange={handleTypeChange}>
-            <option value="">Type de licence</option>
-            {licenceTypes.map(type => (
-              <option key={type.id} value={type.id}>{type.label}</option>
-            ))}
-          </select>
-          <select value={filterEndDate} onChange={handleEndDateChange}>
-            <option value="">Date de fin</option>
-            <option value="1month" style={{color: 'red'}}>Dans 1 mois</option>
-            <option value="3months" style={{color: 'orange'}}>Dans 3 mois</option>
-            <option value="6months" style={{color: 'blue'}}>Dans 6 mois</option>
-            <option value="1year" style={{color: 'green'}}>Dans 1 an</option>
-          </select>
-          <select value={filterRole} onChange={handleRoleChange}>
-            <option value="">Rôle</option>
-            {roles.map(role => (
-              <option key={role.id} value={role.id}>{role.label}</option>
-            ))}
-          </select>
-        </div>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Personne</th>
-              <th>Licence</th>
-              <th>Type</th>
-              <th>Date de début</th>
-              <th>Date de fin</th>
-              <th>Role</th>
-              <th>Contact</th>
+
+      <div className="flex flex-wrap gap-4 mb-6">
+        <input 
+          type="text" 
+          placeholder="Rechercher" 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[250px]"
+        />
+        <select 
+          value={filterType} 
+          onChange={(e) => setFilterType(e.target.value)}
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[200px]"
+        >
+          <option value="">Type de licence</option>
+          {licenceTypes.map(type => (
+            <option key={type.id} value={type.id}>{type.label}</option>
+          ))}
+        </select>
+        <select 
+          value={filterEndDate} 
+          onChange={(e) => setFilterEndDate(e.target.value)}
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[200px]"
+        >
+          <option value="">Date de fin</option>
+          <option value="1month" className="text-red-500">Dans 1 mois</option>
+          <option value="3months" className="text-orange-500">Dans 3 mois</option>
+          <option value="6months" className="text-blue-500">Dans 6 mois</option>
+          <option value="1year" className="text-green-500">Dans 1 an</option>
+        </select>
+        <select 
+          value={filterRole} 
+          onChange={(e) => setFilterRole(e.target.value)}
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[200px]"
+        >
+          <option value="">Rôle</option>
+          {roles.map(role => (
+            <option key={role.id} value={role.id}>{role.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="relative w-full overflow-auto">
+        <table className="w-full caption-bottom text-sm">
+          <thead className="[&_tr]:border-b">
+            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Personne</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Licence</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Type</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date de début</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date de fin</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Role</th>
+              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Contact</th>
+              <th className="h-12 w-[100px] px-4"></th>
             </tr>
           </thead>
-          <tbody>
-            {filteredLicences.length > 0 && filteredLicences.map(licence => (
-              <tr key={licence.id}>
-                <td>
-                  <div className={styles.userInfo}>
+          <tbody className="[&_tr:last-child]:border-0">
+            {filteredLicences.map(licence => (
+              <tr key={licence.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                <td className="p-4 align-middle">
+                  <div className="flex items-center gap-3">
                     <UserImage name={licence.name} size={40} />
-                    <div className={styles.userDetails}>
-                      <span className={styles.userName}>{licence.name}</span>
-                      <span className={styles.userBirthday}>
-                        <BirthdayCake />
+                    <div className="flex flex-col">
+                      <span className="font-medium">{licence.name}</span>
+                      <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <BirthdayCake className="h-4 w-4" />
                         {getDisplayFormatedDate(licence.naissancedate)}
                       </span>
                     </div>
                   </div>
                 </td>
-                <td>{licence.licencefederation}</td>
-                <td>{licence.label}</td>
-                <td>{getDisplayFormatedDate(licence.dd)}</td>
-                <td>{getDisplayFormatedDate(licence.df)}</td>
-                <td>{licence.role}</td>
-                <td>
-                  <div className={styles.contactInfo}>
-                    <span className={styles.email}>{licence.emailaddress}</span>
-                    <span className={styles.phone}>{licence.phonenumber}</span>
+                <td className="p-4 align-middle">{licence.licencefederation}</td>
+                <td className="p-4 align-middle">{licence.label}</td>
+                <td className="p-4 align-middle">{getDisplayFormatedDate(licence.dd)}</td>
+                <td className="p-4 align-middle">{getDisplayFormatedDate(licence.df)}</td>
+                <td className="p-4 align-middle">{licence.role}</td>
+                <td className="p-4 align-middle">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm">{licence.emailaddress}</span>
+                    <span className="text-sm text-muted-foreground">{licence.phonenumber}</span>
+                  </div>
+                </td>
+                <td className="p-4 align-middle">
+                  <div className="flex items-center gap-2">
+                    <button className="inline-flex items-center justify-center rounded-md w-8 h-8 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none hover:bg-muted">
+                      <EditPencil className="h-4 w-4" />
+                    </button>
+                    <button className="inline-flex items-center justify-center rounded-md w-8 h-8 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none hover:bg-red-100 text-red-700">
+                      <Trash className="h-4 w-4" />
+                    </button>
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
-          {filteredLicences.length === 0 && (
-            <p className={styles.noLicences}>Aucunes licences actives.</p>
-          )}
         </table>
+        {filteredLicences.length === 0 && (
+          <p className="text-center text-muted-foreground py-6">Aucunes licences actives.</p>
+        )}
       </div>
     </div>
   );
