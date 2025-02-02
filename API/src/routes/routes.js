@@ -23,6 +23,7 @@ const { getMatchTeam, getMatchTeamById, addMatchTeam, updateMatchTeam, deleteMat
 const { getMatchScore, getMatchScoreById, addMatchScore, updateMatchScore, deleteMatchScore } = require('../controllers/matchScoreControllers');
 const { getTeam, getTeamById, addTeam, updateTeam, deleteTeam } = require('../controllers/teamControllers');
 const { getTeamMember, getTeamMemberById, addTeamMember, updateTeamMember, deleteTeamMember } = require('../controllers/teamMemberControllers');
+const { getGenerateResponse } = require('../controllers/generateResponseController');
 
 const { getGenerateImage } = require('../controllers/generateImageControllers');
 
@@ -173,6 +174,9 @@ router.delete('/teamMember/:id', authenticateToken, deleteTeamMember);
 
 // Routes pour générer une image 
 router.get('/generateImage', getGenerateImage);
+
+// Routes pour générer une réponse
+router.get('/generateResponse', authenticateToken, getGenerateResponse);
 
 // Routes génériques
 router.get('/:table', getEntries);

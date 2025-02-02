@@ -3,7 +3,8 @@ import { APIController } from './ApiController';
 
 const api = new APIController({
   baseURL: 'http://localhost:3200/api',
-  timeout: 5000,
+  // timeout: 5000,
+  timeout: 720000,
   headers: {
     'Content-Type': 'application/json'
   }
