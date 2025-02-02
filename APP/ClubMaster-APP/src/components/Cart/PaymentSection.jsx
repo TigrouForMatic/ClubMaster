@@ -1,31 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import styles from "../../styles/CartPage.module.css";
+import {
+  CreditCard,
+  Wallet,
+  Apple,
+  Chrome,
+  PlusCircle,
+  Tag
+} from 'lucide-react';
 
 function PaymentSection() {
   const [promoCode, setPromoCode] = useState('');
   const [savedCards, setSavedCards] = useState([]);
   const [showAddCard, setShowAddCard] = useState(false);
+  const [newCard, setNewCard] = useState({
+    number: '',
+    expiry: '',
+    cvv: '',
+    saveCard: false
+  });
 
   useEffect(() => {
-    // Fetch user's saved cards
-    fetchSavedCards();
-  }, []);
-
-  const fetchSavedCards = async () => {
-    // Implement API call to fetch user's saved cards
-    // For now, we'll use dummy data
+    // Simuler le chargement des cartes sauvegardées
     setSavedCards([
       { id: 1, last4: '1234', brand: 'Visa' },
       { id: 2, last4: '5678', brand: 'Mastercard' },
     ]);
+  }, []);
+
+  const handleNewCardSubmit = (e) => {
+    e.preventDefault();
+    // Logique pour ajouter une nouvelle carte
+    console.log('Nouvelle carte:', newCard);
+    setShowAddCard(false);
+  };
+
+  const handleCardChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setNewCard(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
   const handleApplyPromo = () => {
     console.log("Code promo appliqué:", promoCode);
-  };
-
-  const handleAddCard = () => {
-    setShowAddCard(true);
   };
 
   const handlePayWithCard = (cardId) => {
@@ -48,60 +66,140 @@ function PaymentSection() {
   };
 
   return (
-    <div className={styles.paymentSection}>
-      <h3>Choisir un mode de paiement</h3>
-      
-      {/* Cartes bancaires sauvegardées */}
-      <h4>Cartes bancaires</h4>
-      {savedCards.map(card => (
-        <div key={card.id} className={styles.paymentOption} onClick={() => handlePayWithCard(card.id)}>
-          <img src={`/path-to-${card.brand.toLowerCase()}-icon.png`} alt={card.brand} />
-          <span>{card.brand} se terminant par {card.last4}</span>
-        </div>
-      ))}
-      <button onClick={handleAddCard}>Ajouter une nouvelle carte</button>
-      
-      {showAddCard && (
-        <div className={styles.addCardForm}>
-          {/* Implement add card form */}
-          <input type="text" placeholder="Numéro de carte" />
-          <input type="text" placeholder="Date d'expiration" />
-          <input type="text" placeholder="CVV" />
-          <label>
-            <input type="checkbox" /> Sauvegarder cette carte pour de futurs achats
-          </label>
-          <button>Ajouter la carte</button>
-        </div>
-      )}
-
-      {/* PayPal */}
-      <h4>PayPal</h4>
-      <div className={styles.paymentOption} onClick={handlePayWithPaypal}>
-        <img src="/path-to-paypal-icon.png" alt="PayPal" />
-        <span>Payer avec PayPal</span>
+    <div className="space-y-6">
+      <div className="flex items-center gap-2 border-b pb-4">
+        <h2 className="text-2xl font-semibold">Mode de paiement</h2>
+        <Wallet className="h-5 w-5" />
       </div>
 
-      {/* Apple Pay et Google Pay */}
-      <h4>Autres modes de paiement</h4>
-      <div className={styles.paymentOption} onClick={handlePayWithApplePay}>
-        <img src="/path-to-apple-pay-icon.png" alt="Apple Pay" />
-        <span>Payer avec Apple Pay</span>
+      {/* Cartes sauvegardées */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium">Cartes bancaires</h3>
+        <div className="grid gap-3">
+          {savedCards.map(card => (
+            <div
+              key={card.id}
+              className="p-4 cursor-pointer hover:bg-accent/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <CreditCard className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="font-medium">{card.brand}</p>
+                  <p className="text-sm text-muted-foreground">
+                    se terminant par {card.last4}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button
+          className="w-full p-2 border rounded-md flex items-center justify-center gap-2 hover:bg-gray-100"
+          onClick={() => setShowAddCard(!showAddCard)}
+        >
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Ajouter une nouvelle carte
+        </button>
+
+        {showAddCard && (
+          <div className="p-6 border rounded-lg">
+            <form onSubmit={handleNewCardSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="cardNumber">Numéro de carte</label>
+                <input
+                  id="cardNumber"
+                  name="number"
+                  placeholder="1234 5678 9012 3456"
+                  value={newCard.number}
+                  onChange={handleCardChange}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="expiry">Date d'expiration</label>
+                  <input
+                    id="expiry"
+                    name="expiry"
+                    placeholder="MM/AA"
+                    value={newCard.expiry}
+                    onChange={handleCardChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="cvv">CVV</label>
+                  <input
+                    id="cvv"
+                    name="cvv"
+                    placeholder="123"
+                    value={newCard.cvv}
+                    onChange={handleCardChange}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="saveCard"
+                  name="saveCard"
+                  checked={newCard.saveCard}
+                  onCheckedChange={(checked) => 
+                    setNewCard(prev => ({ ...prev, saveCard: checked }))
+                  }
+                />
+                <label htmlFor="saveCard">
+                  Sauvegarder pour mes prochains achats
+                </label>
+              </div>
+              <button type="submit" className="w-full p-2 border rounded-md flex items-center justify-center gap-2 hover:bg-gray-100">
+                Ajouter la carte
+              </button>
+            </form>
+          </div>
+        )}
       </div>
-      <div className={styles.paymentOption} onClick={handlePayWithGooglePay}>
-        <img src="/path-to-google-pay-icon.png" alt="Google Pay" />
-        <span>Payer avec Google Pay</span>
+
+      {/* Autres moyens de paiement */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium">Autres moyens de paiement</h3>
+        <div className="grid gap-3">
+          {[
+            { icon: Wallet, label: 'PayPal' },
+            { icon: Apple, label: 'Apple Pay' },
+            { icon: Chrome, label: 'Google Pay' }
+          ].map((payment) => (
+            <div
+              key={payment.label}
+              className="p-4 cursor-pointer hover:bg-accent/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <payment.icon className="h-5 w-5 text-muted-foreground" />
+                <p className="font-medium">Payer avec {payment.label}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Code promo */}
-      <div className={styles.promoCodeSection}>
-        <h4>Codes cartes cadeaux et bons de réduction disponibles</h4>
-        <input 
-          type="text" 
-          placeholder="Saisissez le code"
-          value={promoCode}
-          onChange={(e) => setPromoCode(e.target.value)}
-        />
-        <button onClick={handleApplyPromo}>Appliquer</button>
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Tag className="h-5 w-5" />
+          <h3 className="text-lg font-medium">Code promo</h3>
+        </div>
+        <div className="flex gap-2">
+          <input
+            value={promoCode}
+            onChange={(e) => setPromoCode(e.target.value)}
+            placeholder="Saisissez votre code"
+            className="flex-1"
+          />
+          <button className="p-2 border rounded-md flex items-center justify-center gap-2 hover:bg-gray-100">
+            Appliquer
+          </button>
+        </div>
       </div>
     </div>
   );

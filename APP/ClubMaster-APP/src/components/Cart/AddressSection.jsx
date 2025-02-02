@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from "../../styles/CartPage.module.css";
+import { PlusCircle } from 'lucide-react';
 import api from '../../js/App/Api';
 
 function AddressSection({ currentUserAddresses, selectedAddressId, onAddressSelect, currentUser, addItem }) {
@@ -42,28 +42,76 @@ function AddressSection({ currentUserAddresses, selectedAddressId, onAddressSele
   };
 
   return (
-    <div className={styles.paymentSection}>
-      <h3>Adresse de facturation</h3>
-      {currentUserAddresses.map((add) => (
-        <div 
-          key={add.id} 
-          className={`${styles.addressOption} ${selectedAddressId === add.id ? styles.selectedAddress : ''}`}
-          onClick={() => onAddressSelect(add.id)}
-        >
-          <p>{add.street}</p>
-          <p>{add.postalcode} {add.city}</p>
-          <p>{add.state}, {add.country}</p>
-        </div>
-      ))}
-      <button onClick={handleAddAddress} className={styles.addButton}>Ajouter une adresse</button>
+    <div className="space-y-4">
+      <h3 className="text-lg font-semibold">Adresse de facturation</h3>
+      
+      <div className="grid gap-3">
+        {currentUserAddresses.map((add) => (
+          <div
+            key={add.id}
+            className={`p-4 cursor-pointer transition-colors ${
+              selectedAddressId === add.id ? 'border-primary' : 'hover:bg-accent'
+            }`}
+            onClick={() => onAddressSelect(add.id)}
+          >
+            <p className="text-sm">{add.street}</p>
+            <p className="text-sm">{add.postalcode} {add.city}</p>
+            <p className="text-sm text-muted-foreground">{add.state}, {add.country}</p>
+          </div>
+        ))}
+      </div>
+
+      <button
+        className="p-2 border rounded-md flex items-center justify-center gap-2 hover:bg-gray-100"
+        onClick={handleAddAddress}
+      >
+        <PlusCircle className="h-4 w-4 mr-2" />
+        Ajouter une adresse
+      </button>
+
       {showAddressForm && (
-        <form onSubmit={handleSubmitAddress} className={styles.addressForm}>
-          <input type="text" name="street" value={newAddress.street} onChange={handleAddressChange} placeholder="Rue" required />
-          <input type="text" name="city" value={newAddress.city} onChange={handleAddressChange} placeholder="Ville" required />
-          <input type="text" name="state" value={newAddress.state} onChange={handleAddressChange} placeholder="État/Région" required />
-          <input type="text" name="postalcode" value={newAddress.postalcode} onChange={handleAddressChange} placeholder="Code postal" required />
-          <input type="text" name="country" value={newAddress.country} onChange={handleAddressChange} placeholder="Pays" required />
-          <button type="submit">Ajouter</button>
+        <form onSubmit={handleSubmitAddress} className="space-y-4">
+          <input
+            type="text"
+            name="street"
+            value={newAddress.street}
+            onChange={handleAddressChange}
+            placeholder="Rue"
+            required
+          />
+          <input
+            type="text"
+            name="city"
+            value={newAddress.city}
+            onChange={handleAddressChange}
+            placeholder="Ville"
+            required
+          />
+          <input
+            type="text"
+            name="state"
+            value={newAddress.state}
+            onChange={handleAddressChange}
+            placeholder="État/Région"
+            required
+          />
+          <input
+            type="text"
+            name="postalcode"
+            value={newAddress.postalcode}
+            onChange={handleAddressChange}
+            placeholder="Code postal"
+            required
+          />
+          <input
+            type="text"
+            name="country"
+            value={newAddress.country}
+            onChange={handleAddressChange}
+            placeholder="Pays"
+            required
+          />
+          <button type="submit" className="w-full p-2 border rounded-md flex items-center justify-center gap-2 hover:bg-gray-100">Ajouter</button>
         </form>
       )}
     </div>
