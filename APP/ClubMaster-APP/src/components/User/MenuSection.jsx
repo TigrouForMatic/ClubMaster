@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
 import useStore from '../../store/store';
-import styles from '../../styles/MenuSection.module.css';
 import { getDisplayFormatedDate } from "../../js/date";
 import { EditPencil } from 'iconoir-react';
 import ModalEditPersonnalData from '../Modale/ModalEditPersonnalData';
 
 const MenuItem = ({ title, content, isOpen, toggleItem }) => (
-  <div className={styles.menuItemWrapper}>
-    <div className={styles.menuItem} onClick={toggleItem}>
-      <h3>{title}</h3>
-      <span className={`${styles.arrow} ${isOpen ? styles.rotated : ''}`}>
+  <div className="mb-2 border-b border-gray-200 last:border-b-0">
+    <div 
+      onClick={toggleItem}
+      className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
+    >
+      <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+      <span className={`transform transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}>
         →
       </span>
     </div>
-    {isOpen && <div className={styles.menuItemContent}>{content}</div>}
+    {isOpen && (
+      <div className="p-4 bg-gray-50 rounded-b-lg">
+        {content}
+      </div>
+    )}
   </div>
 );
 
@@ -26,25 +32,20 @@ const MenuSection = () => {
     setOpenItem(openItem === index ? null : index);
   };
 
-  const handleEditPersonalInfo = () => {
-    setIsModalPersonnalDataOpen(true);
-  };
-
-  const closeModalPersonnalData = () => {
-    setIsModalPersonnalDataOpen(false);
-  };
-
   const menuItems = [
     {
       title: "Club(s)",
       content: (
-        <ul>
+        <ul className="space-y-4">
           {userClubs.map((club, index) => (
-            <li key={index}>
-              <strong>{club.label}</strong>
-              {club.oldlabel && <span> (Ancien nom : {club.oldlabel})</span>}
-              <br />
-              <small>Créé le : {getDisplayFormatedDate(new Date(club.creationdate))}</small>
+            <li key={index} className="bg-white p-3 rounded-lg shadow-sm">
+              <span className="font-semibold text-gray-900">{club.label}</span>
+              {club.oldlabel && (
+                <span className="text-gray-600 text-sm"> (Ancien nom : {club.oldlabel})</span>
+              )}
+              <div className="text-sm text-gray-500 mt-1">
+                Créé le : {getDisplayFormatedDate(new Date(club.creationdate))}
+              </div>
             </li>
           ))}
         </ul>
@@ -53,50 +54,61 @@ const MenuSection = () => {
     {
       title: "Paiements",
       content: (
-        <div>
-          <p>Liste des moyens de paiement :</p>
-          {/* Ajoutez ici la liste des moyens de paiement */}
+        <div className="text-gray-600">
+          <p className="font-medium">Liste des moyens de paiement :</p>
+          {/* Contenu des paiements */}
         </div>
       )
     },
     {
       title: "Informations Personnelles",
       content: (
-        <div>
-          <div className={styles.headerWithButton}>
-            <h4>Informations</h4>
-            <button className={styles.editButton} onClick={handleEditPersonalInfo}>
-              <EditPencil />
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-lg font-medium text-gray-900">Informations</h4>
+            <button 
+              onClick={() => setIsModalPersonnalDataOpen(true)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <EditPencil className="w-5 h-5 text-blue-600" />
             </button>
           </div>
-          <p><strong>Nom :</strong> {currentUser.name}</p>
-          <p><strong>Date de naissance :</strong> {new Date(currentUser.naissancedate).toLocaleDateString()}</p>
-          <p><strong>Téléphone :</strong> {currentUser.phonenumber}</p>
-          <p><strong>Email :</strong> {currentUser.emailaddress}</p>
-          <h4>Adresses :</h4>
-          <ul>
-            {currentUserAddresses.map((add, index) => (
-              <li key={index}>
-                {add.street}, {add.city}, {add.state} {add.postalcode}, {add.country}
-              </li>
-            ))}
-          </ul>
+          
+          <div className="space-y-2 text-gray-600">
+            <p><span className="font-medium">Nom :</span> {currentUser.name}</p>
+            <p><span className="font-medium">Date de naissance :</span> {new Date(currentUser.naissancedate).toLocaleDateString()}</p>
+            <p><span className="font-medium">Téléphone :</span> {currentUser.phonenumber}</p>
+            <p><span className="font-medium">Email :</span> {currentUser.emailaddress}</p>
+          </div>
+
+          <div className="mt-4">
+            <h4 className="text-lg font-medium text-gray-900 mb-2">Adresses</h4>
+            <ul className="space-y-2">
+              {currentUserAddresses.map((add, index) => (
+                <li key={index} className="bg-white p-3 rounded-lg shadow-sm text-gray-600">
+                  {add.street}, {add.city}, {add.state} {add.postalcode}, {add.country}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )
     },
     {
       title: "Inviter des amis",
       content: (
-        <div>
-          <p>Vous souhaitez inviter un ami ?</p>
-          {/* Ajoutez ici un formulaire ou un bouton pour inviter des amis */}
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Vous souhaitez inviter un ami ?</p>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            Inviter un ami
+          </button>
         </div>
       )
     }
   ];
 
   return (
-    <section className={styles.menuSection}>
+    <section className="bg-white rounded-xl shadow-sm p-6 space-y-2">
       {menuItems.map((item, index) => (
         <MenuItem
           key={index}
@@ -108,7 +120,7 @@ const MenuSection = () => {
       ))}
       <ModalEditPersonnalData
         isOpen={isModalPersonnalDataOpen}
-        onClose={closeModalPersonnalData}
+        onClose={() => setIsModalPersonnalDataOpen(false)}
       />
     </section>
   );

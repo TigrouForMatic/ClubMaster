@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../js/App/Api';
 import useStore from '../store/store';
-import styles from '../styles/UserView.module.css';
 import { SystemShut, Plus } from 'iconoir-react';
 
 import UserImage from '../components/UserImage';
@@ -10,9 +9,9 @@ import LicenceList from '../components/User/LicenceList';
 import BadgeSection from '../components/User/BadgeSection';
 import MenuSection from '../components/User/MenuSection';
 import ProgressBar from '../components/ProgressBar';
-
 import ModalFindClub from "../components/Modale/ModalFindClub";
 import ChatbotModale from "../components/User/ChatbotModale";
+
 function UserView() {
   const navigate = useNavigate();
   const { currentUser, currentUserAddresses, userClubs, licences, licenceTypes, roles, setItems, setShowApp, setLastFetchTime } = useStore();
@@ -20,7 +19,6 @@ function UserView() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   const user = useMemo(() => {
-    // Vérifier si currentUserAddresses existe
     if (!currentUserAddresses || currentUserAddresses.length === 0) {
       return {
         ...currentUser,
@@ -28,9 +26,7 @@ function UserView() {
       };
     }
     const { postalcode = '', city = '' } = currentUserAddresses[0] || {};
-  
     const addressLabel = postalcode && city ? `${postalcode} ${city}` : 'Aucune Adresse';
-  
     return {
       ...currentUser,
       address: addressLabel
@@ -39,86 +35,100 @@ function UserView() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    
-    setItems('currentUser', null); 
+    setItems('currentUser', null);
     setItems('login', null);
     setLastFetchTime(null);
     navigate('/');
     setShowApp();
   };
 
-  const handleNewClub = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleOpenChatbot = () => {
-    setIsChatbotOpen(true);
-  };
-
-  const handleCloseChatbot = () => {
-    setIsChatbotOpen(false);
-  };
-
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <UserImage name={user.name} />
-        <div className={styles.userInfo}>
-          <h1>{user.name}</h1>
-          <p>{user.address}</p>
+    <div className="container mx-auto px-4 py-8 max-w-3xl pb-24">
+      <div className="space-y-6">
+        {/* Header Section */}
+        <div className="bg-white rounded-lg shadow-sm p-6 flex items-center space-x-4">
+          <UserImage name={user.name} className="w-16 h-16 rounded-full" />
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
+            <p className="text-gray-500">{user.address}</p>
+          </div>
         </div>
-      </header>
 
-      <section className={styles.levelSection}>
-        <h2>My Level</h2>
-        <div className={styles.levelInfo}>
-          <p>Clubmaster LEVEL {currentUser.level}</p>
-          <p>CMP to spend: {currentUser.points}</p>
+        {/* Level Section */}
+        <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold text-gray-900">Mon Niveau</h2>
+            <span className="text-blue-600 font-medium">
+              {currentUser.points} CMP disponibles
+            </span>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>Niveau {currentUser.level}</span>
+              <span>251 CMP pour niveau suivant</span>
+            </div>
+            <ProgressBar 
+              value={currentUser.points} 
+              max={1000}
+              className="h-2 bg-blue-100 rounded-full"
+              barClassName="bg-blue-600 rounded-full"
+            />
+          </div>
         </div>
-        <ProgressBar value={currentUser.points} max={1000} />
-        <p>251 CMP more to reach Level 2</p>
-      </section>
 
-      <LicenceList />
+        {/* Licences Section */}
+        <LicenceList />
 
-      <BadgeSection />
+        {/* Badges Section */}
+        <BadgeSection />
 
-      <button className={styles.newClubButton} onClick={handleNewClub}>
-        <Plus className={styles.iconNewClub} />
-        Rejoindre un nouveau club
-      </button>
+        {/* Join Club Button */}
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+        >
+          <Plus className="w-5 h-5" />
+          <span>Rejoindre un nouveau club</span>
+        </button>
 
-      <MenuSection />
+        {/* Menu Section */}
+        <MenuSection />
 
-      <section className={styles.membershipInfo}>
-        <h2>Entrainement et Diététique</h2>
-      </section>
-
-      <button className={styles.chatbotButton} onClick={handleOpenChatbot}>CHATBOT & SERVICE</button>
-
-      <section className={styles.membershipInfo}>
-        <h2>Mes Cartes et Réductions</h2>
-        {/* <div className={styles.levelInfo}>
-          <p>Adidas - 10%</p>
-          <p>Decathlon -30%</p>
+        {/* Training Section */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Entrainement et Diététique
+          </h2>
         </div>
-        <ProgressBar value={500} max={1000} />
-        <p>1 month left to enjoy</p> */}
-      </section>
 
-      <button className={styles.logoutButton} onClick={handleLogout}>
-        <SystemShut className='icon--detail__modal' />
-        Deconnexion
-      </button>
+        {/* Chatbot Button */}
+        <button 
+          onClick={() => setIsChatbotOpen(true)}
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg transition-colors"
+        >
+          CHATBOT & SERVICE
+        </button>
 
-      <ModalFindClub isOpen={isModalOpen} onClose={handleCloseModal} />
+        {/* Rewards Section */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Mes Cartes et Réductions
+          </h2>
+        </div>
 
-      <ChatbotModale isOpen={isChatbotOpen} onClose={handleCloseChatbot} />
+        {/* Logout Button */}
+        <button 
+          onClick={handleLogout}
+          className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+        >
+          <SystemShut className="w-5 h-5" />
+          <span>Déconnexion</span>
+        </button>
 
+        {/* Modals */}
+        <ModalFindClub isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <ChatbotModale isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
+      </div>
     </div>
   );
 }
