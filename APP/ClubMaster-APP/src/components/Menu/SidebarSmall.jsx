@@ -1,6 +1,13 @@
-import { Menu } from 'iconoir-react';
+import { Menu, User, Home, ArcheryMatch, Calendar, Shop } from 'iconoir-react';
+import ClubIcon from './ClubIcon';
+import useStore from '../../store/store';
+import { NavLink } from 'react-router-dom';
 
 function SidebarSmall({ onMenuClick, isSmall }) {
+  const { currentUserRoles, userClubs } = useStore();
+  const isHighLevel = currentUserRoles.some(r => r.level >= 3);
+  const isPro = userClubs.some(c => c.personmoralplan === 'Pro');
+
   return (
     <div 
       className={`fixed inset-y-0 left-0 z-40 flex flex-col bg-white shadow-lg dark:bg-gray-900 
@@ -15,6 +22,48 @@ function SidebarSmall({ onMenuClick, isSmall }) {
         >
           <Menu className="h-5 w-5 text-gray-500 dark:text-gray-400" />
         </button>
+      </div>
+
+      <nav className="flex-1 space-y-1 px-2 py-4">
+        <NavLink to="/" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
+          isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+        }`}>
+          <Home className="h-5 w-5" />
+        </NavLink>
+
+        <NavLink to="/match" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
+          isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+        }`}>
+          <ArcheryMatch className="h-5 w-5" />
+        </NavLink>
+
+        <NavLink to="/calendar" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
+          isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+        }`}>
+          <Calendar className="h-5 w-5" />
+        </NavLink>
+
+        <NavLink to="/shop" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
+          isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+        }`}>
+          <Shop className="h-5 w-5" />
+        </NavLink>
+
+        {isHighLevel && isPro && (
+          <NavLink to="/manage" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
+            isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+          }`}>
+            <ClubIcon className="h-5 w-5" />
+          </NavLink>
+        )}
+      </nav>
+
+      <div className="border-t p-4">
+        <NavLink to="/user" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
+          isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+        }`}>
+          <User className="h-5 w-5" />
+        </NavLink>
       </div>
     </div>
   );
