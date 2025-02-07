@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
 import { EditPencil, Trash } from 'iconoir-react';
+import CustomConfirm from '../CustomConfirm';
 
 function AddressForm() {
     const addItem = useStore((state) => state.addItem);
     const updateItem = useStore((state) => state.updateItem);
     const deleteItem = useStore((state) => state.deleteItem);
     const { currentUser, currentUserAddresses } = useStore();
-    
+    const [confirmDeleteAddressOpen, setConfirmDeleteAddressOpen] = useState(false);
     const [showAddressForm, setShowAddressForm] = useState(false);
     const [editAddress, setEditAddress] = useState(null);
     const [newAddress, setNewAddress] = useState({
@@ -91,7 +92,8 @@ function AddressForm() {
                                     <EditPencil className="h-4 w-4" />
                                 </button>
                                 <button 
-                                    onClick={() => handleDeleteAddress(add.id)}
+                                    // onClick={() => setConfirmDeleteAddressOpen(true)}
+                                    onClick={() => handleDeleteAddress(editAddress.id)}
                                     className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-full transition-colors"
                                 >
                                     <Trash className="h-4 w-4" />
@@ -264,6 +266,14 @@ function AddressForm() {
                     </form>
                 </div>
             )}
+
+            <CustomConfirm
+                isOpen={confirmDeleteAddressOpen}
+                onClose={() => setConfirmDeleteAddressOpen(false)}
+                onConfirm={() => handleDeleteAddress(editAddress.id)}
+                message="Voulez-vous vraiment supprimer cette adresse ?"
+            />
+
         </div>
     );
 }
