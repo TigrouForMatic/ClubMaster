@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import useStore from '../../store/store';
-import styles from "../../styles/ModaleCreateEvent.module.css";
 import { saveAs } from 'file-saver';
 import ical from 'ical-generator';
+import { Calendar, X } from 'lucide-react';
 
 function ModalExportPlanning({ isOpen, onClose }) {
 
@@ -105,66 +105,94 @@ function ModalExportPlanning({ isOpen, onClose }) {
     <Modal
       isOpen={isOpen}
       onRequestClose={handleClose}
-      className={styles.modal}
-      overlayClassName={styles.modalOverlay}
+      className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-auto mt-10 overflow-hidden"
+      overlayClassName="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
     >
-      <div className={styles.headerModal}>
-        <h2 className={styles.title}>Exporter le planning</h2>
-        <button onClick={handleClose} className={styles.closeButton}>&times;</button>
-      </div>
+      <div className="flex flex-col h-full max-h-[90vh]">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b">
+          <div className="flex items-center space-x-2">
+            <Calendar className="w-5 h-5 text-gray-500" />
+            <h2 className="text-xl font-semibold text-gray-900">
+              Exporter le planning
+            </h2>
+          </div>
+          <button
+            onClick={handleClose}
+            className="text-gray-400 hover:text-gray-500 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-      <form onSubmit={handleSubmit} className={styles.content}>
-        
-        <div className={styles.dateTimeSection}>
-          <div className={styles.dateTimeBlock}>
-            <div className={styles.dateTimeContainer}>
-              <div className={styles.inputGroup}>
-                <label>Date de début</label>
-                <div className={styles.dateInput}>
-                  <input
-                    type="date"
-                    name="startDate"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    placeholder="Date de début"
-                    required
-                  />
-                </div>
-                <label>Date de fin</label>
-                <div className={styles.dateInput}>
-                  <input
-                    type="date"
-                    name="endDate"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    placeholder="Date de fin"
-                    required
-                  />
-                </div>
+        {/* Content */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto">
+          {/* Date Range */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Date de début
+                </label>
+                <input
+                  type="date"
+                  name="startDate"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Date de fin
+                </label>
+                <input
+                  type="date"
+                  name="endDate"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
               </div>
             </div>
           </div>
-        </div>
 
-        <hr/>
+          {/* Export Format */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Format d'export
+            </label>
+            <select
+              value={exportFormat}
+              onChange={(e) => setExportFormat(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="ics">iCalendar (.ics) - Apple Calendar</option>
+              <option value="google">Google Calendar</option>
+            </select>
+          </div>
+        </form>
 
-        <div className={styles.formatSelection}>
-          <label>Format d'export</label>
-          <select 
-            value={exportFormat} 
-            onChange={(e) => setExportFormat(e.target.value)}
-            className={styles.selectFormat}
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-3 p-6 border-t bg-gray-50">
+          <button
+            type="button"
+            onClick={handleClose}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            <option value="ics">iCalendar (.ics) - Apple Calendar</option>
-            <option value="google">Google Calendar</option>
-          </select>
+            Annuler
+          </button>
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Exporter le planning
+          </button>
         </div>
-
-        <div className={styles.buttonContainer}>
-          <button type="button" onClick={handleClose} className={styles.unregisterButton}>Annuler</button>
-          <button type="submit" className={styles.registerButton}>Exporter le planning</button>
-        </div>
-      </form>
+      </div>
     </Modal>
   );
 }
