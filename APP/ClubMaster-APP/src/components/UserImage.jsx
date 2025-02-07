@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { getColorFromString } from '../js/color';
-import styles from '../styles/UserImage.module.css';
 
 const UserImage = ({ name, size = 60 }) => {
     const initials = useMemo(() => {
@@ -17,7 +16,17 @@ const UserImage = ({ name, size = 60 }) => {
 
     return (
         <div
-            className={styles.profilePic}
+            className={`
+                flex items-center justify-center
+                rounded-full
+                text-white
+                mr-4
+                uppercase
+                transition-all
+                duration-200
+                hover:opacity-90
+                select-none
+            `}
             style={{ 
                 backgroundColor, 
                 width: `${size}px`, 
@@ -25,7 +34,7 @@ const UserImage = ({ name, size = 60 }) => {
                 fontSize: `${fontSize}px` 
             }}
         >
-            <span>{initials}</span>
+            <span className="font-medium">{initials}</span>
         </div>
     );
 };
