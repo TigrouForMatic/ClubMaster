@@ -8,11 +8,10 @@ import UserImage from '../components/UserImage';
 import LicenceList from '../components/User/LicenceList';
 import BadgeSection from '../components/User/BadgeSection';
 import MenuSection from '../components/User/MenuSection';
-import ProgressBar from '../components/ProgressBar';
 import ModalFindClub from "../components/Modale/ModalFindClub";
 import ChatbotModale from "../components/User/ChatbotModale";
 
-// import PrgressBarUi from "../components/ui/progress";
+import { Progress } from "../components/ui/progress";
 
 function UserView() {
   const navigate = useNavigate();
@@ -69,13 +68,10 @@ function UserView() {
               <span>Niveau {currentUser.level}</span>
               <span>251 CMP pour niveau suivant</span>
             </div>
-            <ProgressBar 
-              value={currentUser.points} 
-              max={1000}
-              className="h-2 bg-blue-100 rounded-full"
-              barClassName="bg-blue-600 rounded-full"
+            <Progress 
+              className="h-2 w-full"
+              value={(currentUser.points / 1000) * 100} 
             />
-            {/* <PrgressBarUi /> */}
           </div>
         </div>
 
