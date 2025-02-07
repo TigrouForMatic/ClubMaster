@@ -1,14 +1,20 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import styles from '../../styles/ModaleFindClub.module.css';
 import Select from 'react-select';
 import { toSqlDate, getDateEndLicence } from '../../js/date';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
+import { Search, MapPin, X } from 'lucide-react';
 
 const ClubCard = React.memo(({ club, onClick }) => (
-  <li className={styles.clubCard} onClick={() => onClick(club)}>
-    <h3 className={styles.clubTitle}>{club.label}</h3>
-  </li>
+  <div 
+    onClick={() => onClick(club)}
+    className="group relative flex cursor-pointer items-center justify-between rounded-lg border p-4 hover:bg-gray-50 transition-colors"
+  >
+    <h3 className="text-sm font-medium leading-none">{club.label}</h3>
+    <div className="ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+      <span className="text-xs text-muted-foreground">Cliquer pour rejoindre</span>
+    </div>
+  </div>
 ));
 
 const ModalFindClub = ({ isOpen, onClose }) => {
@@ -151,10 +157,17 @@ const ModalFindClub = ({ isOpen, onClose }) => {
 
   if (error) {
     return (
-      <div className={styles.modalOverlay}>
-        <div className={styles.modal}>
-          <div className={styles.error}>{error}</div>
-          <button className={styles.closeButton} onClick={onClose}>&times;</button>
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div className="bg-white rounded-lg shadow-lg w-full max-w-md mx-4">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Erreur</h2>
+              <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="text-red-500">{error}</p>
+          </div>
         </div>
       </div>
     );
@@ -167,48 +180,94 @@ const ModalFindClub = ({ isOpen, onClose }) => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modal}>
-        <button className={styles.closeButton} onClick={onClose}>&times;</button>
-        <div className={styles.findClubContainer}>
-          <h1 className={styles.title}>Trouver un Club</h1>
-          <div className={styles.filters}>
-            <div className={styles.filterSection}>
-              <h3>Nom</h3>
-              <input
-                type="text"
-                placeholder="Nom du club"
-                value={nomClub}
-                onChange={(e) => setNomClub(e.target.value)}
-                className={styles.input}
-              />
-            </div>
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl mx-4">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-semibold">Trouver un Club</h2>
+            <button 
+              onClick={onClose}
+              className="rounded-full p-1.5 hover:bg-gray-100 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
 
-            <div className={styles.filterSection}>
-              <h3>Lieu</h3>
-              <Select
-                options={locations}
-                className={styles.select}
-                onChange={setSelectedLocation}
-                placeholder="Sélectionner un lieu"
-                value={selectedLocation}
-              />
+          <div className="space-y-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  <Search className="h-4 w-4 inline mr-2" />
+                  Nom
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nom du club"
+                  value={nomClub}
+                  onChange={(e) => setNomClub(e.target.value)}
+                  className="w-full px-3 py-2 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  <MapPin className="h-4 w-4 inline mr-2" />
+                  Lieu
+                </label>
+                <Select
+                  options={locations}
+                  onChange={setSelectedLocation}
+                  placeholder="Sélectionner un lieu"
+                  value={selectedLocation}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+              </div>
             </div>
           </div>
 
-          <ul className={styles.clubsList}>
-            {currentClubs.length > 0 ? (
-              currentClubs.map((club) => (
-                <ClubCard key={club.id} club={club} onClick={handleClick} />
-              ))
-            ) : (
-              <p className={styles.noClubs}>Aucun club ne correspond à ces critères.</p>
-            )}
-          </ul>
+          <div className="border rounded-lg">
+            <div className="max-h-[400px] overflow-y-auto p-4 space-y-2">
+              {currentClubs.length > 0 ? (
+                currentClubs.map((club) => (
+                  <ClubCard key={club.id} club={club} onClick={handleClick} />
+                ))
+              ) : (
+                <div className="text-center space-y-4 py-8">
+                  <p className="text-gray-500">
+                    Aucun club ne correspond à ces critères.
+                  </p>
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <p className="text-sm text-blue-700">
+                      Si vous ne trouvez pas votre club dans la liste, 
+                      <a 
+                        href="mailto:contact@clubmaster.fr" 
+                        className="font-medium underline hover:text-blue-800 ml-1"
+                      >
+                        contactez-nous
+                      </a>
+                      . Nous serons ravis d'accompagner votre club dans sa digitalisation !
+                    </p>
+                    <p className="text-sm text-blue-700 mt-2">
+                      <span className="font-medium">Avantage :</span> En intégrant tous vos clubs sur ClubMaster, vous bénéficiez d'une gestion centralisée de toutes vos activités sportives sur une seule application.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
-          <div className={styles.pagination}>
+          <div className="flex justify-center mt-4 gap-1">
             {Array.from({ length: Math.ceil(filteredClubs.length / clubsPerPage) }, (_, i) => (
-              <button key={i} onClick={() => paginate(i + 1)} className={styles.pageButton}>
+              <button
+                key={i}
+                onClick={() => paginate(i + 1)}
+                className={`px-3 py-1 rounded-md text-sm transition-colors ${
+                  currentPage === i + 1
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
+              >
                 {i + 1}
               </button>
             ))}

@@ -12,6 +12,8 @@ import ProgressBar from '../components/ProgressBar';
 import ModalFindClub from "../components/Modale/ModalFindClub";
 import ChatbotModale from "../components/User/ChatbotModale";
 
+// import PrgressBarUi from "../components/ui/progress";
+
 function UserView() {
   const navigate = useNavigate();
   const { currentUser, currentUserAddresses, userClubs, licences, licenceTypes, roles, setItems, setShowApp, setLastFetchTime } = useStore();
@@ -73,6 +75,7 @@ function UserView() {
               className="h-2 bg-blue-100 rounded-full"
               barClassName="bg-blue-600 rounded-full"
             />
+            {/* <PrgressBarUi /> */}
           </div>
         </div>
 
