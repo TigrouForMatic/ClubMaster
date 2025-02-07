@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Modal from 'react-modal';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
-import styles from "../../styles/ModaleCreateEvent.module.css";
 import { dateFormat } from '../../js/date';
 
 function ModalCreateEvent({ isOpen, onClose, date }) {
@@ -170,140 +169,190 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
     <Modal
       isOpen={isOpen}
       onRequestClose={handleClose}
-      className={styles.modal}
-      overlayClassName={styles.modalOverlay}
+      className="relative bg-white rounded-lg shadow-lg w-full max-w-2xl mx-auto mt-10 max-h-[90vh] overflow-y-auto scrollbar-hide"
+      overlayClassName="fixed inset-0 bg-black/50 z-50 flex items-start justify-center"
     >
-      <div className={styles.headerModal}>
-        <h2 className={styles.title}>Créer un nouvel événement</h2>
-        <button onClick={handleClose} className={styles.closeButton}>&times;</button>
-      </div>
-
-      {filteredClubs.length > 1 && (
-        <ClubList clubs={filteredClubs} selectedClubId={selectedClubId} onClubSelect={handleClubSelect} />
-      )}
-
-      <form onSubmit={handleSubmit} className={styles.content}>
-        <div>
-          <label htmlFor="EventTypeId">Type d'événement :</label>
-          <select
-            id="EventTypeId"
-            name="EventTypeId"
-            value={eventData.EventTypeId}
-            onChange={handleChange}
+      <div className="p-6">
+        <div className="flex items-center justify-between border-b pb-4">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Créer un nouvel événement
+          </h2>
+          <button 
+            onClick={handleClose}
+            className="text-zinc-500 hover:text-zinc-900 transition-colors"
           >
-            <option value="">Sélectionnez un type d'événement</option>
-            {eventTypeSorted.map((type) => (
-              <option key={type.id} value={type.id}>
-                {type.label}
-              </option>
-            ))}
-          </select>
+            <span className="text-2xl">&times;</span>
+          </button>
         </div>
-        <div>
-          <label htmlFor="Label">Nom de l'événement :</label>
-          <input
-            type="text"
-            id="Label"
-            name="Label"
-            value={eventData.Label}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="Description">Description :</label>
-          <textarea
-            id="Description"
-            name="Description"
-            value={eventData.Description}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="AddressId">Adresse :</label>
-          <select
-            id="AddressId"
-            name="AddressId"
-            value={eventData.AddressId}
-            onChange={handleChange}
-          >
-            <option value="">Sélectionnez une adresse</option>
-            {addresses.map((address) => (
-              <option key={address.id} value={address.id}>
-                {`${address.street}, ${address.postalcode} ${address.city}`}
-              </option>
-            ))}
-          </select>
-        </div>
-        <hr />
-        <div className={styles.dateTimeSection}>
-          <div className={styles.dateTimeBlock}>
-            <div className={styles.dateTimeContainer}>
-              <div className={styles.inputGroup}>
-                <label>Date</label>
-                <div className={styles.dateInput}>
-                  <input
-                    type="date"
-                    name="startDate"
-                    value={startDate || new Date().toISOString().split('T')[0]}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    min={new Date().toLocaleDateString('fr-CA')}
-                    placeholder="Date de début"
-                    required
-                  />
-                </div>
+
+        {filteredClubs.length > 1 && (
+          <div className="mt-6">
+            <h3 className="text-lg font-medium mb-3">Clubs</h3>
+            <div className="flex flex-wrap gap-2">
+              {filteredClubs.map(club => (
+                <button
+                  key={club.id}
+                  onClick={() => handleClubSelect(club.id)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
+                    ${selectedClubId === club.id 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200'
+                    }`}
+                >
+                  {club.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+          <div className="space-y-2">
+            <label htmlFor="EventTypeId" className="text-sm font-medium">
+              Type d'événement
+            </label>
+            <select
+              id="EventTypeId"
+              name="EventTypeId"
+              value={eventData.EventTypeId}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+            >
+              <option value="">Sélectionnez un type d'événement</option>
+              {eventTypeSorted.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="Label" className="text-sm font-medium">
+              Nom de l'événement
+            </label>
+            <input
+              type="text"
+              id="Label"
+              name="Label"
+              value={eventData.Label}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="Description" className="text-sm font-medium">
+              Description
+            </label>
+            <textarea
+              id="Description"
+              name="Description"
+              value={eventData.Description}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm min-h-[100px]"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="AddressId" className="text-sm font-medium">
+              Adresse
+            </label>
+            <select
+              id="AddressId"
+              name="AddressId"
+              value={eventData.AddressId}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+            >
+              <option value="">Sélectionnez une adresse</option>
+              {addresses.map((address) => (
+                <option key={address.id} value={address.id}>
+                  {`${address.street}, ${address.postalcode} ${address.city}`}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="border-t border-b py-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Date</label>
+                <input
+                  type="date"
+                  name="startDate"
+                  value={startDate || new Date().toISOString().split('T')[0]}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  min={new Date().toLocaleDateString('fr-CA')}
+                  required
+                  className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+                />
               </div>
-              
-              <div className={styles.timeGroup}>
-                <label>Horaires</label>
-                <div className={styles.timeInputs}>
-                  <span>de</span>
-                  <input aria-label="Time" type="time" name="startTime" value={startTime} max={eventData.Df} onChange={handleChange} required/>
-                  <span>à</span>
-                  <input aria-label="Time" type="time" name="endTime" value={endTime} min={eventData.Dd} onChange={handleChange} />
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Horaires</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="time"
+                    name="startTime"
+                    value={startTime}
+                    onChange={handleChange}
+                    required
+                    className="flex-1 px-3 py-2 border rounded-md border-input bg-background text-sm"
+                  />
+                  <span className="text-sm text-zinc-500">à</span>
+                  <input
+                    type="time"
+                    name="endTime"
+                    value={endTime}
+                    onChange={handleChange}
+                    className="flex-1 px-3 py-2 border rounded-md border-input bg-background text-sm"
+                  />
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className={styles.maxPersonContainer}>
-          <label className={styles.toggleLabel}>
-            <input
-              type="checkbox"
-              checked={hasRecurrence}
-              onChange={() => setHasRecurrence(!hasRecurrence)}
-              className={styles.toggleInput}
-            />
-            <span className={styles.toggleSlider}></span>
-            Événement récurrent
-          </label>
-          
-          {hasRecurrence && (
-            <div className={styles.recurrenceContainer}>
-              <div className={styles.recurrenceInputs}>
-                <span className={styles.recurrenceText}>Tous les</span>
-                <input 
-                  type="number" 
-                  value={recurrenceInterval} 
-                  onChange={(e) => setRecurrenceInterval(parseInt(e.target.value) || 1)}
-                  min="1" 
-                  className={styles.recurrenceInput}
-                />
-                <select 
-                  value={recurrenceUnit}
-                  onChange={(e) => setRecurrenceUnit(e.target.value)}
-                  className={styles.recurrenceSelect}
-                >
-                  <option value='jours'>jours</option>
-                  <option value='semaines'>semaines</option>
-                  <option value='mois'>mois</option>
-                </select>
-              </div>
+          <div className="space-y-4">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={hasRecurrence}
+                onChange={() => setHasRecurrence(!hasRecurrence)}
+                className="w-4 h-4 rounded border-zinc-300"
+              />
+              <span className="text-sm font-medium">Événement récurrent</span>
+            </label>
 
-              <div className={styles.inputGroup}>
-                <label>Date du dernier événement</label>
-                <div className={styles.dateInput}>
+            {hasRecurrence && (
+              <div className="pl-6 space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Tous les</label>
+                  <input 
+                    type="number" 
+                    value={recurrenceInterval} 
+                    onChange={(e) => setRecurrenceInterval(parseInt(e.target.value) || 1)}
+                    min="1" 
+                    className="w-16 px-3 py-2 border rounded-md border-input bg-background text-sm"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">jours</label>
+                  <select 
+                    value={recurrenceUnit}
+                    onChange={(e) => setRecurrenceUnit(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+                  >
+                    <option value='jours'>jours</option>
+                    <option value='semaines'>semaines</option>
+                    <option value='mois'>mois</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Date du dernier événement</label>
                   <input
                     type="date"
                     name="recurrenceEndDate"
@@ -311,70 +360,66 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
                     onChange={(e) => setRecurrenceEndDate(e.target.value)}
                     min={eventData.Dd ? eventData.Dd.split('T')[0] : new Date().toISOString().split('T')[0]}
                     required={hasRecurrence}
-                    className={styles.recurrenceEndDateInput}
+                    className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
                   />
                 </div>
+
+                { getRecurrenceResume() && (
+                  <span className="text-sm text-zinc-500">{getRecurrenceResume()}</span>
+                )}
               </div>
-              { getRecurrenceResume() && (
-                <span className={styles.recurrenceResume}> {getRecurrenceResume()}</span>
-              )}
-            </div>
-          )}
-        </div>
-        <hr />
-        <div className={styles.maxPersonContainer}>
-          <label className={styles.toggleLabel}>
-            <input
-              type="checkbox"
-              checked={hasMaxPerson}
-              onChange={handleToggleMaxPerson}
-              className={styles.toggleInput}
-            />
-            <span className={styles.toggleSlider}></span>
-            Limiter le nombre de participants
-          </label>
-          
-          {hasMaxPerson && (
-            <div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <label className="flex items-center gap-2">
               <input
-                type="number"
-                id="MaxPerson"
-                name="MaxPerson"
-                value={eventData.MaxPerson || ''}
-                onChange={handleChange}
-                placeholder="Nombre maximum de participants"
-                min="1"
+                type="checkbox"
+                checked={hasMaxPerson}
+                onChange={handleToggleMaxPerson}
+                className="w-4 h-4 rounded border-zinc-300"
               />
-            </div>
-          )}
-        </div>
-        <div className={styles.buttonContainer}>
-          <button type="button" onClick={handleClose} className={styles.unregisterButton}>Annuler</button>
-          <button type="submit" className={styles.registerButton}>Créer l'événement</button>
-        </div>
-      </form>
+              <span className="text-sm font-medium">
+                Limiter le nombre de participants
+              </span>
+            </label>
+
+            {hasMaxPerson && (
+              <div className="pl-6">
+                <input
+                  type="number"
+                  id="MaxPerson"
+                  name="MaxPerson"
+                  value={eventData.MaxPerson || ''}
+                  onChange={handleChange}
+                  placeholder="Nombre maximum de participants"
+                  min="1"
+                  className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-end gap-3 pt-6 border-t">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="px-4 py-2 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-md shadow-sm hover:bg-zinc-50"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700"
+            >
+              Créer l'événement
+            </button>
+          </div>
+        </form>
+      </div>
     </Modal>
   );
 }
-
-const ClubList = React.memo(({ clubs, selectedClubId, onClubSelect }) => (
-  <div className={styles.section}>
-    <div className={styles.sectionHeader}>
-      <h2 className={styles.subtitle}>Clubs</h2>
-    </div>
-      <div className={styles.clubList}>
-      {clubs.map(club => (
-        <div
-          key={club.id}
-          className={`${styles.clubItem} ${selectedClubId === club.id ? styles.active : ""}`}
-          onClick={() => onClubSelect(club.id)}
-        >
-          {club.label}
-        </div>
-      ))}
-    </div>
-  </div>
-));
 
 export default ModalCreateEvent;
 
