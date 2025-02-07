@@ -7,7 +7,6 @@ import LoadingSpinner from './components/LoadingSpinner';
 import AuthForm from './components/Authentification/AuthForm';
 import NotificationContainer from './components/Notification/NotificationContainer';
 import './App.css';
-import './styles/navbarStyles.css';
 
 // Lazy loading des composants
 const SideBarContainer = lazy(() => import('./components/Menu/SideBarContainer'));
@@ -42,7 +41,7 @@ function AppContent() {
   }
 
   return (
-    <div className="App">
+    <div>
       <Suspense fallback={<LoadingSpinner />}>
         {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
         <Routes>
