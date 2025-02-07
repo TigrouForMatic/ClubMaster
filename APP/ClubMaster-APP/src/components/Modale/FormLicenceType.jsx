@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
-import styles from '../../styles/ModaleFormLicenceType.module.css';
 import Modal from 'react-modal';
 
 const FormLicenceType = ({ isOpen, onClose, selectedClubId, licenceType }) => {
@@ -27,7 +26,6 @@ const FormLicenceType = ({ isOpen, onClose, selectedClubId, licenceType }) => {
 
     const addItem = useStore(state => state.addItem);
     const updateItem = useStore(state => state.updateItem);
-
     const typeLicence = useStore(state => state.licenceTypes);
     const basicTypeLicenceExist = typeLicence.find(type => type.basic === true);
 
@@ -52,16 +50,12 @@ const FormLicenceType = ({ isOpen, onClose, selectedClubId, licenceType }) => {
             };
 
             if (licenceType) {
-                console.log('payload', licenceType);
-                // Mode modification
                 await api.put(`/licenceType/${licenceType.id}`, payload);
                 updateItem('licenceTypes', licenceType.id, payload);
             } else {
-                // Mode création
                 await api.post('/licenceType', payload);
                 addItem('licenceTypes', payload);
             }
-
             onClose();
         } catch (error) {
             console.error('Erreur lors de la sauvegarde du type de licence:', error);
@@ -72,80 +66,88 @@ const FormLicenceType = ({ isOpen, onClose, selectedClubId, licenceType }) => {
         <Modal
             isOpen={isOpen}
             onRequestClose={onClose}
-            className={styles.modal}
-            overlayClassName={styles.modalOverlay}
+            className="relative bg-white rounded-lg shadow-lg w-full max-w-2xl mx-auto mt-10 max-h-[90vh] overflow-y-auto scrollbar-hide"
+            overlayClassName="fixed inset-0 bg-black/50 z-50 flex items-start justify-center"
         >
-            <div className={styles.headerModal}>
-                <h2 className={styles.title}>
-                    {licenceType ? 'Modifier le type de licence' : 'Créer un type de licence'}
-                </h2>
-                <button onClick={onClose} className={styles.closeButton}>&times;</button>
-            </div>
-
-            <form onSubmit={handleSubmit} className={styles.content}>
-                <div>
-                    <label htmlFor="label">Nom du type de licence :</label>
-                    <input
-                        type="text"
-                        id="label"
-                        name="label"
-                        value={formData.label}
-                        onChange={handleChange}
-                        required
-                    />
+            <div className="p-6">
+                <div className="flex items-center justify-between border-b pb-4">
+                    <h2 className="text-2xl font-semibold tracking-tight">
+                        {licenceType ? 'Modifier le type de licence' : 'Créer un type de licence'}
+                    </h2>
+                    <button 
+                        onClick={onClose}
+                        className="text-zinc-500 hover:text-zinc-900 transition-colors"
+                    >
+                        <span className="text-2xl">&times;</span>
+                    </button>
                 </div>
 
-                <div>
-                    <label htmlFor="duration">Durée (en jours) :</label>
-                    <input
-                        type="number"
-                        id="duration"
-                        name="duration"
-                        value={formData.duration}
-                        onChange={handleChange}
-                        min="1"
-                        required
-                    />
-                </div>
+                <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+                    <div className="space-y-2">
+                        <label htmlFor="label" className="block text-sm font-medium text-zinc-700">
+                            Nom du type de licence
+                        </label>
+                        <input
+                            type="text"
+                            id="label"
+                            name="label"
+                            value={formData.label}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
 
-                <div>
-                    <label htmlFor="price">Prix (€) :</label>
-                    <input
-                        type="number"
-                        id="price"
-                        name="price"
-                        value={formData.price}
-                        onChange={handleChange}
-                        min="0"
-                        step="0.01"
-                        placeholder="Gratuit si vide"
-                    />
-                </div>
+                    <div className="space-y-2">
+                        <label htmlFor="duration" className="block text-sm font-medium text-zinc-700">
+                            Durée (en jours)
+                        </label>
+                        <input
+                            type="number"
+                            id="duration"
+                            name="duration"
+                            value={formData.duration}
+                            onChange={handleChange}
+                            min="1"
+                            required
+                            className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
 
-                <div className={styles.switchContainer}>
-                    <label htmlFor="private">VIsible par tous ?</label>
-                    <div className={styles.switchWrapper}>
-                        <label className={styles.switch}>
+                    <div className="space-y-2">
+                        <label htmlFor="price" className="block text-sm font-medium text-zinc-700">
+                            Prix (€)
+                        </label>
+                        <input
+                            type="number"
+                            id="price"
+                            name="price"
+                            value={formData.price}
+                            onChange={handleChange}
+                            min="0"
+                            step="0.01"
+                            placeholder="Gratuit si vide"
+                            className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="flex items-center space-x-2">
                             <input
                                 type="checkbox"
                                 id="private"
                                 name="private"
                                 checked={formData.private}
                                 onChange={handleChange}
+                                className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
                             />
-                            <span className={styles.slider}></span>
+                            <span className="text-sm font-medium text-zinc-700">Visible par tous</span>
                         </label>
-                        <span className={styles.switchLabel}>
-                            {formData.private ? 'Oui' : 'Non'}
-                        </span>
                     </div>
-                </div>
 
-                {!basicTypeLicenceExist ? (
-                    <div className={styles.switchContainer}>
-                        <label htmlFor="basic">Licence de base</label>
-                        <div className={styles.switchWrapper}>
-                            <label className={styles.switch}>
+                    {!basicTypeLicenceExist && (
+                        <div className="space-y-2">
+                            <label className="flex items-center space-x-2">
                                 <input
                                     type="checkbox"
                                     id="basic"
@@ -153,28 +155,33 @@ const FormLicenceType = ({ isOpen, onClose, selectedClubId, licenceType }) => {
                                     checked={formData.basic}
                                     onChange={handleChange}
                                     disabled={basicTypeLicenceExist}
+                                    className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
                                 />
-                                <span className={styles.slider}></span>
+                                <span className="text-sm font-medium text-zinc-700">Licence de base</span>
                             </label>
-                            <span className={styles.switchLabel}>
-                                {formData.basic ? 'Oui' : 'Non'}
-                            </span>
+                            <p className="text-sm text-zinc-500 mt-1">
+                                Faire en sorte que cette licence soit sélectionnée par défaut lors de l'arrivée d'un nouveau membre.
+                            </p>
                         </div>
-                        <span className={styles.helpText}>
-                            Faire en sorte que cette licence soit sélectionnée par défaut lors de l'arrivée d'un nouveau membre.
-                        </span>
+                    )}
+
+                    <div className="flex justify-end space-x-4 pt-6 border-t">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-4 py-2 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-md shadow-sm hover:bg-zinc-50"
+                        >
+                            Annuler
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700"
+                        >
+                            {licenceType ? 'Modifier' : 'Créer'}
+                        </button>
                     </div>
-                ) : null}
-                
-                <div className={styles.buttonContainer}>
-                    <button type="button" onClick={onClose} className={styles.unregisterButton}>
-                        Annuler
-                    </button>
-                    <button type="submit" className={styles.registerButton}>
-                        {licenceType ? 'Modifier' : 'Créer'}
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </Modal>
     );
 };
