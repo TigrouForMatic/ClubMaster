@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import styles from "../../styles/ManageView.module.css";
 import { EditPencil, Trash } from 'iconoir-react';
 import { daysToYearMonthDay } from '../../js/date';
 import FormLicenceType from '../Modale/FormLicenceType';
