@@ -268,8 +268,12 @@ function AuthForm() {
             <PersonalInfoForm handlePersonalInformationSet={handlePersonalInformationSet} />
           )}
 
-          {showClubOptions && <FindClubOption />}
         </div>
+        {showClubOptions && (
+          <div className="mx-auto flex w-full flex-col justify-center space-y-6 ml-20">
+            <FindClubOption />
+          </div>
+        )}
       </div>
     </div>
   );

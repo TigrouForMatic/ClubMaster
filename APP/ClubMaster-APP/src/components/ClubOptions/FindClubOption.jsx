@@ -1,14 +1,23 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import styles from '../../styles/FindClubOption.module.css';
 import Select from 'react-select';
 import { toSqlDate, getDateEndLicence } from '../../js/date';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
+import { Search, MapPin, Building2 } from 'lucide-react';
 
 const ClubCard = React.memo(({ club, onClick }) => (
-  <li className={styles.clubCard} onClick={() => onClick(club)}>
-    <h3 className={styles.clubTitle}>{club.label}</h3>
-  </li>
+  <div 
+    onClick={() => onClick(club)}
+    className="group relative flex cursor-pointer items-center justify-between rounded-lg border p-4 hover:bg-gray-50 transition-colors"
+  >
+    <div className="flex items-center gap-3">
+      <Building2 className="h-5 w-5 text-gray-400" />
+      <h3 className="text-sm font-medium leading-none">{club.label}</h3>
+    </div>
+    <div className="ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+      <span className="text-xs text-muted-foreground">Cliquer pour rejoindre</span>
+    </div>
+  </div>
 ));
 
 const FindClubOption = () => {
@@ -142,7 +151,11 @@ const FindClubOption = () => {
   }, [addresses]);
 
   if (error) {
-    return <div className={styles.error}>{error}</div>;
+    return (
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        {error}
+      </div>
+    );
   }
 
   const indexOfLastClub = currentPage * clubsPerPage;
@@ -152,48 +165,87 @@ const FindClubOption = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className={styles.findClubContainer}>
-      <h1 className={styles.title}>Trouver un Club</h1>
-      <div className={styles.filters}>
-        <div className={styles.filterSection}>
-          <h3>Nom</h3>
-          <input
-            type="text"
-            placeholder="Nom du club"
-            value={nomClub}
-            onChange={(e) => setNomClub(e.target.value)}
-            className={styles.input}
-          />
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="space-y-8">
+        <div className="flex flex-col items-center text-center">
+          <h1 className="text-3xl font-bold tracking-tight">Trouver un Club</h1>
+          <p className="text-muted-foreground mt-2">
+            Rejoignez un club existant ou découvrez de nouvelles opportunités
+          </p>
         </div>
 
-        <div className={styles.filterSection}>
-          <h3>Lieu</h3>
-          <Select
-            options={locations}
-            className={styles.select}
-            onChange={setSelectedLocation}
-            placeholder="Sélectionner un lieu"
-            value={selectedLocation}
-          />
-        </div>
-      </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Search className="h-4 w-4" />
+              Nom du club
+            </label>
+            <input
+              type="text"
+              placeholder="Rechercher un club..."
+              value={nomClub}
+              onChange={(e) => setNomClub(e.target.value)}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            />
+          </div>
 
-      <ul className={styles.clubsList}>
-        {currentClubs.length > 0 ? (
-          currentClubs.map((club) => (
-            <ClubCard key={club.id} club={club} onClick={handleClick} />
-          ))
-        ) : (
-          <p className={styles.noClubs}>Aucun club ne correspond à ces critères.</p>
+          <div className="space-y-2">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Localisation
+            </label>
+            <Select
+              options={locations}
+              onChange={setSelectedLocation}
+              placeholder="Sélectionner un lieu"
+              value={selectedLocation}
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
+          </div>
+        </div>
+
+        <div className="rounded-lg border bg-card">
+          <div className="p-4 space-y-4">
+            {currentClubs.length > 0 ? (
+              currentClubs.map((club) => (
+                <ClubCard key={club.id} club={club} onClick={handleClick} />
+              ))
+            ) : (
+              <div className="text-center py-8 space-y-4">
+                <p className="text-muted-foreground">
+                  Aucun club ne correspond à ces critères.
+                </p>
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-sm text-blue-700">
+                    Vous ne trouvez pas votre club ? 
+                    <a href="mailto:contact@clubmaster.fr" className="font-medium underline hover:text-blue-800 ml-1">
+                      Contactez-nous
+                    </a>
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {filteredClubs.length > clubsPerPage && (
+          <div className="flex justify-center gap-1">
+            {Array.from({ length: Math.ceil(filteredClubs.length / clubsPerPage) }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => paginate(i + 1)}
+                className={`inline-flex items-center justify-center rounded-md px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                  currentPage === i + 1
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                    : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
         )}
-      </ul>
-
-      <div className={styles.pagination}>
-        {Array.from({ length: Math.ceil(filteredClubs.length / clubsPerPage) }, (_, i) => (
-          <button key={i} onClick={() => paginate(i + 1)} className={styles.pageButton}>
-            {i + 1}
-          </button>
-        ))}
       </div>
     </div>
   );
