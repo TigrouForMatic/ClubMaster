@@ -1,6 +1,5 @@
 import React from 'react';
 import Notification from './Notification';
-import styles from '../../styles/Notification.module.css';
 import { getDisplayTimeFormat } from '../../js/date';
 import useStore from '../../store/store';
 
@@ -13,7 +12,7 @@ const NotificationContainer = () => {
   };
 
   return (
-    <div className={styles.notificationContainer}>
+    <div className="fixed top-4 right-4 z-50 w-full max-w-md space-y-2 px-4">
       {notifications.map((notification, index) => (
         <Notification
           key={index}
