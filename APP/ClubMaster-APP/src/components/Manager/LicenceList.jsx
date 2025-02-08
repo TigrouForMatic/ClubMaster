@@ -4,8 +4,9 @@ import { BirthdayCake, EditPencil, Trash } from 'iconoir-react';
 import { getDisplayFormatedDate } from '../../js/date';
 import { useState } from 'react';
 import Select from 'react-select';
+import api from '../../js/App/Api';
 
-const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
+const LicenceList = React.memo(({ licences, licenceTypes, roles, selectedClubId }) => {
   const [filterType, setFilterType] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
@@ -55,13 +56,46 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
     { value: '1year', label: 'Dans 1 an' }
   ];
 
+  const handleExport = async () => {
+    try {
+        const response = await api.get(`/export/licences`, {
+            responseType: 'blob', // Important pour recevoir le fichier
+            params: {
+                clubId: selectedClubId,
+                etat: 'tout',
+                isDelete: false
+            }
+        });
+        
+        // Création et téléchargement du fichier
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'licences.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error) {
+        console.error('Erreur lors de l\'export', error);
+        // Gérer l'erreur (afficher une notification, etc.)
+    }
+  };
+
   return (
     <div className="space-y-4 p-4 bg-white rounded-lg shadow-sm">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold tracking-tight">Adhérents</h2>
-        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-blue-500 text-white hover:bg-blue-600 h-10 px-4 py-2">
-          Ajouter
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={handleExport}
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-blue-500 text-white hover:bg-blue-600 h-10 px-4 py-2"
+          >
+            Exporter
+          </button>
+          <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-blue-500 text-white hover:bg-blue-600 h-10 px-4 py-2">
+            Ajouter
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

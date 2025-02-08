@@ -138,6 +138,7 @@ function ManageView() {
             licences={filteredLicences} 
             licenceTypes={filteredLicenceTypes} 
             roles={filteredRoles} 
+            selectedClubId={selectedClubId}
           />
 
           {filteredLicences?.length > 0 && (

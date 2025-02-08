@@ -24,6 +24,7 @@ const { getMatchScore, getMatchScoreById, addMatchScore, updateMatchScore, delet
 const { getTeam, getTeamById, addTeam, updateTeam, deleteTeam } = require('../controllers/teamControllers');
 const { getTeamMember, getTeamMemberById, addTeamMember, updateTeamMember, deleteTeamMember } = require('../controllers/teamMemberControllers');
 const { getGenerateResponse } = require('../controllers/generateResponseController');
+const { exportLicencesToExcel } = require('../controllers/exportController');
 
 const { getGenerateImage } = require('../controllers/generateImageControllers');
 
@@ -177,6 +178,9 @@ router.get('/generateImage', getGenerateImage);
 
 // Routes pour générer une réponse
 router.get('/generateResponse', authenticateToken, getGenerateResponse);
+
+// Routes pour exporter les licences
+router.get('/export/licences', authenticateToken, exportLicencesToExcel);
 
 // Routes génériques
 router.get('/:table', getEntries);

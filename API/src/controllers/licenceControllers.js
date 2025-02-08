@@ -6,7 +6,7 @@ const getLicence = async (req, res) => {
     const filters = req.query;
 
     try {
-        let queryString = `SELECT * FROM ${TABLE_NAME}`;
+        let queryString = `SELECT * FROM ${TABLE_NAME} WHERE Bin = false`;
         const values = [];
         
         if (Object.keys(filters).length > 0) {
@@ -14,7 +14,7 @@ const getLicence = async (req, res) => {
                 values.push(value);
                 return `${key} = $${index + 1}`;
             });
-            queryString += ' WHERE ' + filterConditions.join(' AND ');
+            queryString += ' AND ' + filterConditions.join(' AND ');
         }
 
         const client = await pool.connect();
@@ -67,42 +67,11 @@ const getLicenceManage = async (req, res) => {
     }
 };
 
-// const getLicenceManage = async (req, res) => {
-//     // Vérification de l'authentification
-//     if (!req.user) return res.sendStatus(401);
-
-//     try {
-//         const { roleIds } = req.query;
-
-//         let queryString = `
-//             SELECT l.*, pp.Name, pp.NaissanceDate, pp.PhoneNumber, pp.EmailAddress
-//             FROM db.Licence l
-//             JOIN db.PersonPhysic pp ON l.PersonPhysicId = pp.Id
-//         `;
-//         const values = [];
-
-//         // console.log(roleIds) --> [ '2', '9' ]
-//         if (roleIds && Array.isArray(JSON.parse(roleIds))) {
-//             queryString += ` WHERE l.roleid = ANY($1)`;
-//             values.push(JSON.parse(roleIds));
-//         }
-
-//         const client = await pool.connect();
-//         const result = await client.query(queryString, values);
-//         client.release();
-
-//         res.json(result.rows);
-//     } catch (err) {
-//         console.error('Erreur lors de la récupération des licences', err);
-//         res.status(500).send('Erreur lors de la récupération des licences');
-//     }
-// };
-
 const getLicenceById = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1`, [id]);
+        const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1 AND Bin = false`, [id]);
         client.release();
         if (result.rows.length === 0) {
             return res.status(404).send('Licence non trouvée');
@@ -125,8 +94,8 @@ const addLicence = async (req, res) => {
     try {
         const client = await pool.connect();
 
-        const columnsWithDates = `${columns}, Dc, Dm`;
-        const valuesWithDates = [...values, currentDate, currentDate];
+        const columnsWithDates = `${columns}, Dc, Dm, Bin`;
+        const valuesWithDates = [...values, currentDate, currentDate, false];
 
         const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
 
@@ -169,17 +138,21 @@ const deleteLicence = async (req, res) => {
     if (!req.user) return res.sendStatus(401);
 
     const { id } = req.params;
+    // Vérification de l'authentification
+    if (!req.user) return res.sendStatus(401);
+
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM ${TABLE_NAME} WHERE id = $1 RETURNING *`, [id]);
+        const updateQuery = `UPDATE ${TABLE_NAME} SET Bin = true WHERE id = $1 RETURNING *`;
+        const result = await client.query(updateQuery, [id]);
         client.release();
         if (result.rows.length === 0) {
             return res.status(404).send('Licence non trouvée');
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la suppression de la licence avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la suppression de la licence avec l'ID ${id}`);
+        console.error(`Erreur lors de la mise à jour de la licence avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la mise à jour de la licence avec l'ID ${id}`);
     }
 };
 
