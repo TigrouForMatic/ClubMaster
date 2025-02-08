@@ -3,6 +3,7 @@ import UserImage from "../UserImage";
 import { BirthdayCake, EditPencil, Trash } from 'iconoir-react';
 import { getDisplayFormatedDate } from '../../js/date';
 import { useState } from 'react';
+import Select from 'react-select';
 
 const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
   const [filterType, setFilterType] = useState('');
@@ -32,6 +33,28 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
     });
   }, [licences, filterType, filterRole, filterEndDate, searchQuery]);
 
+  const getDataForSelectFromLicenceTypes = React.useMemo(() => 
+    licenceTypes.map(type => ({
+      value: type.id,
+      label: type.label
+    })),
+  [licenceTypes]);
+
+  const getDataForSelectFromRoles = React.useMemo(() => 
+    roles.map(role => ({
+      value: role.id,
+      label: role.label
+    })),
+  [roles]);
+
+  const endDateOptions = [
+    { value: '', label: 'Toutes les dates' },
+    { value: '1month', label: 'Dans 1 mois' },
+    { value: '3months', label: 'Dans 3 mois' },
+    { value: '6months', label: 'Dans 6 mois' },
+    { value: '1year', label: 'Dans 1 an' }
+  ];
+
   return (
     <div className="space-y-4 p-4 bg-white rounded-lg shadow-sm">
       <div className="flex items-center justify-between mb-6">
@@ -41,50 +64,63 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <input 
-          type="text" 
-          placeholder="Rechercher" 
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[250px]"
-        />
-        <select 
-          value={filterType} 
-          onChange={(e) => setFilterType(e.target.value)}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[200px]"
-        >
-          <option value="">Type de licence</option>
-          {licenceTypes.map(type => (
-            <option key={type.id} value={type.id}>{type.label}</option>
-          ))}
-        </select>
-        <select 
-          value={filterEndDate} 
-          onChange={(e) => setFilterEndDate(e.target.value)}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[200px]"
-        >
-          <option value="">Date de fin</option>
-          <option value="1month" className="text-red-500">Dans 1 mois</option>
-          <option value="3months" className="text-orange-500">Dans 3 mois</option>
-          <option value="6months" className="text-blue-500">Dans 6 mois</option>
-          <option value="1year" className="text-green-500">Dans 1 an</option>
-        </select>
-        <select 
-          value={filterRole} 
-          onChange={(e) => setFilterRole(e.target.value)}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-[200px]"
-        >
-          <option value="">Rôle</option>
-          {roles.map(role => (
-            <option key={role.id} value={role.id}>{role.label}</option>
-          ))}
-        </select>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="space-y-2">
+          <input 
+            type="text" 
+            placeholder="Rechercher" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-3 pr-4 py-1.5 bg-white rounded-md cursor-default react-select-container border border-gray-300 shadow-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="space-y-2 relative z-20">
+          <Select
+            value={filterType ? { value: filterType, label: licenceTypes.find(t => t.id == filterType)?.label } : null}
+            onChange={(option) => setFilterType(option ? option.value : '')}
+            options={[{ value: '', label: 'Tous les types' }, ...getDataForSelectFromLicenceTypes]}
+            placeholder="Sélectionner un type"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isClearable
+          />
+        </div>
+
+        <div className="space-y-2 relative z-20">
+          <Select
+            value={endDateOptions.find(option => option.value === filterEndDate)}
+            onChange={(option) => setFilterEndDate(option ? option.value : '')}
+            options={endDateOptions}
+            placeholder="Sélectionner une période"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isClearable
+            styles={{
+              singleValue: (base) => ({
+                  ...base,
+                  color: '#6B7280', // Couleur grise (gray-500)
+              })
+            }}
+          />
+        </div>
+
+        <div className="space-y-2 relative z-20">
+          <Select
+            value={filterRole ? { value: filterRole, label: roles.find(r => r.id == filterRole)?.label } : null}
+            onChange={(option) => setFilterRole(option ? option.value : '')}
+            options={[{ value: '', label: 'Tous les rôles' }, ...getDataForSelectFromRoles]}
+            placeholder="Sélectionner un rôle"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isClearable
+          />
+        </div>
       </div>
 
-      <div className="relative w-full overflow-auto">
+      <div className="relative w-full overflow-y-auto overflow-x-hidden max-h-[600px] min-h-[600px] scrollbar-hide">
         <table className="w-full caption-bottom text-sm">
-          <thead className="[&_tr]:border-b">
+          <thead className="[&_tr]:border-b sticky top-0 bg-white z-10">
             <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
               <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Personne</th>
               <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Licence</th>
@@ -118,8 +154,8 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles }) => {
                 <td className="p-4 align-middle">{licence.role}</td>
                 <td className="p-4 align-middle">
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm">{licence.emailaddress}</span>
-                    <span className="text-sm text-muted-foreground">{licence.phonenumber}</span>
+                    <a href={`mailto:${licence.emailaddress}`} className="text-sm cursor-pointer">{licence.emailaddress}</a>
+                    <a href={`tel:${licence.phonenumber}`} className="text-sm text-muted-foreground cursor-pointer">{licence.phonenumber}</a>
                   </div>
                 </td>
                 <td className="p-4 align-middle">
