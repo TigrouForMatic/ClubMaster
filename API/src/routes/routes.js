@@ -8,7 +8,7 @@ const { getPersonPhysic, getPersonPhysicById, addPersonPhysic, updatePersonPhysi
 const { getLogin, getLoginById, addLogin, updateLogin, deleteLogin } = require('../controllers/loginControllers');
 const { getClub, getClubByPerson, getClubById, addClub, updateClub, deleteClub } = require('../controllers/clubControllers');
 const { getLicenceType, getLicenceTypeById, addLicenceType, addLicenceTypeFromNewClub, updateLicenceType, deleteLicenceType } = require('../controllers/licenceTypeControllers');
-const { getLicence, getLicenceManage, getLicenceById, addLicence, updateLicence, deleteLicence } = require('../controllers/licenceControllers');
+const { getLicence, getLicenceManage, getLicenceById, addLicence, updateLicence, deleteLicence, getLicenceExport } = require('../controllers/licenceControllers');
 const { getRole, getRoleById, addRole, addRoleFromNewClub, updateRole, deleteRole } = require('../controllers/roleControllers');
 const { getEventType, getEventTypeById, addEventType, updateEventType, deleteEventType } = require('../controllers/eventTypeControllers');
 const { getEvent, getEventById, addEvent, updateEvent, deleteEvent } = require('../controllers/eventControllers');
@@ -24,7 +24,6 @@ const { getMatchScore, getMatchScoreById, addMatchScore, updateMatchScore, delet
 const { getTeam, getTeamById, addTeam, updateTeam, deleteTeam } = require('../controllers/teamControllers');
 const { getTeamMember, getTeamMemberById, addTeamMember, updateTeamMember, deleteTeamMember } = require('../controllers/teamMemberControllers');
 const { getGenerateResponse } = require('../controllers/generateResponseController');
-const { exportLicencesToExcel } = require('../controllers/exportController');
 
 const { getGenerateImage } = require('../controllers/generateImageControllers');
 
@@ -75,11 +74,11 @@ router.delete('/licenceType/:id', authenticateToken, deleteLicenceType);
 // Routes pour le CRUD des licences
 router.get('/licence', getLicence);
 router.get('/licence/manage',authenticateToken, getLicenceManage);
+router.get('/licence/export', authenticateToken, getLicenceExport);
 router.get('/licence/:id', getLicenceById);
 router.post('/licence', authenticateToken, addLicence);
 router.put('/licence/:id', authenticateToken, updateLicence);
 router.delete('/licence/:id', authenticateToken, deleteLicence);
-
 // Routes pour le CRUD des roles
 router.get('/role', getRole);
 router.get('/role/:id', getRoleById);
@@ -178,9 +177,6 @@ router.get('/generateImage', getGenerateImage);
 
 // Routes pour générer une réponse
 router.get('/generateResponse', authenticateToken, getGenerateResponse);
-
-// Routes pour exporter les licences
-router.get('/export/licences', authenticateToken, exportLicencesToExcel);
 
 // Routes génériques
 router.get('/:table', getEntries);

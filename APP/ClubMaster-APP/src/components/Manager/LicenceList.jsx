@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import UserImage from "../UserImage";
 import { BirthdayCake, EditPencil, Trash } from 'iconoir-react';
 import { getDisplayFormatedDate } from '../../js/date';
-import { useState } from 'react';
 import Select from 'react-select';
 import api from '../../js/App/Api';
+import { read, utils, writeFileXLSX } from 'xlsx';
 
 const LicenceList = React.memo(({ licences, licenceTypes, roles, selectedClubId }) => {
   const [filterType, setFilterType] = useState('');
@@ -56,25 +56,22 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles, selectedClubId 
     { value: '1year', label: 'Dans 1 an' }
   ];
 
-  const handleExport = async () => {
+    const handleExport = async () => {
     try {
-        const response = await api.get(`/export/licences`, {
-            responseType: 'blob', // Important pour recevoir le fichier
+        const response = await api.get(`/licence/export`, {
+            responseType: 'json',
             params: {
                 clubId: selectedClubId,
-                etat: 'tout',
+                etat: 'actif',
                 isDelete: false
             }
         });
-        
-        // Création et téléchargement du fichier
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'licences.xlsx');
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+
+        const ws = utils.json_to_sheet(response);
+        const wb = utils.book_new();
+        utils.book_append_sheet(wb, ws, "Data");
+        writeFileXLSX(wb, "Licences.xlsx");
+
     } catch (error) {
         console.error('Erreur lors de l\'export', error);
         // Gérer l'erreur (afficher une notification, etc.)

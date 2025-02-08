@@ -67,6 +67,68 @@ const getLicenceManage = async (req, res) => {
     }
 };
 
+const getLicenceExport = async (req, res) => {
+    let client;
+    try {
+        // Vérification de l'authentification
+        if (!req.user) return res.sendStatus(401);
+
+        const { clubId, etat = 'actif', isDelete = 'false' } = req.query;
+
+        client = await pool.connect();
+        
+        // Construction de la requête SQL avec les conditions
+        let queryString = `
+            SELECT 
+                pp.name,
+                l.licencefederation,
+                lt.label as type,
+                l.dd as date_debut,
+                l.df as date_fin,
+                r.label as role,
+                pp.emailaddress,
+                pp.phonenumber,
+                pp.naissancedate,
+                c.label as club
+            FROM db.Licence l
+            JOIN db.PersonPhysic pp ON l.PersonPhysicId = pp.Id
+            LEFT JOIN db.LicenceType lt ON l.licencetypeid = lt.id
+            LEFT JOIN db.Role r ON l.roleid = r.id
+            LEFT JOIN db.Club c ON lt.clubid = c.id
+            WHERE lt.clubid = $1`;
+
+        const values = [clubId];
+
+        if (isDelete === 'true') {
+            queryString += ` AND l.bin = true`;
+        } else {
+            queryString += ` AND l.bin = false`;
+        }
+
+        if (etat === 'tout') {
+            queryString += ` AND l.df >= NOW()`;
+        } else if (etat === 'actif') {
+            queryString += ` AND l.df >= NOW()`;
+        } else if (etat === 'inactif') {
+            queryString += ` AND l.df < NOW()`;
+        }
+        
+        const result = await client.query(queryString, values);
+        return res.json(result.rows);
+
+    } catch (error) {
+        console.error('Erreur lors de l\'export:', error);
+        return res.status(500).json({
+            error: 'Erreur lors de l\'export',
+            details: error.message
+        });
+    } finally {
+        if (client) {
+            client.release();
+        }
+    }
+};
+
 const getLicenceById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -174,5 +236,6 @@ module.exports = {
     getLicenceById,
     addLicence,
     updateLicence,
-    deleteLicence
+    deleteLicence,
+    getLicenceExport
 };
