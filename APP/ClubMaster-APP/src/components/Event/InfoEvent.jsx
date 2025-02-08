@@ -16,6 +16,9 @@ const InfoEvent = ({ isOpen, onClose, eventId }) => {
   const [inscription, setInscription] = useState(null);
   const [conversation, setConversation] = useState(null);
   
+  const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser, conversations, currentUserRoles } = useStore();
+  const getItem = useStore(state => state.getItem);
+
   const handleClose = useCallback(() => {
     setIsClosing(true);
     setTimeout(() => {
@@ -31,15 +34,6 @@ const InfoEvent = ({ isOpen, onClose, eventId }) => {
   }, [handleClose, isConfirmOpen]);
 
   if (!isOpen || !eventId) return null;
-
-  const { addItem, deleteItem, addresses, typesEvent, inscriptions, currentUser, conversations, currentUserRoles } = useStore();
-  const getItem = useStore(state => state.getItem);
-
-  useEffect(() => {
-    const eventData = getItem('events', eventId)(useStore.getState());
-    setEvent(eventData);
-  }, [eventId, getItem]);
-
 
   const type = useMemo(() => 
     event ? typesEvent.find(e => e.id === event.eventtypeid) || {} : {},
@@ -62,6 +56,12 @@ const InfoEvent = ({ isOpen, onClose, eventId }) => {
     if (!event) return null;
     return conversations.flat().find(conv => conv.eventid === event.id);
   }, [conversations, event]);
+
+  useEffect(() => {
+    if (!isOpen || !eventId) return;
+    const eventData = getItem('events', eventId)(useStore.getState());
+    setEvent(eventData);
+  }, [eventId, getItem, isOpen]);
 
   useEffect(() => {
     if (!event) return;

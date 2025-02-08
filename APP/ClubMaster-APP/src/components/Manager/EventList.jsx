@@ -208,7 +208,9 @@ const EventList = React.memo(({ clubId }) => {
             </div>
 
             <ModalCreateEvent isOpen={modaleCreate} onClose={handleCloseCreateModale} />
-            <InfoEvent isOpen={infoEventOpen} onClose={handleCloseInfoEvent} eventId={infoEventId} />
+            {infoEventId && (
+                <InfoEvent isOpen={infoEventOpen} onClose={handleCloseInfoEvent} eventId={infoEventId} />
+            )}
         </div>
     );
 });
