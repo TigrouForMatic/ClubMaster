@@ -3,14 +3,14 @@ import UserImage from "../UserImage";
 import { BirthdayCake, EditPencil, Trash } from 'iconoir-react';
 import { getDisplayFormatedDate } from '../../js/date';
 import Select from 'react-select';
-import api from '../../js/App/Api';
-import { read, utils, writeFileXLSX } from 'xlsx';
+import ModaleExportLicences from '../Modale/ModaleExportLicences';
 
 const LicenceList = React.memo(({ licences, licenceTypes, roles, selectedClubId }) => {
   const [filterType, setFilterType] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const filteredLicences = React.useMemo(() => {
     return licences.filter(licence => {
@@ -56,35 +56,13 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles, selectedClubId 
     { value: '1year', label: 'Dans 1 an' }
   ];
 
-    const handleExport = async () => {
-    try {
-        const response = await api.get(`/licence/export`, {
-            responseType: 'json',
-            params: {
-                clubId: selectedClubId,
-                etat: 'actif',
-                isDelete: false
-            }
-        });
-
-        const ws = utils.json_to_sheet(response);
-        const wb = utils.book_new();
-        utils.book_append_sheet(wb, ws, "Data");
-        writeFileXLSX(wb, "Licences.xlsx");
-
-    } catch (error) {
-        console.error('Erreur lors de l\'export', error);
-        // Gérer l'erreur (afficher une notification, etc.)
-    }
-  };
-
   return (
     <div className="space-y-4 p-4 bg-white rounded-lg shadow-sm">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold tracking-tight">Adhérents</h2>
         <div className="flex items-center gap-2">
           <button 
-            onClick={handleExport}
+            onClick={() => setIsExportModalOpen(true)}
             className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-blue-500 text-white hover:bg-blue-600 h-10 px-4 py-2"
           >
             Exporter
@@ -207,6 +185,11 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles, selectedClubId 
           <p className="text-center text-muted-foreground py-6">Aucunes licences actives.</p>
         )}
       </div>
+      <ModaleExportLicences 
+        isOpen={isExportModalOpen} 
+        onClose={() => setIsExportModalOpen(false)} 
+        selectedClubId={selectedClubId} 
+      />
     </div>
   );
 });
