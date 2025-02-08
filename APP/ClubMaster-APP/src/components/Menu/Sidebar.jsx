@@ -37,7 +37,7 @@ function Sidebar({ onClose }) {
               }`
             }
           >
-            <Icon className="h-5 w-5" />
+            <Icon className="h-7 w-7 ml-1" />
             <span>{text}</span>
           </NavLink>
         ))}
@@ -66,7 +66,7 @@ function Sidebar({ onClose }) {
             }`
           }
         >
-          <User className="h-5 w-5" />
+          <User className="h-7 w-7 ml-1" />
           <span>Profil</span>
         </NavLink>
       </div>

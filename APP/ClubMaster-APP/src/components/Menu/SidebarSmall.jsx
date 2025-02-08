@@ -8,6 +8,13 @@ function SidebarSmall({ onMenuClick, isSmall }) {
   const isHighLevel = currentUserRoles.some(r => r.level >= 3);
   const isPro = userClubs.some(c => c.personmoralplan === 'Pro');
 
+  const menuItems = [
+    { to: "/", icon: Home },
+    { to: "/match", icon: ArcheryMatch },
+    { to: "/calendar", icon: Calendar },
+    { to: "/shop", icon: Shop },
+  ];
+
   return (
     <div 
       className={`fixed inset-y-0 left-0 z-40 flex flex-col bg-white shadow-lg dark:bg-gray-900 
@@ -25,29 +32,17 @@ function SidebarSmall({ onMenuClick, isSmall }) {
       </div>
 
       <nav className="flex-1 space-y-1 px-2 py-4">
-        <NavLink to="/" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
-          isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
-        }`}>
-          <Home className="h-5 w-5" />
-        </NavLink>
-
-        <NavLink to="/match" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
-          isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
-        }`}>
-          <ArcheryMatch className="h-5 w-5" />
-        </NavLink>
-
-        <NavLink to="/calendar" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
-          isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
-        }`}>
-          <Calendar className="h-5 w-5" />
-        </NavLink>
-
-        <NavLink to="/shop" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
-          isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
-        }`}>
-          <Shop className="h-5 w-5" />
-        </NavLink>
+        {menuItems.map(({ to, icon: Icon }) => (
+          <NavLink
+            key={to}
+            to={to}
+            exact={to === "/"}
+            className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
+              isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
+            }`}>
+            <Icon className="h-7 w-14" />
+          </NavLink>
+        ))}
 
         {isHighLevel && isPro && (
           <NavLink to="/manage" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
@@ -58,11 +53,11 @@ function SidebarSmall({ onMenuClick, isSmall }) {
         )}
       </nav>
 
-      <div className="border-t p-4">
+      <div className="border-t py-4">
         <NavLink to="/user" className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
           isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
         }`}>
-          <User className="h-5 w-5" />
+          <User className="h-7 w-7" />
         </NavLink>
       </div>
     </div>
