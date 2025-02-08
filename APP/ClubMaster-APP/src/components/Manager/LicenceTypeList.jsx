@@ -51,7 +51,7 @@ const LicenceTypeList = React.memo(({ licenceTypes, selectedClubId }) => {
         <h2 className="text-2xl font-semibold tracking-tight">Types de licences</h2>
         <button 
           onClick={() => handleOpenForm(null)}
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-black text-white hover:bg-gray-800 h-10 px-4 py-2"
+          className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-blue-500 text-white hover:bg-blue-600 h-10 px-4 py-2"
         >
           Ajouter
         </button>
