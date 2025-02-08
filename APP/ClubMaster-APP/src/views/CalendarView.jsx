@@ -174,12 +174,20 @@ const CalendarView = () => {
 
       days.push(
         <div key={day} className="min-h-[130px] border border-gray-200 p-2 relative">
-          <div 
-            className="flex justify-between items-center mb-1 cursor-pointer hover:bg-gray-50 rounded"
-            onClick={() => openCreateModal(new Date(year, month, day))}
-          >
-            <span className="font-semibold text-gray-700">{day}</span>
-          </div>
+          {currentUserRoles.some(role => role.level >= 3) ? (
+            <div 
+              className="flex justify-between items-center mb-1 cursor-pointer hover:bg-gray-50 rounded"
+              onClick={() => openCreateModal(new Date(year, month, day))}
+            >
+              <span className="font-semibold text-gray-700">{day}</span>
+            </div>
+          ) : (
+            <div 
+              className="flex justify-between items-center mb-1 rounded"
+            >
+              <span className="font-semibold text-gray-700">{day}</span>
+            </div>
+          )}
           {visibleEvents.map((e, index) => (
             <div 
               key={index}
@@ -357,7 +365,7 @@ const CalendarView = () => {
           {currentUserRoles.some(role => role.level >= 3) && (
             <button 
               onClick={openCreateModal}
-              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
             >
               <Plus className="w-5 h-5 mr-2" />
               Événement
@@ -365,7 +373,7 @@ const CalendarView = () => {
           )}
           <button 
             onClick={openPlanningModal}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
             <Calendar className="w-5 h-5 mr-2" />
             Exporter
@@ -386,16 +394,16 @@ const CalendarView = () => {
             />
           </div>
 
-          <div>
+          <div className="space-y-2">
             <h3 className="font-semibold text-gray-700">Mois</h3>
-            <div className="relative">
+            <div className="relative w-full">
               <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10" />
               <DatePicker
                 selected={currentDate}
                 onChange={setCurrentDate}
                 dateFormat="MM/yyyy"
                 showMonthYearPicker
-                className="w-full pl-10 pr-4 py-1.5 bg-white rounded-md cursor-default react-select-container"
+                className="w-full pl-10 pr-4 py-1.5 bg-white rounded-md cursor-default react-select-container border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 calendarClassName="react-select-container"
                 wrapperClassName="react-select-container"
                 popperClassName="react-select-container"
