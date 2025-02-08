@@ -89,10 +89,10 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
       isOpen={isOpen}
       onRequestClose={onClose}
       contentLabel="Gestion des annonces"
-      className="relative bg-white rounded-lg shadow-lg w-full max-w-3xl mx-auto mt-10 max-h-[90vh] overflow-y-auto p-6"
+      className="relative bg-white rounded-lg shadow-lg w-full max-w-2xl mx-auto mt-10 max-h-[90vh] overflow-y-auto scrollbar-hide"
       overlayClassName="fixed inset-0 bg-black/50 z-50 flex items-start justify-center"
     >
-      <div className="space-y-6">
+      <div className="p-6">
         <div className="flex items-center justify-between border-b pb-4">
           <h2 className="text-2xl font-semibold tracking-tight">
             {infoBanner ? "Modifier l'annonce" : "Créer une nouvelle annonce"}
@@ -106,18 +106,18 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
         </div>
 
         {filteredClubs.length > 1 && (
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Sélectionner un club</h3>
+          <div className="mt-6">
+            <h3 className="text-lg font-medium mb-3">Clubs</h3>
             <div className="flex flex-wrap gap-2">
               {filteredClubs.map(club => (
                 <button
                   key={club.id}
                   onClick={() => handleClubSelect(club.id)}
-                  className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                    selectedClubId === club.id
-                      ? 'bg-black text-white'
-                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                  }`}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
+                    ${selectedClubId === club.id 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200'
+                    }`}
                 >
                   {club.label}
                 </button>
@@ -126,9 +126,9 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           <div className="space-y-2">
-            <label htmlFor="title" className="text-sm font-medium">
+            <label htmlFor="title" className="block text-sm font-medium text-zinc-700">
               Titre
             </label>
             <input
@@ -138,12 +138,12 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
               value={bannerData.title}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+              className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="description" className="text-sm font-medium">
+            <label htmlFor="description" className="block text-sm font-medium text-zinc-700">
               Description
             </label>
             <textarea
@@ -151,12 +151,12 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
               name="description"
               value={bannerData.description}
               onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm min-h-[100px]"
+              className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px]"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="headerimage" className="text-sm font-medium">
+            <label htmlFor="headerimage" className="block text-sm font-medium text-zinc-700">
               Image d'en-tête (URL)
             </label>
             <input
@@ -165,13 +165,13 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
               name="headerimage"
               value={bannerData.headerimage}
               onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+              className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label htmlFor="dd" className="text-sm font-medium">
+              <label htmlFor="dd" className="block text-sm font-medium text-zinc-700">
                 Date d'annonce
               </label>
               <input
@@ -182,12 +182,12 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
                 onChange={handleChange}
                 min={!infoBanner ? new Date().toISOString().split('T')[0] : undefined}
                 required
-                className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+                className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="df" className="text-sm font-medium">
+              <label htmlFor="df" className="block text-sm font-medium text-zinc-700">
                 Date de fin
               </label>
               <input
@@ -198,22 +198,22 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
                 onChange={handleChange}
                 min={bannerData.dd}
                 required
-                className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
+                className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
 
-          <div className="flex justify-end space-x-4 pt-4 border-t">
+          <div className="flex justify-end space-x-4 pt-6 border-t">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-md text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80"
+              className="px-4 py-2 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-md shadow-sm hover:bg-zinc-50"
             >
               Annuler
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-md text-sm font-medium bg-black text-white hover:bg-black/90"
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700"
             >
               {infoBanner ? "Modifier" : "Créer"}
             </button>
