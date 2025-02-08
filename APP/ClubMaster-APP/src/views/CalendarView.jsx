@@ -181,8 +181,8 @@ const CalendarView = () => {
         <div key={day} className={`min-h-[130px] border border-gray-200 p-2 relative ${day === today && month === new Date().getMonth() && year === new Date().getFullYear() ? 'border-blue-500' : ''}`}>
           {currentUserRoles.some(role => role.level >= 3) && (
             day >= today && 
-            month === new Date().getMonth() && 
-            year === new Date().getFullYear()
+            month >= new Date().getMonth() && 
+            year >= new Date().getFullYear()
           ) ? (
             <div 
               className="flex justify-between items-center mb-1 cursor-pointer hover:bg-gray-50 rounded"
@@ -406,13 +406,13 @@ const CalendarView = () => {
           <div className="space-y-2">
             <h3 className="font-semibold text-gray-700">Mois</h3>
             <div className="relative w-full">
-              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10" />
+              <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10 focus:!border-blue-500 focus:!ring-1 focus:!ring-blue-500" />
               <DatePicker
                 selected={currentDate}
                 onChange={setCurrentDate}
                 dateFormat="MM/yyyy"
                 showMonthYearPicker
-                className="w-full pl-10 pr-4 py-1.5 bg-white rounded-md cursor-default react-select-container border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-1.5 bg-white rounded-md cursor-default border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 calendarClassName="react-select-container"
                 wrapperClassName="react-select-container"
                 popperClassName="react-select-container"
