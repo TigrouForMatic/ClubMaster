@@ -31,6 +31,11 @@ const CalendarView = () => {
 
   const [eventStartIndices, setEventStartIndices] = useState({});
 
+  const today = useMemo(() => {
+    const now = new Date();
+    return now.getDate();
+  }, []);
+
   const getDataForSelectFromTypeEvent = useMemo(() => 
     typesEvent.reduce((acc, type) => {
       const existingType = acc.find(t => t.label === type.label);
@@ -173,8 +178,12 @@ const CalendarView = () => {
       const visibleEvents = eventsForDay.slice(startIndex, startIndex + 2);
 
       days.push(
-        <div key={day} className="min-h-[130px] border border-gray-200 p-2 relative">
-          {currentUserRoles.some(role => role.level >= 3) ? (
+        <div key={day} className={`min-h-[130px] border border-gray-200 p-2 relative ${day === today && month === new Date().getMonth() && year === new Date().getFullYear() ? 'border-blue-500' : ''}`}>
+          {currentUserRoles.some(role => role.level >= 3) && (
+            day >= today && 
+            month === new Date().getMonth() && 
+            year === new Date().getFullYear()
+          ) ? (
             <div 
               className="flex justify-between items-center mb-1 cursor-pointer hover:bg-gray-50 rounded"
               onClick={() => openCreateModal(new Date(year, month, day))}
