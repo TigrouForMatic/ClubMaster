@@ -141,12 +141,18 @@ const EventList = React.memo(({ clubId }) => {
                         ]}
                         className="react-select-container"
                         classNamePrefix="react-select"
+                        styles={{
+                            singleValue: (base) => ({
+                                ...base,
+                                color: '#6B7280', // Couleur grise (gray-500)
+                            })
+                        }}
                     />
                 </div>
             </div>
 
             <div 
-                className="relative w-full overflow-y-auto overflow-x-hidden max-h-[600px] scrollbar-hide"
+                className="relative w-full overflow-y-auto overflow-x-hidden max-h-[600px] min-h-[600px] scrollbar-hide"
                 ref={tableRef}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
