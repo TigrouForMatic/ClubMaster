@@ -12,12 +12,12 @@ function MatchsView() {
   const filteredAndSortedMatches = useMemo(() => {
     if (!events || !typesEvent || !userClubs || !matchScores || !matchTeams) return [];
     const now = new Date();
+
     
-    return events
-      .filter(e => 
-        (matchScores.some(s => s.eventid === e.id) ||
-          matchTeams.some(t => t.eventid === e.id))
-        )
+    const matchs = events.filter(e => e.ismatch)
+    console.log(matchs)
+    
+    return matchs
       .sort((a, b) => new Date(a.dd) - new Date(b.dd))
       .map(e => {
         const eventType = typesEvent.find(t => t.id === e.eventtypeid);

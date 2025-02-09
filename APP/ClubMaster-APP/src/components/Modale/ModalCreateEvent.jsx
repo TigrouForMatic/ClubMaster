@@ -17,6 +17,7 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
   const [startDate, setStartDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
+  const [isMatch, setIsMatch] = useState(false);
 
   const [eventData, setEventData] = useState({
     Label: '',
@@ -25,7 +26,7 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
     Dd: null,
     Df: null,
     AddressId: null,
-    MaxPerson: null,
+    MaxPerson: null
   });
 
   useEffect(() => {
@@ -65,6 +66,41 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
     }
   };
 
+  // const handleSubmitIsMatch = async () => {
+  // //   CREATE TABLE db.MatchScore (
+  // //     Id SERIAL PRIMARY KEY,
+  // //     Dc TIMESTAMP NOT NULL,
+  // //     Dm TIMESTAMP,
+  // //     Bin BOOLEAN NOT NULL,
+  // //     EventId INT,
+  // //     TeamId INT,
+  // //     Score INT,
+  // //     Result VARCHAR(255),
+  // //     FOREIGN KEY (EventId) REFERENCES db.Event(Id),
+  // //     FOREIGN KEY (TeamId) REFERENCES db.Team(Id)
+  // // );
+
+  // try {
+
+
+  //   const response = await api.post('/matchscore', finalEventData);
+
+  // } catch (error) {
+  //   console.error('Erreur lors de la création de l\'événement:', error);
+  // }
+
+  // // CREATE TABLE db.MatchTeam (
+  // //     Id SERIAL PRIMARY KEY,
+  // //     Dc TIMESTAMP NOT NULL,
+  // //     Dm TIMESTAMP,
+  // //     Bin BOOLEAN NOT NULL,
+  // //     EventId INT,
+  // //     TeamId INT,
+  // //     FOREIGN KEY (EventId) REFERENCES db.Event(Id),
+  // //     FOREIGN KEY (TeamId) REFERENCES db.Team(Id)
+  // // );
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -73,6 +109,7 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
         ...eventData,
         Dd: new Date(`${date}T${startTime}`).toISOString(),
         Df: new Date(`${date}T${endTime === '' ? startTime : endTime}`).toISOString(),
+        IsMatch : isMatch,
         Recurrence: hasRecurrence ? {
           interval: recurrenceInterval,
           unit: recurrenceUnit,
@@ -120,6 +157,7 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
     setStartDate('');
     setStartTime('');
     setEndTime('');
+    setIsMatch(false);
     setHasRecurrence(false);
     setHasMaxPerson(false);
     setRecurrenceEndDate('');
@@ -318,6 +356,18 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
+                checked={isMatch}
+                onChange={() => setIsMatch(!isMatch)}
+                className="w-4 h-4 rounded border-zinc-300"
+              />
+              <span className="text-sm font-medium">Es ce que il s'agit d'un match ?</span>
+            </label>
+          </div>
+          
+            <div className="space-y-4">
+              <label className="flex items-center gap-2">
+                <input
+                type="checkbox"
                 checked={hasRecurrence}
                 onChange={() => setHasRecurrence(!hasRecurrence)}
                 className="w-4 h-4 rounded border-zinc-300"
@@ -364,16 +414,16 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
                   />
                 </div>
 
-                { getRecurrenceResume() && (
-                  <span className="text-sm text-zinc-500">{getRecurrenceResume()}</span>
-                )}
+                  { getRecurrenceResume() && (
+                    <span className="text-sm text-zinc-500">{getRecurrenceResume()}</span>
+                  )}
+                </div>
+              )}
               </div>
-            )}
-          </div>
 
-          <div className="space-y-4">
-            <label className="flex items-center gap-2">
-              <input
+            <div className="space-y-4">
+              <label className="flex items-center gap-2">
+                <input
                 type="checkbox"
                 checked={hasMaxPerson}
                 onChange={handleToggleMaxPerson}
