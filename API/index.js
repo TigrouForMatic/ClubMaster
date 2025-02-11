@@ -11,7 +11,13 @@ const port = process.env.APP_PORT || 3200;
 const app = express();
 app.use(helmet());
 
-app.use(cors());
+app.use(cors({
+  origin: ['www.clubmaster.fr',
+    'club-master-tan.vercel.app',
+    'club-master-tigrouformatics-projects.vercel.app',
+    'http://localhost:3300'],
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 // Initialisation de la base de données
