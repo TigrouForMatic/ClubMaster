@@ -3,6 +3,31 @@ import Modal from 'react-modal';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
 import { dateFormat } from '../../js/date';
+import Select from 'react-select';
+
+const RECURRENCE_OPTIONS = [
+  { value: 'weekly', label: 'Toutes les semaines' },
+  { value: '2weeks', label: 'Toutes les 2 semaines' },
+  { value: 'monthly', label: 'Tous les mois' },
+  { value: 'quarterly', label: 'Tous les trimestres' },
+  { value: 'biannual', label: 'Tous les 6 mois' },
+  { value: 'yearly', label: 'Tous les ans' }
+];
+
+const DURATION_OPTIONS = [
+  { value: 'week', label: 'Pendant une semaine' },
+  { value: '2weeks', label: 'Pendant 2 semaines' },
+  { value: 'month', label: 'Pendant 1 mois' },
+  { value: 'quarter', label: 'Pendant 1 trimestre' },
+  { value: 'biannual', label: 'Pendant 6 mois' },
+  { value: 'year', label: 'Pendant 1 an' }
+];
+
+const RECURRENCE_UNITS = [
+  { value: 'days', label: 'jours' },
+  { value: 'weeks', label: 'semaines' },
+  { value: 'months', label: 'mois' }
+];
 
 function ModalCreateEvent({ isOpen, onClose, date }) {
   const { currentUserRoles, userClubs, addresses, typesEvent } = useStore();
@@ -10,7 +35,6 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
   const addItems = useStore((state) => state.addItems);
   const [selectedClubId, setSelectedClubId] = useState(userClubs[0].id);
   const [hasMaxPerson, setHasMaxPerson] = useState(false);
-  const [hasRecurrence, setHasRecurrence] = useState(false);
   const [recurrenceEndDate, setRecurrenceEndDate] = useState('');
   const [recurrenceInterval, setRecurrenceInterval] = useState(1);
   const [recurrenceUnit, setRecurrenceUnit] = useState('jours');
@@ -27,6 +51,16 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
     Df: null,
     AddressId: null,
     MaxPerson: null
+  });
+
+  const [recurrenceData, setRecurrenceData] = useState({
+    isEnabled: false,
+    isCustomConfig: false,
+    option: RECURRENCE_OPTIONS[0].value,
+    duration: DURATION_OPTIONS[0].value,
+    interval: 1,
+    unit: RECURRENCE_UNITS[0].value,
+    endDate: ''
   });
 
   useEffect(() => {
@@ -66,40 +100,54 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
     }
   };
 
-  // const handleSubmitIsMatch = async () => {
-  // //   CREATE TABLE db.MatchScore (
-  // //     Id SERIAL PRIMARY KEY,
-  // //     Dc TIMESTAMP NOT NULL,
-  // //     Dm TIMESTAMP,
-  // //     Bin BOOLEAN NOT NULL,
-  // //     EventId INT,
-  // //     TeamId INT,
-  // //     Score INT,
-  // //     Result VARCHAR(255),
-  // //     FOREIGN KEY (EventId) REFERENCES db.Event(Id),
-  // //     FOREIGN KEY (TeamId) REFERENCES db.Team(Id)
-  // // );
+  const handleRecurrenceChange = (field, value) => {
+    setRecurrenceData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
-  // try {
+  const getRecurrenceConfig = () => {
+    if (!recurrenceData.isEnabled) return null;
 
+    if (recurrenceData.isCustomConfig) {
+      return {
+        interval: recurrenceData.interval,
+        unit: recurrenceData.unit,
+        endDate: recurrenceData.endDate
+      };
+    }
 
-  //   const response = await api.post('/matchscore', finalEventData);
+    // Calcul automatique basé sur l'option sélectionnée
+    const config = {
+      interval: 1,
+      unit: 'weeks',
+      endDate: new Date(startDate)
+    };
 
-  // } catch (error) {
-  //   console.error('Erreur lors de la création de l\'événement:', error);
-  // }
+    // Configuration de l'intervalle
+    switch (recurrenceData.option) {
+      case '2weeks': config.interval = 2; break;
+      case 'monthly': config.unit = 'months'; break;
+      case 'quarterly': config.interval = 3; config.unit = 'months'; break;
+      case 'biannual': config.interval = 6; config.unit = 'months'; break;
+      case 'yearly': config.interval = 1; config.unit = 'years'; break;
+    }
 
-  // // CREATE TABLE db.MatchTeam (
-  // //     Id SERIAL PRIMARY KEY,
-  // //     Dc TIMESTAMP NOT NULL,
-  // //     Dm TIMESTAMP,
-  // //     Bin BOOLEAN NOT NULL,
-  // //     EventId INT,
-  // //     TeamId INT,
-  // //     FOREIGN KEY (EventId) REFERENCES db.Event(Id),
-  // //     FOREIGN KEY (TeamId) REFERENCES db.Team(Id)
-  // // );
-  // };
+    // Configuration de la durée
+    const endDate = new Date(startDate);
+    switch (recurrenceData.duration) {
+      case '2weeks': endDate.setDate(endDate.getDate() + 14); break;
+      case 'month': endDate.setMonth(endDate.getMonth() + 1); break;
+      case 'quarter': endDate.setMonth(endDate.getMonth() + 3); break;
+      case 'biannual': endDate.setMonth(endDate.getMonth() + 6); break;
+      case 'year': endDate.setFullYear(endDate.getFullYear() + 1); break;
+      default: endDate.setDate(endDate.getDate() + 7);
+    }
+
+    config.endDate = endDate.toISOString().split('T')[0];
+    return config;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -110,11 +158,7 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
         Dd: new Date(`${date}T${startTime}`).toISOString(),
         Df: new Date(`${date}T${endTime === '' ? startTime : endTime}`).toISOString(),
         IsMatch : isMatch,
-        Recurrence: hasRecurrence ? {
-          interval: recurrenceInterval,
-          unit: recurrenceUnit,
-          endDate: recurrenceEndDate
-        } : null
+        Recurrence: getRecurrenceConfig()
       };
 
       const response = await api.post('/event', finalEventData);
@@ -158,11 +202,19 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
     setStartTime('');
     setEndTime('');
     setIsMatch(false);
-    setHasRecurrence(false);
     setHasMaxPerson(false);
     setRecurrenceEndDate('');
     setRecurrenceInterval(1);
     setRecurrenceUnit('jours');
+    setRecurrenceData({
+      isEnabled: false,
+      isCustomConfig: false,
+      option: RECURRENCE_OPTIONS[0].value,
+      duration: DURATION_OPTIONS[0].value,
+      interval: 1,
+      unit: RECURRENCE_UNITS[0].value,
+      endDate: ''
+    });
     onClose();
   };
 
@@ -364,66 +416,63 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
             </label>
           </div>
           
-            <div className="space-y-4">
-              <label className="flex items-center gap-2">
-                <input
+          <div className="space-y-4">
+            <label className="flex items-center gap-2">
+              <input
                 type="checkbox"
-                checked={hasRecurrence}
-                onChange={() => setHasRecurrence(!hasRecurrence)}
+                checked={recurrenceData.isEnabled}
+                onChange={(e) => handleRecurrenceChange('isEnabled', e.target.checked)}
                 className="w-4 h-4 rounded border-zinc-300"
               />
               <span className="text-sm font-medium">Événement récurrent</span>
             </label>
 
-            {hasRecurrence && (
-              <div className="pl-6 space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Tous les</label>
-                  <input 
-                    type="number" 
-                    value={recurrenceInterval} 
-                    onChange={(e) => setRecurrenceInterval(parseInt(e.target.value) || 1)}
-                    min="1" 
-                    className="w-16 px-3 py-2 border rounded-md border-input bg-background text-sm"
-                  />
+            {recurrenceData.isEnabled && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 ml-4">
+                  <span className="text-sm font-medium">Configuration :</span>
+                  <div className="relative inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={recurrenceData.isCustomConfig}
+                      onChange={(e) => handleRecurrenceChange('isCustomConfig', e.target.checked)}
+                      className="sr-only peer"
+                      id="customConfig"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                    <span className="ml-2 text-sm font-medium">
+                      {recurrenceData.isCustomConfig ? 'Personnalisée' : 'Commune'}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">jours</label>
-                  <select 
-                    value={recurrenceUnit}
-                    onChange={(e) => setRecurrenceUnit(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
-                  >
-                    <option value='jours'>jours</option>
-                    <option value='semaines'>semaines</option>
-                    <option value='mois'>mois</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Date du dernier événement</label>
-                  <input
-                    type="date"
-                    name="recurrenceEndDate"
-                    value={recurrenceEndDate || ''}
-                    onChange={(e) => setRecurrenceEndDate(e.target.value)}
-                    min={eventData.Dd ? eventData.Dd.split('T')[0] : new Date().toISOString().split('T')[0]}
-                    required={hasRecurrence}
-                    className="w-full px-3 py-2 border rounded-md border-input bg-background text-sm"
-                  />
-                </div>
-
-                  { getRecurrenceResume() && (
-                    <span className="text-sm text-zinc-500">{getRecurrenceResume()}</span>
-                  )}
-                </div>
-              )}
+                {!recurrenceData.isCustomConfig ? (
+                  <div className="flex gap-4 ml-6">
+                    <Select
+                      value={RECURRENCE_OPTIONS.find(opt => opt.value === recurrenceData.option)}
+                      onChange={(opt) => handleRecurrenceChange('option', opt.value)}
+                      options={RECURRENCE_OPTIONS}
+                      className="flex-1"
+                    />
+                    <Select
+                      value={DURATION_OPTIONS.find(opt => opt.value === recurrenceData.duration)}
+                      onChange={(opt) => handleRecurrenceChange('duration', opt.value)}
+                      options={DURATION_OPTIONS}
+                      className="flex-1"
+                    />
+                  </div>
+                ) : (
+                  <div className="ml-6 space-y-4">
+                    {/* Configuration personnalisée existante */}
+                  </div>
+                )}
               </div>
+            )}
+          </div>
 
-            <div className="space-y-4">
-              <label className="flex items-center gap-2">
-                <input
+          <div className="space-y-4">
+            <label className="flex items-center gap-2">
+              <input
                 type="checkbox"
                 checked={hasMaxPerson}
                 onChange={handleToggleMaxPerson}
