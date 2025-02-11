@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  ollama:
+    build:
+      context: ./Ollama
+      dockerfile: DockerfileOllama
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        limits:
+          memory: 18G
+          cpus: '3'
+    networks:
+      - backend
+
+  api:
+    build:
+      context: ./API
+      dockerfile: DockerfileAPI.Dockerfile
+    ports:
+      - "3200:3200"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2'
+    depends_on:
+      - db
+    networks:
+      - frontend
+      - backend
+
+  db:
+    build:
+      context: ./BDD
+      dockerfile: DockerfileBDD.Dockerfile
+    ports:
+      - "5432:5432"
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+          cpus: '2'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  web:
+    build:
+      context: ./APP
+      dockerfile: DockerfileAPP.Dockerfile
+    ports:
+      - "3300:3300"
+      - "80:80"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1'
+    depends_on:
+      - api
+    networks:
+      - frontend
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  postgres_data:
