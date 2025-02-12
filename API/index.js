@@ -15,9 +15,9 @@ const app = express();
 app.use(helmet());
 
 app.use(cors({
-  origin: ['www.clubmaster.fr',
-    'club-master-tan.vercel.app',
-    'club-master-tigrouformatics-projects.vercel.app',
+  origin: ['https://www.clubmaster.fr',
+    'https://club-master-tan.vercel.app',
+    'https://club-master-tigrouformatics-projects.vercel.app',
     'http://localhost:3300',
     'http://localhost:5173'],
   credentials: true
