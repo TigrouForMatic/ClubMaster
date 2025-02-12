@@ -10,5 +10,6 @@ const setupSupabase = () => {
 }
 
 module.exports = {
+    supabase,
     setupSupabase
 }
