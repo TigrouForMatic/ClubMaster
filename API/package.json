@@ -4,7 +4,9 @@
   "description": "Api of Club Master",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=development node index.js",
+    "test": "NODE_ENV=test node index.js"
   },
   "keywords": [
     "api"
@@ -12,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^2.48.1",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -22,6 +25,7 @@
     "node-abort-controller": "^3.1.1",
     "node-fetch": "^2.7.0",
     "openai": "^4.52.7",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "supabase": "^2.12.1"
   }
 }

@@ -2,7 +2,7 @@
 import { APIController } from './ApiController';
 
 const api = new APIController({
-  baseURL: 'http://localhost:3200/api',
+  baseURL: import.meta.env.VITE_API_URL || process.env.REACT_APP_API_URL,
   // timeout: 5000,
   timeout: 720000,
   headers: {

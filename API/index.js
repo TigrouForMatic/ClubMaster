@@ -1,9 +1,12 @@
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
-require('dotenv').config();
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV || 'development'}`
+});
 const bodyParser = require('body-parser');
 const { setupDatabase } = require('./database');
+const { setupSupabase } = require('./supabase');
 const routes = require('./src/routes/routes');
 
 const port = process.env.APP_PORT || 3200;
@@ -21,8 +24,15 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
-// Initialisation de la base de données
-setupDatabase();
+if (process.env.NODE_ENV === 'production') {
+    console.log('Mode de production');
+    // Initialisation de la base de données
+    setupSupabase();
+} else {
+    console.log('Mode de développement');
+    // Initialisation de la base de données
+    setupDatabase();
+}
 
 // Utilisation des routes
 app.use('/api', routes);
