@@ -1,7 +1,4 @@
 const { pool } = require('../../database');
-const { supabase } = require('../../supabase');
-
-const CLIENT = supabase;
 
 const TABLE_NAME = 'db.Login';
 
@@ -20,15 +17,10 @@ const getLogin = async (req, res) => {
             queryString += ' WHERE ' + filterConditions.join(' AND ');
         }
 
-        // const client = await pool.connect();
-        // const result = await client.query(queryString, values);
-        // client.release();
-        // res.json(result.rows);
-        const { data, error } = await CLIENT.from(TABLE_NAME).select('*');
-        if (error) {
-            throw error;
-        }
-        res.json(data);
+        const client = await pool.connect();
+        const result = await client.query(queryString, values);
+        client.release();
+        res.json(result.rows);
     } catch (err) {
         console.error('Erreur lors de la récupération des personnes physiques', err);
         res.status(500).send('Erreur lors de la récupération des personnes physiques');
