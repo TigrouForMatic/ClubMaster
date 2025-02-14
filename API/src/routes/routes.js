@@ -1,6 +1,7 @@
 //routes.js
 const express = require('express');
 const router = express.Router();
+const { healthCheck } = require('../controllers/healthControllers');
 const { createAccount, testLogin } = require('../controllers/authControllers');
 const { authenticateToken } = require('../middleware/auth');
 const { getAddresses, getAddressById, getAddressByPerson, addAddress, updateAddress, deleteAddress } = require('../controllers/addressControllers');
@@ -23,11 +24,13 @@ const { getMatchTeam, getMatchTeamById, addMatchTeam, updateMatchTeam, deleteMat
 const { getMatchScore, getMatchScoreById, addMatchScore, updateMatchScore, deleteMatchScore } = require('../controllers/matchScoreControllers');
 const { getTeam, getTeamById, addTeam, updateTeam, deleteTeam } = require('../controllers/teamControllers');
 const { getTeamMember, getTeamMemberById, addTeamMember, updateTeamMember, deleteTeamMember } = require('../controllers/teamMemberControllers');
-const { getGenerateResponse } = require('../controllers/generateResponseController');
+// const { getGenerateResponse } = require('../controllers/generateResponseController');
 
-const { getGenerateImage } = require('../controllers/generateImageControllers');
+// const { getGenerateImage } = require('../controllers/generateImageControllers');
 
 const { getEntries, getEntryById, addEntry, updateEntry, deleteEntry } = require('../controllers/controllers');
+
+router.get('/health', healthCheck);
 
 // Nouvelles routes pour l'authentification
 router.post('/auth/create-account', createAccount);
@@ -173,10 +176,10 @@ router.put('/teamMember/:id', authenticateToken, updateTeamMember);
 router.delete('/teamMember/:id', authenticateToken, deleteTeamMember);
 
 // Routes pour générer une image 
-router.get('/generateImage', getGenerateImage);
+// router.get('/generateImage', getGenerateImage);
 
 // Routes pour générer une réponse
-router.get('/generateResponse', authenticateToken, getGenerateResponse);
+// router.get('/generateResponse', authenticateToken, getGenerateResponse);
 
 // Routes génériques
 router.get('/:table', getEntries);

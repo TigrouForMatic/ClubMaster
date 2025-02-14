@@ -14,12 +14,22 @@ const app = express();
 app.use(helmet());
 
 app.use(cors({
-  origin: ['https://www.clubmaster.fr',
-    'https://club-master-tan.vercel.app',
-    'https://club-master-tigrouformatics-projects.vercel.app',
+  origin: [
+    'https://clubmaster.fr',
+    'https://www.clubmaster.fr',
     'http://localhost:3300',
-    'http://localhost:5173'],
-  credentials: true
+    'http://localhost:8080',
+    'http://localhost:80',
+    'http://localhost:443',
+    'http://localhost:5173',
+    'http://0.0.0.0:3300',
+    'http://localhost:3200',
+    'http://localhost'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Length', 'Content-Range']
 }));
 app.use(bodyParser.json());
 
@@ -29,10 +39,26 @@ setupDatabase();
 app.use('/api', routes);
 
 // Après vos routes
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - Requête reçue:`, {
+        method: req.method,
+        url: req.url,
+        headers: req.headers,
+        body: req.body
+    });
+    next();
+});
+
+// Pour les erreurs
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-  });
+    console.error(`${new Date().toISOString()} - Erreur:`, err);
+    res.status(500).send('Erreur serveur');
+});
+
+// Endpoint de health check
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+});
 
 // Endpoint de test
 app.get('/test', (req, res) => {
@@ -40,6 +66,6 @@ app.get('/test', (req, res) => {
 });
 
 // Démarrer le serveur
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Serveur démarré sur le port ${port}`);
 });
