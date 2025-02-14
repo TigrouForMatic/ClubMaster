@@ -14,23 +14,25 @@ const app = express();
 app.use(helmet());
 
 app.use(cors({
-  origin: [
-    'https://clubmaster.fr',
-    'https://www.clubmaster.fr',
-    'http://localhost:3300',
-    'http://localhost:8080',
-    'http://localhost:80',
-    'http://localhost:443',
-    'http://localhost:5173',
-    'http://0.0.0.0:3300',
-    'http://localhost:3200',
-    'http://localhost'
-  ],
+  origin: ['https://clubmaster.fr', 'https://www.clubmaster.fr'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   exposedHeaders: ['Content-Length', 'Content-Range']
 }));
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://clubmaster.fr');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 app.use(bodyParser.json());
 
 setupDatabase();

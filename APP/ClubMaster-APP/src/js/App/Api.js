@@ -2,7 +2,7 @@
 import { APIController } from './ApiController';
 
 const api = new APIController({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3200/api',
+  baseURL: '/api',
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
