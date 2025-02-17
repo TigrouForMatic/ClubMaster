@@ -3,7 +3,7 @@ import { APIController } from './ApiController';
 
 const api = new APIController({
   baseURL: '/api',
-  timeout: 5000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
     'X-Requested-With': 'XMLHttpRequest'
