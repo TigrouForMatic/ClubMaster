@@ -2,12 +2,13 @@
 import { APIController } from './ApiController';
 
 const api = new APIController({
-  baseURL: import.meta.env.API_URL,
-  // timeout: 5000,
-  timeout: 720000,
+  baseURL: '/api',
+  timeout: 60000,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest'
+  },
+  withCredentials: true
 });
 
 // Ajout d'un intercepteur pour l'authentification
@@ -17,6 +18,17 @@ api.addRequestInterceptor(config => {
     config.headers['Authorization'] = `Bearer ${token}`;
   }
   return config;
+});
+
+// Ajoutez un intercepteur pour logger les requêtes
+api.axios.interceptors.request.use(request => {
+  console.log('Requête sortante:', {
+    url: request.url,
+    method: request.method,
+    headers: request.headers,
+    data: request.data
+  });
+  return request;
 });
 
 export default api;
