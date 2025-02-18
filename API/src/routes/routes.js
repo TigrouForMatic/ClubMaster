@@ -186,7 +186,7 @@ router.delete('/teamMember/:id', authenticateToken, deleteTeamMember);
 // Routes pour le CRUD des photos
 router.get('/photos', authenticateToken, getPhotos);
 router.get('/photo/:id', authenticateToken, getPhoto);
-router.post('/photo', authenticateToken, upload.single('photo'), addPhoto);
+router.post('/photo', authenticateToken, upload, addPhoto);
 router.delete('/photo/:id', authenticateToken, deletePhoto);
 
 // Routes génériques

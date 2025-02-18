@@ -3,7 +3,7 @@ import { dateFormat } from '../../js/date';
 import { EditPencil, Trash } from 'iconoir-react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
-import { getColorFromString } from '../../js/color'
+import { getColorFromString } from '../../js/color';
 
 const InfoBannerCard = ({ infoBanner, onEdit }) => {
     const { currentUserRoles, deleteItem } = useStore();

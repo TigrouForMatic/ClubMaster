@@ -1,2 +1,4 @@
 ssl/
 data/
+/uploads/*
+!uploads/.gitkeep

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Upload, X } from 'lucide-react';
-import api from '../../js/App/Api';
-import useStore from '../../store/store';
+import api from '../js/App/Api';
+// import useStore from '../../store/store';
 
-const PhotoUploader = ({ referenceId, referenceType, onUploadComplete }) => {
+const PhotoUploader = ({ referenceId, referenceType }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [preview, setPreview] = useState(null);
     const [error, setError] = useState('');
@@ -38,10 +38,9 @@ const PhotoUploader = ({ referenceId, referenceType, onUploadComplete }) => {
                 }
             });
             
-            if (onUploadComplete) {
-                onUploadComplete(response.data);
-            }
-            
+            // response.data.url = response.data.url.replace('\\', '/');
+            console.log(response.data);
+            console.log(file);
             setPreview(URL.createObjectURL(file));
         } catch (error) {
             setError('Erreur lors de l\'upload de la photo');

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Modal from 'react-modal';
 import api from '../../js/App/Api';
+import { Upload, X } from 'lucide-react';
 import useStore from '../../store/store';
 
 function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
@@ -9,10 +10,15 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
   const updateItem = useStore((state) => state.updateItem);
   const [selectedClubId, setSelectedClubId] = useState(infoBanner?.clubid || userClubs[0]?.id);
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [error, setError] = useState('');
+
+  const [file, setFile] = useState(null);
+
   const [bannerData, setBannerData] = useState({
     title: infoBanner?.title || '',
     description: infoBanner?.description || '',
-    headerimage: infoBanner?.headerimage || '',
     dd: infoBanner?.dd ? new Date(infoBanner.dd).toISOString().split('T')[0] : '',
     df: infoBanner?.df ? new Date(infoBanner.df).toISOString().split('T')[0] : '',
   });
@@ -35,6 +41,23 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
     setBannerData(prevData => ({ ...prevData, [name]: value }));
   };
 
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    setFile(file);
+  };
+
+  const handleFileSelect = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      setFile(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -48,16 +71,44 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
       if (infoBanner) {
         response = await api.put(`/infobanner/${infoBanner.id}`, finalBannerData);
         updateItem('infoBanners', response);
+        await uploadFile(infoBanner.id);
+
       } else {
         response = await api.post('/infobanner', finalBannerData);
         response.clublabel = userClubs.find(club => club.id === selectedClubId).label;
         response.createdbyname = currentUser.name;
         addItem('infoBanners', response);
+        await uploadFile(response.id);
       }
 
       handleClose();
     } catch (error) {
       console.error('Erreur lors de la création/modification de l\'infoBanner:', error);
+    }
+  };
+
+  const uploadFile = async (referenceId) => {
+    console.log("file", file);
+    console.log("referenceId", referenceId);
+    const formData = new FormData();
+    formData.append('photo', file);
+    formData.append('referenceid', referenceId);
+    formData.append('referencetype', 'infobanner');
+    
+    try {
+        const response = await api.post('/photo', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        
+        // response.data.url = response.data.url.replace('\\', '/');
+        console.log(response.data);
+        console.log(file);
+        setPreview(URL.createObjectURL(file));
+    } catch (error) {
+        setError('Erreur lors de l\'upload de la photo');
+        console.error(error);
     }
   };
 
@@ -157,16 +208,57 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
 
           <div className="space-y-2">
             <label htmlFor="headerimage" className="block text-sm font-medium text-zinc-700">
-              Image d'en-tête (URL)
+              Image d'en-tête
             </label>
-            <input
-              type="url"
-              id="headerimage"
-              name="headerimage"
-              value={bannerData.headerimage}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+            <div className="space-y-4">
+              <div 
+                  className={`border-2 border-dashed rounded-lg p-8 text-center ${
+                      isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+                  }`}
+                  onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsDragging(true);
+                  }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={handleDrop}
+              >
+                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                  <div className="mt-4">
+                      <label className="cursor-pointer text-blue-600 hover:text-blue-500">
+                          <span>Télécharger un fichier</span>
+                          <input
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={handleFileSelect}
+                          />
+                      </label>
+                      <p className="mt-2 text-sm text-gray-500">
+                          ou glisser-déposer ici
+                      </p>
+                  </div>
+              </div>
+
+              {error && (
+                  <p className="text-red-500 text-sm">{error}</p>
+              )}
+
+              {preview && (
+                <div className="relative">
+                    <img 
+                        src={preview} 
+                        alt="Aperçu" 
+                        className="rounded-lg max-h-48 w-auto"
+                    />
+                    <button
+                        onClick={() => setPreview(null)}
+                        className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                    >
+                        <X className="h-4 w-4" />
+                    </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

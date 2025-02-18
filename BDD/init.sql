@@ -287,7 +287,7 @@ BEGIN
         FOREIGN KEY (TeamId) REFERENCES db.Team(Id)
     );
 
-    CREATE TABLE Photos (
+    CREATE TABLE db.Photos (
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP NOT NULL,
         Dm TIMESTAMP,
