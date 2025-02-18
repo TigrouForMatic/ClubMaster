@@ -110,6 +110,15 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./ssl:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: renew
+    depends_on:
+      - web
+
 networks:
   frontend:
     driver: bridge
