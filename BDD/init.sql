@@ -287,6 +287,22 @@ BEGIN
         FOREIGN KEY (TeamId) REFERENCES db.Team(Id)
     );
 
+    CREATE TABLE Photos (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP NOT NULL,
+        Dm TIMESTAMP,
+        Bin BOOLEAN NOT NULL,
+        Filename VARCHAR(255) NOT NULL,
+        Originalname VARCHAR(255) NOT NULL,
+        Mimetype VARCHAR(100) NOT NULL,
+        Size INTEGER NOT NULL,
+        Url VARCHAR(255) NOT NULL,
+        ReferenceId INTEGER,
+        ReferenceType VARCHAR(50),
+        CreatedBy INTEGER,
+        FOREIGN KEY (CreatedBy) REFERENCES db.PersonPhysic(Id)
+    );
+
     -- Insert test data
     INSERT INTO db.Address (Dc, Dm, Bin, Street, City, State, PostalCode, Country, ReferenceId, Private, Validate) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', null, false, true),

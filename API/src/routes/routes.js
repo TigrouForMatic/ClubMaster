@@ -28,6 +28,8 @@ const { getTeamMember, getTeamMemberById, addTeamMember, updateTeamMember, delet
 
 // const { getGenerateImage } = require('../controllers/generateImageControllers');
 
+const { addPhoto, upload, getPhoto, deletePhoto, getPhotos } = require('../controllers/photoControllers');
+
 const { getEntries, getEntryById, addEntry, updateEntry, deleteEntry } = require('../controllers/controllers');
 
 router.get('/health', healthCheck);
@@ -180,6 +182,12 @@ router.delete('/teamMember/:id', authenticateToken, deleteTeamMember);
 
 // Routes pour générer une réponse
 // router.get('/generateResponse', authenticateToken, getGenerateResponse);
+
+// Routes pour le CRUD des photos
+router.get('/photos', authenticateToken, getPhotos);
+router.get('/photo/:id', authenticateToken, getPhoto);
+router.post('/photo', authenticateToken, upload.single('photo'), addPhoto);
+router.delete('/photo/:id', authenticateToken, deletePhoto);
 
 // Routes génériques
 router.get('/:table', getEntries);

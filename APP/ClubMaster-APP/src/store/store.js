@@ -25,6 +25,7 @@ const useStore = create((set) => ({
   panier: [],
   conversations: [],
   infoBanners: [],
+  photos: [],
   showApp: false,
   lastFetchTime: null,
 
