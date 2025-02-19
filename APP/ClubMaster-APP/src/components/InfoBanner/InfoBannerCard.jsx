@@ -5,8 +5,8 @@ import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { getColorFromString } from '../../js/color';
 
-// const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3200';
-const API_URL = 'http://localhost:3200';
+const API_URL = '/api';
+// const API_URL = 'http://localhost:3200';
 
 const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
     const { currentUserRoles, deleteItem } = useStore();
@@ -26,6 +26,12 @@ const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
         } catch (error) {
             console.error('Erreur lors de la création/modification de l\'infoBanner:', error);
         }
+    };
+
+    const getImageUrl = (photo) => {
+        if (!photo) return '';
+        if (photo.url.startsWith('http')) return photo.url;
+        return `${API_URL}/uploads/${photo.url.split('/').pop()}`;
     };
 
     return (
@@ -57,18 +63,11 @@ const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
                         <div className="absolute inset-0 h-48 rounded-t-lg overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent z-[1]" />
                             <img 
-                                src={infoBanner.photo.url.startsWith('http') 
-                                    ? infoBanner.photo.url 
-                                    : `${API_URL}${infoBanner.photo.url}`}
-                                alt={infoBanner.photo.originalname}
+                                src={getImageUrl(infoBanner.photo)}
+                                alt={infoBanner.photo?.originalname || 'Banner image'}
                                 className="object-cover w-full h-full"
                                 crossOrigin="anonymous"
                             />
-                            <span className="text-xs text-white absolute bottom-2 left-2 bg-black/50 p-1 rounded-md z-[2]">
-                                {infoBanner.photo.url.startsWith('http') 
-                                    ? infoBanner.photo.url 
-                                    : `${API_URL}${infoBanner.photo.url}`}
-                            </span>
                         </div>
                     )}
 

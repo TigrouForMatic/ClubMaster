@@ -84,6 +84,7 @@ services:
       - ./APP/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./ssl:/etc/nginx/ssl:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./uploads:/app/uploads:ro
     deploy:
       resources:
         limits:
