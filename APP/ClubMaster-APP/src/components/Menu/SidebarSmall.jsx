@@ -36,7 +36,7 @@ function SidebarSmall({ onMenuClick, isSmall }) {
           <NavLink
             key={to}
             to={to}
-            exact={to === "/"}
+            end={to === "/"}
             className={({ isActive }) => `flex items-center justify-center rounded-lg p-2 transition-colors ${
               isActive ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
             }`}>

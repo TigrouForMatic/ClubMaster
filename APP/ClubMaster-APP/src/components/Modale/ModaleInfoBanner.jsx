@@ -105,8 +105,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
       
       addItem('photos', response);
     } catch (error) {
-      setError('Erreur lors de l\'upload de la photo');
-      console.error(error);
+      console.error('Erreur lors de l\'upload de la photo', error);
       throw error;
     }
   };
