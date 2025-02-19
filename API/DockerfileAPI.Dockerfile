@@ -12,6 +12,9 @@ RUN npm install
 
 COPY . .
 
+# Créer le dossier uploads avec les bonnes permissions
+RUN mkdir -p /app/uploads && chmod 777 /app/uploads
+
 EXPOSE 3200
 
 CMD ["pm2-runtime", "index.js"]

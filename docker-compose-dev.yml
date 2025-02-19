@@ -11,7 +11,8 @@ services:
       - frontend
       - backend
     volumes:
-      - ./uploads:/app/uploads
+      - ./uploads:/app/uploads:rw
+    user: "1000:1000"
 
   db:
     build:

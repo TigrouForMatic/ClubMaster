@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const { setupDatabase } = require('./database');
 const routes = require('./src/routes/routes');
 const path = require('path');
+const uploadLogger = require('./src/middleware/uploadLogger');
 
 const port = process.env.APP_PORT || 3200;
 
@@ -15,7 +16,7 @@ const app = express();
 app.use(helmet());
 
 app.use(cors({
-  origin: ['https://clubmaster.fr', 'https://www.clubmaster.fr'],
+  origin: ['https://clubmaster.fr', 'https://www.clubmaster.fr', 'http://localhost:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -39,6 +40,7 @@ app.use(bodyParser.json());
 setupDatabase();
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', uploadLogger);
 
 // Utilisation des routes
 app.use('/api', routes);

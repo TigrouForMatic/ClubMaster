@@ -5,10 +5,32 @@ const fs = require('fs');
 
 const TABLE_NAME = 'db.Photos';
 
-// Assurez-vous que le répertoire uploads existe
+// Au démarrage de l'application
 const uploadsDir = path.join(__dirname, '../../uploads');
+
+// Vérification et création du dossier avec les bonnes permissions
 if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
+    try {
+        fs.mkdirSync(uploadsDir, { recursive: true, mode: 0o777 });
+        console.log('Dossier uploads créé avec succès');
+    } catch (error) {
+        console.error('Erreur lors de la création du dossier uploads:', error);
+    }
+} else {
+    // Vérifier les permissions
+    try {
+        fs.accessSync(uploadsDir, fs.constants.R_OK | fs.constants.W_OK);
+        console.log('Permissions du dossier uploads OK');
+    } catch (error) {
+        console.error('Problème de permissions sur le dossier uploads:', error);
+        // Tenter de corriger les permissions
+        try {
+            fs.chmodSync(uploadsDir, 0o777);
+            console.log('Permissions du dossier uploads corrigées');
+        } catch (error) {
+            console.error('Impossible de corriger les permissions:', error);
+        }
+    }
 }
 
 const storage = multer.diskStorage({
