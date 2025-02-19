@@ -21,15 +21,15 @@ api.addRequestInterceptor(config => {
 });
 
 // Ajoutez un intercepteur pour logger les requêtes
-api.axios.interceptors.request.use(request => {
-  console.log('Requête sortante:', {
-    url: request.url,
-    method: request.method,
-    headers: request.headers,
-    data: request.data
-  });
-  return request;
-});
+// api.axios.interceptors.request.use(request => {
+//   console.log('Requête sortante:', {
+//     url: request.url,
+//     method: request.method,
+//     headers: request.headers,
+//     data: request.data
+//   });
+//   return request;
+// });
 
 export default api;
 
