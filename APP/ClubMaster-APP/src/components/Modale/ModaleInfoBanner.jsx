@@ -5,7 +5,7 @@ import useStore from '../../store/store';
 import InfoBannerPhotoUploader from '../InfoBanner/InfoBannerPhotoUploader';
 
 function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
-  const { currentUserRoles, userClubs, currentUser } = useStore();
+  const { currentUserRoles, userClubs, currentUser, events, typesEvent } = useStore();
   const addItem = useStore((state) => state.addItem);
   const updateItem = useStore((state) => state.updateItem);
   const [selectedClubId, setSelectedClubId] = useState(infoBanner?.clubid || userClubs[0]?.id);
@@ -19,6 +19,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
     description: infoBanner?.description || '',
     dd: infoBanner?.dd ? new Date(infoBanner.dd).toISOString().split('T')[0] : '',
     df: infoBanner?.df ? new Date(infoBanner.df).toISOString().split('T')[0] : '',
+    eventid: infoBanner?.eventid || null,
   });
 
   const filteredClubs = useMemo(() => {
@@ -30,6 +31,11 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
     return userClubs.filter(club => highLevelClubIds.has(club.id));
   }, [userClubs, currentUserRoles]);
 
+  const filteredEvents = useMemo(() => {
+    const eventTypes = typesEvent.filter(type => type.clubid === selectedClubId);
+    return events.filter(event => eventTypes.includes(event.typeid));
+  }, [events, selectedClubId, typesEvent]);
+
   const handleClubSelect = (clubId) => {
     setSelectedClubId(clubId);
   };
@@ -37,25 +43,6 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBannerData(prevData => ({ ...prevData, [name]: value }));
-  };
-
-  const handleDrop = async (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
-
-    setFile(file);
-    setPreview(URL.createObjectURL(file));
-  };
-
-  const handleFileSelect = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      setFile(file);
-      setPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
@@ -251,6 +238,23 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
                 className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <label htmlFor="eventid" className="text-sm font-medium text-zinc-700 w-1/4">
+              Associez un événement
+            </label>
+            <select
+              id="eventid"
+              name="eventid"
+              value={bannerData.eventid}
+              onChange={handleChange}
+              className="w-3/4 px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {filteredEvents.map(event => (
+                <option key={event.id} value={event.id}>{event.label}</option>
+              ))}
+            </select>
           </div>
 
           <div className="flex justify-end space-x-4 pt-6 border-t">

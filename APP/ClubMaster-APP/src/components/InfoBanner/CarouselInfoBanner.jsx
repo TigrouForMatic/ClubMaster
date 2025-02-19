@@ -10,7 +10,7 @@ const CarouselInfoBanner = () => {
     const [isModalInfoBannerOpen, setIsModalInfoBannerOpen] = useState(false);
     const [selectedInfoBanner, setSelectedInfoBanner] = useState(null);
 
-    const { infoBanners, currentUserRoles, photos } = useStore();
+    const { infoBanners, currentUserRoles, photos, events } = useStore();
     const currentRole = currentUserRoles.find(role => role.level >= 3);
 
     const settings = {
@@ -34,9 +34,10 @@ const CarouselInfoBanner = () => {
             photo: photos.find(photo => 
                 photo.referenceid == infoBanner.id && 
                 photo.referencetype == 'infobanner'
-            )
+            ),
+            event: events.find(event => event.id == infoBanner.eventid)
         }));
-    }, [infoBanners, photos]);
+    }, [infoBanners, photos, events]);
 
     return (
         <div className="w-full max-w-6xl mx-auto px-4 py-6">

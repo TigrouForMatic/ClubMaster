@@ -33,8 +33,8 @@ const useEventData = () => {
         const teamData = await api.get("/team", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
         setItems('teams', teamData);
 
-        const photos = await api.get("/photos", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
-        setItems('photos', photos);
+        // const photos = await api.get("/photos", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
+        // setItems('photos', photos);
 
         const infoBannerData = await api.get("/infoBanner", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
         setItems('infoBanners', infoBannerData);

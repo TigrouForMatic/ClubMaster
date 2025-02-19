@@ -250,18 +250,11 @@ BEGIN
         HeaderImage VARCHAR(255),
         ClubId INTEGER NOT NULL,
         CreatedBy INTEGER NOT NULL,
+        EventId INTEGER NULL,
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id),
-        FOREIGN KEY (CreatedBy) REFERENCES db.PersonPhysic(Id)
+        FOREIGN KEY (CreatedBy) REFERENCES db.PersonPhysic(Id),
+        FOREIGN KEY (EventId) REFERENCES db.Event(Id)
     );
-
-    -- CREATE TABLE db.InfoBannerImage (
-    --     Id SERIAL PRIMARY KEY,
-    --     Dc TIMESTAMP NOT NULL,
-    --     Dm TIMESTAMP,
-    --     InfoBannerId INT,
-    --     ImageUrl VARCHAR(255),
-    --     FOREIGN KEY (InfoBannerId) REFERENCES db.InfoBanner(Id)
-    -- );
 
     CREATE TABLE db.MatchScore (
         Id SERIAL PRIMARY KEY,
@@ -485,9 +478,9 @@ BEGIN
     ('2024-07-30T00:00:00.000Z', '2024-07-30T00:00:00.000Z', 'Chaud pour un petit Bad?', 11,1),
     ('2024-08-08T00:00:00.000Z', '2024-08-08T00:00:00.000Z', 'Pourquoi pas :)', 11,2);
 
-    INSERT INTO db.InfoBanner (Dc, Dm, Bin, Title, Description, Dd, Df, HeaderImage, ClubId, CreatedBy) VALUES
-    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 1, 1),
-    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 2, 1);
+    INSERT INTO db.InfoBanner (Dc, Dm, Bin, Title, Description, Dd, Df, HeaderImage, ClubId, CreatedBy, EventId) VALUES
+    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 1, 1, null),
+    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 2, 1, null);
 
 END
 $$;
