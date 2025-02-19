@@ -2,13 +2,18 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Modal from 'react-modal';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
+import Select from 'react-select';
 import InfoBannerPhotoUploader from '../InfoBanner/InfoBannerPhotoUploader';
+
+Modal.setAppElement('#root');
 
 function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
   const { currentUserRoles, userClubs, currentUser, events, typesEvent } = useStore();
   const addItem = useStore((state) => state.addItem);
   const updateItem = useStore((state) => state.updateItem);
   const [selectedClubId, setSelectedClubId] = useState(infoBanner?.clubid || userClubs[0]?.id);
+  const [hasEvent, setHasEvent] = useState(false);
+  const [hasHeaderImage, setHasHeaderImage] = useState(false);
 
   const [preview, setPreview] = useState(null);
 
@@ -32,8 +37,12 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
   }, [userClubs, currentUserRoles]);
 
   const filteredEvents = useMemo(() => {
-    const eventTypes = typesEvent.filter(type => type.clubid === selectedClubId);
-    return events.filter(event => eventTypes.includes(event.typeid));
+    const eventTypes = typesEvent.filter(type => type.clubid == selectedClubId);
+    const filteredEvents = events.filter(event => eventTypes.filter(type => type.id == event.eventtypeid));
+    return filteredEvents.map(event => ({
+      value: event.id,
+      label: "#" + event.id + ' : ' + event.label
+    }));
   }, [events, selectedClubId, typesEvent]);
 
   const handleClubSelect = (clubId) => {
@@ -102,6 +111,10 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
     }
   };
 
+  const handleSelectEvent = (eventId) => {
+    setBannerData(prevData => ({ ...prevData, eventid: eventId }));
+  };
+
   const handleClose = () => {
     setBannerData({
         title: '',
@@ -109,7 +122,10 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
         headerimage: '',
         dd: '',
         df: '',
+        eventid: null,
     });
+    setHasEvent(false);
+    setHasHeaderImage(false);
     onClose();
   };
 
@@ -130,6 +146,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
       isOpen={isOpen}
       onRequestClose={onClose}
       contentLabel="Gestion des annonces"
+      ariaHideApp={false}
       className="relative bg-white rounded-lg shadow-lg w-full max-w-2xl mx-auto mt-10 max-h-[90vh] overflow-y-auto scrollbar-hide"
       overlayClassName="fixed inset-0 bg-black/50 z-50 flex items-start justify-center"
     >
@@ -168,6 +185,27 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
         )}
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+
+          <div className="">
+            <label className="flex items-center gap-2 w-80 h-10">
+              <input
+                type="checkbox"
+                checked={hasHeaderImage}
+                onChange={(e) => setHasHeaderImage(e.target.checked)}
+                className="w-4 h-4 rounded border-blue-500"
+              />
+              <span className="text-sm font-medium">Ajouter une image d'en-tête</span>
+            </label>
+          </div>
+        {hasHeaderImage && (
+          <div className="space-y-2">
+            <InfoBannerPhotoUploader 
+              onFileSelect={setFile}
+              initialPreview={preview}
+            />
+          </div>
+        )}
+
           <div className="space-y-2">
             <label htmlFor="title" className="block text-sm font-medium text-zinc-700">
               Titre
@@ -193,16 +231,6 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
               value={bannerData.description}
               onChange={handleChange}
               className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[100px]"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="headerimage" className="block text-sm font-medium text-zinc-700">
-              Image d'en-tête
-            </label>
-            <InfoBannerPhotoUploader 
-              onFileSelect={setFile}
-              initialPreview={preview}
             />
           </div>
 
@@ -241,20 +269,26 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <label htmlFor="eventid" className="text-sm font-medium text-zinc-700 w-1/4">
-              Associez un événement
+            <label className="flex items-center gap-2 w-80 h-10">
+              <input
+                type="checkbox"
+                checked={hasEvent}
+                onChange={(e) => setHasEvent(e.target.checked)}
+                className="w-4 h-4 rounded border-blue-500"
+              />
+              <span className="text-sm font-medium">Associez un événement</span>
             </label>
-            <select
-              id="eventid"
-              name="eventid"
-              value={bannerData.eventid}
-              onChange={handleChange}
-              className="w-3/4 px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              {filteredEvents.map(event => (
-                <option key={event.id} value={event.id}>{event.label}</option>
-              ))}
-            </select>
+            {hasEvent && (
+              <Select
+                value={bannerData.eventid ? { value: bannerData.eventid, label: events.find(e => e.id == bannerData.eventid)?.label } : null}
+                onChange={(option) => handleSelectEvent(option ? option.value : null)}
+                options={filteredEvents}
+                placeholder="Sélectionner un événement"
+                className="react-select-container w-80"
+                classNamePrefix="react-select"
+                isClearable
+              />
+            )}
           </div>
 
           <div className="flex justify-end space-x-4 pt-6 border-t">

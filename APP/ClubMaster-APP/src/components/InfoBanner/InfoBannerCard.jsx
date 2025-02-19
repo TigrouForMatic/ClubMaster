@@ -4,7 +4,7 @@ import { EditPencil, Trash } from 'iconoir-react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { getColorFromString } from '../../js/color';
-import InfoEvent from '../InfoEvent/InfoEvent';
+import InfoEvent from '../Event/InfoEvent';
 
 const InfoBannerCard = ({ infoBanner, onEdit }) => {
     const { currentUserRoles, deleteItem } = useStore();
@@ -69,14 +69,6 @@ const InfoBannerCard = ({ infoBanner, onEdit }) => {
                         {infoBanner.title}
                     </h2>
                     <p className="text-muted-foreground text-center text-base mb-6">{infoBanner.description}</p>
-                    {infoBanner.event && (
-                        <button
-                            onClick={handleEventClick}
-                            className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center justify-center gap-2 w-full mt-2"
-                        >
-                            Voir l'événement →
-                        </button>
-                    )}
                 </div>
 
                 <div className="mt-auto">
@@ -92,6 +84,17 @@ const InfoBannerCard = ({ infoBanner, onEdit }) => {
                             {infoBanner.clublabel}
                         </span>
                     </div>
+                    
+                    {infoBanner.event && (
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+                            <button
+                                onClick={handleEventClick}
+                                className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center justify-center gap-2 w-full mt-2"
+                            >
+                                Voir l'événement →
+                            </button>
+                        </div>
+                    )}
                     
                     <p className="absolute bottom-4 right-4 text-xs text-muted-foreground italic">
                         Créé par : {infoBanner.createdbyname} le {getDateDisplay(infoBanner.dd)}
