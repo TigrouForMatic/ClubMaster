@@ -5,8 +5,7 @@ import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { getColorFromString } from '../../js/color';
 
-const API_URL = '/api';
-// const API_URL = 'http://localhost:3200';
+const API_URL = import.meta.env.VITE_API_URL_UPLOADS_PATH;
 
 const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
     const { currentUserRoles, deleteItem } = useStore();
