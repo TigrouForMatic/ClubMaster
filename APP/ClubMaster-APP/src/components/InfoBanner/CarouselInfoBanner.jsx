@@ -5,10 +5,13 @@ import InfoBannerCard from './InfoBannerCard';
 import useStore from '../../store/store';
 import { useState, useMemo } from 'react';
 import ModaleInfoBanner from '../Modale/ModaleInfoBanner';
+import InfoEvent from '../Event/InfoEvent';
 
 const CarouselInfoBanner = () => {
     const [isModalInfoBannerOpen, setIsModalInfoBannerOpen] = useState(false);
     const [selectedInfoBanner, setSelectedInfoBanner] = useState(null);
+    const [isModalEventOpen, setIsModalEventOpen] = useState(false);
+
 
     const { infoBanners, currentUserRoles, photos, events } = useStore();
     const currentRole = currentUserRoles.find(role => role.level >= 3);
@@ -20,12 +23,21 @@ const CarouselInfoBanner = () => {
         slidesToShow: 1,
         slidesToScroll: 1,
         autoplay: true,
-        autoplaySpeed: 3000
+        autoplaySpeed: 3000,
+        swipe: true,
+        draggable: true,
+        clickable: false,
+        accessibility: false
     };
 
     const handleEditInfoBanner = (infoBanner) => {
         setSelectedInfoBanner(infoBanner);
         setIsModalInfoBannerOpen(true);
+    };
+
+    const handleEventClick = (infoBanner) => {
+        setSelectedInfoBanner(infoBanner);
+        setIsModalEventOpen(true);
     };
 
     const infoBannersWithPhotos = useMemo(() => {
@@ -59,6 +71,7 @@ const CarouselInfoBanner = () => {
                         key={infoBannersWithPhotos[0].id} 
                         infoBanner={infoBannersWithPhotos[0]} 
                         onEdit={handleEditInfoBanner}
+                        onEventClick={handleEventClick}
                     />
                 ) : infoBannersWithPhotos.length > 1 && (
                     <Slider {...settings} className="rounded-lg overflow-hidden">
@@ -67,6 +80,7 @@ const CarouselInfoBanner = () => {
                                 key={infoBanner.id} 
                                 infoBanner={infoBanner}
                                 onEdit={handleEditInfoBanner}
+                                onEventClick={handleEventClick}
                             />
                         ))}
                     </Slider>
@@ -81,6 +95,14 @@ const CarouselInfoBanner = () => {
                 }} 
                 infoBanner={selectedInfoBanner}
             />
+
+            {isModalEventOpen && selectedInfoBanner.event && (
+                <InfoEvent 
+                    isOpen={isModalEventOpen} 
+                    onClose={() => setIsModalEventOpen(false)} 
+                    eventId={selectedInfoBanner.event.id} 
+                />
+            )}
         </div>
     );
 };

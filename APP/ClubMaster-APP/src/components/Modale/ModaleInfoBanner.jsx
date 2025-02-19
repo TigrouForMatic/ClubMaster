@@ -144,7 +144,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
       contentLabel="Gestion des annonces"
       ariaHideApp={false}
       className="relative bg-white rounded-lg shadow-lg w-full max-w-2xl mx-auto mt-10 max-h-[90vh] overflow-y-auto scrollbar-hide"
@@ -156,7 +156,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
             {infoBanner ? "Modifier l'annonce" : "Créer une nouvelle annonce"}
           </h2>
           <button 
-            onClick={onClose}
+            onClick={handleClose}
             className="text-zinc-500 hover:text-zinc-900 transition-colors"
           >
             <span className="text-2xl">&times;</span>
@@ -235,20 +235,28 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+            <div className="space-y-2 relative group">
               <label htmlFor="dd" className="block text-sm font-medium text-zinc-700">
                 Date d'annonce
               </label>
-              <input
-                type="date"
-                id="dd"
-                name="dd"
-                value={bannerData.dd}
-                onChange={handleChange}
-                min={!infoBanner ? new Date().toISOString().split('T')[0] : undefined}
-                required
-                className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+              <div className="relative">
+                <input
+                  type="date"
+                  id="dd"
+                  name="dd"
+                  value={bannerData.dd}
+                  onChange={handleChange}
+                  min={!infoBanner ? new Date().toISOString().split('T')[0] : undefined}
+                  required
+                  disabled={infoBanner ? new Date(infoBanner.dd) < new Date() : false}
+                  className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                {infoBanner && new Date(infoBanner.dd) < new Date() && (
+                  <div className="absolute left-0 -bottom-10 hidden group-hover:block bg-blue-500 text-white text-sm rounded px-2 py-1 w-75">
+                    La date d'annonce ne peut pas être modifiée car l'annonce a déjà commencé
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -294,7 +302,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
           <div className="flex justify-end space-x-4 pt-6 border-t">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="px-4 py-2 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-md shadow-sm hover:bg-zinc-50"
             >
               Annuler

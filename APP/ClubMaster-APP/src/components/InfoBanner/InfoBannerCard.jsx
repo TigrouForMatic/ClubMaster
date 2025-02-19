@@ -4,24 +4,16 @@ import { EditPencil, Trash } from 'iconoir-react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { getColorFromString } from '../../js/color';
-import InfoEvent from '../Event/InfoEvent';
 
-const InfoBannerCard = ({ infoBanner, onEdit }) => {
+const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
     const { currentUserRoles, deleteItem } = useStore();
     const getDateDisplay = useCallback((date) => dateFormat(date), []);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const currentRole = currentUserRoles.find(role => role.level >= 3 && role.clubid === infoBanner.clubid);
     
     const handleEdit = useCallback(() => {
         onEdit(infoBanner);
     }, [onEdit, infoBanner]);
-
-    const handleEventClick = useCallback(() => {
-        if (infoBanner.event) {
-            setIsModalOpen(true);
-        }
-    }, [infoBanner]);
 
     const handleDelete = async (e) => {
         e.preventDefault();
@@ -34,81 +26,79 @@ const InfoBannerCard = ({ infoBanner, onEdit }) => {
     };
 
     return (
-        <div className="relative p-6 bg-card text-card-foreground rounded-lg transition-all min-h-[200px] w-full" key={infoBanner.id}>
-            {currentRole && (
-                <div className="absolute right-4 top-4 flex flex-col gap-2 z-10">
-                    <button 
-                        onClick={handleEdit}
-                        className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors bg-white/80"
-                    >
-                        <EditPencil className="h-4 w-4 text-blue-500" />
-                    </button>
-                    <button 
-                        onClick={handleDelete}
-                        className="p-2 rounded-full hover:bg-destructive hover:text-destructive-foreground transition-colors bg-white/80"
-                    >
-                        <Trash className="h-4 w-4 text-red-500" />
-                    </button>
-                </div>
-            )}
-
-            <div className="flex flex-col h-full">
-                {infoBanner.photo && (
-                    <div className="absolute inset-0 h-48 rounded-t-lg overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent z-[1]" />
-                        <img 
-                            src={infoBanner.photo.url} 
-                            alt={infoBanner.photo.originalname}
-                            className="object-cover w-full h-full"
-                        />
+        <div 
+            className="relative p-6 bg-card text-card-foreground rounded-lg transition-all min-h-[200px] w-full" 
+            key={infoBanner.id}
+            style={{ pointerEvents: 'none' }}
+        >
+            <div style={{ pointerEvents: 'auto' }}>
+                {currentRole && (
+                    <div className="absolute right-4 top-4 flex flex-col gap-2 z-10">
+                        <button 
+                            onClick={handleEdit}
+                            className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors bg-white/80"
+                        >
+                            <EditPencil className="h-4 w-4 text-blue-500" />
+                        </button>
+                        <button 
+                            onClick={handleDelete}
+                            className="p-2 rounded-full hover:bg-destructive hover:text-destructive-foreground transition-colors bg-white/80"
+                        >
+                            <Trash className="h-4 w-4 text-red-500" />
+                        </button>
                     </div>
                 )}
 
-                <div className={`flex-grow ${infoBanner.photo ? 'mt-40' : ''}`}>
-                    <h2 className={`text-xl font-bold text-center mb-4 ${infoBanner.photo ? 'text-white relative z-[2]' : ''}`}>
-                        {infoBanner.title}
-                    </h2>
-                    <p className="text-muted-foreground text-center text-base mb-6">{infoBanner.description}</p>
-                </div>
-
-                <div className="mt-auto">
-                    <div className="absolute bottom-4 left-4">
-                        <span 
-                            className="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
-                            style={{
-                                backgroundColor: `${getColorFromString(infoBanner.clublabel)}20`,
-                                color: getColorFromString(infoBanner.clublabel),
-                                borderColor: `${getColorFromString(infoBanner.clublabel)}40`
-                            }}
-                        >
-                            {infoBanner.clublabel}
-                        </span>
-                    </div>
-                    
-                    {infoBanner.event && (
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-                            <button
-                                onClick={handleEventClick}
-                                className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center justify-center gap-2 w-full mt-2"
-                            >
-                                Voir l'événement →
-                            </button>
+                <div className="flex flex-col h-full">
+                    {infoBanner.photo && (
+                        <div className="absolute inset-0 h-48 rounded-t-lg overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent z-[1]" />
+                            <img 
+                                src={infoBanner.photo.url} 
+                                alt={infoBanner.photo.originalname}
+                                className="object-cover w-full h-full"
+                            />
                         </div>
                     )}
-                    
-                    <p className="absolute bottom-4 right-4 text-xs text-muted-foreground italic">
-                        Créé par : {infoBanner.createdbyname} le {getDateDisplay(infoBanner.dd)}
-                    </p>
+
+                    <div className={`flex-grow ${infoBanner.photo ? 'mt-40' : ''}`}>
+                        <h2 className={`text-xl font-bold text-center mb-4 ${infoBanner.photo ? 'text-white relative z-[2]' : ''}`}>
+                            {infoBanner.title}
+                        </h2>
+                        <p className="text-muted-foreground text-center text-base mb-6">{infoBanner.description}</p>
+                    </div>
+
+                    <div className="mt-auto">
+                        <div className="absolute bottom-4 left-4">
+                            <span 
+                                className="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                style={{
+                                    backgroundColor: `${getColorFromString(infoBanner.clublabel)}20`,
+                                    color: getColorFromString(infoBanner.clublabel),
+                                    borderColor: `${getColorFromString(infoBanner.clublabel)}40`
+                                }}
+                            >
+                                {infoBanner.clublabel}
+                            </span>
+                        </div>
+                        
+                        {infoBanner.event && (
+                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10" style={{ pointerEvents: 'auto' }}>
+                                <button
+                                    onClick={() => onEventClick(infoBanner)}
+                                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center justify-center gap-2 w-full mt-2"
+                                >
+                                    Voir l'événement →
+                                </button>
+                            </div>
+                        )}
+                        
+                        <p className="absolute bottom-4 right-4 text-xs text-muted-foreground italic">
+                            Créé par : {infoBanner.createdbyname} le {getDateDisplay(infoBanner.dd)}
+                        </p>
+                    </div>
                 </div>
             </div>
-
-            {isModalOpen && infoBanner.event && (
-                <InfoEvent 
-                    isOpen={isModalOpen} 
-                    onClose={() => setIsModalOpen(false)} 
-                    eventId={infoBanner.event.id} 
-                />
-            )}
         </div>
     );
 };
