@@ -28,16 +28,16 @@ const InfoBannerCard = ({ infoBanner, onEdit }) => {
     return (
         <div className="relative p-6 bg-card text-card-foreground rounded-lg transition-all min-h-[200px] w-full" key={infoBanner.id}>
             {currentRole && (
-                <div className="absolute right-4 top-4 flex flex-col gap-2">
+                <div className="absolute right-4 top-4 flex flex-col gap-2 z-10">
                     <button 
                         onClick={handleEdit}
-                        className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                        className="p-2 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors bg-white/80"
                     >
                         <EditPencil className="h-4 w-4 text-blue-500" />
                     </button>
                     <button 
                         onClick={handleDelete}
-                        className="p-2 rounded-full hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                        className="p-2 rounded-full hover:bg-destructive hover:text-destructive-foreground transition-colors bg-white/80"
                     >
                         <Trash className="h-4 w-4 text-red-500" />
                     </button>
@@ -45,18 +45,21 @@ const InfoBannerCard = ({ infoBanner, onEdit }) => {
             )}
 
             <div className="flex flex-col h-full">
-                {infoBanner.headerimage && (
-                    <div className="relative w-full h-32 mb-4 rounded-md overflow-hidden">
+                {infoBanner.photo && (
+                    <div className="absolute inset-0 h-48 rounded-t-lg overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent z-[1]" />
                         <img 
-                            src={infoBanner.headerimage} 
-                            alt={infoBanner.title}
+                            src={infoBanner.photo.url} 
+                            alt={infoBanner.photo.originalname}
                             className="object-cover w-full h-full"
                         />
                     </div>
                 )}
 
-                <div className="flex-grow">
-                    <h2 className="text-xl font-bold text-center mb-4">{infoBanner.title}</h2>
+                <div className={`flex-grow ${infoBanner.photo ? 'mt-40' : ''}`}>
+                    <h2 className={`text-xl font-bold text-center mb-4 ${infoBanner.photo ? 'text-white relative z-[2]' : ''}`}>
+                        {infoBanner.title}
+                    </h2>
                     <p className="text-muted-foreground text-center text-base mb-6">{infoBanner.description}</p>
                 </div>
 

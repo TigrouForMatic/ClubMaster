@@ -94,6 +94,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
     formData.append('photo', file);
     formData.append('referenceid', referenceId);
     formData.append('referencetype', 'infobanner');
+    formData.append('clubid', selectedClubId);
     
     try {
       const response = await api.post('/photo', formData, {
@@ -106,8 +107,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
         }
       });
       
-      addItem('photos', response.data);
-      return response.data;
+      addItem('photos', response);
     } catch (error) {
       setError('Erreur lors de l\'upload de la photo');
       console.error(error);

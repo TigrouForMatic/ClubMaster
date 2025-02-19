@@ -300,7 +300,9 @@ BEGIN
         ReferenceId INTEGER,
         ReferenceType VARCHAR(50),
         CreatedBy INTEGER,
-        FOREIGN KEY (CreatedBy) REFERENCES db.PersonPhysic(Id)
+        ClubId INTEGER,
+        FOREIGN KEY (CreatedBy) REFERENCES db.PersonPhysic(Id),
+        FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
     );
 
     -- Insert test data

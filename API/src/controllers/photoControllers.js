@@ -63,11 +63,30 @@ const deletePhoto = async (req, res) => {
 };
 
 const getPhotos = async (req, res) => {
-    if (!req.file) {
-        return res.status(400).send('Aucun fichier uploadé');
+    const { arrayClubId } = req.query;
+    try {
+        let queryString = `SELECT * FROM ${TABLE_NAME} WHERE Bin = FALSE`;
+        const values = [];
+        
+        if (arrayClubId) {
+            try {
+                const clubIds = JSON.parse(arrayClubId);
+                if (Array.isArray(clubIds)) {
+                    queryString += ` AND ClubId = ANY($1)`;
+                    values.push(clubIds);
+                }
+            } catch (error) {
+                console.error('Erreur lors du parsing de arrayClubId:', error);
+                return res.status(400).send('Format de arrayClubId invalide');
+            }
+        }
+
+        const result = await pool.query(queryString, values);
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error('Erreur lors de la récupération des photos:', err);
+        res.status(500).send('Erreur lors de la récupération des photos');
     }
-    const result = await pool.query(`SELECT * FROM ${TABLE_NAME} WHERE Bin = FALSE`);
-    res.status(200).json(result.rows);
 };
 
 
@@ -78,7 +97,7 @@ const addPhoto = async (req, res) => {
 
     try {
         const file = req.files.photo[0];
-        const { referenceid, referencetype } = req.body;
+        const { referenceid, referencetype, clubid } = req.body;
         const photoData = {
             filename: file.filename,
             originalname: file.originalname,
@@ -87,7 +106,8 @@ const addPhoto = async (req, res) => {
             url: `/uploads/${file.filename}`,
             referenceid,
             referencetype,
-            createdby: req.user.id
+            createdby: req.user.id,
+            clubid
         };
 
         // Vérification des données requises
@@ -100,8 +120,8 @@ const addPhoto = async (req, res) => {
         photoData.referenceid = parseInt(photoData.referenceid, 10);
 
         const currentDate = new Date();
-        const columnsWithDates = `filename, originalname, mimetype, size, url, referenceid, referencetype, createdby, Dc, Dm, Bin`;
-        const valuesWithDates = [photoData.filename, photoData.originalname, photoData.mimetype, photoData.size, photoData.url, photoData.referenceid, photoData.referencetype, photoData.createdby, currentDate, currentDate, false];
+        const columnsWithDates = `filename, originalname, mimetype, size, url, referenceid, referencetype, createdby, clubid, Dc, Dm, Bin`;
+        const valuesWithDates = [photoData.filename, photoData.originalname, photoData.mimetype, photoData.size, photoData.url, photoData.referenceid, photoData.referencetype, photoData.createdby, photoData.clubid, currentDate, currentDate, false];
 
         const result = await pool.query(
             `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) 

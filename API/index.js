@@ -7,6 +7,7 @@ require('dotenv').config({
 const bodyParser = require('body-parser');
 const { setupDatabase } = require('./database');
 const routes = require('./src/routes/routes');
+const path = require('path');
 
 const port = process.env.APP_PORT || 3200;
 
@@ -36,6 +37,8 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 setupDatabase();
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Utilisation des routes
 app.use('/api', routes);
