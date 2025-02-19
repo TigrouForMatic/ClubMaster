@@ -54,7 +54,7 @@ const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
                         <div className="absolute inset-0 h-48 rounded-t-lg overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent z-[1]" />
                             <img 
-                                src={infoBanner.photo.url} 
+                                src={infoBanner.photo.url}
                                 alt={infoBanner.photo.originalname}
                                 className="object-cover w-full h-full"
                             />
