@@ -21,30 +21,17 @@ export class APIController {
   setupInterceptors() {
     this.axios.interceptors.request.use(
       config => {
-        // Ajouter le token Bearer pour les méthodes POST, PUT et DELETE
-        const methodsRequiringAuth = ['post', 'put', 'delete'];
-        const noAuthRoutes = ['auth/login', 'auth/create-account'];
+        // Ajouter le token Bearer pour toutes les requêtes sauf les exceptions
+        const noAuthRoutes = ['auth/login', 'auth/create-account', 'health'];
         
-        // Vérifie si la méthode nécessite une authentification et si la route n'est pas dans les exceptions
-        if (methodsRequiringAuth.includes(config.method?.toLowerCase()) && 
-            !noAuthRoutes.some(route => config.url?.includes(route))) {
+        if (!noAuthRoutes.some(route => config.url?.includes(route))) {
           const { currentUser } = useStore.getState();
-          const token = currentUser.token;
+          const token = currentUser?.token;
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
           }
         }
 
-        for (const interceptor of this.interceptors.request) {
-          config = interceptor(config);
-        }
-        return config;
-      },
-      error => Promise.reject(error)
-    );
-
-    this.axios.interceptors.request.use(
-      config => {
         for (const interceptor of this.interceptors.request) {
           config = interceptor(config);
         }

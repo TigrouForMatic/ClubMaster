@@ -71,7 +71,7 @@ const getMatchTeamById = async (req, res) => {
 const addMatchTeam = async (req, res) => {
     const currentDate = new Date();
     
-    if (!req.user) return res.sendStatus(401);
+    
 
     
     const { columns, values } = prepareInsertData(req.body);
@@ -103,8 +103,7 @@ const addMatchTeam = async (req, res) => {
 
 const updateMatchTeam = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
@@ -126,8 +125,7 @@ const updateMatchTeam = async (req, res) => {
 
 const deleteMatchTeam = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     try {

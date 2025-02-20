@@ -47,8 +47,7 @@ const getPersonPhysicById = async (req, res) => {
 const addPersonPhysic = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     
     const { columns, values } = prepareInsertData(req.body);
@@ -88,8 +87,7 @@ const addPersonPhysic = async (req, res) => {
 
 const updatePersonPhysic = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
 
     const { id } = req.params;
@@ -112,8 +110,7 @@ const updatePersonPhysic = async (req, res) => {
 
 const deletePersonPhysic = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
 
     const { id } = req.params;

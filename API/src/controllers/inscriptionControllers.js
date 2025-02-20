@@ -53,9 +53,6 @@ const getInscriptionById = async (req, res) => {
 const addInscription = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     const { columns, values } = prepareInsertData(req.body);
 
     try {
@@ -77,9 +74,6 @@ const addInscription = async (req, res) => {
 
 const updateInscription = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
 
@@ -99,9 +93,6 @@ const updateInscription = async (req, res) => {
 };
 
 const deleteInscription = async (req, res) => {
-
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
 
     const { id } = req.params;
     try {

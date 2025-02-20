@@ -43,9 +43,6 @@ const getEventTypeById = async (req, res) => {
 const addEventType = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     const { columns, values } = prepareInsertData(req.body);
 
     try {
@@ -67,9 +64,6 @@ const addEventType = async (req, res) => {
 
 const updateEventType = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
 
@@ -89,9 +83,6 @@ const updateEventType = async (req, res) => {
 };
 
 const deleteEventType = async (req, res) => {
-
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
 
     const { id } = req.params;
     try {

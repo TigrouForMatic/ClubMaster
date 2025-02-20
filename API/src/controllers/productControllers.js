@@ -43,8 +43,7 @@ const getProductById = async (req, res) => {
 const addProduct = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { columns, values } = prepareInsertData(req.body);
 
@@ -68,8 +67,7 @@ const addProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
@@ -91,8 +89,7 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     try {

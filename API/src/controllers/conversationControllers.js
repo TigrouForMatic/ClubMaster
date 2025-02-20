@@ -106,8 +106,7 @@ const getConversationById = async (req, res) => {
 const addConversation = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { eventIds, eventId, teamId } = req.body;
 
@@ -171,8 +170,7 @@ const addConversation = async (req, res) => {
 
 const updateConversation = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
@@ -194,8 +192,7 @@ const updateConversation = async (req, res) => {
 
 const deleteConversation = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     try {

@@ -28,7 +28,7 @@ const getLicence = async (req, res) => {
 };
 
 const getLicenceManage = async (req, res) => {
-    if (!req.user) return res.sendStatus(401);
+    
 
     try {
         const { arrayClubId } = req.query;
@@ -71,7 +71,7 @@ const getLicenceExport = async (req, res) => {
     let client;
     try {
         // Vérification de l'authentification
-        if (!req.user) return res.sendStatus(401);
+        
 
         const { clubId, etat = 'actif', isDelete = 'false' } = req.query;
 
@@ -148,9 +148,6 @@ const getLicenceById = async (req, res) => {
 const addLicence = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     const { columns, values } = prepareInsertData(req.body);
 
     try {
@@ -173,9 +170,6 @@ const addLicence = async (req, res) => {
 
 const updateLicence = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
 
@@ -195,13 +189,7 @@ const updateLicence = async (req, res) => {
 };
 
 const deleteLicence = async (req, res) => {
-
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     const { id } = req.params;
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
 
     try {
         const client = await pool.connect();

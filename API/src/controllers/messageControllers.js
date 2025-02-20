@@ -43,8 +43,7 @@ const getMessageById = async (req, res) => {
 const addMessage = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { columns, values } = prepareInsertData(req.body);
 
@@ -68,8 +67,7 @@ const addMessage = async (req, res) => {
 
 const updateMessage = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
@@ -91,8 +89,7 @@ const updateMessage = async (req, res) => {
 
 const deleteMessage = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     try {

@@ -44,8 +44,6 @@ const getEventById = async (req, res) => {
 
 const addEvent = async (req, res) => {
     const currentDate = new Date();
-    
-    if (!req.user) return res.sendStatus(401);
 
     const { Recurrence, ...eventData } = req.body;
     
@@ -134,9 +132,6 @@ const addEvent = async (req, res) => {
 
 const updateEvent = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
 
@@ -156,9 +151,6 @@ const updateEvent = async (req, res) => {
 };
 
 const deleteEvent = async (req, res) => {
-
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
 
     const { id } = req.params;
     try {

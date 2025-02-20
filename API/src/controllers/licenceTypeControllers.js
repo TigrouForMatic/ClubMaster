@@ -43,9 +43,6 @@ const getLicenceTypeById = async (req, res) => {
 };
 
 const addLicenceType = async (req, res) => {
-
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
     
     const { columns, values } = prepareInsertData(req.body);
     const currentDate = new Date();    
@@ -69,9 +66,6 @@ const addLicenceTypeFromNewClub = async (req, res) => {
 
     const { clubId } = req.params;
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     try {
         const client = await pool.connect();
         const insertQuery =  `INSERT INTO ${TABLE_NAME} (Label, ClubId, Price) VALUES ('Licence Adulte', ${clubId}, null) RETURNING *`;
@@ -86,8 +80,7 @@ const addLicenceTypeFromNewClub = async (req, res) => {
 
 const updateLicenceType = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
@@ -112,8 +105,7 @@ const updateLicenceType = async (req, res) => {
 
 const deleteLicenceType = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     const currentDate = new Date();

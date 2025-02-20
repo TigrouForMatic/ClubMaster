@@ -38,8 +38,7 @@ const getEntryById = async (req, res) => {
 
 const addEntry = async (req, res) => {
     const currentDate = new Date();
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const table = req.params.table;
     const { columns, values } = prepareInsertData(req.body);
@@ -62,8 +61,7 @@ const addEntry = async (req, res) => {
 };
 
 const updateEntry = async (req, res) => {
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { table, id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
@@ -81,8 +79,7 @@ const updateEntry = async (req, res) => {
 };
 
 const deleteEntry = async (req, res) => {
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { table, id } = req.params;
     try {

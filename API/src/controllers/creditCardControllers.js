@@ -55,8 +55,7 @@ const addCreditCard = async (req, res) => {
     const { personPhysicId, cardNumber, expirationDate, cvv, cardType } = req.body;
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const encryptedCardNumber = encrypt(cardNumber);
     const encryptedExpirationDate = encrypt(expirationDate);
@@ -79,8 +78,7 @@ const updateCreditCard = async (req, res) => {
     const { id } = req.params;
     const { cardNumber, expirationDate, cvv, cardType } = req.body;
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const encryptedCardNumber = encrypt(cardNumber);
     const encryptedExpirationDate = encrypt(expirationDate);
@@ -105,8 +103,7 @@ const updateCreditCard = async (req, res) => {
 const deleteCreditCard = async (req, res) => {
     const { id } = req.params;
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     try {
         const client = await pool.connect();

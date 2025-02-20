@@ -73,8 +73,7 @@ const getClubById = async (req, res) => {
 const addClub = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { columns, values } = prepareInsertData(req.body);
 
@@ -97,8 +96,7 @@ const addClub = async (req, res) => {
 
 const updateClub = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
@@ -120,8 +118,7 @@ const updateClub = async (req, res) => {
 
 const deleteClub = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     try {

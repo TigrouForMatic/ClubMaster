@@ -43,8 +43,7 @@ const getRoleById = async (req, res) => {
 const addRole = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { columns, values } = prepareInsertData(req.body);
 
@@ -69,8 +68,7 @@ const addRoleFromNewClub = async (req, res) => {
 
     const { clubId } = req.params;
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     try {
         const client = await pool.connect();
@@ -86,8 +84,7 @@ const addRoleFromNewClub = async (req, res) => {
 
 const updateRole = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
@@ -109,8 +106,7 @@ const updateRole = async (req, res) => {
 
 const deleteRole = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     try {

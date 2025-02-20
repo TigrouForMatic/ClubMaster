@@ -46,8 +46,7 @@ const getLoginById = async (req, res) => {
 const addLogin = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
 
     const { columns, values } = prepareInsertData(req.body);
@@ -71,8 +70,7 @@ const addLogin = async (req, res) => {
 
 const updateLogin = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
 
     const { id } = req.params;
@@ -95,8 +93,7 @@ const updateLogin = async (req, res) => {
 
 const deleteLogin = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
 
     const { id } = req.params;

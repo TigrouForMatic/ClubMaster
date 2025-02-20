@@ -29,8 +29,7 @@ const getAddresses = async (req, res) => {
 
 const getAddressByPerson = async (req, res) => {
     
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
     
     const { idPersonnel } = req.params;
 
@@ -53,8 +52,7 @@ const getAddressByPerson = async (req, res) => {
 
 const getAddressById = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
     
     const { id } = req.params;
     try {
@@ -74,8 +72,7 @@ const getAddressById = async (req, res) => {
 const addAddress = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { columns, values } = prepareInsertData(req.body);
 
@@ -98,8 +95,7 @@ const addAddress = async (req, res) => {
 
 const updateAddress = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
@@ -121,8 +117,7 @@ const updateAddress = async (req, res) => {
 
 const deleteAddress = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
+    
 
     const { id } = req.params;
     try {

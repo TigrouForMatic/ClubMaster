@@ -56,9 +56,6 @@ const getInfoBannerById = async (req, res) => {
 const addInfoBanner = async (req, res) => {
     const currentDate = new Date();
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     const { columns, values } = prepareInsertData(req.body);
 
     try {
@@ -80,9 +77,6 @@ const addInfoBanner = async (req, res) => {
 
 const updateInfoBanner = async (req, res) => {
 
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
-
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
 
@@ -102,9 +96,6 @@ const updateInfoBanner = async (req, res) => {
 };
 
 const deleteInfoBanner = async (req, res) => {
-
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
 
     const { id } = req.params;
 

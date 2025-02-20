@@ -2,8 +2,6 @@ const fetch = require('node-fetch');
 const { AbortController } = require('node-abort-controller');
 
 const getGenerateResponse = async (req, res) => {
-    // Vérification de l'authentification
-    if (!req.user) return res.sendStatus(401);
 
     try {
         const { prompt } = req.query;
