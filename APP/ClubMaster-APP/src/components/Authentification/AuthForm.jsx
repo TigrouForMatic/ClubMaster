@@ -14,10 +14,10 @@ const passwordRules = [
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
-  // const [login, setLogin] = useState('jules@clubmaster.bzh');
-  // const [password, setPassword] = useState('Test1234');
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
+  const [login, setLogin] = useState('jules@clubmaster.bzh');
+  const [password, setPassword] = useState('Test1234');
+  // const [login, setLogin] = useState('');
+  // const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [passwordValidation, setPasswordValidation] = useState({

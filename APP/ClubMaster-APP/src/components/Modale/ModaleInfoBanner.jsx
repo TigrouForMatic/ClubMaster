@@ -30,8 +30,10 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
   useEffect(() => {
     if (infoBanner?.photo) {
       setHasHeaderImage(true);
+      const API_URL = import.meta.env.VITE_API_URL_UPLOADS_PATH;
+      const photoUrl = `${API_URL}${infoBanner.photo.url}`;
       setFile(infoBanner.photo);
-      setPreview(infoBanner.photo);
+      setPreview(photoUrl);
     }
     if (infoBanner?.eventid) {
       setHasEvent(true);
