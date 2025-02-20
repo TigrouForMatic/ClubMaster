@@ -27,6 +27,18 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
     eventid: infoBanner?.eventid || null,
   });
 
+  useEffect(() => {
+    if (infoBanner?.photo) {
+      setHasHeaderImage(true);
+      setFile(infoBanner.photo);
+      setPreview(infoBanner.photo);
+    }
+    if (infoBanner?.eventid) {
+      setHasEvent(true);
+      setBannerData(prevData => ({ ...prevData, eventid: infoBanner.eventid }));
+    }
+  }, [infoBanner]);
+
   const filteredClubs = useMemo(() => {
     const highLevelClubIds = new Set(
       currentUserRoles
@@ -125,6 +137,8 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
     });
     setHasEvent(false);
     setHasHeaderImage(false);
+    setFile(null);
+    setPreview(null);
     onClose();
   };
 

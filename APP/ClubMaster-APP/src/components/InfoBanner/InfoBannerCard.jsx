@@ -35,7 +35,7 @@ const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
 
     return (
         <div 
-            className="relative p-6 bg-card text-card-foreground rounded-lg transition-all min-h-[200px] w-full" 
+            className="relative p-6 bg-card text-card-foreground rounded-lg transition-all min-h-[400px] w-full" 
             key={infoBanner.id}
             style={{ pointerEvents: 'none' }}
         >
@@ -58,27 +58,48 @@ const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
                 )}
 
                 <div className="flex flex-col h-full">
-                    {infoBanner.photo && (
-                        <div className="absolute inset-0 h-48 rounded-t-lg overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent z-[1]" />
-                            <img 
+                    {infoBanner.photo ? (
+                        <>
+                            <div className="absolute inset-0 h-48 rounded-t-lg overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent z-[1]" />
+                                <img 
                                 src={getImageUrl(infoBanner.photo)}
                                 alt={infoBanner.photo?.originalname || 'Banner image'}
                                 className="object-cover w-full h-full"
                                 crossOrigin="anonymous"
-                            />
-                        </div>
+                                />
+                            </div>
+                            <div className="absolute -top-20 inset-0 flex items-center justify-center">
+                                <div className="text-white text-2xl font-bold z-10 text-center p-2 bg-black/50 rounded-lg">
+                                    {infoBanner.title.toUpperCase()}
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="absolute inset-0 h-48 rounded-t-lg overflow-hidden">
+                                <div 
+                                    className="absolute inset-0" 
+                                style={{
+                                    background: `linear-gradient(135deg, ${getColorFromString(infoBanner.clublabel)}80, ${getColorFromString(infoBanner.clublabel)}20)`
+                                    }}
+                                />
+                            </div>
+                            <div className="absolute inset-0 bg-gradient-to-b to-transparent z-[1]" />
+                            <div className="absolute h-48 inset-0 flex items-center justify-center">
+                                <div className="text-white text-2xl font-bold z-10 text-center p-2 bg-black/50 rounded-lg">
+                                    {infoBanner.title.toUpperCase()}
+                                </div>
+                            </div>
+                        </>
                     )}
 
-                    <div className={`flex-grow ${infoBanner.photo ? 'mt-40' : ''}`}>
-                        <h2 className={`text-xl font-bold text-center mb-4 ${infoBanner.photo ? 'text-white relative z-[2]' : ''}`}>
-                            {infoBanner.title}
-                        </h2>
+                    <div className="flex-grow mt-52 min-h-[70px] flex items-center justify-center">
                         <p className="text-muted-foreground text-center text-base mb-6">{infoBanner.description}</p>
                     </div>
 
-                    <div className="mt-auto">
-                        <div className="absolute bottom-4 left-4">
+                    <div className="relative h-12 bottom-0">
+                        <div className="absolute left-4 bottom-0">
                             <span 
                                 className="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                 style={{
@@ -92,17 +113,17 @@ const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
                         </div>
                         
                         {infoBanner.event && (
-                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10" style={{ pointerEvents: 'auto' }}>
+                            <div className="absolute left-1/2 -translate-x-1/2 bottom-0" style={{ pointerEvents: 'auto' }}>
                                 <button
                                     onClick={() => onEventClick(infoBanner)}
-                                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center justify-center gap-2 w-full mt-2"
+                                    className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center justify-center gap-2"
                                 >
                                     Voir l'événement →
                                 </button>
                             </div>
                         )}
                         
-                        <p className="absolute bottom-4 right-4 text-xs text-muted-foreground italic">
+                        <p className="absolute right-4 bottom-0 text-xs text-muted-foreground italic">
                             Créé par : {infoBanner.createdbyname} le {getDateDisplay(infoBanner.dd)}
                         </p>
                     </div>
