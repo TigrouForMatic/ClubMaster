@@ -4,6 +4,7 @@ import { toSqlDate, getDateEndLicence } from '../../js/date';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { Search, MapPin, Building2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ClubCard = React.memo(({ club, onClick }) => (
   <div 
@@ -26,6 +27,8 @@ const FindClubOption = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const clubsPerPage = 10;
+
+  const navigate = useNavigate();
 
   const { clubs, addresses, setItems, addItem, currentUser, setShowApp } = useStore((state) => ({
     clubs: state.clubs || [],
@@ -115,6 +118,7 @@ const FindClubOption = () => {
       addItem('notifications', createdClubNotif);
       addItem('userClubs', club);
       setShowApp();
+      navigate('/');
     } catch (err) {
       console.error('Erreur lors de la création du club:', err.message);
       setError(err.message);

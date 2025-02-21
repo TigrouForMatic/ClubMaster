@@ -2,87 +2,9 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import PropTypes from "prop-types";
 import EventCard from "../components/Event/EventCard";
 import useStore from '../store/store';
-import api from '../js/App/Api';
 import { dateFormat, dateToTimeFormat } from "../js/date";
 import InfoEvent from '../components/Event/InfoEvent';
 import CarouselInfoBanner from '../components/InfoBanner/CarouselInfoBanner';
-
-const useEventData = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { userClubs, currentUser, lastFetchTime, setItems } = useStore();
-
-  useEffect(() => {
-    const fetchData = async () => {
-
-       // Vérifiez si les données ont été récupérées récemment (par exemple, dans les 20 dernières minutes)
-       const now = Date.now();
-       const minBeforeData = 20 * 60 * 1000;
-       if (lastFetchTime && now - lastFetchTime < minBeforeData) {
-         setIsLoading(false);
-         return;
-       }
-
-      try {
-        setIsLoading(true);
-        const arrayClubId = userClubs.map(club => club.id);
-
-        const typeEventData = await api.get("/eventType", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
-        setItems('typesEvent', typeEventData);
-
-        const teamData = await api.get("/team", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
-        setItems('teams', teamData);
-
-        const photosData = await api.get("/photos", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
-        setItems('photos', photosData);
-
-        const infoBannerData = await api.get("/infoBanner", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
-        setItems('infoBanners', infoBannerData);
-
-        const arrayEventTypeId = typeEventData.map(type => type.id);
-        const eventData = await api.get("/event", { params: { arrayEventTypeId: JSON.stringify(arrayEventTypeId) } });
-        setItems('events', eventData);
-
-        const matchTeamData = await api.get("/matchTeam", { params: { arrayTeamId: JSON.stringify(teamData.map(team => team.id)) } });
-        setItems('matchTeams', matchTeamData);
-
-        const matchScoreData = await api.get("/matchScore", { params: { arrayMatchTeamId: JSON.stringify(matchTeamData.map(matchTeam => matchTeam.id)) } });
-        setItems('matchScores', matchScoreData);
-
-        const arrayEventId = eventData.map(evnt => evnt.id);
-        const inscriptionData = await api.get("/inscription", { params: { arrayEventId: JSON.stringify(arrayEventId), personPhysicId : currentUser.id } });
-        setItems('inscriptions', inscriptionData);
-        
-        const addressData = await api.get("/address");
-        setItems('addresses', addressData);
-
-        const licenceData = await api.get("/licence", { params: { personphysicid: currentUser.id } });
-        setItems('licences', licenceData);
-
-        const typeLicencesData = await api.get("/licenceType", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
-        setItems('licenceTypes', typeLicencesData);
-
-        const roleData = await api.get("/role", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
-        setItems('roles', roleData);
-
-        const userRoles = roleData.filter(role => licenceData.some(lic => lic.roleid === role.id));
-        setItems('currentUserRoles', userRoles);
-
-        // Mettez à jour le temps de la dernière récupération
-        useStore.setState({ lastFetchTime: now });
-
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des données :", error);
-        setError(error);
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [userClubs, currentUser, setItems]);
-
-  return { isLoading, error };
-};
 
 const MainEventCard = ({ event, getDateDisplay, getTimeDisplay, addresses, onClick, isInscrit }) => {
   const address = addresses.find(a => a.id === event.addressid);
@@ -184,8 +106,6 @@ EventList.propTypes = {
 function HomeView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-
-  const { isLoading, error } = useEventData();
   const { events, typesEvent, addresses, inscriptions } = useStore();
 
   const filteredAndSortedEvents = useMemo(() => {
@@ -211,18 +131,6 @@ function HomeView() {
     setIsModalOpen(false);
     setSelectedEvent(null);
   }, []);
-
-  if (isLoading) return (
-    <div className="flex items-center justify-center min-h-[200px]">
-      <div className="text-lg text-gray-600">Chargement...</div>
-    </div>
-  );
-  
-  if (error) return (
-    <div className="flex items-center justify-center min-h-[200px]">
-      <div className="text-lg text-red-600">Une erreur est survenue : {error.message}</div>
-    </div>
-  );
 
   const nextEvent = filteredAndSortedEvents[0];
 

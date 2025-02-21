@@ -14,10 +14,10 @@ const passwordRules = [
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
-  // const [login, setLogin] = useState('jules@clubmaster.bzh');
-  // const [password, setPassword] = useState('Test1234');
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
+  const [login, setLogin] = useState('jules@clubmaster.bzh');
+  const [password, setPassword] = useState('Test1234');
+  // const [login, setLogin] = useState('');
+  // const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [passwordValidation, setPasswordValidation] = useState({
@@ -29,7 +29,6 @@ function AuthForm() {
   const [showClubOptions, setShowClubOptions] = useState(false);
   const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
 
-  const setItems = useStore((state) => state.setItems);
   const setShowApp = useStore((state) => state.setShowApp);
 
   const testimonials = [
@@ -85,79 +84,72 @@ function AuthForm() {
     return () => clearInterval(timer);
   }, []);
 
-  const fetchAdressCurrentUser = useCallback(async (personPhysicId) => {
-    try {
-      const dataCurrentUserAddresses = await api.get(`/address/personnel/${personPhysicId}`);
-      setItems('currentUserAddresses', dataCurrentUserAddresses)
-    } catch (error) {
-      console.error('Erreur:', error);
-      setError(error.message);
-    }
-  }, [setItems]);
-
-  const fetchClub = useCallback(async (personPhysicId) => {
-    try {
-      const dataClub = await api.get(`/club/personnel/${personPhysicId}`);
-      
-      if (dataClub.length) {
-        setItems('userClubs', dataClub);
-        setShowApp();
-      } else {
-        setShowClubOptions(true);
-      }
-    } catch (error) {
-      console.error('Erreur:', error);
-      setError(error.message);
-    }
-  }, [setItems, setShowApp]);
-
-  const fetchPersonPhysic = useCallback(async (userId) => {
-    try {
-      const dataPersonPhysic = await api.get('/personPhysic', { params: { loginId: userId } });
-
-      if (dataPersonPhysic.length) {
-        setItems('currentUser', dataPersonPhysic[0]);
-        await fetchAdressCurrentUser(dataPersonPhysic[0].id);
-        await fetchClub(dataPersonPhysic[0].id);
-      } else {
-        setShowPersonalInfo(true);
-      }
-    } catch (error) {
-      console.error('Erreur:', error);
-      setError(error.message);
-    }
-  }, [fetchAdressCurrentUser, fetchClub, setItems]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+    
     try {
-      const endpoint = isLogin ? 'auth/login' : 'auth/create-account';
-      const body = isLogin ? { login, password } : { login, password, confirmPassword };
+      const response = await api.post(isLogin ? '/auth/login' : '/auth/create-account', {
+        login,
+        password
+      });
 
-      if (!isLogin && password !== confirmPassword) {
-        setError("Les mots de passe ne correspondent pas");
-        return;
-      }
+      if (response.token) {
+        localStorage.setItem('token', response.token);
 
-      const data = await api.post(endpoint, body);
-      
-      localStorage.setItem('token', data.token);
-      setItems('login', { id: data.user.id, login: data.user.login, pseudo: data.user.pseudo });
-      setShowLoginForm(false);
-      
-      if (isLogin) {
-        await fetchPersonPhysic(data.user.id);
-      } else {
-        setShowPersonalInfo(true);
+        console.log(response)
+        const loginData = {
+          id: response.user.id,
+          login: response.user.login,
+          token: response.token,
+          pseudo: response.user.pseudo
+        }
+        
+        // Mettre à jour le login
+        useStore.setState({
+          login: loginData,
+          lastFetchTime: null
+        });
+
+        // Récupérer les données de l'utilisateur
+        const dataPersonPhysic = await api.get('/personPhysic', { 
+          params: { loginId: response.user.id } 
+        });
+
+        if (dataPersonPhysic.length) {
+          // Mettre à jour l'utilisateur
+          useStore.setState({
+            currentUser: dataPersonPhysic[0]
+          });
+
+          // Récupérer l'adresse
+          const dataCurrentUserAddresses = await api.get(`/address/personnel/${dataPersonPhysic[0].id}`);
+          useStore.setState({
+            currentUserAddresses: dataCurrentUserAddresses
+          });
+
+          // Récupérer les clubs
+          const dataClub = await api.get(`/club/personnel/${dataPersonPhysic[0].id}`);
+          if (dataClub.length) {
+            useStore.setState({
+              userClubs: dataClub
+            });
+            setShowApp();
+          } else {
+            setShowLoginForm(false);
+            setShowClubOptions(true);
+          }
+        } else {
+          setShowLoginForm(false);
+          setShowPersonalInfo(true);
+        }
       }
     } catch (err) {
       if (err.status === 401) {
-        setError('Utilisateur ou mot de passe incorrect');
+        setError('Login ou mot de passe incorrect');
       } else if (err.status === 400) {
         setError('Ce nom d\'utilisateur existe déjà');
-      }else {
+      } else {
         setError(`Erreur lors de ${isLogin ? 'la connexion' : 'la création du compte'}`);
       }
     }
@@ -310,6 +302,9 @@ function AuthForm() {
 
               <button
                 type="button"
+                onClick={() => {
+                  window.alert('Cette fonctionnalité n\'est pas encore disponible. Elle arrivera dans une prochaine version.');
+                }}
                 className="w-full py-2 border rounded-md flex items-center justify-center gap-2 hover:bg-zinc-50"
               >
                 <span className="font-bold">G</span>
@@ -317,6 +312,9 @@ function AuthForm() {
               </button>
               <button
                 type="button"
+                onClick={() => {
+                  window.alert('Cette fonctionnalité n\'est pas encore disponible. Elle arrivera dans une prochaine version.');
+                }}
                 className="w-full py-2 border rounded-md flex items-center justify-center gap-2 hover:bg-zinc-50"
               >
                 <FacebookIcon className="h-4 w-4" />
@@ -338,7 +336,7 @@ function AuthForm() {
 
         </div>
         {showClubOptions && (
-          <div className="mx-auto flex w-full flex-col justify-center space-y-6 ml-20">
+          <div className="mx-auto flex w-full flex-col justify-center space-y-6">
             <FindClubOption />
           </div>
         )}

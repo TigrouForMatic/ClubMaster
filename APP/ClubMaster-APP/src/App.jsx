@@ -6,6 +6,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import AuthForm from './components/Authentification/AuthForm';
 import NotificationContainer from './components/Notification/NotificationContainer';
+import DataLoader from './components/DataLoader';
 import './App.css';
 
 // Lazy loading des composants
@@ -60,15 +61,22 @@ function AppContent() {
 }
 
 function App() {
+  const showApp = useStore((state) => state.showApp);
+
   return (
-    <ErrorBoundary>
-      <MobileProvider>
-        <Router>
-          <NotificationContainer />
-          <AppContent />
-        </Router>
-      </MobileProvider>
-    </ErrorBoundary>
+    <Router>
+      {!showApp ? (
+        <AuthForm />
+      ) : (
+        <DataLoader>
+          <ErrorBoundary>
+            <MobileProvider>
+              <AppContent />
+            </MobileProvider>
+          </ErrorBoundary>
+        </DataLoader>
+      )}
+    </Router>
   );
 }
 
