@@ -55,8 +55,7 @@ function AuthForm() {
       text: "Gérez votre profil, vos licences et vos informations personnelles. Tout est centralisé au même endroit.",
       author: "Profil Personnel",
       role: "Gestion simplifiée",
-      image: "../../../public/logo_ClubMaster.jpg"
-      // image: "../../../assets/photos/carousel-auth-profil-personnel.webp"
+      image: "../../../public/carousel-auth-profil-personnel.webp"
     }
   ];
 
