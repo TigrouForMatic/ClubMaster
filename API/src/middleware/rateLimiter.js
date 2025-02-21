@@ -62,8 +62,34 @@ const authLimiter = rateLimit({
   }
 });
 
+// Limiteur création de compte
+const createAccountLimiter = rateLimit({
+  store: new RedisStore({
+    sendCommand: async (...args) => {
+      console.log('Redis Command (Create Account):', args);
+      const result = await redis.call(...args);
+      console.log('Redis Result:', result);
+      return result;
+    },
+    prefix: 'create_account_limit:'
+  }),
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  handler: (req, res) => {
+    console.log('Rate Limit Atteint:', {
+      ip: req.ip,
+      path: req.path,
+      headers: req.headers
+    });
+    res.status(429).json({
+      message: 'Trop de tentatives de création de compte, veuillez réessayer plus tard'
+    });
+  }
+});
+
 module.exports = {
   globalLimiter,
   authLimiter,
+  createAccountLimiter,
   redis
 };
