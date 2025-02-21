@@ -32,5 +32,10 @@ export default defineConfig({
       WEBSOCKET_URL: JSON.stringify(process.env.WEBSOCKET_URL || 'ws://localhost:3200'),
       NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
     }
+  },
+  build: {
+    rollupOptions: {
+      external: ['socket.io-client']
+    }
   }
 })
