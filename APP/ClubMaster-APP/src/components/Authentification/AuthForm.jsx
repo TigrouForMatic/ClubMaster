@@ -4,6 +4,11 @@ import FindClubOption from '../ClubOptions/FindClubOption';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { FacebookIcon } from 'lucide-react';
+import ClubMasterLogo from '../../assets/photos/logo_ClubMaster.jpg';
+import CarouselAuthPlanning from '../../assets/photos/carousel-auth-planning.webp';
+import CarouselAuthMultiSupport from '../../assets/photos/carousel-auth-multi-support.webp';
+import CarouselAuthCommunication from '../../assets/photos/carousel-auth-communication.webp';
+import CarouselAuthProfilPersonnel from '../../assets/photos/carousel-auth-profil-personnel.webp';
 
 const passwordRules = [
   { message: "Une lettre minuscule.", regex: /[a-z]+/ },
@@ -36,25 +41,25 @@ function AuthForm() {
       text: "Gérez votre planning sportif en toute simplicité. Inscrivez-vous aux événements et suivez vos activités en temps réel.",
       author: "Planning Interactif",
       role: "Organisation simplifiée",
-      image: "../../../public/carousel-auth-planning.webp"
+      image: CarouselAuthPlanning
     },
     {
       text: "Une interface intuitive accessible sur tous vos appareils. Restez connecté à votre club où que vous soyez.",
       author: "Multi-support",
       role: "Mobile, tablette, ordinateur",
-      image: "../../../public/carousel-auth-multi-support.webp"
+      image: CarouselAuthMultiSupport
     },
     {
       text: "Communiquez facilement avec votre équipe et vos coachs. Messagerie intégrée et notifications en temps réel.",
       author: "Communication",
       role: "Restez connecté",
-      image: "../../../public/carousel-auth-communication.webp"
+      image: CarouselAuthCommunication
     },
     {
       text: "Gérez votre profil, vos licences et vos informations personnelles. Tout est centralisé au même endroit.",
       author: "Profil Personnel",
       role: "Gestion simplifiée",
-      image: "../../../public/carousel-auth-profil-personnel.webp"
+      image: CarouselAuthProfilPersonnel
     }
   ];
 
@@ -173,7 +178,7 @@ function AuthForm() {
       <div className="relative hidden h-full flex-col bg-zinc-900 p-10 text-white lg:flex">
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center text-lg font-medium">
-          <img src="../../../public/logo_ClubMaster.jpg" alt="ClubMaster" className="h-10 w-10 mr-2 rounded" />
+          <img src={ClubMasterLogo} alt="ClubMaster" className="h-10 w-10 mr-2 rounded" />
           ClubMaster
         </div>
         <div className="relative z-20 flex-1 flex items-center justify-center">
