@@ -9,6 +9,7 @@ const { setupDatabase } = require('./database');
 const routes = require('./src/routes/routes');
 const path = require('path');
 const uploadLogger = require('./src/middleware/uploadLogger');
+const { requireAuth } = require('./src/middleware/auth');
 
 const port = process.env.APP_PORT || 3200;
 
@@ -42,8 +43,42 @@ setupDatabase();
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/uploads', uploadLogger);
 
-// Utilisation des routes
+// Configuration de base
+app.set('trust proxy', 1);
+
+// Middleware de logging
+app.use((req, res, next) => {
+  console.log('Requête entrante:', {
+    timestamp: new Date().toISOString(),
+    method: req.method,
+    path: req.path,
+    ip: req.ip,
+    headers: req.headers
+  });
+  next();
+});
+
+// Routes avec rate limiting
 app.use('/api', routes);
+
+// Middleware d'authentification
+app.use(requireAuth);
+
+// Avant l'application des rate limiters
+app.use((req, res, next) => {
+  console.log('Requête entrante:', {
+    timestamp: new Date().toISOString(),
+    method: req.method,
+    path: req.path,
+    ip: req.ip,
+    headers: {
+      'x-forwarded-for': req.headers['x-forwarded-for'],
+      'x-real-ip': req.headers['x-real-ip'],
+      'user-agent': req.headers['user-agent']
+    }
+  });
+  next();
+});
 
 // Après vos routes
 app.use((req, res, next) => {
@@ -70,6 +105,16 @@ app.get('/health', (req, res) => {
 // Endpoint de test
 app.get('/test', (req, res) => {
     res.json("Ici ça teste");
+});
+
+// Après l'initialisation de Redis
+app.use((req, res, next) => {
+  console.log('IP détectée:', {
+    ip: req.ip,
+    'x-forwarded-for': req.headers['x-forwarded-for'],
+    'x-real-ip': req.headers['x-real-ip']
+  });
+  next();
 });
 
 // Démarrer le serveur

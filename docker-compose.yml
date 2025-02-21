@@ -25,11 +25,16 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - frontend
       - backend
     environment:
       NODE_ENV: development
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: docker
     logging:
       driver: "json-file"
       options:
@@ -121,6 +126,22 @@ services:
     command: renew
     depends_on:
       - web
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+    command: redis-server --requirepass docker
+    environment:
+      - REDIS_PASSWORD=docker
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "docker", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 networks:
   frontend:
@@ -140,6 +161,12 @@ volumes:
       type: 'none'
       o: 'bind'
       device: './data/postgres'
+  redis_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './data/redis'
 
 # secrets:
 #   db_password:

@@ -7,12 +7,17 @@ services:
       - "3200:3200"
     depends_on:
       - db
+      - redis
     networks:
       - frontend
       - backend
     volumes:
       - ./uploads:/app/uploads:rw
     user: "1000:1000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=docker
 
   db:
     build:
@@ -36,6 +41,28 @@ services:
       - frontend
     volumes:
       - ./uploads:/app/uploads:rw
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+    command: redis-server --requirepass docker
+    environment:
+      - REDIS_PASSWORD=docker
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "docker", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+  redis_data:
+
 networks:
   frontend:
   backend:

@@ -32,13 +32,20 @@ const { addPhoto, upload, getPhoto, deletePhoto, getPhotos } = require('../contr
 
 const { getEntries, getEntryById, addEntry, updateEntry, deleteEntry } = require('../controllers/controllers');
 
+const { globalLimiter, authLimiter } = require('../middleware/rateLimiter');
+
 // Appliquer le middleware d'authentification à toutes les routes
 router.use(requireAuth);
+
+// Appliquer le limiteur d'authentification spécifiquement à la route login
+router.post('/auth/login', authLimiter, testLogin);
+
+// Appliquer le limiteur global aux autres routes
+router.use(globalLimiter);
 
 // Définir toutes les routes sans authenticateToken individuel
 router.get('/health', healthCheck);
 router.post('/auth/create-account', createAccount);
-router.post('/auth/login', testLogin);
 
 // Routes pour le CRUD des addresses
 router.get('/address', getAddresses);
