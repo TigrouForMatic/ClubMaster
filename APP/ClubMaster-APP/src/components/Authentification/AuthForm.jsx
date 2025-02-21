@@ -97,7 +97,6 @@ function AuthForm() {
       if (response.token) {
         localStorage.setItem('token', response.token);
 
-        console.log(response)
         const loginData = {
           id: response.user.id,
           login: response.user.login,

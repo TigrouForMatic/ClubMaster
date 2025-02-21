@@ -3,11 +3,13 @@ import useStore from '../store/store';
 import api from '../js/App/Api';
 import { dateFormat, dateToTimeFormat } from '../js/date';
 import UserImage from './UserImage';
+import { useWebSocket } from '../hooks/useWebSocket';
 
 const Conversation = React.memo(({ conversation }) => {
   const { currentUser, addMessageToConversation } = useStore();
   const [newMessage, setNewMessage] = useState('');
   const messagesContainerRef = useRef(null);
+  const { sendMessage } = useWebSocket(conversation.conversationid);
 
   const messages = conversation?.messages || [];
 
@@ -28,9 +30,10 @@ const Conversation = React.memo(({ conversation }) => {
           personname: currentUser.name,
           personphysicid: messageResponse.personphysicid,
           sentat: messageResponse.dc
-        }
+        };
 
-        addMessageToConversation(conversation.conversationid, newMessageData);
+        // Envoyer le message via WebSocket
+        sendMessage(newMessageData);
         setNewMessage('');
         if (messagesContainerRef.current) {
           messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
@@ -39,7 +42,7 @@ const Conversation = React.memo(({ conversation }) => {
     } catch (err) {
       console.error('Erreur lors de l\'envoi du message:', err);
     }
-  }, [conversation.conversationid, newMessage, currentUser, addMessageToConversation]);
+  }, [conversation.conversationid, newMessage, currentUser, sendMessage]);
 
   useEffect(() => {
     if (messagesContainerRef.current) {

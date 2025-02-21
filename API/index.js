@@ -10,10 +10,14 @@ const routes = require('./src/routes/routes');
 const path = require('path');
 const uploadLogger = require('./src/middleware/uploadLogger');
 const { requireAuth } = require('./src/middleware/auth');
+const http = require('http');
+const initializeWebSocket = require('./src/websocket/socketServer');
 
 const port = process.env.APP_PORT || 3200;
 
 const app = express();
+const server = http.createServer(app);
+
 app.use(helmet());
 
 app.use(cors({
@@ -117,7 +121,13 @@ app.use((req, res, next) => {
   next();
 });
 
+// Initialiser le serveur WebSocket
+const io = initializeWebSocket(server);
+
+// Rendre io accessible dans les routes
+app.set('io', io);
+
 // Démarrer le serveur
-app.listen(port, '0.0.0.0', () => {
+server.listen(port, '0.0.0.0', () => {
     console.log(`Serveur démarré sur le port ${port}`);
 });

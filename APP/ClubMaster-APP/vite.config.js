@@ -27,6 +27,10 @@ export default defineConfig({
     }
   },
   define: {
-    'import.meta.env.API_URL': JSON.stringify(process.env.API_URL || '/api')
+    'import.meta.env.API_URL': JSON.stringify(process.env.API_URL || '/api'),
+    'process.env': {
+      WEBSOCKET_URL: JSON.stringify(process.env.WEBSOCKET_URL || 'ws://localhost:3200'),
+      NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
+    }
   }
 })
