@@ -27,9 +27,38 @@ function AuthForm() {
   const [showLoginForm, setShowLoginForm] = useState(true);
   const [showPersonalInfo, setShowPersonalInfo] = useState(false);
   const [showClubOptions, setShowClubOptions] = useState(false);
+  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
 
   const setItems = useStore((state) => state.setItems);
   const setShowApp = useStore((state) => state.setShowApp);
+
+  const testimonials = [
+    {
+      text: "Gérez votre planning sportif en toute simplicité. Inscrivez-vous aux événements et suivez vos activités en temps réel.",
+      author: "Planning Interactif",
+      role: "Organisation simplifiée",
+      image: "../../../public/carousel-auth-planning.webp"
+    },
+    {
+      text: "Une interface intuitive accessible sur tous vos appareils. Restez connecté à votre club où que vous soyez.",
+      author: "Multi-support",
+      role: "Mobile, tablette, ordinateur",
+      image: "../../../public/carousel-auth-multi-support.webp"
+    },
+    {
+      text: "Communiquez facilement avec votre équipe et vos coachs. Messagerie intégrée et notifications en temps réel.",
+      author: "Communication",
+      role: "Restez connecté",
+      image: "../../../public/carousel-auth-communication.webp"
+    },
+    {
+      text: "Gérez votre profil, vos licences et vos informations personnelles. Tout est centralisé au même endroit.",
+      author: "Profil Personnel",
+      role: "Gestion simplifiée",
+      image: "../../../public/logo_ClubMaster.jpg"
+      // image: "../../../assets/photos/carousel-auth-profil-personnel.webp"
+    }
+  ];
 
   const validatePassword = useCallback((newPassword) => {
     const errors = passwordRules.map(condition => ({
@@ -46,6 +75,16 @@ function AuthForm() {
   useEffect(() => {
     validatePassword(password);
   }, [password, validatePassword]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTestimonialIndex((prevIndex) => 
+        (prevIndex + 1) % testimonials.length
+      );
+    }, 5000); // Change de témoignage toutes les 5 secondes
+
+    return () => clearInterval(timer);
+  }, []);
 
   const fetchAdressCurrentUser = useCallback(async (personPhysicId) => {
     try {
@@ -140,20 +179,48 @@ function AuthForm() {
   }
 
   return (
-    <div className="container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <div className="relative hidden h-full flex-col bg-zinc-900 p-10 text-white dark:border-r lg:flex">
+    <div className="container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-[1fr,1fr] lg:px-0">
+      <div className="relative hidden h-full flex-col bg-zinc-900 p-10 text-white lg:flex">
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center text-lg font-medium">
-          <img src="@/assets/photos/logo_ClubMaster.jpg" alt="ClubMaster" className="h-8 w-8 mr-2" />
+          <img src="../../../public/logo_ClubMaster.jpg" alt="ClubMaster" className="h-10 w-10 mr-2 rounded" />
           ClubMaster
         </div>
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg">
-              "Cette application m'a permis de gérer mon club de sport plus efficacement que jamais."
-            </p>
-            <footer className="text-sm">Sophie Martin</footer>
-          </blockquote>
+        <div className="relative z-20 flex-1 flex items-center justify-center">
+          <div className="space-y-4">
+            <div className="flex flex-col items-center space-y-6">
+              <div className="w-full overflow-hidden rounded-lg mb-8">
+                <img 
+                  src={testimonials[currentTestimonialIndex].image}
+                  alt={testimonials[currentTestimonialIndex].author}
+                  className="w-[1000px] h-[600px] object-cover transition-opacity duration-300"
+                />
+              </div>
+              
+              <blockquote className="space-y-2 transition-opacity duration-300 text-center mt-8">
+                <p className="text-lg">
+                  "{testimonials[currentTestimonialIndex].text}"
+                </p>
+                <footer className="text-sm">
+                  <p className="font-semibold">{testimonials[currentTestimonialIndex].author}</p>
+                  <p className="text-zinc-400">{testimonials[currentTestimonialIndex].role}</p>
+                </footer>
+              </blockquote>
+            </div>
+            
+            <div className="flex justify-center space-x-2">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentTestimonialIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    currentTestimonialIndex === index ? 'bg-white' : 'bg-zinc-600'
+                  }`}
+                  aria-label={`Témoignage ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       
