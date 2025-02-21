@@ -1,5 +1,5 @@
 import React from 'react';
-import ComingSoonImage from "../../../public/comming_soon.jpg";
+import ComingSoonImage from '../../assets/photos/comming_soon.jpg';
 import { ShoppingCart } from 'lucide-react';
 
 const ProductCard = ({ product, onAddToCart }) => (
