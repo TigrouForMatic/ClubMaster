@@ -33,9 +33,4 @@ export default defineConfig({
       NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
     }
   },
-  build: {
-    rollupOptions: {
-      external: ['socket.io-client']
-    }
-  }
 })
