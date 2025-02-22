@@ -42,3 +42,17 @@ docker-compose -f docker-compose-dev.yml up -d --build api
 docker-compose -f docker-compose-dev.yml up -d --build web
 ```
 
+
+Pour gerer les migrations : 
+
+```bash
+chmod +x ./migrate.sh
+./migrate.sh
+```
+
+# En développement
+docker-compose -f docker-compose-dev.yml up -d --build db
+
+# En production
+docker-compose up -d --build db
+
