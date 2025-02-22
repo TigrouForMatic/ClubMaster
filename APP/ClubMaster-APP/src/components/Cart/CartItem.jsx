@@ -1,6 +1,6 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
-import ComingSoonImage from "../../../public/comming_soon.jpg";
+import ComingSoonImage from '../../assets/photos/comming_soon.jpg';
 
 function CartItem({ item, onRemove, onQuantityChange }) {
   return (
