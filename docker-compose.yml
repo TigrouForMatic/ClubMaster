@@ -61,7 +61,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U docker"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -69,13 +69,10 @@ services:
     networks:
       - backend
     environment:
-      # POSTGRES_PASSWORD_FILE: /run/secrets/db_password
       POSTGRES_SHARED_BUFFERS: 1GB
       POSTGRES_EFFECTIVE_CACHE_SIZE: 3GB
       POSTGRES_WORK_MEM: 16MB
       POSTGRES_MAINTENANCE_WORK_MEM: 256MB
-    # secrets:
-    #   - db_password
 
   web:
     build:
@@ -167,7 +164,3 @@ volumes:
       type: 'none'
       o: 'bind'
       device: './data/redis'
-
-# secrets:
-#   db_password:
-#     file: ./secrets/db_password.txt
