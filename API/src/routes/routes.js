@@ -24,6 +24,7 @@ const { getMatchTeam, getMatchTeamById, addMatchTeam, updateMatchTeam, deleteMat
 const { getMatchScore, getMatchScoreById, addMatchScore, updateMatchScore, deleteMatchScore } = require('../controllers/matchScoreControllers');
 const { getTeam, getTeamById, addTeam, updateTeam, deleteTeam } = require('../controllers/teamControllers');
 const { getTeamMember, getTeamMemberById, addTeamMember, updateTeamMember, deleteTeamMember } = require('../controllers/teamMemberControllers');
+const { getRequestToJoin, getRequestToJoinById, addRequestToJoin, updateRequestToJoin, deleteRequestToJoin } = require('../controllers/requestToJoinControllers');
 // const { getGenerateResponse } = require('../controllers/generateResponseController');
 
 // const { getGenerateImage } = require('../controllers/generateImageControllers');
@@ -183,6 +184,13 @@ router.get('/teamMember/:id', getTeamMemberById);
 router.post('/teamMember', addTeamMember);
 router.put('/teamMember/:id', updateTeamMember);
 router.delete('/teamMember/:id', deleteTeamMember);
+
+// Routes pour le CRUD des demandes d'adhésion
+router.get('/requestToJoin', getRequestToJoin);
+router.get('/requestToJoin/:id', getRequestToJoinById);
+router.post('/requestToJoin', addRequestToJoin);
+router.put('/requestToJoin/:id', updateRequestToJoin);
+router.delete('/requestToJoin/:id', deleteRequestToJoin);
 
 // Routes pour générer une image 
 // router.get('/generateImage', getGenerateImage);
