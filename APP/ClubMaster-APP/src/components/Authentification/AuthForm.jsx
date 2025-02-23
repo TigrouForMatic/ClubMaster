@@ -174,7 +174,7 @@ function AuthForm() {
   }
 
   return (
-    <div className="container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-[1fr,1fr] lg:px-0">
+    <div className="container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-[1fr,1fr] lg:px-0 sm:mx-0">
       <div className="relative hidden h-full flex-col bg-zinc-900 p-10 text-white lg:flex">
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center text-lg font-medium">
@@ -188,7 +188,7 @@ function AuthForm() {
                 <img 
                   src={testimonials[currentTestimonialIndex].image}
                   alt={testimonials[currentTestimonialIndex].author}
-                  className="w-[1000px] h-[600px] object-cover transition-opacity duration-300"
+                  className="w-full h-[600px] object-cover transition-opacity duration-300"
                 />
               </div>
               
@@ -220,7 +220,7 @@ function AuthForm() {
       </div>
       
       <div className="lg:p-8">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] px-4 sm:px-0">
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
               {error}
@@ -228,7 +228,7 @@ function AuthForm() {
           )}
           
           {showLoginForm && (
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 w-full">
               <h1 className="text-2xl font-semibold tracking-tight">
                 {isLogin ? 'Connexion' : 'Créer un compte'}
               </h1>
@@ -236,8 +236,8 @@ function AuthForm() {
                 {isLogin ? 'Connectez-vous à votre compte' : 'Créez votre compte pour commencer'}
               </p>
               
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
+              <form onSubmit={handleSubmit} className="space-y-4 w-full">
+                <div className="space-y-2 w-full">
                   <input
                     type="email"
                     placeholder="Email"
@@ -340,7 +340,7 @@ function AuthForm() {
 
         </div>
         {showClubOptions && (
-          <div className="mx-auto flex w-full flex-col justify-center space-y-6">
+          <div className="mx-auto flex w-full flex-col justify-center space-y-6 px-4 sm:px-0">
             <FindClubOption />
           </div>
         )}
