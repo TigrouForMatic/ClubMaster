@@ -6,7 +6,7 @@ const getRequestToJoin = async (req, res) => {
     const { arrayClubId, userId } = req.query;
     try {
         let queryString = `
-            SELECT r.*, p.Name as PersonName, c.Label as ClubLabel
+            SELECT r.*, p.Name as PersonName,p.EmailAddress as PersonEmailAddress,p.PhoneNumber as PersonPhoneNumber, c.Label as ClubLabel
             FROM ${TABLE_NAME} r
             LEFT JOIN db.PersonPhysic p ON r.PersonPhysicId = p.Id
             LEFT JOIN db.Club c ON r.ClubId = c.Id

@@ -7,9 +7,10 @@ import EventTypeList from "../components/Manager/EventTypeList";
 import LicenceTypeList from "../components/Manager/LicenceTypeList";
 import RoleList from "../components/Manager/RoleList";
 import EventList from "../components/Manager/EventList";
+import RequestToJoinList from "../components/Manager/RequestToJoinList";
 
 function ManageView() {
-  const { userClubs, currentUserRoles, typesEvent, licenceTypes, productTypes, roles } = useStore();
+  const { userClubs, currentUserRoles, typesEvent, licenceTypes, productTypes, roles, requestToJoinAdmin } = useStore();
   const [licences, setLicences] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -131,6 +132,16 @@ function ManageView() {
             ))}
           </div>
         )}
+
+        {/* Liste des demandes d'adhésion */}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <RequestToJoinList 
+            requests={requestToJoinAdmin} 
+            selectedClubId={selectedClubId}
+            licenceTypes={filteredLicenceTypes}
+            roles={filteredRoles}
+          />
+        </div>
 
         {/* Liste des licences */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">

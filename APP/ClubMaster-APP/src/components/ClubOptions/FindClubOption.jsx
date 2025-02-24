@@ -87,59 +87,14 @@ const FindClubOption = () => {
     try {
       const requestToJoinData = await api.post("/requestToJoin", {
         clubid: club.id, 
-        personphysicid: currentUser.id
+        personphysicid: currentUser.id,
+        status: 'pending'
       });
       console.log(requestToJoinData);
       addItem('requestToJoin', requestToJoinData);
     } catch (err) {
       console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
     }
-    // try {
-    //   const fetchData = async (url, method, body = null) => {
-    //     if (method === 'GET') {
-    //       return await api.get(url);
-    //     } else if (method === 'POST') {
-    //       return await api.post(url, body);
-    //     }
-    //   };
-
-    //   const roleData = await api.get("/role", { params: { arrayClubId: JSON.stringify([club.id])} });
-    //   const roleId = roleData.find(role => role.clubid === club.id && role.level === 0)?.id;
-    //   setItems('roles', roleData);
-    //   if (roleId === undefined) {
-    //     console.error(`Aucun rôle trouvé pour le club ${club.id} avec le niveau 0`);
-    //   }
-
-    //   const typeLicencesData = await api.get("/licenceType", { params: { arrayClubId: JSON.stringify([club.id])} });
-    //   const licenceTypeId = typeLicencesData.find(licTyp => licTyp.clubid === club.id && licTyp.label === "Licence Visiteur")?.id;
-    //   setItems('licenceTypes', typeLicencesData);
-    //   if (licenceTypeId === undefined) {
-    //     console.error(`Aucun type de licence trouvé pour le club ${club.id} avec le nom Licence Visiteur`);
-    //   }
-
-    //   const licenceData = await fetchData('/licence', 'POST', {
-    //     label: "Licence Visiteur",
-    //     dd: toSqlDate(new Date()),
-    //     df: toSqlDate(getDateEndLicence()),
-    //     licenceTypeId: licenceTypeId,
-    //     personPhysicId: currentUser.id,
-    //     roleId: roleId,
-    //   });
-
-    //   addItem('licences', licenceData);
-
-    //   const createdClubNotif = {
-    //     label: `Club rejoint avec succès !! Vous êtes désormais visiteur de ${club.label}`,
-    //     time: new Date()
-    //   };
-    //   addItem('notifications', createdClubNotif);
-    //   addItem('userClubs', club);
-    //   setShowApp();
-    //   navigate('/');
-    // } catch (err) {
-    //   console.error('Erreur lors de la création du club:', err.message);
-    //   setError(err.message);
-    // }
   }, [addItem, currentUser, requestToJoin]);
 
   const locations = useMemo(() => {
