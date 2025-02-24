@@ -26,9 +26,10 @@ const useStore = create((set) => ({
   conversations: [],
   infoBanners: [],
   photos: [],
+  requestToJoin: [],
+  requestToJoinAdmin: [],
   showApp: false,
   lastFetchTime: null,
-
   // ShowApp
   setShowApp: () => set((state) => {
     const newShowAppState = !state.showApp;

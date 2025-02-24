@@ -5,7 +5,7 @@ import api from '../js/App/Api';
 export const useInitialData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { userClubs, currentUser, lastFetchTime, setItems } = useStore();
+  const { userClubs, currentUser, lastFetchTime, setItems, addItem } = useStore();
 
   useEffect(() => {
     let isMounted = true;
@@ -88,6 +88,45 @@ export const useInitialData = () => {
         const userRoles = roleData.filter(role => licenceData.some(lic => lic.roleid === role.id));
         setItems('currentUserRoles', userRoles);
 
+        const requestToJoinData = await api.get("/requestToJoin", { params: { userid: currentUser.id, arrayClubId: JSON.stringify(arrayClubId) } });
+        setItems('requestToJoin', requestToJoinData);
+
+        if (userRoles.some(role => role.level >= 3)) {
+          const arrayClubIdAdmin = [];
+          for (const role of userRoles) {
+            if (role.level >= 3) {
+              arrayClubIdAdmin.push(role.clubid);
+            }
+          }
+          const requestToJoinData = await api.get("/requestToJoin", { params: { arrayClubId: JSON.stringify(arrayClubIdAdmin) } });
+          setItems('requestToJoinAdmin', requestToJoinData);
+
+          const arrayClubRequest = [];
+          arrayClubIdAdmin.forEach(clubAdmin => {
+            const request = requestToJoinData.filter(request => request.clubid == clubAdmin);
+            arrayClubRequest.push({
+              label: request[0].clublabel,
+              number: request.length
+            });
+          });
+
+          if (arrayClubRequest.length > 0) {
+            for (const clubRequest of arrayClubRequest) {
+              if (clubRequest.number == 1) {
+                addItem('notifications', {
+                  label: `Demande d'une nouvelle adhésion à ${clubRequest.label}`,
+                  time: new Date()
+                });
+              } else {
+                addItem('notifications', {
+                  label: `Demande de ${clubRequest.number} nouvelles adhésions à ${clubRequest.label}`,
+                  time: new Date()
+                });
+              }
+            }
+          }
+        }
+        
         useStore.setState({ lastFetchTime: now });
         setIsLoading(false);
       } catch (error) {

@@ -298,7 +298,7 @@ BEGIN
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
     );
 
-    CREATE TABLE db.requestToJoin (
+    CREATE TABLE db.RequestToJoin (
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP NOT NULL,
         Dm TIMESTAMP,
@@ -492,6 +492,12 @@ BEGIN
     INSERT INTO db.InfoBanner (Dc, Dm, Bin, Title, Description, Dd, Df, HeaderImage, ClubId, CreatedBy, EventId) VALUES
     ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 1, 1, null),
     ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 2, 1, null);
+
+    INSERT INTO db.RequestToJoin (Dc, Dm, Bin, ClubId, PersonPhysicId) VALUES
+    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 2, 9),
+    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 2, 10),
+    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 1, 11);
+
 
 END
 $$;

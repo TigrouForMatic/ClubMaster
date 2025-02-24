@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Notification from './Notification';
 import { getDisplayTimeFormat } from '../../js/date';
 import useStore from '../../store/store';
@@ -6,6 +6,19 @@ import useStore from '../../store/store';
 const NotificationContainer = () => {
   const deleteNotif = useStore((state) => state.deleteNotif);
   const notifications = useStore((state) => state.notifications);
+
+  // Suppression automatique après 5 secondes
+  useEffect(() => {
+    const timers = notifications.map((_, index) => {
+      return setTimeout(() => {
+        deleteNotif(index);
+      }, 5000);
+    });
+
+    return () => {
+      timers.forEach(timer => clearTimeout(timer));
+    };
+  }, [notifications, deleteNotif]);
 
   const handleDeleteNotification = (index) => {
     deleteNotif(index);

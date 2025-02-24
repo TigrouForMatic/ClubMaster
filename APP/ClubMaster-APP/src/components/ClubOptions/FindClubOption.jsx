@@ -4,7 +4,7 @@ import { toSqlDate, getDateEndLicence } from '../../js/date';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { Search, MapPin, Building2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+
 
 const ClubCard = React.memo(({ club, onClick }) => (
   <div 
@@ -15,9 +15,16 @@ const ClubCard = React.memo(({ club, onClick }) => (
       <Building2 className="h-5 w-5 text-gray-400" />
       <h3 className="text-sm font-medium leading-none">{club.label}</h3>
     </div>
-    <div className="ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
-      <span className="text-xs text-muted-foreground">Cliquer pour rejoindre</span>
-    </div>
+    {club.request && (
+      <div className="ml-4">
+        <span className="text-xs text-blue-500">Demande envoyée</span>
+      </div>
+    )}
+    {!club.request && (
+      <div className="ml-4 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+        <span className="text-xs text-muted-foreground">Cliquer pour rejoindre</span>
+      </div>
+    )}
   </div>
 ));
 
@@ -28,15 +35,13 @@ const FindClubOption = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const clubsPerPage = 10;
 
-  const navigate = useNavigate();
-
-  const { clubs, addresses, setItems, addItem, currentUser, setShowApp } = useStore((state) => ({
+  const { clubs, addresses, setItems, addItem, currentUser, requestToJoin } = useStore((state) => ({
     clubs: state.clubs || [],
     addresses: state.addresses || [],
     setItems: state.setItems,
     addItem: state.addItem,
     currentUser: state.currentUser,
-    setShowApp: state.setShowApp
+    requestToJoin: state.requestToJoin
   }));
 
   const fetchData = useCallback(async (endpoint) => {
@@ -51,12 +56,14 @@ const FindClubOption = () => {
 
   useEffect(() => {
     const fetchAllData = async () => {
-      const [clubsData, addressesData] = await Promise.all([
+      const [clubsData, addressesData, requestToJoinData] = await Promise.all([
         fetchData('club'),
-        fetchData('address')
+        fetchData('address'),
+        fetchData('requestToJoin')
       ]);
       setItems('clubs', clubsData);
       setItems('addresses', addressesData);
+      setItems('requestToJoin', requestToJoinData);
     };
     
     fetchAllData();
@@ -78,52 +85,62 @@ const FindClubOption = () => {
 
   const handleClick = useCallback(async (club) => {
     try {
-      const fetchData = async (url, method, body = null) => {
-        if (method === 'GET') {
-          return await api.get(url);
-        } else if (method === 'POST') {
-          return await api.post(url, body);
-        }
-      };
-
-      const roleData = await api.get("/role", { params: { arrayClubId: JSON.stringify([club.id])} });
-      const roleId = roleData.find(role => role.clubid === club.id && role.level === 0)?.id;
-      setItems('roles', roleData);
-      if (roleId === undefined) {
-        console.error(`Aucun rôle trouvé pour le club ${club.id} avec le niveau 0`);
-      }
-
-      const typeLicencesData = await api.get("/licenceType", { params: { arrayClubId: JSON.stringify([club.id])} });
-      const licenceTypeId = typeLicencesData.find(licTyp => licTyp.clubid === club.id && licTyp.label === "Licence Visiteur")?.id;
-      setItems('licenceTypes', typeLicencesData);
-      if (licenceTypeId === undefined) {
-        console.error(`Aucun type de licence trouvé pour le club ${club.id} avec le nom Licence Visiteur`);
-      }
-
-      const licenceData = await fetchData('/licence', 'POST', {
-        label: "Licence Visiteur",
-        dd: toSqlDate(new Date()),
-        df: toSqlDate(getDateEndLicence()),
-        licenceTypeId: licenceTypeId,
-        personPhysicId: currentUser.id,
-        roleId: roleId,
+      const requestToJoinData = await api.post("/requestToJoin", {
+        clubid: club.id, 
+        personphysicid: currentUser.id
       });
-
-      addItem('licences', licenceData);
-
-      const createdClubNotif = {
-        label: `Club rejoint avec succès !! Vous êtes désormais visiteur de ${club.label}`,
-        time: new Date()
-      };
-      addItem('notifications', createdClubNotif);
-      addItem('userClubs', club);
-      setShowApp();
-      navigate('/');
+      console.log(requestToJoinData);
+      addItem('requestToJoin', requestToJoinData);
     } catch (err) {
-      console.error('Erreur lors de la création du club:', err.message);
-      setError(err.message);
+      console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
     }
-  }, [addItem, currentUser, setShowApp]);
+    // try {
+    //   const fetchData = async (url, method, body = null) => {
+    //     if (method === 'GET') {
+    //       return await api.get(url);
+    //     } else if (method === 'POST') {
+    //       return await api.post(url, body);
+    //     }
+    //   };
+
+    //   const roleData = await api.get("/role", { params: { arrayClubId: JSON.stringify([club.id])} });
+    //   const roleId = roleData.find(role => role.clubid === club.id && role.level === 0)?.id;
+    //   setItems('roles', roleData);
+    //   if (roleId === undefined) {
+    //     console.error(`Aucun rôle trouvé pour le club ${club.id} avec le niveau 0`);
+    //   }
+
+    //   const typeLicencesData = await api.get("/licenceType", { params: { arrayClubId: JSON.stringify([club.id])} });
+    //   const licenceTypeId = typeLicencesData.find(licTyp => licTyp.clubid === club.id && licTyp.label === "Licence Visiteur")?.id;
+    //   setItems('licenceTypes', typeLicencesData);
+    //   if (licenceTypeId === undefined) {
+    //     console.error(`Aucun type de licence trouvé pour le club ${club.id} avec le nom Licence Visiteur`);
+    //   }
+
+    //   const licenceData = await fetchData('/licence', 'POST', {
+    //     label: "Licence Visiteur",
+    //     dd: toSqlDate(new Date()),
+    //     df: toSqlDate(getDateEndLicence()),
+    //     licenceTypeId: licenceTypeId,
+    //     personPhysicId: currentUser.id,
+    //     roleId: roleId,
+    //   });
+
+    //   addItem('licences', licenceData);
+
+    //   const createdClubNotif = {
+    //     label: `Club rejoint avec succès !! Vous êtes désormais visiteur de ${club.label}`,
+    //     time: new Date()
+    //   };
+    //   addItem('notifications', createdClubNotif);
+    //   addItem('userClubs', club);
+    //   setShowApp();
+    //   navigate('/');
+    // } catch (err) {
+    //   console.error('Erreur lors de la création du club:', err.message);
+    //   setError(err.message);
+    // }
+  }, [addItem, currentUser, requestToJoin]);
 
   const locations = useMemo(() => {
     if (!addresses || addresses.length === 0) return [];
@@ -162,9 +179,22 @@ const FindClubOption = () => {
     );
   }
 
+ const getRequestByClub = (club) => {
+    return requestToJoin.find(rtj => rtj.clubid == club.id && rtj.personphysicid == currentUser.id)
+  } 
+
+  const filteredClubsWithRequest = useMemo(() => {
+    return filteredClubs.map((club) => {
+      return {
+        ...club,
+        request: getRequestByClub(club)
+      }
+    });
+  }, [filteredClubs, requestToJoin]);
+
   const indexOfLastClub = currentPage * clubsPerPage;
   const indexOfFirstClub = indexOfLastClub - clubsPerPage;
-  const currentClubs = filteredClubs.slice(indexOfFirstClub, indexOfLastClub);
+  const currentClubs = filteredClubsWithRequest.slice(indexOfFirstClub, indexOfLastClub);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
