@@ -3,7 +3,7 @@ import PersonalInfoForm from './PersonalInfoForm';
 import FindClubOption from '../ClubOptions/FindClubOption';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
-import { FacebookIcon } from 'lucide-react';
+import { FacebookIcon, Eye, EyeOff } from 'lucide-react';
 import ClubMasterLogo from '../../assets/photos/logo_ClubMaster.jpg';
 import CarouselAuthPlanning from '../../assets/photos/carousel-auth-planning.webp';
 import CarouselAuthMultiSupport from '../../assets/photos/carousel-auth-multi-support.webp';
@@ -25,6 +25,8 @@ function AuthForm() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordValidation, setPasswordValidation] = useState({
     valid: false,
     errors: []
@@ -164,6 +166,8 @@ function AuthForm() {
     setLogin('');
     setPassword('');
     setConfirmPassword('');
+    setShowPassword(false);
+    setShowConfirmPassword(false);
     setError('');
     setShowPersonalInfo(false);
   };
@@ -247,25 +251,43 @@ function AuthForm() {
                     required
                   />
                   
-                  <input
-                    type="password"
-                    placeholder="Mot de passe"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Mot de passe"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                   
                   {!isLogin && (
                     <>
-                      <input
-                        type="password"
-                        placeholder="Confirmer le mot de passe"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
-                        required
-                      />
+                      <div className="relative">
+                        <input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Confirmer le mot de passe"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        >
+                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
                       
                       <div className="bg-zinc-50 p-4 rounded-lg space-y-2">
                         {passwordValidation.errors.map((error, index) => (
