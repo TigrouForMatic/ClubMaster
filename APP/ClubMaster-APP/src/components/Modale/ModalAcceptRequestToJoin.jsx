@@ -33,7 +33,7 @@ const ModalAcceptRequestToJoin = ({ isOpen, onClose, request, licenceTypes, role
       const responseRequest = await api.put(`/requestToJoin/${request.id}`, { 
         status: 'accepted' 
       });
-      updateItem('requestToJoin', request.id, responseRequest);
+      updateItem('requestToJoinAdmin', request.id, responseRequest);
 
       // Créer la nouvelle licence
       const licenceData = await api.post('/licence', {

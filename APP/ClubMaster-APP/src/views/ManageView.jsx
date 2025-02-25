@@ -10,7 +10,7 @@ import EventList from "../components/Manager/EventList";
 import RequestToJoinList from "../components/Manager/RequestToJoinList";
 
 function ManageView() {
-  const { userClubs, currentUserRoles, typesEvent, licenceTypes, productTypes, roles, requestToJoinAdmin } = useStore();
+  const { userClubs, currentUserRoles, typesEvent, licenceTypes, productTypes, roles } = useStore();
   const [licences, setLicences] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -136,7 +136,6 @@ function ManageView() {
         {/* Liste des demandes d'adhésion */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <RequestToJoinList 
-            requests={requestToJoinAdmin} 
             selectedClubId={selectedClubId}
             licenceTypes={filteredLicenceTypes}
             roles={filteredRoles}

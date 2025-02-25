@@ -495,8 +495,8 @@ BEGIN
     ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 2, 1, null);
 
     INSERT INTO db.RequestToJoin (Dc, Dm, Bin, ClubId, PersonPhysicId, Status) VALUES
-    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 2, 9, 'pending'),
-    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 2, 10, 'pending'),
+    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 1, 9, 'pending'),
+    ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 1, 10, 'pending'),
     ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 1, 11, 'pending');
 
 

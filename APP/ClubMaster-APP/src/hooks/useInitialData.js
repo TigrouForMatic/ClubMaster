@@ -104,10 +104,12 @@ export const useInitialData = () => {
           const arrayClubRequest = [];
           arrayClubIdAdmin.forEach(clubAdmin => {
             const request = requestToJoinData.filter(request => request.clubid == clubAdmin);
-            arrayClubRequest.push({
-              label: request[0].clublabel,
-              number: request.length
-            });
+            if (request.length > 0) {
+              arrayClubRequest.push({
+                label: request[0].clublabel,
+                number: request.length
+              });
+            }
           });
 
           if (arrayClubRequest.length > 0) {
