@@ -1,15 +1,18 @@
 import React, { useMemo } from 'react';
 import { getColorFromString } from '../js/color';
 
-const UserImage = ({ name, size = 60 }) => {
+const UserImage = ({ name = '', size = 60 }) => {
     const initials = useMemo(() => {
+        if (!name) return '?';
         return name
+            .trim()
             .split(' ')
-            .map(word => word[0].toUpperCase())
+            .filter(word => word.length > 0)
+            .map(word => word[0]?.toUpperCase() || '')
             .join('');
     }, [name]);
 
-    const backgroundColor = useMemo(() => getColorFromString(name), [name]);
+    const backgroundColor = useMemo(() => getColorFromString(name || ''), [name]);
 
     // Calcule la taille du texte proportionnellement à la taille donnée
     const fontSize = size * 0.4;
