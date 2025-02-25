@@ -45,8 +45,6 @@ const ModalAcceptRequestToJoin = ({ isOpen, onClose, request, licenceTypes, role
         roleId: selectedRole.value,
       });
 
-      console.log(licenceData);
-
       addItem('licencesAdmin', licenceData);
       onClose();
     } catch (error) {

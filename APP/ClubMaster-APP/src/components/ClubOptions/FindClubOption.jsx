@@ -90,7 +90,6 @@ const FindClubOption = () => {
         personphysicid: currentUser.id,
         status: 'pending'
       });
-      console.log(requestToJoinData);
       addItem('requestToJoin', requestToJoinData);
     } catch (err) {
       console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
