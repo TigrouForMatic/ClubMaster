@@ -10,25 +10,10 @@ import EventList from "../components/Manager/EventList";
 import RequestToJoinList from "../components/Manager/RequestToJoinList";
 
 function ManageView() {
-  const { userClubs, currentUserRoles, typesEvent, licenceTypes, productTypes, roles } = useStore();
-  const [licences, setLicences] = useState([]);
+  const { userClubs, currentUserRoles, typesEvent, licenceTypes, productTypes, roles, licencesAdmin } = useStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedClubId, setSelectedClubId] = useState(userClubs[0].id);
-
-  const fetchLicences = useCallback(async (filteredClubs) => {
-    try {
-      setIsLoading(true);
-      const arrayClubId = filteredClubs.map(club => club.id);
-      const licenceData = await api.get("/licence/manage", { params: { arrayClubId: JSON.stringify(arrayClubId)}});
-      setLicences(licenceData);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des données :", error);
-      setError(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   const filteredClubs = useMemo(() => {
     const highLevelClubIds = new Set(
@@ -40,10 +25,6 @@ function ManageView() {
     return userClubs.filter(club => highLevelClubIds.has(club.id) && club.personmoralplan === 'Pro');
   }, [userClubs, currentUserRoles]);
 
-  useEffect(() => {
-    fetchLicences(filteredClubs); 
-  }, [filteredClubs, fetchLicences]);
-
   const filteredTypes = useMemo(() => {
     return typesEvent.filter(type => selectedClubId ? type.clubid === selectedClubId : true);
   }, [typesEvent, selectedClubId]);
@@ -54,7 +35,7 @@ function ManageView() {
     const roleMap = new Map(roles.map(role => [role.id, role]));
   
     // Filtrer et transformer les licences en une seule passe
-    return licences
+    return licencesAdmin
       .filter(licence => {
         const licenceType = licenceTypeMap.get(licence.licencetypeid);
         return licenceType && licenceType.clubid === selectedClubId;
@@ -69,7 +50,7 @@ function ManageView() {
         };
       });
   
-  }, [licences, licenceTypes, roles, selectedClubId]);
+  }, [licencesAdmin, licenceTypes, roles, selectedClubId]);
 
   const filteredLicenceTypes = useMemo(() => {
     return licenceTypes.filter(type => selectedClubId ? type.clubid === selectedClubId : true);

@@ -28,6 +28,7 @@ const useStore = create((set) => ({
   photos: [],
   requestToJoin: [],
   requestToJoinAdmin: [],
+  licencesAdmin: [],
   showApp: false,
   lastFetchTime: null,
   // ShowApp

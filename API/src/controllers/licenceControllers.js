@@ -28,8 +28,6 @@ const getLicence = async (req, res) => {
 };
 
 const getLicenceManage = async (req, res) => {
-    
-
     try {
         const { arrayClubId } = req.query;
 
@@ -70,9 +68,6 @@ const getLicenceManage = async (req, res) => {
 const getLicenceExport = async (req, res) => {
     let client;
     try {
-        // Vérification de l'authentification
-        
-
         const { clubId, etat = 'actif', isDelete = 'false' } = req.query;
 
         client = await pool.connect();
@@ -168,6 +163,40 @@ const addLicence = async (req, res) => {
     }
 };
 
+const addLicenceManage = async (req, res) => {
+    const currentDate = new Date();
+
+    const { columns, values } = prepareInsertData(req.body);
+
+    try {
+        const client = await pool.connect();
+
+        const columnsWithDates = `${columns}, Dc, Dm, Bin`;
+        const valuesWithDates = [...values, currentDate, currentDate, false];
+
+        const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
+
+        const resultAddLicence = await client.query(insertQuery, valuesWithDates);
+
+        let queryString = `
+            SELECT l.*, pp.Name, pp.NaissanceDate, pp.PhoneNumber, pp.EmailAddress, lt.Label AS TypeLabel
+            FROM db.Licence l
+            JOIN db.PersonPhysic pp ON l.PersonPhysicId = pp.Id
+            JOIN db.LicenceType lt ON l.LicenceTypeId = lt.Id
+            WHERE l.id = $1
+        `;
+
+        const result = await client.query(queryString, [resultAddLicence.rows[0].id]);
+
+        client.release();
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        console.error('Erreur lors de l\'ajout d\'une nouvelle licence', err);
+        res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle licence');
+    }
+};
+
+
 const updateLicence = async (req, res) => {
 
     const { id } = req.params;
@@ -223,6 +252,7 @@ module.exports = {
     getLicenceManage,
     getLicenceById,
     addLicence,
+    addLicenceManage,
     updateLicence,
     deleteLicence,
     getLicenceExport

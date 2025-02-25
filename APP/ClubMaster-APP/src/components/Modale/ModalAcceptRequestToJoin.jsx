@@ -36,7 +36,7 @@ const ModalAcceptRequestToJoin = ({ isOpen, onClose, request, licenceTypes, role
       updateItem('requestToJoinAdmin', request.id, responseRequest);
 
       // Créer la nouvelle licence
-      const licenceData = await api.post('/licence', {
+      const licenceData = await api.post('/licence/manage', {
         label: selectedLicenceType.label,
         dd: toSqlDate(new Date()),
         df: toSqlDate(getDateEndLicence()),
@@ -45,7 +45,9 @@ const ModalAcceptRequestToJoin = ({ isOpen, onClose, request, licenceTypes, role
         roleId: selectedRole.value,
       });
 
-      addItem('licences', licenceData);
+      console.log(licenceData);
+
+      addItem('licencesAdmin', licenceData);
       onClose();
     } catch (error) {
       console.error('Erreur lors de l\'acceptation de la demande:', error);

@@ -79,6 +79,8 @@ export const useInitialData = () => {
         const licenceData = await api.get("/licence", { params: { personphysicid: currentUser.id } });
         setItems('licences', licenceData);
 
+        console.log(licenceData);
+
         const typeLicencesData = await api.get("/licenceType", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
         setItems('licenceTypes', typeLicencesData);
 
@@ -92,12 +94,21 @@ export const useInitialData = () => {
         setItems('requestToJoin', requestToJoinData);
 
         if (userRoles.some(role => role.level >= 3)) {
+          // Récupération des id des clubs admin
           const arrayClubIdAdmin = [];
           for (const role of userRoles) {
             if (role.level >= 3) {
               arrayClubIdAdmin.push(role.clubid);
             }
           }
+
+          // Récupération des licences pour les clubs admin
+          const licenceAdminData = await api.get("/licence/manage", { params: { arrayClubId: JSON.stringify(arrayClubIdAdmin)}});
+          setItems('licencesAdmin', licenceAdminData);
+
+          console.log(licenceAdminData);
+
+          // Récupération des demandes d'adhésion pour les clubs admin
           const requestToJoinData = await api.get("/requestToJoin", { params: { arrayClubId: JSON.stringify(arrayClubIdAdmin) } });
           setItems('requestToJoinAdmin', requestToJoinData);
 

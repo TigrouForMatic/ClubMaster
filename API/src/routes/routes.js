@@ -9,7 +9,7 @@ const { getPersonPhysic, getPersonPhysicById, addPersonPhysic, updatePersonPhysi
 const { getLogin, getLoginById, addLogin, updateLogin, deleteLogin } = require('../controllers/loginControllers');
 const { getClub, getClubByPerson, getClubById, addClub, updateClub, deleteClub } = require('../controllers/clubControllers');
 const { getLicenceType, getLicenceTypeById, addLicenceType, addLicenceTypeFromNewClub, updateLicenceType, deleteLicenceType } = require('../controllers/licenceTypeControllers');
-const { getLicence, getLicenceManage, getLicenceById, addLicence, updateLicence, deleteLicence, getLicenceExport } = require('../controllers/licenceControllers');
+const { getLicence, getLicenceManage, getLicenceById, addLicence, updateLicence, deleteLicence, getLicenceExport, addLicenceManage } = require('../controllers/licenceControllers');
 const { getRole, getRoleById, addRole, addRoleFromNewClub, updateRole, deleteRole } = require('../controllers/roleControllers');
 const { getEventType, getEventTypeById, addEventType, updateEventType, deleteEventType } = require('../controllers/eventTypeControllers');
 const { getEvent, getEventById, addEvent, updateEvent, deleteEvent } = require('../controllers/eventControllers');
@@ -90,6 +90,7 @@ router.get('/licence/manage', getLicenceManage);
 router.get('/licence/export', getLicenceExport);
 router.get('/licence/:id', getLicenceById);
 router.post('/licence', addLicence);
+router.post('/licence/manage', addLicenceManage);
 router.put('/licence/:id', updateLicence);
 router.delete('/licence/:id', deleteLicence);
 // Routes pour le CRUD des roles
