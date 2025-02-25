@@ -26,7 +26,7 @@ const globalLimiter = rateLimit({
     prefix: 'global_limit:'
   }),
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 200,
   message: 'Trop de requêtes, veuillez réessayer plus tard',
   standardHeaders: true,
   legacyHeaders: false,
