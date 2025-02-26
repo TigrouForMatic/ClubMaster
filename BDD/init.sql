@@ -310,6 +310,35 @@ BEGIN
         FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
     );
 
+    CREATE TABLE db.MembershipForm (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP NOT NULL,
+        Dm TIMESTAMP,
+        Bin BOOLEAN NOT NULL,
+        Title VARCHAR(255) NOT NULL,
+        Description TEXT NOT NULL,
+        Period VARCHAR(255) NOT NULL,
+        RequiresSignature BOOLEAN NOT NULL,
+        RequiresAcknowledgment BOOLEAN NOT NULL,
+        LegalText TEXT NOT NULL,
+        ClubId INTEGER NOT NULL,
+        ClubLogoId INTEGER,
+        FOREIGN KEY (ClubId) REFERENCES db.Club(Id),
+        FOREIGN KEY (ClubLogoId) REFERENCES db.Photos(Id)
+    );
+
+    CREATE TABLE db.MembershipFormSignature (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP NOT NULL,
+        Dm TIMESTAMP,
+        Bin BOOLEAN NOT NULL,
+        MembershipFormId INTEGER NOT NULL,
+        PersonPhysicId INTEGER NOT NULL,
+        FOREIGN KEY (MembershipFormId) REFERENCES db.MembershipForm(Id),
+        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+    );  
+    
+
     -- Insert test data
     INSERT INTO db.Address (Dc, Dm, Bin, Street, City, State, PostalCode, Country, ReferenceId, Private, Validate) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '4 Av. du Stade', 'Bohal', 'Bretagne', '56140', 'France', null, false, true),

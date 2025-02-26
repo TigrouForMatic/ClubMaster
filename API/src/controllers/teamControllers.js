@@ -61,9 +61,6 @@ const getTeamById = async (req, res) => {
 const addTeam = async (req, res) => {
     const currentDate = new Date();
     
-    
-
-    
     const { columns, values } = prepareInsertData(req.body);
 
     try {
@@ -93,8 +90,6 @@ const addTeam = async (req, res) => {
 
 const updateTeam = async (req, res) => {
 
-    
-
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
 
@@ -114,9 +109,6 @@ const updateTeam = async (req, res) => {
 };
 
 const deleteTeam = async (req, res) => {
-
-    
-
     const { id } = req.params;
     try {
         const client = await pool.connect();

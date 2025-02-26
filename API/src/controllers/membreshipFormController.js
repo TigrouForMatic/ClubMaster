@@ -1,20 +1,19 @@
 const { pool } = require('../../database');
 
-const TABLE_NAME = 'db.Login';
+const TABLE_NAME = 'db.MembershipForm';
 
-const getLogin = async (req, res) => {
-    const filters = req.query;
-
+const getMembershipForm = async (req, res) => {
+    const { arrayClubId } = req.query;
     try {
         let queryString = `SELECT * FROM ${TABLE_NAME}`;
         const values = [];
         
-        if (Object.keys(filters).length > 0) {
-            const filterConditions = Object.entries(filters).map(([key, value], index) => {
-                values.push(value);
-                return `${key} = $${index + 1}`;
-            });
-            queryString += ' WHERE ' + filterConditions.join(' AND ');
+        if (arrayClubId && Array.isArray(JSON.parse(arrayClubId))) {
+            const clubIds = JSON.parse(arrayClubId);
+            queryString += ` WHERE clubid = ANY($1) AND Bin = false`;
+            values.push(clubIds);
+        } else {
+            queryString += ` WHERE Bin = false`;
         }
 
         const client = await pool.connect();
@@ -22,28 +21,28 @@ const getLogin = async (req, res) => {
         client.release();
         res.json(result.rows);
     } catch (err) {
-        console.error('Erreur lors de la récupération des personnes physiques', err);
-        res.status(500).send('Erreur lors de la récupération des personnes physiques');
+        console.error('Erreur lors de la récupération des formulaire d\'adhésion', err);
+        res.status(500).send('Erreur lors de la récupération des formulaire d\'adhésion');
     }
 };
 
-const getLoginById = async (req, res) => {
+const getMembershipFormById = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
         const result = await client.query(`SELECT * FROM ${TABLE_NAME} WHERE id = $1`, [id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Personne physique non trouvée');
+            return res.status(404).send('Formulaire d\'adhésion non trouvée');
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la récupération de la personne physique avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la récupération de la personne physique avec l'ID ${id}`);
+        console.error(`Erreur lors de la récupération du formulaire d'adhésion avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la récupération du formulaire d'adhésion avec l'ID ${id}`);
     }
 };
 
-const addLogin = async (req, res) => {
+const addMembershipForm = async (req, res) => {
     const currentDate = new Date();
 
     const { columns, values } = prepareInsertData(req.body);
@@ -57,19 +56,16 @@ const addLogin = async (req, res) => {
         const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
 
         const result = await client.query(insertQuery, valuesWithDates);
+
         client.release();
         res.status(201).json(result.rows[0]);
     } catch (err) {
-        console.error('Erreur lors de l\'ajout d\'une nouvelle personne physique', err);
-        res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle personne physique');
+        console.error('Erreur lors de l\'ajout d\'un nouveau formulaire d\'adhésion', err);
+        res.status(500).send('Erreur lors de l\'ajout d\'un nouveau formulaire d\'adhésion');
     }
 };
 
-const updateLogin = async (req, res) => {
-
-    
-
-
+const updateMembershipForm = async (req, res) => {
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
 
@@ -79,32 +75,28 @@ const updateLogin = async (req, res) => {
         const result = await client.query(updateQuery, [...values, id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Personne physique non trouvée');
+            return res.status(404).send('Formulaire d\'adhésion non trouvée');
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la mise à jour de la personne physique avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la mise à jour de la personne physique avec l'ID ${id}`);
+        console.error(`Erreur lors de la mise à jour du formulaire d'adhésion avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la mise à jour du formulaire d'adhésion avec l'ID ${id}`);
     }
 };
 
-const deleteLogin = async (req, res) => {
-
-    
-
-
+const deleteMembershipForm = async (req, res) => {
     const { id } = req.params;
     try {
         const client = await pool.connect();
         const result = await client.query(`UPDATE ${TABLE_NAME} SET Bin = true WHERE id = $1 RETURNING *`, [id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Personne physique non trouvée');
+            return res.status(404).send('Formulaire d\'adhésion non trouvée');
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la suppression de la personne physique avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la suppression de la personne physique avec l'ID ${id}`);
+        console.error(`Erreur lors de la suppression du formulaire d'adhésion avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la suppression du formulaire d'adhésion avec l'ID ${id}`);
     }
 };
 
@@ -121,9 +113,9 @@ const prepareUpdateData = (body) => {
 };
 
 module.exports = {
-    getLogin,
-    getLoginById,
-    addLogin,
-    updateLogin,
-    deleteLogin
+    getMembershipForm,
+    getMembershipFormById,
+    addMembershipForm,
+    updateMembershipForm,
+    deleteMembershipForm
 };
