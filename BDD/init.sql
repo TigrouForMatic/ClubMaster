@@ -319,8 +319,8 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
 
     INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password, Pseudo) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', 'jules@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach'),
-    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, '2024-11-17T00:00:00.000Z', 'constance@clubmaster.bzh','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle'),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', 'jules.chassany@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach'),
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, '2024-11-17T00:00:00.000Z', 'constance.le.ray@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle'),
     ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, '2024-12-01T00:00:00.000Z', 'user1@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User One'),
     ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, '2024-12-02T00:00:00.000Z', 'user2@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Two'),
     ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, '2024-12-03T00:00:00.000Z', 'user3@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Three'),

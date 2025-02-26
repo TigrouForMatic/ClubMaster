@@ -33,6 +33,7 @@ const { addPhoto, upload, getPhoto, deletePhoto, getPhotos } = require('../contr
 
 const { getEntries, getEntryById, addEntry, updateEntry, deleteEntry } = require('../controllers/controllers');
 
+const { register, requestPasswordReset } = require('../controllers/emailTestController');
 const { globalLimiter, authLimiter, createAccountLimiter } = require('../middleware/rateLimiter');
 
 // Appliquer le middleware d'authentification à toutes les routes
@@ -204,6 +205,11 @@ router.get('/photos', getPhotos);
 router.get('/photo/:id', getPhoto);
 router.post('/photo', upload, addPhoto);
 router.delete('/photo/:id', deletePhoto);
+
+// Routes pour l'envoi d'emails
+// router.post('/register', register);
+router.post('/emailTest/register', register);
+router.post('/emailTest/requestPasswordReset', requestPasswordReset);
 
 // Routes génériques
 router.get('/:table', getEntries);
