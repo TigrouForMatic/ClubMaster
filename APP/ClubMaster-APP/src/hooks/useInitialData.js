@@ -91,6 +91,9 @@ export const useInitialData = () => {
         const requestToJoinData = await api.get("/requestToJoin", { params: { userid: currentUser.id, arrayClubId: JSON.stringify(arrayClubId) } });
         setItems('requestToJoin', requestToJoinData);
 
+        const membershipFormData = await api.get("/membershipForm", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
+        setItems('membershipForms', membershipFormData);
+
         if (userRoles.some(role => role.level >= 3)) {
           // Récupération des id des clubs admin
           const arrayClubIdAdmin = [];

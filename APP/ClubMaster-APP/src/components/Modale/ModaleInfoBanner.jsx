@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
 import Select from 'react-select';
-import InfoBannerPhotoUploader from '../InfoBanner/InfoBannerPhotoUploader';
+import PhotoUploader from '../PhotoUploader';
 
 Modal.setAppElement('#root');
 
@@ -214,7 +214,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
           </div>
         {hasHeaderImage && (
           <div className="space-y-2">
-            <InfoBannerPhotoUploader 
+            <PhotoUploader 
               onFileSelect={setFile}
               initialPreview={preview}
             />

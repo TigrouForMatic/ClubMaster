@@ -27,6 +27,7 @@ const useStore = create((set) => ({
   infoBanners: [],
   photos: [],
   requestToJoin: [],
+  membershipForms: [],
   requestToJoinAdmin: [],
   licencesAdmin: [],
   showApp: false,

@@ -8,6 +8,7 @@ import LicenceTypeList from "../components/Manager/LicenceTypeList";
 import RoleList from "../components/Manager/RoleList";
 import EventList from "../components/Manager/EventList";
 import RequestToJoinList from "../components/Manager/RequestToJoinList";
+import MembershipForm from "../components/MemberShip/MembershipForm";
 
 function ManageView() {
   const { userClubs, currentUserRoles, typesEvent, licenceTypes, productTypes, roles, licencesAdmin } = useStore();
@@ -59,6 +60,7 @@ function ManageView() {
   const filteredRoles = useMemo(() => {
     return roles.filter(role => selectedClubId ? role.clubid === selectedClubId : true).sort((a, b) => a.level - b.level);
   }, [roles, selectedClubId]);
+
 
   const handleClubSelect = (clubId) => {
     setSelectedClubId(clubId);
@@ -161,6 +163,13 @@ function ManageView() {
               <EventList clubId={selectedClubId} />
             </div>
           </div>
+        </div>
+
+        {/* Fiches d'adhésion */}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <MembershipForm 
+            clubId={selectedClubId}
+          />
         </div>
       </div>
     </div>

@@ -1,104 +1,105 @@
 import React, { useState } from 'react';
 import { Upload, X } from 'lucide-react';
-import api from '../js/App/Api';
-// import useStore from '../../store/store';
 
-const PhotoUploader = ({ referenceId, referenceType }) => {
-    const [isDragging, setIsDragging] = useState(false);
-    const [preview, setPreview] = useState(null);
-    const [error, setError] = useState('');
+const PhotoUploader = ({ onFileSelect, initialPreview = null }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [preview, setPreview] = useState(initialPreview);
+  const [error, setError] = useState('');
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
     
-    const handleDrop = async (e) => {
-        e.preventDefault();
-        setIsDragging(false);
-        
-        const file = e.dataTransfer.files[0];
-        if (!file) return;
-        
-        await uploadFile(file);
-    };
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
     
-    const handleFileSelect = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        await uploadFile(file);
-    };
+    validateAndProcessFile(file);
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
     
-    const uploadFile = async (file) => {
-        const formData = new FormData();
-        formData.append('photo', file);
-        formData.append('referenceid', referenceId);
-        formData.append('referencetype', referenceType);
-        
-        try {
-            const response = await api.post('/photo', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            
-            // response.data.url = response.data.url.replace('\\', '/');
-            console.log(response.data);
-            console.log(file);
-            setPreview(URL.createObjectURL(file));
-        } catch (error) {
-            setError('Erreur lors de l\'upload de la photo');
-            console.error(error);
-        }
-    };
+    validateAndProcessFile(file);
+  };
 
-    return (
-        <div className="space-y-4">
-            <div 
-                className={`border-2 border-dashed rounded-lg p-8 text-center ${
-                    isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-                }`}
-                onDragOver={(e) => {
-                    e.preventDefault();
-                    setIsDragging(true);
-                }}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={handleDrop}
-            >
-                <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                <div className="mt-4">
-                    <label className="cursor-pointer text-blue-600 hover:text-blue-500">
-                        <span>Télécharger un fichier</span>
-                        <input
-                            type="file"
-                            className="hidden"
-                            accept="image/*"
-                            onChange={handleFileSelect}
-                        />
-                    </label>
-                    <p className="mt-2 text-sm text-gray-500">
-                        ou glisser-déposer ici
-                    </p>
-                </div>
-            </div>
+  const validateAndProcessFile = (file) => {
+    // Validation du type de fichier
+    if (!file.type.startsWith('image/')) {
+      setError('Seules les images sont acceptées');
+      return;
+    }
 
-            {error && (
-                <p className="text-red-500 text-sm">{error}</p>
-            )}
+    // Validation de la taille (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('L\'image ne doit pas dépasser 5MB');
+      return;
+    }
 
-            {preview && (
-                <div className="relative">
-                    <img 
-                        src={preview} 
-                        alt="Aperçu" 
-                        className="rounded-lg max-h-48 w-auto"
-                    />
-                    <button
-                        onClick={() => setPreview(null)}
-                        className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                    >
-                        <X className="h-4 w-4" />
-                    </button>
-                </div>
-            )}
+    setError('');
+    setPreview(URL.createObjectURL(file));
+    onFileSelect(file);
+  };
+
+  const handleRemovePreview = () => {
+    setPreview(null);
+    onFileSelect(null);
+  };
+
+  return (
+    <div className="space-y-4">
+      {!preview ? (
+        <div 
+          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+            isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+          }`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleDrop}
+        >
+          <Upload className="mx-auto h-12 w-12 text-gray-400" />
+          <div className="mt-4">
+            <label className="cursor-pointer text-blue-600 hover:text-blue-500">
+              <span>Télécharger un fichier</span>
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileSelect}
+              />
+            </label>
+            <p className="mt-2 text-sm text-gray-500">
+              ou glisser-déposer ici
+            </p>
+            <p className="mt-1 text-xs text-gray-400">
+              Format accepté : JPG, PNG, GIF (max 5MB)
+            </p>
+          </div>
         </div>
-    );
+      ) : (
+        <div className="relative">
+          <img 
+            src={preview} 
+            alt="Aperçu" 
+            className="rounded-lg max-h-48 w-full object-cover"
+          />
+          <button
+            onClick={handleRemovePreview}
+            className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      {error && (
+        <p className="text-red-500 text-sm">{error}</p>
+      )}
+    </div>
+  );
 };
 
 export default PhotoUploader;

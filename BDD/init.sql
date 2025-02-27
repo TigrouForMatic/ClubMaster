@@ -322,9 +322,7 @@ BEGIN
         RequiresAcknowledgment BOOLEAN NOT NULL,
         LegalText TEXT NOT NULL,
         ClubId INTEGER NOT NULL,
-        ClubLogoId INTEGER,
-        FOREIGN KEY (ClubId) REFERENCES db.Club(Id),
-        FOREIGN KEY (ClubLogoId) REFERENCES db.Photos(Id)
+        FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
     );
 
     CREATE TABLE db.MembershipFormSignature (
