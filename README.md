@@ -87,10 +87,3 @@ CREATE TABLE db.Exemple (
 SELECT * FROM db.exemple;
 ```
 ```
-
-Les principales améliorations apportées sont :
-1. Une meilleure organisation hiérarchique
-2. Des sections clairement définies
-3. Une séparation plus claire entre le mode développement et production
-4. Un regroupement logique des commandes liées à la base de données
-5. Une meilleure mise en forme des blocs de code
