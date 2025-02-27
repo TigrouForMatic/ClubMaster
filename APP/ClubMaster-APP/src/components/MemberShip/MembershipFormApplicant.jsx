@@ -8,19 +8,19 @@ const MembershipFormApplicant = ({ club, membershipForm }) => {
     <div className="flex justify-center p-6">
       <div className="w-[210mm] h-[297mm] bg-white shadow-lg p-8 relative">
         {/* En-tête */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="w-24 h-24">
-            {photo && (
+        <div className={`flex items-center ${photo ? 'justify-between' : 'justify-center'} mb-8`}>
+          {photo && (
+            <div className="w-24 h-24">
               <img 
                 src={photo.url} 
                 alt="Logo du club" 
                 className="w-full h-full object-contain"
               />
-            )}
-          </div>
+            </div>
+          )}
           <div className="text-center flex-grow">
             <h1 className="text-3xl font-bold">{club.label}</h1>
-            <p className="text-lg text-gray-600 mt-2">Période : {membershipForm.period}</p>
+            <p className="text-lg text-gray-600 mt-2">{membershipForm.period}</p>
           </div>
         </div>
 
@@ -37,19 +37,19 @@ const MembershipFormApplicant = ({ club, membershipForm }) => {
         {/* Texte légal */}
         <div className="mb-8">
           <div className="bg-gray-50 p-4 rounded">
-            <p className="text-sm text-gray-600 whitespace-pre-wrap">{membershipForm.legalText}</p>
+            <p className="text-sm text-gray-600 whitespace-pre-wrap">{membershipForm.legaltext}</p>
           </div>
         </div>
 
         {/* Zone de signature et prise de connaissance */}
         <div className="absolute bottom-8 left-8 right-8">
-          {membershipForm.requiresAcknowledgment && (
+          {membershipForm.requiresacknowledgment && (
             <div className="mb-4">
               <p className="text-sm text-gray-600">☐ Je déclare avoir pris connaissance des conditions d'adhésion</p>
             </div>
           )}
           
-          {membershipForm.requiresSignature && (
+          {membershipForm.requiresignature && (
             <div>
               <p className="text-sm text-gray-600 mb-2">Signature :</p>
               <div className="border-b border-gray-300 h-16"></div>

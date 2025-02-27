@@ -3,7 +3,7 @@ import PhotoUploader from '../PhotoUploader';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
 
-const MembershipFormEditor = ({ club, initialData = null, onClose }) => {
+const MembershipFormEditor = ({ club, initialMembershipForm = null, onClose }) => {
   const addItem = useStore((state) => state.addItem);
   const updateItem = useStore((state) => state.updateItem);
 
@@ -11,21 +11,21 @@ const MembershipFormEditor = ({ club, initialData = null, onClose }) => {
     title: '',
     description: '',
     period: '',
-    requiresSignature: true,
-    requiresAcknowledgment: true,
-    legalText: '',
+    requiressignature: true,
+    requiresacknowledgment: true,
+    legaltext: '',
   });
 
   useEffect(() => {
       setMembershipForm({
-          title: initialData?.title || '',
-          description: initialData?.description || '',
-          period: initialData?.period || '',
-          requiresSignature: initialData?.requiresSignature || true,
-          requiresAcknowledgment: initialData?.requiresAcknowledgment || true,
-          legalText: initialData?.legalText || '',
+          title: initialMembershipForm?.title || '',
+          description: initialMembershipForm?.description || '',
+          period: initialMembershipForm?.period || '',
+          requiressignature: initialMembershipForm?.requiressignature || true,
+          requiresacknowledgment: initialMembershipForm?.requiresacknowledgment || true,
+          legaltext: initialMembershipForm?.legaltext || '',
       });
-  }, [initialData]);
+  }, [initialMembershipForm]);
 
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -35,9 +35,9 @@ const MembershipFormEditor = ({ club, initialData = null, onClose }) => {
       title: '',
       description: '',
       period: '',
-      requiresSignature: true,
-      requiresAcknowledgment: true,
-      legalText: '',
+      requiressignature: true,
+      requiresacknowledgment: true,
+      legaltext: '',
     });
     setFile(null);
     setPreview(null);
@@ -67,15 +67,14 @@ const MembershipFormEditor = ({ club, initialData = null, onClose }) => {
     try {
       membershipForm.clubid = club.id;
       let response;
-      if (initialData) {
-        response = await api.put(`/membershipForm/${membershipForm.id}`, membershipForm);
-        updateItem('membershipForms', response);
-        await uploadFile(membershipForm.id);
+      if (initialMembershipForm) {
+        response = await api.put(`/membershipForm/${initialMembershipForm.id}`, membershipForm);
+        updateItem('membershipForms',response.id, response);
       } else {
         response = await api.post('/membershipForm', membershipForm);
         addItem('membershipForms', response);
-        await uploadFile(response.id);
       }
+      await uploadFile(response.id);
       handleClose();
     } catch (error) {
       console.error('Erreur lors de la création/modification de la fiche d\'adhésion:', error);
@@ -182,8 +181,8 @@ const MembershipFormEditor = ({ club, initialData = null, onClose }) => {
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-700">Texte légal</label>
             <textarea
-              name="legalText"
-              value={membershipForm.legalText}
+              name="legaltext"
+              value={membershipForm.legaltext}
               onChange={handleChange}
               rows={6}
               className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -195,12 +194,12 @@ const MembershipFormEditor = ({ club, initialData = null, onClose }) => {
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
-                id="requiresSignature"
-                checked={membershipForm.requiresSignature}
-                onChange={(e) => setMembershipForm({ ...membershipForm, requiresSignature: e.target.checked })}
+                id="requiressignature"
+                checked={membershipForm.requiressignature}
+                onChange={(e) => setMembershipForm({ ...membershipForm, requiressignature: e.target.checked })}
                 className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
               />
-              <label htmlFor="requiresSignature" className="text-sm font-medium text-zinc-700">
+              <label htmlFor="requiressignature" className="text-sm font-medium text-zinc-700">
                 Signature requise
               </label>
             </div>
@@ -208,12 +207,12 @@ const MembershipFormEditor = ({ club, initialData = null, onClose }) => {
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
-                id="requiresAcknowledgment"
-                checked={membershipForm.requiresAcknowledgment}
-                onChange={(e) => setMembershipForm({ ...membershipForm, requiresAcknowledgment: e.target.checked })}
+                id="requiresacknowledgment"
+                checked={membershipForm.requiresacknowledgment}
+                onChange={(e) => setMembershipForm({ ...membershipForm, requiresacknowledgment: e.target.checked })}
                 className="rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
               />
-              <label htmlFor="requiresAcknowledgment" className="text-sm font-medium text-zinc-700">
+              <label htmlFor="requiresacknowledgment" className="text-sm font-medium text-zinc-700">
                 Prise de connaissance requise
               </label>
             </div>

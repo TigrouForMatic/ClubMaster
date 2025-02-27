@@ -67,6 +67,14 @@ const addMembershipForm = async (req, res) => {
 
 const updateMembershipForm = async (req, res) => {
     const { id } = req.params;
+    
+    if (!id || isNaN(id)) {
+        return res.status(400).json({ 
+            error: 'ID invalide ou manquant',
+            details: 'L\'ID du formulaire d\'adhésion doit être un nombre valide'
+        });
+    }
+
     const { updates, values } = prepareUpdateData(req.body);
 
     try {

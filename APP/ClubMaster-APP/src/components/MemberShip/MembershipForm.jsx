@@ -43,19 +43,21 @@ const MembershipForm = ({ clubId }) => {
                 </h2>
                 <div className="flex items-center gap-2">
                     {membershipForm && (
-                        <>
+                        <>  
+                            {!isEditing && (
+                                <button className="bg-zinc-900 text-white px-4 py-2 rounded-md hover:bg-zinc-800" onClick={() => setIsEditing(true)}>
+                                    Modifier
+                                </button>
+                            )}
                             <button className="bg-zinc-900 text-white px-4 py-2 rounded-md hover:bg-zinc-800" onClick={() => setMembershipForm(null)}>
                                 Télécharger
-                            </button>
-                            <button className="bg-zinc-900 text-white px-4 py-2 rounded-md hover:bg-zinc-800" onClick={() => setIsEditing(true)}>
-                                Modifier
                             </button>
                         </>
                     )}
                 </div>
             </div>
             {isEditing ? (
-                <MembershipFormEditor club={club} membershipForm={membershipForm} onClose={() => setIsEditing(false)}/>
+                <MembershipFormEditor club={club} initialMembershipForm={membershipForm} onClose={() => setIsEditing(false)}/>
             ) : (
                 <>
                 {membershipForm ? (
