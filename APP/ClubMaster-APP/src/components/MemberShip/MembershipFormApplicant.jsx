@@ -1,5 +1,6 @@
 import React from 'react';
 import useStore from '../../store/store';
+import { getImageUrl } from '../../js/photo';
 
 const MembershipFormApplicant = ({ club, membershipForm }) => {
   const photo = useStore((state) => state.photos).find(photo => photo.referenceid == membershipForm.id);
@@ -8,17 +9,18 @@ const MembershipFormApplicant = ({ club, membershipForm }) => {
     <div className="flex justify-center p-6">
       <div className="w-[210mm] h-[297mm] bg-white shadow-lg p-8 relative">
         {/* En-tête */}
-        <div className={`flex items-center ${photo ? 'justify-between' : 'justify-center'} mb-8`}>
+        <div className="relative mb-8">
           {photo && (
-            <div className="w-24 h-24">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-24 h-24">
               <img 
-                src={photo.url} 
+                src={getImageUrl(photo)} 
                 alt="Logo du club" 
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain rounded-md"
+                crossOrigin="anonymous"
               />
             </div>
           )}
-          <div className="text-center flex-grow">
+          <div className="text-center">
             <h1 className="text-3xl font-bold">{club.label}</h1>
             <p className="text-lg text-gray-600 mt-2">{membershipForm.period}</p>
           </div>

@@ -67,14 +67,31 @@ const MembershipFormEditor = ({ club, initialMembershipForm = null, onClose }) =
     try {
       membershipForm.clubid = club.id;
       let response;
+      let hasChanges = false;
+
       if (initialMembershipForm) {
-        response = await api.put(`/membershipForm/${initialMembershipForm.id}`, membershipForm);
-        updateItem('membershipForms',response.id, response);
+        // Vérifier si des modifications ont été apportées
+        hasChanges = Object.keys(membershipForm).some(key => 
+          membershipForm[key] !== initialMembershipForm[key]
+        );
+
+        if (hasChanges) {
+          response = await api.put(`/membershipForm/${initialMembershipForm.id}`, membershipForm);
+          updateItem('membershipForms', response.id, response);
+        } else {
+          response = initialMembershipForm;
+        }
       } else {
+        // Nouveau formulaire
         response = await api.post('/membershipForm', membershipForm);
         addItem('membershipForms', response);
       }
-      await uploadFile(response.id);
+
+      // Upload du fichier uniquement si un nouveau fichier a été sélectionné
+      if (file) {
+        await uploadFile(response.id);
+      }
+
       handleClose();
     } catch (error) {
       console.error('Erreur lors de la création/modification de la fiche d\'adhésion:', error);
@@ -88,7 +105,7 @@ const MembershipFormEditor = ({ club, initialMembershipForm = null, onClose }) =
     formData.append('photo', file);
     formData.append('referenceid', referenceId);
     formData.append('referencetype', 'membershipForm');
-    formData.append('clubid', selectedClubId);
+    formData.append('clubid', club.id);
     
     try {
       const response = await api.post('/photo', formData, {
@@ -125,15 +142,6 @@ const MembershipFormEditor = ({ club, initialMembershipForm = null, onClose }) =
                         onFileSelect={handlePhotoChange}
                         initialPreview={preview}
                     />
-                    {preview && (
-                        <div className="mt-2">
-                            <img 
-                                src={preview} 
-                                alt="Aperçu du logo" 
-                                className="w-full rounded-lg shadow-md"
-                            />
-                        </div>
-                    )}
                 </div>
                 
                 <h1 className="text-3xl font-bold flex-grow">
@@ -223,13 +231,13 @@ const MembershipFormEditor = ({ club, initialMembershipForm = null, onClose }) =
             <button
                 type="button"
                 onClick={handleClose}
-                className="px-4 py-2 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-md shadow-sm hover:bg-zinc-50"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
                 Annuler
             </button>
             <button
                 type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
                 { membershipForm ? 'Modifier' : 'Créer'}
             </button>

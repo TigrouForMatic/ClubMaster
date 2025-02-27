@@ -45,11 +45,11 @@ const MembershipForm = ({ clubId }) => {
                     {membershipForm && (
                         <>  
                             {!isEditing && (
-                                <button className="bg-zinc-900 text-white px-4 py-2 rounded-md hover:bg-zinc-800" onClick={() => setIsEditing(true)}>
+                                <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onClick={() => setIsEditing(true)}>
                                     Modifier
                                 </button>
                             )}
-                            <button className="bg-zinc-900 text-white px-4 py-2 rounded-md hover:bg-zinc-800" onClick={() => setMembershipForm(null)}>
+                            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onClick={() => setMembershipForm(null)}>
                                 Télécharger
                             </button>
                         </>

@@ -4,8 +4,7 @@ import { EditPencil, Trash } from 'iconoir-react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { getColorFromString } from '../../js/color';
-
-const API_URL = import.meta.env.VITE_API_URL_UPLOADS_PATH;
+import { getImageUrl } from '../../js/photo';
 
 const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
     const { currentUserRoles, deleteItem } = useStore();
@@ -25,12 +24,6 @@ const InfoBannerCard = ({ infoBanner, onEdit, onEventClick }) => {
         } catch (error) {
             console.error('Erreur lors de la création/modification de l\'infoBanner:', error);
         }
-    };
-
-    const getImageUrl = (photo) => {
-        if (!photo) return '';
-        if (photo.url.startsWith('http')) return photo.url;
-        return `${API_URL}/uploads/${photo.url.split('/').pop()}`;
     };
 
     return (
