@@ -70,18 +70,13 @@ const EventTypeList = React.memo(({ types }) => {
       </div>
 
       <div 
-        className="relative w-full overflow-y-auto overflow-x-hidden min-h-[600px] max-h-[600px] scrollbar-hide"
+        className="relative w-full overflow-y-auto overflow-x-hidden min-h-[600px] max-h-[600px] hide-scrollbar"
         style={{
           msOverflowStyle: 'none',
           scrollbarWidth: 'none',
           WebkitOverflowScrolling: 'touch'
         }}
       >
-        <style jsx>{`
-          div::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
         <table className="w-full caption-bottom text-sm">
           <thead className="[&_tr]:border-b sticky top-0 bg-white z-10">
             <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">

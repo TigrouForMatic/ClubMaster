@@ -152,7 +152,7 @@ const EventList = React.memo(({ clubId }) => {
             </div>
 
             <div 
-                className="relative w-full overflow-y-auto overflow-x-hidden max-h-[600px] min-h-[600px] scrollbar-hide"
+                className="relative w-full overflow-y-auto overflow-x-hidden max-h-[600px] min-h-[600px] scrollbar-hide hide-scrollbar"
                 ref={tableRef}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
@@ -163,11 +163,6 @@ const EventList = React.memo(({ clubId }) => {
                     WebkitOverflowScrolling: 'touch'
                 }}
             >
-                <style jsx>{`
-                    div::-webkit-scrollbar {
-                        display: none;
-                    }
-                `}</style>
                 <table className="w-full caption-bottom text-sm">
                     <thead className="[&_tr]:border-b sticky top-0 bg-white z-10">
                         <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">

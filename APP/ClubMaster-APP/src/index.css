@@ -121,3 +121,7 @@
 .slide-out {
   animation: slideOut 0.3s ease-out;
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
