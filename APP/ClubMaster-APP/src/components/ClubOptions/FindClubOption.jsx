@@ -4,7 +4,7 @@ import { toSqlDate, getDateEndLicence } from '../../js/date';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { Search, MapPin, Building2 } from 'lucide-react';
-
+import ModalSignedMembershipForm from '../Modale/ModalSignedMembershipForm';
 
 const ClubCard = React.memo(({ club, onClick }) => (
   <div 
@@ -33,15 +33,18 @@ const FindClubOption = () => {
   const [nomClub, setNomClub] = useState('');
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedClub, setSelectedClub] = useState(null);
   const clubsPerPage = 10;
 
-  const { clubs, addresses, setItems, addItem, currentUser, requestToJoin } = useStore((state) => ({
+  const { clubs, addresses, setItems, addItem, currentUser, requestToJoin, membershipForms } = useStore((state) => ({
     clubs: state.clubs || [],
     addresses: state.addresses || [],
     setItems: state.setItems,
     addItem: state.addItem,
     currentUser: state.currentUser,
-    requestToJoin: state.requestToJoin
+    requestToJoin: state.requestToJoin,
+    membershipForms: state.membershipForms
   }));
 
   const fetchData = useCallback(async (endpoint) => {
@@ -56,18 +59,25 @@ const FindClubOption = () => {
 
   useEffect(() => {
     const fetchAllData = async () => {
-      const [clubsData, addressesData, requestToJoinData] = await Promise.all([
+      const [clubsData, addressesData, requestToJoinData, membershipForms] = await Promise.all([
         fetchData('club'),
         fetchData('address'),
-        fetchData('requestToJoin')
+        fetchData('requestToJoin'),
+        fetchData('membershipForm')
       ]);
       setItems('clubs', clubsData);
       setItems('addresses', addressesData);
       setItems('requestToJoin', requestToJoinData);
+      setItems('membershipForms', membershipForms);
     };
     
     fetchAllData();
   }, [fetchData, setItems]);
+
+  const membershipForm = useMemo(() => {
+    if (!selectedClub) return null;
+    return membershipForms.find(mf => mf.clubid == selectedClub.id);
+  }, [membershipForms, selectedClub]);
 
   const filteredClubs = useMemo(() => {
     return clubs.filter((club) => {
@@ -83,10 +93,10 @@ const FindClubOption = () => {
     });
   }, [clubs, addresses, nomClub, selectedLocation]);
 
-  const handleClick = useCallback(async (club) => {
+  const handleSendRequest = useCallback(async (clubid) => {
     try {
       const requestToJoinData = await api.post("/requestToJoin", {
-        clubid: club.id, 
+        clubid: clubid, 
         personphysicid: currentUser.id,
         status: 'pending'
       });
@@ -94,6 +104,7 @@ const FindClubOption = () => {
     } catch (err) {
       console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
     }
+    setIsModalOpen(false);
   }, [addItem, currentUser, requestToJoin]);
 
   const locations = useMemo(() => {
@@ -197,7 +208,16 @@ const FindClubOption = () => {
           <div className="p-4 space-y-4">
             {currentClubs.length > 0 ? (
               currentClubs.map((club) => (
-                <ClubCard key={club.id} club={club} onClick={handleClick} />
+                <ClubCard key={club.id} club={club} onClick={() => {
+                  if (!club.request) {
+                    if (membershipForm) {
+                      setSelectedClub(club);
+                      setIsModalOpen(true);
+                    } else {
+                      handleSendRequest(club.id);
+                    }
+                  }
+                }} />
               ))
             ) : (
               <div className="text-center py-8 space-y-4">
@@ -235,6 +255,9 @@ const FindClubOption = () => {
           </div>
         )}
       </div>
+      {isModalOpen && membershipForm && (
+        <ModalSignedMembershipForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} club={selectedClub} membershipForm={membershipForm} onSubmit={handleSendRequest} />
+      )}
     </div>
   );
 };

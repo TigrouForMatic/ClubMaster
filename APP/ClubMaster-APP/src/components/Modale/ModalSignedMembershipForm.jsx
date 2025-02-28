@@ -1,9 +1,10 @@
 import React, { useRef } from 'react';
 import MembershipFormApplicant from '../MemberShip/MembershipFormApplicant';
-import { SignaturePad } from 'react-signature-pad-wrapper';
+// import { SignaturePad } from 'react-signature-pad-wrapper';
 import Modal from 'react-modal';
+import useStore from '../../store/store';
 
-const ModalSignedMembershipForm = ({ isOpen, onClose, membershipForm, onSubmit }) => {
+const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSubmit }) => {
     if (!isOpen) return null;
 
     const signaturePadRef = useRef(null);
@@ -11,8 +12,9 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, membershipForm, onSubmit }
     const handleSubmit = () => {
         if (signaturePadRef.current) {
             const signatureData = signaturePadRef.current.toDataURL();
-            onSubmit({ ...membershipForm, signature: signatureData });
+            console.log(signatureData);
         }
+        onSubmit(club.id);
     };
 
     const handleClear = () => {
@@ -43,7 +45,7 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, membershipForm, onSubmit }
 
                 <div className="mt-6 space-y-6">
                     <div className="space-y-4">
-                        <MembershipFormApplicant membershipForm={membershipForm} />
+                        <MembershipFormApplicant membershipForm={membershipForm} club={club} />
                     </div>
 
                     <div className="space-y-4">
@@ -53,13 +55,13 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, membershipForm, onSubmit }
                                 Veuillez signer ci-dessous pour confirmer votre demande d'adhésion :
                             </p>
                             <div className="border border-zinc-300 rounded-lg bg-white">
-                                <SignaturePad 
+                                {/* <SignaturePad 
                                     ref={signaturePadRef} 
                                     options={{ 
                                         backgroundColor: 'rgb(255, 255, 255)',
                                         height: 200
                                     }} 
-                                />
+                                /> */}
                             </div>
                             <button
                                 onClick={handleClear}

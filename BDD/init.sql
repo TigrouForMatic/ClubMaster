@@ -70,6 +70,19 @@ BEGIN
         FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
     );
 
+    CREATE TABLE db.Plan (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        Bin BOOLEAN,
+        Label VARCHAR(255) NOT NULL
+    );
+
+    INSERT INTO db.Plan (Dc, Dm, Bin, Label) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Basique'),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Essentiel'),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Pro');
+
     CREATE TABLE db.PersonMoral (
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
@@ -80,13 +93,31 @@ BEGIN
         RnaNumber VARCHAR(11),
         Siren VARCHAR(10),
         Siret VARCHAR(15),
-        Plan VARCHAR(255) NOT NULL DEFAULT 'Basique' -- 'Basique', 'Essentiel', 'Pro'
     );
+
+    CREATE TABLE db.PlanPersonMoral (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        Bin BOOLEAN,
+        StartDate DATE,
+        EndDate DATE NULL,
+        PersonMoralId INT,
+        PlanId INT,
+        FOREIGN KEY (PersonMoralId) REFERENCES db.PersonMoral(Id),
+        FOREIGN KEY (PlanId) REFERENCES db.Plan(Id)
+    );
+
+    INSERT INTO db.PlanPersonMoral (Dc, Dm, Bin, StartDate, EndDate, PersonMoralId, PlanId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', '2024-07-30T00:00:00.000Z', 1, 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-07-30T00:00:00.000Z', '2024-08-30T00:00:00.000Z', 1, 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-08-30T00:00:00.000Z', null, 1, 3);
 
     CREATE TABLE db.Club (
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
+        Bin BOOLEAN,
         Label VARCHAR(255) NOT NULL,
         PersonMoralId INT,
         OldLabel VARCHAR(255),
@@ -377,9 +408,9 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust', null, null, null, null, 'Basique'),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust - Pro', null, null, null, null, 'Pro');
 
-    INSERT INTO db.Club (Dc, Dm, Label, PersonMoralId, OldLabel, CreationDate) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'La Claie', 2, null, '2022-08-01T00:00:00.000Z'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Vol en Pleuc', 1, null, '2022-08-01T00:00:00.000Z');
+    INSERT INTO db.Club (Dc, Dm, Bin, Label, PersonMoralId, OldLabel, CreationDate) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'La Claie', 2, null, '2022-08-01T00:00:00.000Z'),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Pleuc', 1, null, '2022-08-01T00:00:00.000Z');
 
     INSERT INTO db.ProductType (Dc, Dm, Label, ClubId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt', 1),

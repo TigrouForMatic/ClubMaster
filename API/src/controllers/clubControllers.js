@@ -22,8 +22,8 @@ const getClub = async (req, res) => {
         client.release();
         res.json(result.rows);
     } catch (err) {
-        console.error('Erreur lors de la récupération des adresses', err);
-        res.status(500).send('Erreur lors de la récupération des adresses');
+        console.error('Erreur lors de la récupération des clubs', err);
+        res.status(500).send('Erreur lors de la récupération des clubs');
     }
 };
 
@@ -37,7 +37,7 @@ const getClubByPerson = async (req, res) => {
             JOIN db.Role r ON l.RoleId = r.Id
             JOIN db.Club c ON r.ClubId = c.Id
             JOIN db.PersonMoral p on p.Id = c.personMoralId
-            WHERE l.PersonPhysicId = $1
+            WHERE l.PersonPhysicId = $1 AND c.Bin = false
             ORDER BY l.Dd DESC
         `;
 
@@ -73,15 +73,13 @@ const getClubById = async (req, res) => {
 const addClub = async (req, res) => {
     const currentDate = new Date();
 
-    
-
     const { columns, values } = prepareInsertData(req.body);
 
     try {
         const client = await pool.connect();
         
-        const columnsWithDates = `${columns}, Dc, Dm`;
-        const valuesWithDates = [...values, currentDate, currentDate];
+        const columnsWithDates = `${columns}, Dc, Dm, Bin`;
+        const valuesWithDates = [...values, currentDate, currentDate, false];
 
         const insertQuery = `INSERT INTO ${TABLE_NAME} (${columnsWithDates}) VALUES (${valuesWithDates.map((_, i) => `$${i + 1}`).join(', ')}) RETURNING *`;
 
@@ -89,15 +87,12 @@ const addClub = async (req, res) => {
         client.release();
         res.status(201).json(result.rows[0]);
     } catch (err) {
-        console.error('Erreur lors de l\'ajout d\'une nouvelle adresse', err);
-        res.status(500).send('Erreur lors de l\'ajout d\'une nouvelle adresse');
+        console.error('Erreur lors de l\'ajout d\'un nouveau club', err);
+        res.status(500).send('Erreur lors de l\'ajout d\'un nouveau club');
     }
 };
 
 const updateClub = async (req, res) => {
-
-    
-
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
 
@@ -107,31 +102,28 @@ const updateClub = async (req, res) => {
         const result = await client.query(updateQuery, [...values, id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Adresse non trouvée');
+            return res.status(404).send('Club non trouvée');
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la mise à jour de l'adresse avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la mise à jour de l'adresse avec l'ID ${id}`);
+        console.error(`Erreur lors de la mise à jour du club avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la mise à jour du club avec l'ID ${id}`);
     }
 };
 
 const deleteClub = async (req, res) => {
-
-    
-
     const { id } = req.params;
     try {
         const client = await pool.connect();
-        const result = await client.query(`DELETE FROM ${TABLE_NAME} WHERE id = $1 RETURNING *`, [id]);
+        const result = await client.query(`UPDATE ${TABLE_NAME} SET Bin = true WHERE id = $1 RETURNING *`, [id]);
         client.release();
         if (result.rows.length === 0) {
-            return res.status(404).send('Adresse non trouvée');
+            return res.status(404).send('Club non trouvée');
         }
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(`Erreur lors de la suppression de l'adresse avec l'ID ${id}`, err);
-        res.status(500).send(`Erreur lors de la suppression de l'adresse avec l'ID ${id}`);
+        console.error(`Erreur lors de la suppression du club avec l'ID ${id}`, err);
+        res.status(500).send(`Erreur lors de la suppression du club avec l'ID ${id}`);
     }
 };
 
