@@ -6,7 +6,7 @@ import useStore from '../../store/store';
 function MenuBarMobile() {
   const { currentUserRoles, userClubs } = useStore();
   const isHighLevel = currentUserRoles.some(r => r.level >= 3);
-  const isPro = userClubs.some(c => c.personmoralplan === 'Pro');
+  const isPro = userClubs.some(c => c.planlabel === 'Pro');
 
   const menuItems = [
     { to: "/", icon: Home, text: "News" },

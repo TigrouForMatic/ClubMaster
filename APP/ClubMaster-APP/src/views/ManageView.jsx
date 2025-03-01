@@ -23,7 +23,7 @@ function ManageView() {
         .map(role => role.clubid)
     );
 
-    return userClubs.filter(club => highLevelClubIds.has(club.id) && club.personmoralplan === 'Pro');
+    return userClubs.filter(club => highLevelClubIds.has(club.id) && club.planlabel === 'Pro');
   }, [userClubs, currentUserRoles]);
 
   const filteredTypes = useMemo(() => {

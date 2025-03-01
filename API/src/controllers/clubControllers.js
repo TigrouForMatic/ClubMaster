@@ -32,12 +32,13 @@ const getClubByPerson = async (req, res) => {
 
     try {
         const queryString = `
-            SELECT DISTINCT c.*, l.Dd AS DateDebut, l.Df AS DateFin, r.Label AS RoleLabel, p.Plan AS PersonMoralPlan
+            SELECT DISTINCT c.*, l.Dd AS DateDebut, l.Df AS DateFin, r.Label AS RoleLabel, p.Label AS PlanLabel
             FROM db.Licence l
             JOIN db.Role r ON l.RoleId = r.Id
             JOIN db.Club c ON r.ClubId = c.Id
-            JOIN db.PersonMoral p on p.Id = c.personMoralId
-            WHERE l.PersonPhysicId = $1 AND c.Bin = false
+            JOIN db.PlanClub pc on pc.ClubId = c.Id
+            JOIN db.Plan p on p.Id = pc.PlanId
+            WHERE l.PersonPhysicId = $1 AND c.Bin = false AND ((pc.StartDate <= NOW() AND pc.EndDate >= NOW()) OR (pc.EndDate IS NULL AND pc.StartDate <= NOW()))
             ORDER BY l.Dd DESC
         `;
 

@@ -14,7 +14,7 @@ const menuItems = [
 function Sidebar({ onClose }) {
   const { currentUserRoles, userClubs } = useStore();
   const isHighLevel = currentUserRoles.some(r => r.level >= 3);
-  const isPro = userClubs.some(c => c.personmoralplan === 'Pro');
+  const isPro = userClubs.some(c => c.planlabel === 'Pro');
 
   return (
     <div className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-white shadow-lg dark:bg-gray-900">

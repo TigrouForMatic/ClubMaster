@@ -92,26 +92,8 @@ BEGIN
         Rib VARCHAR(255),
         RnaNumber VARCHAR(11),
         Siren VARCHAR(10),
-        Siret VARCHAR(15),
+        Siret VARCHAR(15)
     );
-
-    CREATE TABLE db.PlanPersonMoral (
-        Id SERIAL PRIMARY KEY,
-        Dc TIMESTAMP,
-        Dm TIMESTAMP,
-        Bin BOOLEAN,
-        StartDate DATE,
-        EndDate DATE NULL,
-        PersonMoralId INT,
-        PlanId INT,
-        FOREIGN KEY (PersonMoralId) REFERENCES db.PersonMoral(Id),
-        FOREIGN KEY (PlanId) REFERENCES db.Plan(Id)
-    );
-
-    INSERT INTO db.PlanPersonMoral (Dc, Dm, Bin, StartDate, EndDate, PersonMoralId, PlanId) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', '2024-07-30T00:00:00.000Z', 1, 1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-07-30T00:00:00.000Z', '2024-08-30T00:00:00.000Z', 1, 2),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-08-30T00:00:00.000Z', null, 1, 3);
 
     CREATE TABLE db.Club (
         Id SERIAL PRIMARY KEY,
@@ -121,7 +103,21 @@ BEGIN
         Label VARCHAR(255) NOT NULL,
         PersonMoralId INT,
         OldLabel VARCHAR(255),
-        CreationDate DATE
+        CreationDate DATE,
+        FOREIGN KEY (PersonMoralId) REFERENCES db.PersonMoral(Id)
+    );
+
+    CREATE TABLE db.PlanClub (
+        Id SERIAL PRIMARY KEY,
+        Dc TIMESTAMP,
+        Dm TIMESTAMP,
+        Bin BOOLEAN,
+        StartDate DATE,
+        EndDate DATE NULL,
+        ClubId INT,
+        PlanId INT,
+        FOREIGN KEY (ClubId) REFERENCES db.Club(Id),
+        FOREIGN KEY (PlanId) REFERENCES db.Plan(Id)
     );
 
     CREATE TABLE db.ProductType (
@@ -404,14 +400,20 @@ BEGIN
     ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'User Nine', '1998-09-09T00:00:00.000Z', '0600000009', 'user9@clubmaster.bzh', 11, true, true),
     ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, 'User Ten', '1999-10-10T00:00:00.000Z', '0600000010', 'user10@clubmaster.bzh', 12, true, true);
 
-    INSERT INTO db.PersonMoral (Dc, Dm, Bin, Name, Rib, RnaNumber, Siren, Siret, Plan) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust', null, null, null, null, 'Basique'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust - Pro', null, null, null, null, 'Pro');
+    INSERT INTO db.PersonMoral (Dc, Dm, Bin, Name, Rib, RnaNumber, Siren, Siret) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust', null, null, null, null),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust - Pro', null, null, null, null);
 
     INSERT INTO db.Club (Dc, Dm, Bin, Label, PersonMoralId, OldLabel, CreationDate) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'La Claie', 2, null, '2022-08-01T00:00:00.000Z'),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Pleuc', 1, null, '2022-08-01T00:00:00.000Z');
 
+    INSERT INTO db.PlanClub (Dc, Dm, Bin, StartDate, EndDate, ClubId, PlanId) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', '2024-07-30T00:00:00.000Z', 1, 1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-07-30T00:00:00.000Z', '2024-08-30T00:00:00.000Z', 1, 2),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-08-30T00:00:00.000Z', null, 1, 3),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', null, 2, 3);
+    
     INSERT INTO db.ProductType (Dc, Dm, Label, ClubId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Tee-Shirt', 1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Mug', 1),
@@ -530,7 +532,7 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, 1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 2, 1);
 
-    INSERT INTO Conversation (Dc, Dm, EventId, TeamId) VALUES
+    INSERT INTO db.Conversation (Dc, Dm, EventId, TeamId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 1, null),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 2, null),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 3, null),
