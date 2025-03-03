@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import useStore from '../../store/store';
-
+import api from '../../js/App/Api';
+import { downloadMembershipForm } from '../../js/download';
 import MembershipFormApplicant from './MembershipFormApplicant';
 import MembershipFormEditor from './MembershipFormEditor';
 
@@ -30,6 +31,24 @@ const MembershipForm = ({ clubId }) => {
         setIsLoading(false);
     }, [membershipForms, clubId]);
 
+    const handleDownload = async (id) => {
+        setIsDownloading(true);
+        try {
+            const response = await api.get(`/membershipForm/${id}/download`, {
+                responseType: 'blob',
+                headers: {
+                    'Accept': 'application/pdf'
+                }
+            });
+            
+            downloadMembershipForm(response, club.label);
+        } catch (err) {
+            console.error('Erreur lors du téléchargement du formulaire:', err);
+        }
+        setIsDownloading(false);
+    };
+    
+
     if (isLoading) return (
         <div className="flex items-center justify-center min-h-[200px]">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-zinc-900"></div>
@@ -49,7 +68,7 @@ const MembershipForm = ({ clubId }) => {
                                     Modifier
                                 </button>
                             )}
-                            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onClick={() => setMembershipForm(null)}>
+                            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700" onClick={() => handleDownload(membershipForm.id)}>
                                 Télécharger
                             </button>
                         </>
