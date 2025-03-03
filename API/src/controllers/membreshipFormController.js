@@ -131,7 +131,6 @@ const downloadMembershipForm = async (req, res) => {
         const membershipForm = result.rows[0];
         const PDFDocument = require('pdfkit');
         
-        // Création du document PDF au format A4
         const doc = new PDFDocument({
             size: 'A4',
             margin: 50
@@ -145,9 +144,18 @@ const downloadMembershipForm = async (req, res) => {
             doc.on('end', () => resolve(Buffer.concat(chunks)));
             doc.on('error', reject);
 
-            // En-tête avec logo si disponible
-            if (membershipForm.photo_url) {
-                doc.image(membershipForm.photo_url, 50, 50, { width: 90 });
+            // Vérifier si l'image existe avant d'essayer de l'ajouter
+            try {
+                if (membershipForm.photo_url) {
+                    // Optionnel : ajouter le logo
+                    // doc.image(membershipForm.photo_url, 50, 50, { width: 90 });
+                    
+                    // Pour l'instant, on skip le logo pour éviter l'erreur
+                    console.log('Logo skipped:', membershipForm.photo_url);
+                }
+            } catch (err) {
+                console.warn('Unable to load logo:', err);
+                // Continue without the logo
             }
 
             // Nom du club et période

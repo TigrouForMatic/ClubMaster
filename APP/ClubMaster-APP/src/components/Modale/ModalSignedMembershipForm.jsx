@@ -3,6 +3,8 @@ import MembershipFormApplicant from '../MemberShip/MembershipFormApplicant';
 import SignaturePad from '../SignaturePad';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
+import { downloadMembershipForm } from '../../js/download';
+
 const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSubmit }) => {
     if (!isOpen) return null;
 
@@ -39,8 +41,6 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSu
 
     const handleDownload = async (id) => {
         try {
-            console.log('Début du téléchargement pour l\'ID:', id);
-            
             const response = await api.get(`/membershipForm/${id}/download`, {
                 responseType: 'blob',
                 headers: {
@@ -48,52 +48,9 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSu
                 }
             });
             
-            console.log('Réponse brute:', response);
-            
-            // Vérifier si la réponse est directement un Blob ou contenue dans response.data
-            const pdfBlob = response instanceof Blob ? response : response.data;
-            
-            if (!pdfBlob || !(pdfBlob instanceof Blob)) {
-                throw new Error('La réponse n\'est pas un PDF valide');
-            }
-
-            console.log('Blob reçu:', {
-                type: pdfBlob.type,
-                size: pdfBlob.size
-            });
-
-            // Vérifier la taille du blob
-            if (pdfBlob.size === 0) {
-                throw new Error('Le PDF reçu est vide');
-            }
-
-            const url = window.URL.createObjectURL(pdfBlob);
-            
-            // Créer un lien temporaire et déclencher le téléchargement
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `formulaire-adhesion-${club.label}.pdf`;
-            
-            // Ajouter le lien de manière cachée
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            
-            // Déclencher le téléchargement
-            link.click();
-            
-            // Nettoyer après un court délai pour s'assurer que le téléchargement a commencé
-            setTimeout(() => {
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(url);
-                console.log('Nettoyage effectué');
-            }, 100);
-        } catch (error) {
-            console.error('Erreur détaillée lors du téléchargement du formulaire:', {
-                message: error.message,
-                error: error,
-                stack: error.stack
-            });
-            alert('Erreur lors du téléchargement du formulaire. Veuillez réessayer.');
+            downloadMembershipForm(response, club.label);
+        } catch (err) {
+            console.error('Erreur lors du téléchargement du formulaire:', err);
         }
     };
 
