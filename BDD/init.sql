@@ -357,6 +357,7 @@ BEGIN
         Dc TIMESTAMP NOT NULL,
         Dm TIMESTAMP,
         Bin BOOLEAN NOT NULL,
+        Signature TEXT NOT NULL,
         MembershipFormId INTEGER NOT NULL,
         PersonPhysicId INTEGER NOT NULL,
         FOREIGN KEY (MembershipFormId) REFERENCES db.MembershipForm(Id),
@@ -375,6 +376,7 @@ BEGIN
     INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password, Pseudo) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', 'jules.chassany@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach'),
     ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, '2024-11-17T00:00:00.000Z', 'constance.le.ray@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle'),
+    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, '2024-12-09T00:00:00.000Z', 'elisa@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'Zaza'),
     ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, '2024-12-01T00:00:00.000Z', 'user1@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User One'),
     ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, '2024-12-02T00:00:00.000Z', 'user2@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Two'),
     ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, '2024-12-03T00:00:00.000Z', 'user3@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Three'),
@@ -389,16 +391,17 @@ BEGIN
     INSERT INTO db.PersonPhysic (Dc, Dm, Bin, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId, GeneralConditions, PrivacyPolicy) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1, true, true),
     ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, 'Constance Le Ray','1991-04-27T00:00:00.000Z','0677332963','constance@clubmaster.bzh',2, true, true),
-    ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, 'User One', '1990-01-01T00:00:00.000Z', '0600000001', 'user1@clubmaster.bzh', 3, true, true),
-    ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, 'User Two', '1991-02-02T00:00:00.000Z', '0600000002', 'user2@clubmaster.bzh', 4, true, true),
-    ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, 'User Three', '1992-03-03T00:00:00.000Z', '0600000003', 'user3@clubmaster.bzh', 5, true, true),
-    ('2024-12-04T00:00:00.000Z', '2024-12-04T00:00:00.000Z', false, 'User Four', '1993-04-04T00:00:00.000Z', '0600000004', 'user4@clubmaster.bzh', 6, true, true),
-    ('2024-12-05T00:00:00.000Z', '2024-12-05T00:00:00.000Z', false, 'User Five', '1994-05-05T00:00:00.000Z', '0600000005', 'user5@clubmaster.bzh', 7, true, true),
-    ('2024-12-06T00:00:00.000Z', '2024-12-06T00:00:00.000Z', false, 'User Six', '1995-06-06T00:00:00.000Z', '0600000006', 'user6@clubmaster.bzh', 8, true, true),
-    ('2024-12-07T00:00:00.000Z', '2024-12-07T00:00:00.000Z', false, 'User Seven', '1996-07-07T00:00:00.000Z', '0600000007', 'user7@clubmaster.bzh', 9, true, true),
-    ('2024-12-08T00:00:00.000Z', '2024-12-08T00:00:00.000Z', false, 'User Eight', '1997-08-08T00:00:00.000Z', '0600000008', 'user8@clubmaster.bzh', 10, true, true),
-    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'User Nine', '1998-09-09T00:00:00.000Z', '0600000009', 'user9@clubmaster.bzh', 11, true, true),
-    ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, 'User Ten', '1999-10-10T00:00:00.000Z', '0600000010', 'user10@clubmaster.bzh', 12, true, true);
+    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'Elisa Battiard', '2012-04-23T00:00:00.000Z', '0610000001', 'elisa@clubmaster.bzh', 3, true, true),
+    ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, 'User One', '1990-01-01T00:00:00.000Z', '0600000001', 'user1@clubmaster.bzh', 4, true, true),
+    ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, 'User Two', '1991-02-02T00:00:00.000Z', '0600000002', 'user2@clubmaster.bzh', 5, true, true),
+    ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, 'User Three', '1992-03-03T00:00:00.000Z', '0600000003', 'user3@clubmaster.bzh', 6, true, true),
+    ('2024-12-04T00:00:00.000Z', '2024-12-04T00:00:00.000Z', false, 'User Four', '1993-04-04T00:00:00.000Z', '0600000004', 'user4@clubmaster.bzh', 7, true, true),
+    ('2024-12-05T00:00:00.000Z', '2024-12-05T00:00:00.000Z', false, 'User Five', '1994-05-05T00:00:00.000Z', '0600000005', 'user5@clubmaster.bzh', 8, true, true),
+    ('2024-12-06T00:00:00.000Z', '2024-12-06T00:00:00.000Z', false, 'User Six', '1995-06-06T00:00:00.000Z', '0600000006', 'user6@clubmaster.bzh', 9, true, true),
+    ('2024-12-07T00:00:00.000Z', '2024-12-07T00:00:00.000Z', false, 'User Seven', '1996-07-07T00:00:00.000Z', '0600000007', 'user7@clubmaster.bzh', 10, true, true),
+    ('2024-12-08T00:00:00.000Z', '2024-12-08T00:00:00.000Z', false, 'User Eight', '1997-08-08T00:00:00.000Z', '0600000008', 'user8@clubmaster.bzh', 11, true, true),
+    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'User Nine', '1998-09-09T00:00:00.000Z', '0600000009', 'user9@clubmaster.bzh', 12, true, true),
+    ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, 'User Ten', '1999-10-10T00:00:00.000Z', '0600000010', 'user10@clubmaster.bzh', 13, true, true);
 
     INSERT INTO db.PersonMoral (Dc, Dm, Bin, Name, Rib, RnaNumber, Siren, Siret) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust', null, null, null, null),
@@ -515,16 +518,16 @@ BEGIN
     INSERT INTO db.Licence (Dc, Dm, Bin, Label, Dd, Df, LicenceFederation, LicenceTypeId, PersonPhysicId, RoleId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Président','2025-09-03T00:00:00.000Z','2025-08-31T00:00:00.000Z','Federation',4,1,2),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Secrétaire','2025-09-03T00:00:00.000Z','2025-08-31T00:00:00.000Z','Federation',8,1,9),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2025-08-31T00:00:00.000Z','Federation',1,3,1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2025-08-31T00:00:00.000Z','Federation',1,4,1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2025-08-31T00:00:00.000Z','Federation',1,5,1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2025-04-28T00:00:00.000Z','Federation',1,6,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2025-08-31T00:00:00.000Z','Federation',1,6,1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2025-04-28T00:00:00.000Z','Federation',1,7,1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2025-04-28T00:00:00.000Z','Federation',1,8,1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2024-12-31T00:00:00.000Z','Federation',1,9,1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2024-12-30T00:00:00.000Z','Federation',1,10,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2025-04-28T00:00:00.000Z','Federation',1,9,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2024-12-31T00:00:00.000Z','Federation',1,10,1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2024-12-30T00:00:00.000Z','Federation',1,11,1),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2024-11-30T00:00:00.000Z','Federation',1,12,1);
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2024-12-30T00:00:00.000Z','Federation',1,12,1),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2024-11-30T00:00:00.000Z','Federation',1,13,1);
 
     INSERT INTO db.Inscription (Dc, Dm, EventId, PersonPhysicId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 7, 1),
@@ -554,5 +557,16 @@ BEGIN
     ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 1, 1, null),
     ('2024-11-20T00:00:00.000Z', '2024-11-20T00:00:00.000Z', false, 'Changement de moyen de communication', 'Nous allons entamer un nouveau projet de communication avec une nouvelle application de communication.', '2024-11-20T00:00:00.000Z', '2024-12-25T00:00:00.000Z', 'https://img.craiyon.com/2024-07-21/WwNkdoY5SEmX1qBRsvn8Rw.webp', 2, 1, null);
 
+    INSERT INTO db.MembershipForm (Dc, Dm, Bin, Title, Description, Period, RequiresSignature, RequiresAcknowledgment, LegalText, ClubId) VALUES
+    ('2025-03-02T10:53:17.754Z', '2025-03-02T10:53:17.754Z', false, 'Formulaire d''Adhésion 2024-2025', 'Formulaire d''adhésion pour la saison 2024-2025 du club de badminton La Claie. Ce formulaire est obligatoire pour tous les nouveaux membres et les renouvellements.', '2024-2025', true, true, 'Je soussigné(e) déclare :
+1. Avoir pris connaissance des statuts et du règlement intérieur du club
+2. M''engager à respecter les règles de la fédération
+3. Autoriser le club à utiliser mon image dans le cadre de ses activités
+4. Certifier être en possession d''un certificat médical valide', 1),
+    ('2025-03-02T10:53:17.754Z', '2025-03-02T10:53:17.754Z', false, 'Formulaire d''Adhésion 2024-2025', 'Formulaire d''adhésion pour la saison 2024-2025 du club de badminton La Claie. Ce formulaire est obligatoire pour tous les nouveaux membres et les renouvellements.', '2024-2025', true, true, 'Je soussigné(e) déclare :
+1. Avoir pris connaissance des statuts et du règlement intérieur du club
+2. M''engager à respecter les règles de la fédération
+3. Autoriser le club à utiliser mon image dans le cadre de ses activités
+4. Certifier être en possession d''un certificat médical valide', 2);
 END
 $$;

@@ -26,6 +26,7 @@ const { getTeam, getTeamById, addTeam, updateTeam, deleteTeam } = require('../co
 const { getTeamMember, getTeamMemberById, addTeamMember, updateTeamMember, deleteTeamMember } = require('../controllers/teamMemberControllers');
 const { getRequestToJoin, getRequestToJoinById, addRequestToJoin, updateRequestToJoin, deleteRequestToJoin } = require('../controllers/requestToJoinControllers');
 const { getMembershipForm, getMembershipFormById, addMembershipForm, updateMembershipForm, deleteMembershipForm } = require('../controllers/membreshipFormController');
+const { getMembershipFormSignature, getMembershipFormSignatureById, addMembershipFormSignature, updateMembershipFormSignature, deleteMembershipFormSignature } = require('../controllers/membreshipFormSignatureController');
 // const { getGenerateResponse } = require('../controllers/generateResponseController');
 
 // const { getGenerateImage } = require('../controllers/generateImageControllers');
@@ -201,6 +202,13 @@ router.get('/membershipForm/:id', getMembershipFormById);
 router.post('/membershipForm', addMembershipForm);
 router.put('/membershipForm/:id', updateMembershipForm);
 router.delete('/membershipForm/:id', deleteMembershipForm);
+
+// Routes pour le CRUD des signatures de formulaire d'adhésion
+router.get('/membershipFormSignature', getMembershipFormSignature);
+router.get('/membershipFormSignature/:id', getMembershipFormSignatureById);
+router.post('/membershipFormSignature', addMembershipFormSignature);
+router.put('/membershipFormSignature/:id', updateMembershipFormSignature);
+router.delete('/membershipFormSignature/:id', deleteMembershipFormSignature);
 
 // Routes pour générer une image 
 // router.get('/generateImage', getGenerateImage);

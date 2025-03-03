@@ -1,6 +1,7 @@
 import React from 'react';
 import useStore from '../../store/store';
 import { getImageUrl } from '../../js/photo';
+import MDEditor from '@uiw/react-md-editor';
 
 const MembershipFormApplicant = ({ club, membershipForm }) => {
   const photo = useStore((state) => state.photos).find(photo => photo.referenceid == membershipForm.id);
@@ -33,13 +34,19 @@ const MembershipFormApplicant = ({ club, membershipForm }) => {
 
         {/* Description */}
         <div className="mb-8">
-          <p className="text-gray-700 whitespace-pre-wrap">{membershipForm.description}</p>
+          <MDEditor.Markdown 
+            source={membershipForm.description} 
+            className="text-gray-700"
+          />
         </div>
 
         {/* Texte légal */}
         <div className="mb-8">
           <div className="bg-gray-50 p-4 rounded">
-            <p className="text-sm text-gray-600 whitespace-pre-wrap">{membershipForm.legaltext}</p>
+            <MDEditor.Markdown 
+              source={membershipForm.legaltext} 
+              className="text-sm text-gray-600 bg-gray-50"
+            />
           </div>
         </div>
 

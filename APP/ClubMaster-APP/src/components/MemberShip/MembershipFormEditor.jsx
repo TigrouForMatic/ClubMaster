@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PhotoUploader from '../PhotoUploader';
 import api from '../../js/App/Api';
 import useStore from '../../store/store';
+import MDEditor from '@uiw/react-md-editor';
 
 const MembershipFormEditor = ({ club, initialMembershipForm = null, onClose }) => {
   const addItem = useStore((state) => state.addItem);
@@ -60,6 +61,14 @@ const MembershipFormEditor = ({ club, initialMembershipForm = null, onClose }) =
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMembershipForm(prevData => ({ ...prevData, [name]: value }));
+  };
+
+  const handleDescriptionChange = (value) => {
+    setMembershipForm(prevData => ({ ...prevData, description: value || '' }));
+  };
+
+  const handleLegalTextChange = (value) => {
+    setMembershipForm(prevData => ({ ...prevData, legaltext: value || '' }));
   };
 
   const handleSubmit = async (e) => {
@@ -176,25 +185,23 @@ const MembershipFormEditor = ({ club, initialMembershipForm = null, onClose }) =
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-700">Description</label>
-            <textarea
-              name="description"
+            <MDEditor
               value={membershipForm.description}
-              onChange={handleChange}
-              rows={4}
-              className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
+              onChange={handleDescriptionChange}
+              preview="edit"
+              height={200}
+              className="w-full"
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-zinc-700">Texte légal</label>
-            <textarea
-              name="legaltext"
+            <MDEditor
               value={membershipForm.legaltext}
-              onChange={handleChange}
-              rows={6}
-              className="w-full px-3 py-2 border rounded-md border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
+              onChange={handleLegalTextChange}
+              preview="edit"
+              height={200}
+              className="w-full"
             />
           </div>
 

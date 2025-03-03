@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Select from 'react-select';
-import { toSqlDate, getDateEndLicence } from '../../js/date';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { Search, MapPin, Building2 } from 'lucide-react';
@@ -74,10 +73,10 @@ const FindClubOption = () => {
     fetchAllData();
   }, [fetchData, setItems]);
 
-  const membershipForm = useMemo(() => {
-    if (!selectedClub) return null;
-    return membershipForms.find(mf => mf.clubid == selectedClub.id);
-  }, [membershipForms, selectedClub]);
+  const getMembershipForm = (clubId) => {
+    if (!clubId) return null;
+    return membershipForms.find(mf => mf.clubid == clubId);
+  }
 
   const filteredClubs = useMemo(() => {
     return clubs.filter((club) => {
@@ -94,17 +93,18 @@ const FindClubOption = () => {
   }, [clubs, addresses, nomClub, selectedLocation]);
 
   const handleSendRequest = useCallback(async (clubid) => {
-    try {
-      const requestToJoinData = await api.post("/requestToJoin", {
-        clubid: clubid, 
-        personphysicid: currentUser.id,
-        status: 'pending'
-      });
-      addItem('requestToJoin', requestToJoinData);
-    } catch (err) {
-      console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
-    }
-    setIsModalOpen(false);
+    console.log("HANDLE SEND REQUEST");
+    // try {
+    //   const requestToJoinData = await api.post("/requestToJoin", {
+    //     clubid: clubid, 
+    //     personphysicid: currentUser.id,
+    //     status: 'pending'
+    //   });
+    //   addItem('requestToJoin', requestToJoinData);
+    // } catch (err) {
+    //   console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
+    // }
+    // setIsModalOpen(false);
   }, [addItem, currentUser, requestToJoin]);
 
   const locations = useMemo(() => {
@@ -210,8 +210,8 @@ const FindClubOption = () => {
               currentClubs.map((club) => (
                 <ClubCard key={club.id} club={club} onClick={() => {
                   if (!club.request) {
-                    if (membershipForm) {
-                      setSelectedClub(club);
+                    setSelectedClub(club);
+                    if (getMembershipForm(club.id)) {
                       setIsModalOpen(true);
                     } else {
                       handleSendRequest(club.id);
@@ -220,16 +220,23 @@ const FindClubOption = () => {
                 }} />
               ))
             ) : (
-              <div className="text-center py-8 space-y-4">
-                <p className="text-muted-foreground">
+              <div className="text-center space-y-4 py-8">
+                <p className="text-gray-500">
                   Aucun club ne correspond à ces critères.
                 </p>
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <p className="text-sm text-blue-700">
-                    Vous ne trouvez pas votre club ? 
-                    <a href="mailto:contact@clubmaster.fr" className="font-medium underline hover:text-blue-800 ml-1">
-                      Contactez-nous
+                    Si vous ne trouvez pas votre club dans la liste, 
+                    <a 
+                      href="mailto:contact@clubmaster.fr" 
+                      className="font-medium underline hover:text-blue-800 ml-1"
+                    >
+                      contactez-nous
                     </a>
+                    . Nous serons ravis d'accompagner votre club dans sa digitalisation !
+                  </p>
+                  <p className="text-sm text-blue-700 mt-2">
+                    <span className="font-medium">Avantage :</span> En intégrant tous vos clubs sur ClubMaster, vous bénéficiez d'une gestion centralisée de toutes vos activités sportives sur une seule application.
                   </p>
                 </div>
               </div>
@@ -255,8 +262,8 @@ const FindClubOption = () => {
           </div>
         )}
       </div>
-      {isModalOpen && membershipForm && (
-        <ModalSignedMembershipForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} club={selectedClub} membershipForm={membershipForm} onSubmit={handleSendRequest} />
+      {isModalOpen && getMembershipForm(selectedClub.id) && (
+        <ModalSignedMembershipForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} club={selectedClub} membershipForm={getMembershipForm(selectedClub.id)} onSubmit={handleSendRequest} />
       )}
     </div>
   );

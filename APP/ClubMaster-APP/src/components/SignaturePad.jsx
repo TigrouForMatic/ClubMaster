@@ -1,15 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
-const SignaturePad = ({ onChange, className }) => {
-  const padRef = useRef(null);
-
-  const clear = () => {
-    padRef.current?.clear();
-  };
-
+const SignaturePad = React.forwardRef(({ onChange, className }, ref) => {
   const handleEnd = () => {
-    const signature = padRef.current?.toDataURL();
+    const signature = ref.current?.toDataURL();
     if (signature) {
       onChange(signature);
     }
@@ -18,7 +12,7 @@ const SignaturePad = ({ onChange, className }) => {
   return (
     <div className={className}>
       <SignatureCanvas
-        ref={padRef}
+        ref={ref}
         onEnd={handleEnd}
         canvasProps={{
           className: "signature-canvas",
@@ -27,11 +21,13 @@ const SignaturePad = ({ onChange, className }) => {
         }}
       />
       <button
-        onClick={clear}
+        onClick={() => ref.current?.clear()}
         className="mt-2 text-sm text-gray-600 hover:text-gray-800"
       >
         Effacer la signature
       </button>
     </div>
   );
-};
+});
+
+export default SignaturePad;

@@ -1,42 +1,56 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import MembershipFormApplicant from '../MemberShip/MembershipFormApplicant';
-// import { SignaturePad } from 'react-signature-pad-wrapper';
-import Modal from 'react-modal';
+import SignaturePad from '../SignaturePad';
+import api from '../../js/App/Api';
 import useStore from '../../store/store';
-
 const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSubmit }) => {
     if (!isOpen) return null;
 
+    const { currentUser } = useStore();
+
+    const [isClosing, setIsClosing] = useState(false);
+    const [signature, setSignature] = useState(null);
+
     const signaturePadRef = useRef(null);
 
-    const handleSubmit = () => {
-        if (signaturePadRef.current) {
-            const signatureData = signaturePadRef.current.toDataURL();
-            console.log(signatureData);
+    const handleSubmit = async () => {
+        if (signature) {
+            try {
+                await api.post("/membershipFormSignature", {
+                    signature: signature,
+                    membershipFormId: membershipForm.id,
+                    personPhysicId: currentUser.id
+                });
+                onSubmit(club.id);
+                handleClose();
+            } catch (err) {
+                console.error('Erreur lors de la récupération des signatures:', err.message);
+            }
         }
-        onSubmit(club.id);
     };
 
-    const handleClear = () => {
-        if (signaturePadRef.current) {
-            signaturePadRef.current.clear();
-        }
-    };
+    const handleClose = useCallback(() => {
+        setIsClosing(true);
+        setTimeout(() => {
+          setIsClosing(false);
+          onClose();
+        }, 300);
+      }, [onClose]);
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onRequestClose={onClose}
-            className="relative bg-white rounded-lg shadow-lg w-full max-w-2xl mx-auto mt-10 max-h-[90vh] overflow-y-auto scrollbar-hide"
-            overlayClassName="fixed inset-0 bg-black/50 z-50 flex items-start justify-center"
-        >
-            <div className="p-6">
+        <div className="fixed inset-0 bg-black/30 z-50 flex justify-end" onClick={handleClose}>
+            <div 
+                className={`bg-white w-full max-w-3xl h-full overflow-y-auto p-4 transition-all duration-300 ${
+                isClosing ? 'slide-out' : 'slide-in'
+                }`}
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="flex items-center justify-between border-b pb-4">
                     <h2 className="text-2xl font-semibold tracking-tight">
-                        Signature du formulaire de demande de cotisation
+                        Signature du formulaire d'adhésion
                     </h2>
                     <button 
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="text-zinc-500 hover:text-zinc-900 transition-colors"
                     >
                         <span className="text-2xl">&times;</span>
@@ -55,26 +69,22 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSu
                                 Veuillez signer ci-dessous pour confirmer votre demande d'adhésion :
                             </p>
                             <div className="border border-zinc-300 rounded-lg bg-white">
-                                {/* <SignaturePad 
+                                <SignaturePad 
+                                    onChange={(signature) => setSignature(signature)}
+                                    className="w-full h-full"
                                     ref={signaturePadRef} 
                                     options={{ 
                                         backgroundColor: 'rgb(255, 255, 255)',
                                         height: 200
                                     }} 
-                                /> */}
+                                />
                             </div>
-                            <button
-                                onClick={handleClear}
-                                className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
-                            >
-                                Effacer la signature
-                            </button>
                         </div>
                     </div>
 
                     <div className="flex items-center justify-end gap-3 pt-6 border-t">
                         <button
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="px-4 py-2 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-md shadow-sm hover:bg-zinc-50"
                         >
                             Abandonner
@@ -88,7 +98,7 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSu
                     </div>
                 </div>
             </div>
-        </Modal>
+        </div>
     );
 };
 
