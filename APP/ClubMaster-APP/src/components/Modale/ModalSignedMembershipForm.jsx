@@ -90,9 +90,10 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSu
                         <MembershipFormApplicant membershipForm={membershipForm} club={club} />
                     </div>
 
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-medium">Signature</h3>
-                        <div className="space-y-2">
+                    {membershipForm.RequiresSignature && (
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-medium">Signature</h3>
+                            <div className="space-y-2">
                             <p className="text-sm text-zinc-600">
                                 Veuillez signer ci-dessous pour confirmer votre demande d'adhésion :
                             </p>
@@ -107,8 +108,9 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSu
                                     }} 
                                 />
                             </div>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="flex items-center justify-end gap-3 pt-6 border-t">
                         <button

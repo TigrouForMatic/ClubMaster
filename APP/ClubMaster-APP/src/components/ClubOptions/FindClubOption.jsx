@@ -214,7 +214,11 @@ const FindClubOption = () => {
                   if (!club.request) {
                     setSelectedClub(club);
                     if (getMembershipForm(club.id)) {
-                      setIsModalOpen(true);
+                      if (getMembershipForm(club.id).requiresacknowledgment) {
+                        setIsModalOpen(true);
+                      } else {
+                        handleSendRequest(club.id);
+                      }
                     } else {
                       handleSendRequest(club.id);
                     }
