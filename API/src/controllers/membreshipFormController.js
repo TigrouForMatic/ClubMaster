@@ -108,6 +108,106 @@ const deleteMembershipForm = async (req, res) => {
     }
 };
 
+const downloadMembershipForm = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const client = await pool.connect();
+        const result = await client.query(`
+            SELECT 
+                mf.*, 
+                c.label as club_name,
+                p.url as photo_url
+            FROM ${TABLE_NAME} mf 
+            JOIN db.Club c ON c.id = mf.clubid 
+            LEFT JOIN db.Photos p ON p.referenceid = mf.id AND p.referenceType = 'membershipForm'
+            WHERE mf.id = $1
+        `, [id]);
+        client.release();
+
+        if (result.rows.length === 0) {
+            return res.status(404).send('Formulaire d\'adhésion non trouvé');
+        }
+
+        const membershipForm = result.rows[0];
+        const PDFDocument = require('pdfkit');
+        
+        // Création du document PDF au format A4
+        const doc = new PDFDocument({
+            size: 'A4',
+            margin: 50
+        });
+
+        // Création d'une promesse pour gérer la génération du PDF
+        const pdfBuffer = await new Promise((resolve, reject) => {
+            const chunks = [];
+            
+            doc.on('data', chunk => chunks.push(chunk));
+            doc.on('end', () => resolve(Buffer.concat(chunks)));
+            doc.on('error', reject);
+
+            // En-tête avec logo si disponible
+            if (membershipForm.photo_url) {
+                doc.image(membershipForm.photo_url, 50, 50, { width: 90 });
+            }
+
+            // Nom du club et période
+            doc.fontSize(24).text(membershipForm.club_name, { align: 'center', y: 50 });
+            doc.fontSize(14).text(membershipForm.period, { align: 'center' });
+
+            // Titre du formulaire
+            doc.moveDown(2);
+            doc.fontSize(18).text(membershipForm.title, { align: 'center' });
+
+            // Description
+            doc.moveDown(2);
+            doc.fontSize(12).text(membershipForm.description, { align: 'left' });
+
+            // Texte légal
+            doc.moveDown(2);
+            doc.fontSize(10).text(membershipForm.legaltext, {
+                align: 'left',
+                backgroundColor: '#f9fafb',
+                padding: 10
+            });
+
+            // Partie basse du document
+            doc.y = 700;
+
+            // Case à cocher pour la prise de connaissance
+            if (membershipForm.requiresacknowledgment) {
+                doc.fontSize(10).text('☐ Je déclare avoir pris connaissance des conditions d\'adhésion');
+            }
+
+            // Zone de signature
+            if (membershipForm.requiresignature) {
+                doc.moveDown();
+                doc.fontSize(10).text('Signature :');
+                doc.moveTo(doc.x, doc.y + 5)
+                   .lineTo(doc.x + 200, doc.y + 5)
+                   .stroke();
+            }
+
+            // Date et lieu
+            doc.moveDown(2);
+            doc.fontSize(10).text('Fait à _____________, le ____ / ____ / ________', { align: 'right' });
+
+            doc.end();
+        });
+
+        // Configuration des en-têtes de la réponse
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Length', pdfBuffer.length);
+        res.setHeader('Content-Disposition', `attachment; filename=formulaire-adhesion-${membershipForm.club_name}.pdf`);
+
+        // Envoi du PDF
+        res.send(pdfBuffer);
+
+    } catch (err) {
+        console.error('Erreur lors du téléchargement du formulaire:', err);
+        res.status(500).send('Erreur lors du téléchargement du formulaire');
+    }
+};
+
 const prepareInsertData = (body) => {
     const columns = Object.keys(body).join(', ');
     const values = Object.values(body);
@@ -125,5 +225,6 @@ module.exports = {
     getMembershipFormById,
     addMembershipForm,
     updateMembershipForm,
-    deleteMembershipForm
+    deleteMembershipForm,
+    downloadMembershipForm
 };

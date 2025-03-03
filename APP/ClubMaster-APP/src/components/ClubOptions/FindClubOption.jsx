@@ -93,18 +93,18 @@ const FindClubOption = () => {
   }, [clubs, addresses, nomClub, selectedLocation]);
 
   const handleSendRequest = useCallback(async (clubid) => {
-    console.log("HANDLE SEND REQUEST");
-    // try {
-    //   const requestToJoinData = await api.post("/requestToJoin", {
-    //     clubid: clubid, 
-    //     personphysicid: currentUser.id,
-    //     status: 'pending'
-    //   });
-    //   addItem('requestToJoin', requestToJoinData);
-    // } catch (err) {
-    //   console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
-    // }
-    // setIsModalOpen(false);
+    // console.log("HANDLE SEND REQUEST");
+    try {
+      const requestToJoinData = await api.post("/requestToJoin", {
+        clubid: clubid, 
+        personphysicid: currentUser.id,
+        status: 'pending'
+      });
+      addItem('requestToJoin', requestToJoinData);
+    } catch (err) {
+      console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
+    }
+    setIsModalOpen(false);
   }, [addItem, currentUser, requestToJoin]);
 
   const locations = useMemo(() => {

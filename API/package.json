@@ -28,6 +28,7 @@
     "node-abort-controller": "^3.1.1",
     "node-fetch": "^2.7.0",
     "openai": "^4.52.7",
+    "pdfkit": "^0.16.0",
     "pg": "^8.11.3",
     "rate-limit-redis": "3.0.0",
     "sib-api-v3-sdk": "^8.5.0",
