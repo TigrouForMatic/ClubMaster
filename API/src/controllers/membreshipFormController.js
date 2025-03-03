@@ -136,7 +136,6 @@ const downloadMembershipForm = async (req, res) => {
             margin: 50
         });
 
-        // Création d'une promesse pour gérer la génération du PDF
         const pdfBuffer = await new Promise((resolve, reject) => {
             const chunks = [];
             
@@ -144,18 +143,17 @@ const downloadMembershipForm = async (req, res) => {
             doc.on('end', () => resolve(Buffer.concat(chunks)));
             doc.on('error', reject);
 
-            // Vérifier si l'image existe avant d'essayer de l'ajouter
-            try {
-                if (membershipForm.photo_url) {
-                    // Optionnel : ajouter le logo
-                    // doc.image(membershipForm.photo_url, 50, 50, { width: 90 });
-                    
-                    // Pour l'instant, on skip le logo pour éviter l'erreur
-                    console.log('Logo skipped:', membershipForm.photo_url);
+            // Vérification et chargement sécurisé de l'image
+            if (membershipForm.photo_url) {
+                const fs = require('fs');
+                const path = require('path');
+                const imagePath = path.join(process.cwd(), membershipForm.photo_url);
+                
+                if (fs.existsSync(imagePath)) {
+                    doc.image(imagePath, 50, 50, { width: 90 });
+                } else {
+                    console.warn(`Image non trouvée: ${imagePath}`);
                 }
-            } catch (err) {
-                console.warn('Unable to load logo:', err);
-                // Continue without the logo
             }
 
             // Nom du club et période
