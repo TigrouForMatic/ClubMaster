@@ -58,16 +58,18 @@ const FindClubOption = () => {
 
   useEffect(() => {
     const fetchAllData = async () => {
-      const [clubsData, addressesData, requestToJoinData, membershipForms] = await Promise.all([
+      const [clubsData, addressesData, requestToJoinData, membershipForms, photosData] = await Promise.all([
         fetchData('club'),
         fetchData('address'),
         fetchData('requestToJoin'),
-        fetchData('membershipForm')
+        fetchData('membershipForm'),
+        fetchData('photos')
       ]);
       setItems('clubs', clubsData);
       setItems('addresses', addressesData);
       setItems('requestToJoin', requestToJoinData);
       setItems('membershipForms', membershipForms);
+      setItems('photos', photosData);
     };
     
     fetchAllData();

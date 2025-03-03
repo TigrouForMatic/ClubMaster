@@ -231,6 +231,18 @@ function AuthForm() {
             </div>
           )}
           
+          {showClubOptions && (
+            <button
+              onClick={() => {
+                setShowClubOptions(false);
+                setShowLoginForm(true);
+              }}
+              className="absolute top-4 left-[53%] text-zinc-600 hover:text-zinc-900"
+            >
+              ← Retour
+            </button>
+          )}
+          
           {showLoginForm && (
             <div className="flex flex-col space-y-2 w-full">
               <h1 className="text-2xl font-semibold tracking-tight">

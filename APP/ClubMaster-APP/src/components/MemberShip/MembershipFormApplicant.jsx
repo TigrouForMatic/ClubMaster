@@ -4,7 +4,7 @@ import { getImageUrl } from '../../js/photo';
 import MDEditor from '@uiw/react-md-editor';
 
 const MembershipFormApplicant = ({ club, membershipForm }) => {
-  const photo = useStore((state) => state.photos).find(photo => photo.referenceid == membershipForm.id);
+  const photo = useStore((state) => state.photos).find(photo => photo.referenceid == membershipForm.id && photo.referencetype == "membershipForm");
 
   return (
     <div className="flex justify-center p-6">
