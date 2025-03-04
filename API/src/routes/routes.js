@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { healthCheck } = require('../controllers/healthControllers');
-const { createAccount, testLogin } = require('../controllers/authControllers');
+const { createAccount, testLogin, handleGoogleCallback } = require('../controllers/authControllers');
 const { requireAuth } = require('../middleware/auth');
 const { getAddresses, getAddressById, getAddressByPerson, addAddress, updateAddress, deleteAddress } = require('../controllers/addressControllers');
 const { getPersonPhysic, getPersonPhysicById, addPersonPhysic, updatePersonPhysic, deletePersonPhysic } = require('../controllers/personPhysicControllers');
@@ -48,7 +48,7 @@ router.use(globalLimiter);
 router.get('/health', healthCheck);
 router.post('/auth/login', authLimiter, testLogin);
 router.post('/auth/create-account', createAccountLimiter, createAccount);
-
+router.post('/auth/google/callback', handleGoogleCallback);
 // Routes pour le CRUD des addresses
 router.get('/address', getAddresses);
 router.get('/address/:id', getAddressById);

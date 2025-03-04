@@ -1,4 +1,6 @@
 // api.js
+import axios from 'axios';
+import AuthService from '../authService';
 import { APIController } from './ApiController';
 
 const api = new APIController({
@@ -11,14 +13,29 @@ const api = new APIController({
   withCredentials: true
 });
 
-// Ajout d'un intercepteur pour l'authentification
-api.addRequestInterceptor(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+api.interceptors.request.use(
+  (config) => {
+    const token = AuthService.getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
+
+api.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response?.status === 401) {
+      AuthService.logout();
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Ajoutez un intercepteur pour logger les requêtes
 // api.axios.interceptors.request.use(request => {

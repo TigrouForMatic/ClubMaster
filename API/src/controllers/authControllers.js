@@ -1,6 +1,7 @@
 const { pool } = require('../../database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 const createAccount = async (req, res) => {
     const { login, password } = req.body;
@@ -96,7 +97,121 @@ const testLogin = async (req, res) => {
     }
 };
 
+const handleGoogleCallback = async (req, res) => {
+    try {
+        const { code } = req.body;
+
+        // 1. Échanger le code contre un token d'accès
+        const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+            code,
+            client_id: process.env.GOOGLE_CLIENT_ID,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET,
+            redirect_uri: 'https://clubmaster.fr/auth/google/callback',
+            grant_type: 'authorization_code'
+        });
+
+        const { access_token } = tokenResponse.data;
+
+        // 2. Obtenir les informations de l'utilisateur avec le token
+        const userInfoResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: {
+                Authorization: `Bearer ${access_token}`
+            }
+        });
+
+        const { email, name, picture } = userInfoResponse.data;
+
+        // 3. Connexion à la base de données
+        const client = await pool.connect();
+
+        try {
+            // Commencer une transaction
+            await client.query('BEGIN');
+
+            // Vérifier si l'utilisateur existe déjà
+            const userResult = await client.query(
+                'SELECT * FROM db.Login WHERE Login = $1',
+                [email]
+            );
+
+            let user;
+
+            if (userResult.rows.length > 0) {
+                // Utilisateur existant
+                user = userResult.rows[0];
+                
+                // Mettre à jour la dernière connexion
+                await client.query(
+                    'UPDATE db.Login SET Dm = NOW() WHERE Id = $1',
+                    [user.id]
+                );
+            } else {
+                // Créer un nouvel utilisateur
+                const newUserResult = await client.query(
+                    `INSERT INTO db.Login (Login, Password, Pseudo, Dc, Dm, GoogleId) 
+                     VALUES ($1, $2, $3, NOW(), NOW(), $4) 
+                     RETURNING *`,
+                    [email, 'GOOGLE_AUTH', name, email]
+                );
+
+                user = newUserResult.rows[0];
+            }
+
+            // Valider la transaction
+            await client.query('COMMIT');
+
+            // 4. Générer le JWT
+            const token = jwt.sign(
+                { 
+                    userId: user.id,
+                    login: user.login,
+                    pseudo: user.pseudo
+                },
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' }
+            );
+
+            // 5. Envoyer la réponse
+            res.json({
+                token,
+                user: {
+                    id: user.id,
+                    login: user.login,
+                    pseudo: user.pseudo
+                }
+            });
+
+        } catch (error) {
+            // En cas d'erreur, annuler la transaction
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            // Libérer le client
+            client.release();
+        }
+
+    } catch (error) {
+        console.error('Erreur lors du callback Google:', error);
+        
+        // Gérer les différents types d'erreurs
+        if (error.response) {
+            // Erreur de l'API Google
+            res.status(error.response.status).json({
+                error: 'Erreur lors de l\'authentification Google',
+                details: error.response.data
+            });
+        } else {
+            // Erreur interne
+            res.status(500).json({
+                error: 'Erreur interne du serveur',
+                message: error.message
+            });
+        }
+    }
+};
+
 module.exports = {
     createAccount,
-    testLogin
+    testLogin,
+    handleGoogleCallback
 };
