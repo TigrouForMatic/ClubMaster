@@ -24,14 +24,12 @@ export class APIController {
         // Ajouter le token Bearer pour toutes les requêtes sauf les exceptions
         const noAuthRoutes = ['/auth/login', '/auth/create-account', '/health'];
         
+        // Nettoyer l'URL pour la comparaison
+        const cleanUrl = config.url?.replace(/^\//, '') || '';
+        
         // Vérifier si l'URL correspond à une route d'authentification
         const isAuthRoute = noAuthRoutes.some(route => {
             const cleanRoute = route.replace(/^\//, '');
-            console.log('Comparaison:', {
-                cleanUrl,
-                cleanRoute,
-                isMatch: cleanUrl === cleanRoute
-            });
             return cleanUrl === cleanRoute;
         });
         
@@ -42,7 +40,6 @@ export class APIController {
         
         // Pour les autres routes, on ajoute le token si disponible
         const loginData = AuthService.getLogin();
-        console.log('Données de connexion:', loginData);
         if (loginData?.token) {
             config.headers.Authorization = `Bearer ${loginData.token}`;
         }

@@ -41,13 +41,19 @@ class AuthService {
   
     static getLogin() {
       if (!this.isStorageAvailable()) return null;
-      return localStorage.getItem('login');
+      try {
+        const login = localStorage.getItem('login');
+        return login ? JSON.parse(login) : null;
+      } catch (e) {
+        console.error('Erreur lors de la récupération du login:', e);
+        return null;
+      }
     }
   
     static setLogin(login) {
       if (!this.isStorageAvailable()) return false;
       try {
-        localStorage.setItem('login', login);
+        localStorage.setItem('login', JSON.stringify(login));
         return true;
       } catch (e) {
         console.error('Erreur lors de la sauvegarde du login:', e);
