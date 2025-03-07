@@ -1,20 +1,19 @@
 import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import useStore from './store/store';
+import { UNSAFE_DataRouterContext } from 'react-router-dom';
 import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
-import AuthForm from './components/Authentification/AuthForm';
 import NotificationContainer from './components/Notification/NotificationContainer';
 import DataLoader from './components/DataLoader';
 import AuthService from './js/authService';
-import GoogleCallback from './components/Authentification/GoogleCallback';
-import PrivateRoute from './components/Routes/PrivateRoute';
-import Login from './components/Authentification/AuthForm';
-import Dashboard from './components/Private/Dashboard';
 import './App.css';
 
 // Lazy loading des composants
+const Login = lazy(() => import('./components/Authentification/AuthForm'));
+const PersonalInfoForm = lazy(() => import('./components/Authentification/PersonalInfoForm'));
+const FindClubOption = lazy(() => import('./components/Authentification/AuthFindClubOption'));
+const GoogleCallback = lazy(() => import('./components/Authentification/GoogleCallback'));
 const SideBarContainer = lazy(() => import('./components/Menu/SideBarContainer'));
 const SideBarContainerMobile = lazy(() => import('./components/Menu/MenuBarMobile'));
 const HomeView = lazy(() => import('./views/HomeView'));
@@ -24,13 +23,10 @@ const ShopView = lazy(() => import('./views/ShopView'));
 const ManageView = lazy(() => import('./views/ManageView'));
 const CartPage = lazy(() => import('./views/CartPage'));
 const UserView = lazy(() => import('./views/UserView'));
-const PersonalInfoForm = lazy(() => import('./components/Authentification/PersonalInfoForm'));
-const FindClubOption = lazy(() => import('./components/ClubOptions/FindClubOption'));
 
 // Constantes pour les routes
 const ROUTES = {
   HOME: '/',
-  GOOGLE_CALLBACK: '/auth/google/callback',
   MATCHS: '/match',
   CALENDAR: '/calendar',
   SHOP: '/shop',
@@ -39,15 +35,14 @@ const ROUTES = {
   MANAGE: '/manage',
 };
 
+// Configuration des flags pour React Router v7
+UNSAFE_DataRouterContext.future = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true
+};
+
 function AppContent() {
   const isMobile = useMobile();
-  const showApp = useStore((state) => state.showApp);
-
-  if (!showApp) {
-    return (
-        <AuthForm />
-    );
-  }
 
   return (
     <div>
@@ -55,7 +50,6 @@ function AppContent() {
         {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
         <Routes>
           <Route path={ROUTES.HOME}     element={<HomeView />}      />
-          <Route path={ROUTES.GOOGLE_CALLBACK} element={<GoogleCallback />} />
           <Route path={ROUTES.MATCHS}   element={<MatchsView />}    />
           <Route path={ROUTES.CALENDAR} element={<CalendarView />}  />
           <Route path={ROUTES.SHOP}     element={<ShopView />}      />
@@ -72,30 +66,35 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* Routes publiques */}
-        <Route path="/login" element={
-          AuthService.isAuthenticated() ? <Navigate to="/" replace /> : <Login />
-        } />
-        <Route path="/auth/google/callback" element={<GoogleCallback />} />
+      <ErrorBoundary>
+        <MobileProvider>
+          <NotificationContainer />
+          <Routes>
+            {/* Routes publiques pour l'authentification */}
+            <Route path="/auth" element={
+              !AuthService.isAuthenticated() ? <Login /> : <Navigate to="/auth/personal-info" replace />
+            } />
+            <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
-        {/* Routes privées */}
-        <Route path="/" element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        } />
-        <Route path="/personal-info" element={
-          <PrivateRoute>
-            <PersonalInfoForm />
-          </PrivateRoute>
-        } />
-        <Route path="/find-club" element={
-          <PrivateRoute>
-            <FindClubOption />
-          </PrivateRoute>
-        } />
-      </Routes>
+            <Route path="/auth/personal-info" element={
+              !AuthService.isPersonalInfoSet() ? <PersonalInfoForm /> : <Navigate to="/auth/find-club" replace />
+            } />
+
+            <Route path="/auth/find-club" element={
+              !AuthService.isUserClubsSet() ? <FindClubOption /> : <Navigate to="/" replace />
+            } />
+
+            <Route path="/" element={
+              AuthService.isAuthenticated() && AuthService.isPersonalInfoSet() && AuthService.isUserClubsSet() ? 
+              <DataLoader>
+                <AppContent />
+              </DataLoader> 
+              : <Navigate to="/auth" replace />
+            } />
+
+          </Routes>
+        </MobileProvider>
+      </ErrorBoundary>
     </Router>
   );
 }

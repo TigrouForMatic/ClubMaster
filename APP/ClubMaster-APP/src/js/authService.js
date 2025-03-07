@@ -15,6 +15,11 @@ class AuthService {
     static clearToken() {
       localStorage.removeItem('token');
     }
+
+    static isPersonalInfoSet() {
+      const personalInfo = localStorage.getItem('personalInfo');
+      return !!personalInfo;
+    }
   
     static getUserData() {
       const userData = localStorage.getItem('userData');
@@ -28,10 +33,29 @@ class AuthService {
     static clearUserData() {
       localStorage.removeItem('userData');
     }
+
+    static isUserClubsSet() {
+      const userClubs = localStorage.getItem('userClubs');
+      return !!userClubs;
+    }
+
+    static getUserClubs() {
+      const userClubs = localStorage.getItem('userClubs');
+      return userClubs ? JSON.parse(userClubs) : null;
+    }
+  
+    static setUserClubs(userClubs) {
+      localStorage.setItem('userClubs', JSON.stringify(userClubs));
+    }
+  
+    static clearUserClubs() {
+      localStorage.removeItem('userClubs');
+    }
   
     static logout() {
       this.clearToken();
       this.clearUserData();
+      this.clearUserClubs();
     }
   }
   

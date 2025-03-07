@@ -1,5 +1,4 @@
 // api.js
-import axios from 'axios';
 import AuthService from '../authService';
 import { APIController } from './ApiController';
 
@@ -13,29 +12,28 @@ const api = new APIController({
   withCredentials: true
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = AuthService.getToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+api.addRequestInterceptor((config) => {
+  const token = AuthService.getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+  return config;
+});
 
-api.interceptors.response.use(
-  (response) => response.data,
-  (error) => {
-    if (error.response?.status === 401) {
-      AuthService.logout();
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
+// Ajouter temporairement cet intercepteur pour logger la réponse brute
+api.axios.interceptors.response.use(response => {
+  console.log('Réponse brute du serveur:', response);
+  return response;
+});
+
+api.addResponseInterceptor((response) => {
+  if (response.response?.status === 401) {
+    AuthService.logout();
+    window.location.href = '/auth/login';
   }
-);
+  
+  return response;
+});
 
 // Ajoutez un intercepteur pour logger les requêtes
 // api.axios.interceptors.request.use(request => {
