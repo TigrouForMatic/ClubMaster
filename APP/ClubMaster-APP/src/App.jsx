@@ -71,7 +71,7 @@ function App() {
           <NotificationContainer />
           <Routes>
             {/* Routes publiques pour l'authentification */}
-            <Route path="/auth" element={
+            <Route path="/auth/login" element={
               !AuthService.isAuthenticated() ? <Login /> : <Navigate to="/auth/personal-info" replace />
             } />
             <Route path="/auth/google/callback" element={<GoogleCallback />} />
@@ -89,7 +89,7 @@ function App() {
               <DataLoader>
                 <AppContent />
               </DataLoader> 
-              : <Navigate to="/auth" replace />
+              : <Navigate to="/auth/login" replace />
             } />
 
           </Routes>

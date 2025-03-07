@@ -49,17 +49,10 @@ function AuthForm() {
     setError('');
     
     try {
-      console.log(isLogin ? '/auth/login' : '/auth/create-account');
-      console.log({
-        login,
-        password
-      });
       const response = await api.post(isLogin ? '/auth/login' : '/auth/create-account', {
         login,
         password
       });
-
-      console.log(response);
 
       if (response.token) {
         localStorage.setItem('token', response.token);
@@ -112,7 +105,6 @@ function AuthForm() {
         }
       }
     } catch (err) {
-      console.log(err);
       if (err.status === 401) {
         setError('Login ou mot de passe incorrect');
       } else if (err.status === 400) {

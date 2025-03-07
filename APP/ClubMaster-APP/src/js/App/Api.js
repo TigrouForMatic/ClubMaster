@@ -20,12 +20,6 @@ api.addRequestInterceptor((config) => {
   return config;
 });
 
-// Ajouter temporairement cet intercepteur pour logger la réponse brute
-api.axios.interceptors.response.use(response => {
-  console.log('Réponse brute du serveur:', response);
-  return response;
-});
-
 api.addResponseInterceptor((response) => {
   if (response.response?.status === 401) {
     AuthService.logout();
