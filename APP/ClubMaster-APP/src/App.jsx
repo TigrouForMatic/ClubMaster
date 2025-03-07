@@ -1,6 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { UNSAFE_DataRouterContext } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -24,78 +23,137 @@ const ManageView = lazy(() => import('./views/ManageView'));
 const CartPage = lazy(() => import('./views/CartPage'));
 const UserView = lazy(() => import('./views/UserView'));
 
-// Constantes pour les routes
-const ROUTES = {
-  HOME: '/',
-  MATCHS: '/match',
-  CALENDAR: '/calendar',
-  SHOP: '/shop',
-  CART: '/cart',
-  USER: '/user',
-  MANAGE: '/manage',
+// Composant de protection des routes
+const ProtectedRoute = ({ children, condition, redirectTo }) => {
+  const navigate = useNavigate();
+  const [hasRedirected, setHasRedirected] = React.useState(false);
+  
+  React.useEffect(() => {
+    if (!condition && !hasRedirected) {
+      setHasRedirected(true);
+      navigate(redirectTo, { replace: true });
+    }
+  }, [condition, redirectTo, navigate, hasRedirected]);
+
+  return condition ? children : <LoadingSpinner />;
 };
 
-// Configuration des flags pour React Router v7
-UNSAFE_DataRouterContext.future = {
-  v7_startTransition: true,
-  v7_relativeSplatPath: true
-};
-
-function AppContent() {
+// Layout principal de l'application
+function MainLayout() {
   const isMobile = useMobile();
-
+  
   return (
     <div>
       <Suspense fallback={<LoadingSpinner />}>
         {isMobile ? <SideBarContainerMobile /> : <SideBarContainer />}
-        <Routes>
-          <Route path={ROUTES.HOME}     element={<HomeView />}      />
-          <Route path={ROUTES.MATCHS}   element={<MatchsView />}    />
-          <Route path={ROUTES.CALENDAR} element={<CalendarView />}  />
-          <Route path={ROUTES.SHOP}     element={<ShopView />}      />
-          <Route path={ROUTES.CART}     element={<CartPage />}      />
-          <Route path={ROUTES.MANAGE}   element={<ManageView />}    />
-          <Route path={ROUTES.USER}     element={<UserView />}      />
-          <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
-        </Routes>
+        <Outlet />
       </Suspense>
     </div>
   );
 }
 
+// Configuration du routeur
+const router = createBrowserRouter([
+  {
+    path: "/auth/login",
+    element: (
+      <ProtectedRoute 
+        condition={!AuthService.isAuthenticated()} 
+        redirectTo="/"
+      >
+        <Login />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/auth/google/callback",
+    element: <GoogleCallback />,
+  },
+  {
+    path: "/auth/personal-info",
+    element: (
+      <ProtectedRoute 
+        condition={AuthService.isAuthenticated() && !AuthService.isPersonalInfoSet()} 
+        redirectTo="/auth/login"
+      >
+        <PersonalInfoForm />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/auth/find-club",
+    element: (
+      <ProtectedRoute 
+        condition={AuthService.isAuthenticated() && AuthService.isPersonalInfoSet() && !AuthService.isUserClubsSet()} 
+        redirectTo="/auth/personal-info"
+      >
+        <FindClubOption />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute 
+        condition={AuthService.isAuthenticated() && AuthService.isPersonalInfoSet() && AuthService.isUserClubsSet()} 
+        redirectTo="/auth/login"
+      >
+        <DataLoader>
+          <MainLayout />
+        </DataLoader>
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <HomeView />,
+      },
+      {
+        path: "match",
+        element: <MatchsView />,
+      },
+      {
+        path: "calendar",
+        element: <CalendarView />,
+      },
+      {
+        path: "shop",
+        element: <ShopView />,
+      },
+      {
+        path: "cart",
+        element: <CartPage />,
+      },
+      {
+        path: "manage",
+        element: <ManageView />,
+      },
+      {
+        path: "user",
+        element: <UserView />,
+      },
+      {
+        path: "*",
+        element: <Navigate to="/" replace />,
+      },
+    ],
+  },
+], {
+  future: {
+    v7_startTransition: true,
+    v7_relativeSplatPath: true
+  }
+});
+
 function App() {
   return (
-    <Router>
+    <RouterProvider router={router}>
       <ErrorBoundary>
         <MobileProvider>
           <NotificationContainer />
-          <Routes>
-            {/* Routes publiques pour l'authentification */}
-            <Route path="/auth/login" element={
-              !AuthService.isAuthenticated() ? <Login /> : <Navigate to="/auth/personal-info" replace />
-            } />
-            <Route path="/auth/google/callback" element={<GoogleCallback />} />
-
-            <Route path="/auth/personal-info" element={
-              !AuthService.isPersonalInfoSet() ? <PersonalInfoForm /> : <Navigate to="/auth/find-club" replace />
-            } />
-
-            <Route path="/auth/find-club" element={
-              !AuthService.isUserClubsSet() ? <FindClubOption /> : <Navigate to="/" replace />
-            } />
-
-            <Route path="/" element={
-              AuthService.isAuthenticated() && AuthService.isPersonalInfoSet() && AuthService.isUserClubsSet() ? 
-              <DataLoader>
-                <AppContent />
-              </DataLoader> 
-              : <Navigate to="/auth/login" replace />
-            } />
-
-          </Routes>
         </MobileProvider>
       </ErrorBoundary>
-    </Router>
+    </RouterProvider>
   );
 }
 

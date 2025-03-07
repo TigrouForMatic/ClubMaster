@@ -1,4 +1,5 @@
 import api from '../js/App/Api';
+import AuthService from './authService';
 
 class GoogleAuthService {
   static async handleGoogleLogin() {
@@ -24,8 +25,6 @@ class GoogleAuthService {
       console.log(response);
       
       if (response.token) {
-        localStorage.setItem('token', response.token);
-        
         // Mettre à jour le store avec les informations de l'utilisateur
         const loginData = {
           id: response.user.id,
@@ -33,6 +32,8 @@ class GoogleAuthService {
           token: response.token,
           pseudo: response.user.pseudo
         };
+
+        AuthService.setLogin(loginData);
 
         return loginData;
       }

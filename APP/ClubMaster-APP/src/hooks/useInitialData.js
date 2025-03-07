@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import useStore from '../store/store';
 import api from '../js/App/Api';
+import AuthService from '../js/authService';
 
 export const useInitialData = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -12,6 +13,19 @@ export const useInitialData = () => {
 
     const fetchData = async () => {
       try {
+        // Vérifier si les données sont dans le localStorage
+        const storedUserData = AuthService.getUserData();
+        const storedUserClubs = AuthService.getUserClubs();
+
+        // Si les données sont dans le localStorage mais pas dans le store, les ajouter
+        if (storedUserData && !currentUser) {
+          setItems('currentUser', storedUserData);
+        }
+        if (storedUserClubs && (!userClubs || !userClubs.length)) {
+          setItems('userClubs', storedUserClubs);
+        }
+
+        // Si les données sont toujours manquantes après la synchronisation
         if (!userClubs?.length || !currentUser?.id) {
           if (!userClubs?.length) {
             console.error("Données des clubs de l'utilisateur manquantes", { userClubs, currentUser });

@@ -13,7 +13,7 @@ const api = new APIController({
 });
 
 api.addRequestInterceptor((config) => {
-  const token = AuthService.getToken();
+  const token = AuthService.getLogin().token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

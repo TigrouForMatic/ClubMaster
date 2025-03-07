@@ -34,12 +34,11 @@ function UserView() {
   }, [currentUserAddresses, currentUser]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
     setItems('currentUser', null);
     setItems('login', null);
     setLastFetchTime(null);
-    navigate('/auth/login');
     AuthService.logout();
+    navigate('/auth/login');
   };
 
   return (

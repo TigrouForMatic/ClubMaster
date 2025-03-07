@@ -1,6 +1,6 @@
 //ApiController.js
 import axios from "axios";
-import useStore from "../../store/store";
+import AuthService from "../authService";
 
 export class APIController {
   constructor(options = {}) {
@@ -22,14 +22,29 @@ export class APIController {
     this.axios.interceptors.request.use(
       config => {
         // Ajouter le token Bearer pour toutes les requêtes sauf les exceptions
-        const noAuthRoutes = ['auth/login', 'auth/create-account', 'health'];
+        const noAuthRoutes = ['/auth/login', '/auth/create-account', '/health'];
         
-        if (!noAuthRoutes.some(route => config.url?.includes(route))) {
-          const { currentUser } = useStore.getState();
-          const token = currentUser?.token;
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
+        // Vérifier si l'URL correspond à une route d'authentification
+        const isAuthRoute = noAuthRoutes.some(route => {
+            const cleanRoute = route.replace(/^\//, '');
+            console.log('Comparaison:', {
+                cleanUrl,
+                cleanRoute,
+                isMatch: cleanUrl === cleanRoute
+            });
+            return cleanUrl === cleanRoute;
+        });
+        
+        // Si c'est une route d'authentification, on ne fait rien
+        if (isAuthRoute) {
+            return config;
+        }
+        
+        // Pour les autres routes, on ajoute le token si disponible
+        const loginData = AuthService.getLogin();
+        console.log('Données de connexion:', loginData);
+        if (loginData?.token) {
+            config.headers.Authorization = `Bearer ${loginData.token}`;
         }
 
         for (const interceptor of this.interceptors.request) {

@@ -5,9 +5,25 @@ import useStore from '../store/store';
 import AuthService from '../js/authService';
 
 const DataLoader = ({ children }) => {
-  const { userClubs, currentUser } = useStore();
+  const { userClubs, currentUser, setItems } = useStore();
   const isAuthenticated = AuthService.isAuthenticated();
   const [isLoading, error] = isAuthenticated ? useInitialData() : [false, null];
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Synchroniser les données du localStorage avec le store
+      const storedUserData = AuthService.getUserData();
+      const storedUserClubs = AuthService.getUserClubs();
+
+      if (storedUserData && !currentUser) {
+        setItems('currentUser', storedUserData);
+      }
+
+      if (storedUserClubs && (!userClubs || !userClubs.length)) {
+        setItems('userClubs', storedUserClubs);
+      }
+    }
+  }, [isAuthenticated, currentUser, userClubs, setItems]);
 
   useEffect(() => {
     if (isAuthenticated && (!userClubs?.length || !currentUser?.id)) {

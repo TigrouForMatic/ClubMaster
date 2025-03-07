@@ -5,6 +5,7 @@ import { FacebookIcon, Eye, EyeOff } from 'lucide-react';
 import GoogleAuthService from '../../js/googleAuth';
 import { useNavigate } from 'react-router-dom';
 import AuthCarousel from './AuthCarousel';
+import AuthService from '../../js/authService';
 
 const passwordRules = [
   { message: "Une lettre minuscule.", regex: /[a-z]+/ },
@@ -55,14 +56,14 @@ function AuthForm() {
       });
 
       if (response.token) {
-        localStorage.setItem('token', response.token);
-
         const loginData = {
           id: response.user.id,
           login: response.user.login,
           token: response.token,
           pseudo: response.user.pseudo
         }
+
+        AuthService.setLogin(loginData);
         
         // Mettre à jour le login
         useStore.setState({
@@ -81,7 +82,7 @@ function AuthForm() {
             currentUser: dataPersonPhysic[0]
           });
 
-          localStorage.setItem('userData', JSON.stringify(dataPersonPhysic[0]));
+          AuthService.setUserData(dataPersonPhysic[0]);
 
           // Récupérer l'adresse
           const dataCurrentUserAddresses = await api.get(`/address/personnel/${dataPersonPhysic[0].id}`);
@@ -95,7 +96,7 @@ function AuthForm() {
             useStore.setState({
               userClubs: dataClub
             });
-            localStorage.setItem('userClubs', JSON.stringify(dataClub));
+            AuthService.setUserClubs(dataClub);
             navigate('/');
           } else {
             navigate('/auth/find-club');

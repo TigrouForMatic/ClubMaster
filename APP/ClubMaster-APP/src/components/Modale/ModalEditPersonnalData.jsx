@@ -5,10 +5,11 @@ import useStore from '../../store/store';
 import AddressForm from '../User/AdressesForm';
 import CustomConfirm from '../CustomConfirm';
 import { useNavigate } from 'react-router-dom';
+import AuthService from '../../js/authService';
 
 function ModalEditPersonnalData({ isOpen, onClose }) {
   const navigate = useNavigate();
-  const { currentUser, login, setCurrentUser, setLogin, setShowApp } = useStore();
+  const { currentUser, login, setCurrentUser, setLogin } = useStore();
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const [personnalData, setPersonnalData] = useState({
@@ -86,11 +87,10 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
   const handleDelete = async () => {
     await api.delete(`/login/${login.id}`);
     await api.delete(`/personphysic/${currentUser.id}`);
-    localStorage.removeItem('token');
     setCurrentUser(null);
-    setLogin(null);
-    navigate('/');
-    setShowApp();
+    setPersonnalData(null);
+    AuthService.logout();
+    navigate('/auth/login');
   };
 
   return (
