@@ -384,7 +384,12 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Complexe polyvalent', 'Pleucadeuc', 'Bretagne', '56140', 'France', 2, false, true),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Le Daufresne', 'Malestroit', 'Bretagne', '56140', 'France', 1, false, true),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '29 rue saint roch','Ploermel','Bretagne','56800','France', 1, true, true),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', null, false, true);
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Rue Pierre de Coubertin','Ploermel','Bretagne','56800','France', 3, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Impasse des Olympiades','Ploermel','Bretagne','56800','France', 4, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '6002 rue du bois','Saint-Nolff','Bretagne','56250','France', 5, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '15 chemin de Tromelé','Loyat','Bretagne','56800','France', 8, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '12 avenue Yves Robert','Saint-Abraham','Bretagne','56460','France', 6, false, true),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Chemin du paradis','Sérent','Bretagne','56460','France', 7, false, true);
 
     INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password, Pseudo, GoogleId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', 'jules.chassany@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach', null),
@@ -434,8 +439,7 @@ BEGIN
     ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'AOBD', 5, null, '2022-08-01T00:00:00.000Z'),
     ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'Les fous du volant', 6, null, '2022-08-01T00:00:00.000Z'),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Badminton Sérent', 7, null, '2022-08-01T00:00:00.000Z'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Badminton Sérent', 8, null, '2022-08-01T00:00:00.000Z'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Loyat Volley Club', 9, null, '2022-08-01T00:00:00.000Z');
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Loyat Volley Club', 8, null, '2022-08-01T00:00:00.000Z');
 
     INSERT INTO db.PlanClub (Dc, Dm, Bin, StartDate, EndDate, ClubId, PlanId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', '2024-07-30T00:00:00.000Z', 1, 1),
