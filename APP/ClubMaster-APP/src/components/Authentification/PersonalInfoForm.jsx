@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
 import { OpenInWindow } from 'iconoir-react';
@@ -32,6 +32,12 @@ function PersonalInfoForm() {
   const navigate = useNavigate();
   const setItems = useStore((state) => state.setItems);
   const login = useStore((state) => state.login);
+
+  useEffect(() => {
+    if (AuthService.isAuthenticated() && AuthService.isPersonalInfoSet()) {
+      navigate('/auth/find-club');
+    }
+  }, [navigate]);
 
   const handlePersonalInfoChange = (e) => {
     const { name, value } = e.target;

@@ -42,6 +42,18 @@ function AuthForm() {
   }, []);
 
   useEffect(() => {
+    if (AuthService.isAuthenticated()) {
+      if (!AuthService.isPersonalInfoSet()) {
+        navigate('/auth/personal-info');
+      } else if (!AuthService.isUserClubsSet()) {
+        navigate('/auth/find-club');
+      } else {
+        navigate('/');
+      }
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     validatePassword(password);
   }, [password, validatePassword]);
 
@@ -99,9 +111,11 @@ function AuthForm() {
             AuthService.setUserClubs(dataClub);
             navigate('/');
           } else {
+            console.log("no club");
             navigate('/auth/find-club');
           }
         } else {
+          console.log("no personPhysic");
           navigate('/auth/personal-info');
         }
       }

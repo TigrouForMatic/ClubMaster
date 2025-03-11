@@ -1,11 +1,10 @@
 import React, { lazy, Suspense } from "react";
-import { createBrowserRouter, RouterProvider, Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom';
 import { MobileProvider, useMobile } from './contexts/MobileContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import NotificationContainer from './components/Notification/NotificationContainer';
 import DataLoader from './components/DataLoader';
-import AuthService from './js/authService';
 import './App.css';
 
 // Lazy loading des composants
@@ -22,21 +21,6 @@ const ShopView = lazy(() => import('./views/ShopView'));
 const ManageView = lazy(() => import('./views/ManageView'));
 const CartPage = lazy(() => import('./views/CartPage'));
 const UserView = lazy(() => import('./views/UserView'));
-
-// Composant de protection des routes
-const ProtectedRoute = ({ children, condition, redirectTo }) => {
-  const navigate = useNavigate();
-  const [hasRedirected, setHasRedirected] = React.useState(false);
-  
-  React.useEffect(() => {
-    if (!condition && !hasRedirected) {
-      setHasRedirected(true);
-      navigate(redirectTo, { replace: true });
-    }
-  }, [condition, redirectTo, navigate, hasRedirected]);
-
-  return condition ? children : <LoadingSpinner />;
-};
 
 // Layout principal de l'application
 function MainLayout() {
@@ -57,12 +41,9 @@ const router = createBrowserRouter([
   {
     path: "/auth/login",
     element: (
-      <ProtectedRoute 
-        condition={!AuthService.isAuthenticated()} 
-        redirectTo="/"
-      >
+      <Suspense fallback={<LoadingSpinner />}>
         <Login />
-      </ProtectedRoute>
+      </Suspense>
     ),
   },
   {
@@ -71,37 +52,28 @@ const router = createBrowserRouter([
   },
   {
     path: "/auth/personal-info",
-    element: (
-      <ProtectedRoute 
-        condition={AuthService.isAuthenticated() && !AuthService.isPersonalInfoSet()} 
-        redirectTo="/auth/login"
-      >
-        <PersonalInfoForm />
-      </ProtectedRoute>
+    element: (  
+      <PersonalInfoForm />
     ),
   },
   {
     path: "/auth/find-club",
     element: (
-      <ProtectedRoute 
-        condition={AuthService.isAuthenticated() && AuthService.isPersonalInfoSet() && !AuthService.isUserClubsSet()} 
-        redirectTo="/auth/personal-info"
-      >
-        <FindClubOption />
-      </ProtectedRoute>
+        <MobileProvider>
+          <ErrorBoundary>
+            <Suspense fallback={<LoadingSpinner />}>
+              <FindClubOption />
+            </Suspense>
+          </ErrorBoundary>
+        </MobileProvider>
     ),
   },
   {
     path: "/",
     element: (
-      <ProtectedRoute 
-        condition={AuthService.isAuthenticated() && AuthService.isPersonalInfoSet() && AuthService.isUserClubsSet()} 
-        redirectTo="/auth/login"
-      >
         <DataLoader>
           <MainLayout />
         </DataLoader>
-      </ProtectedRoute>
     ),
     children: [
       {
@@ -148,13 +120,11 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <RouterProvider router={router}>
+    <MobileProvider>
       <ErrorBoundary>
-        <MobileProvider>
-          <NotificationContainer />
-        </MobileProvider>
+        <RouterProvider router={router} />
       </ErrorBoundary>
-    </RouterProvider>
+    </MobileProvider>
   );
 }
 

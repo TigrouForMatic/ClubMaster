@@ -1,42 +1,41 @@
+import { APIController } from './App/ApiController';
+import useStore from '../store/store';
+
+const api = new APIController({
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000'
+});
+
 class AuthService {
-    static #initialized = false;
-
-    static isInitialized() {
-        if (!this.isStorageAvailable()) return false;
-        if (!this.#initialized) {
-            try {
-                // Vérifie si on peut accéder au localStorage et si les structures nécessaires existent
-                const login = localStorage.getItem('login');
-                const userData = localStorage.getItem('userData');
-                const userClubs = localStorage.getItem('userClubs');
-                
-                // Marque le service comme initialisé si on peut accéder au stockage
-                this.#initialized = true;
-                return true;
-            } catch (e) {
-                console.error('Erreur lors de l\'initialisation du service d\'authentification:', e);
-                return false;
-            }
-        }
-        return true;
-    }
-
     static isStorageAvailable() {
-      try {
-        const storage = window.localStorage;
-        const x = '__storage_test__';
-        storage.setItem(x, x);
-        storage.removeItem(x);
-        return true;
-      } catch(e) {
-        return false;
-      }
+        try {
+            // Vérifier si window existe (pour éviter les erreurs SSR)
+            if (typeof window === 'undefined') return false;
+            
+            // Vérifier si localStorage existe
+            if (!window.localStorage) return false;
+            
+            // Test d'écriture/lecture
+            const testKey = '__storage_test__';
+            window.localStorage.setItem(testKey, testKey);
+            window.localStorage.removeItem(testKey);
+            return true;
+        } catch(e) {
+            console.warn('Erreur d\'accès au localStorage:', e);
+            return false;
+        }
     }
 
     static isAuthenticated() {
       if (!this.isStorageAvailable()) return false;
-      const login = localStorage.getItem('login');
-      return !!login;
+      try {
+        const login = localStorage.getItem('login');
+        if (!login) return false;
+        const loginData = JSON.parse(login);
+        return !!loginData && !!loginData.id;
+      } catch (e) {
+        console.error('Erreur lors de la vérification de l\'authentification:', e);
+        return false;
+      }
     }
   
     static getLogin() {
@@ -136,13 +135,6 @@ class AuthService {
       this.clearLogin();
       this.clearUserData();
       this.clearUserClubs();
-    }
-
-    static initialize() {
-        if (!this.isStorageAvailable()) {
-            throw new Error('Le stockage local n\'est pas disponible');
-        }
-        this.#initialized = true;
     }
   }
   
