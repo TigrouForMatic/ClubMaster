@@ -26,7 +26,7 @@ const globalLimiter = rateLimit({
     prefix: 'global_limit:'
   }),
   windowMs: 15 * 60 * 1000,
-  max: 200,
+  max: 500,
   message: 'Trop de requêtes, veuillez réessayer plus tard',
   standardHeaders: true,
   legacyHeaders: false,
@@ -49,7 +49,7 @@ const authLimiter = rateLimit({
     prefix: 'auth_limit:'
   }),
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 15,
   handler: (req, res) => {
     console.log('Rate Limit Atteint:', {
       ip: req.ip,
@@ -74,7 +74,7 @@ const createAccountLimiter = rateLimit({
     prefix: 'create_account_limit:'
   }),
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 15,
   handler: (req, res) => {
     console.log('Rate Limit Atteint:', {
       ip: req.ip,

@@ -1,4 +1,5 @@
 // api.js
+import AuthService from '../authService';
 import { APIController } from './ApiController';
 
 const api = new APIController({
@@ -11,13 +12,21 @@ const api = new APIController({
   withCredentials: true
 });
 
-// Ajout d'un intercepteur pour l'authentification
-api.addRequestInterceptor(config => {
-  const token = localStorage.getItem('token');
+api.addRequestInterceptor((config) => {
+  const token = AuthService.getLogin().token;
   if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
+});
+
+api.addResponseInterceptor((response) => {
+  if (response.response?.status === 401) {
+    AuthService.logout();
+    window.location.href = '/auth/login';
+  }
+  
+  return response;
 });
 
 // Ajoutez un intercepteur pour logger les requêtes

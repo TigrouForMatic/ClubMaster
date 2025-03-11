@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import api from '../js/App/Api';
 import useStore from '../store/store';
 import { SystemShut, Plus } from 'iconoir-react';
-
+import AuthService from '../js/authService';
 import UserImage from '../components/UserImage';
 import LicenceList from '../components/User/LicenceList';
 import BadgeSection from '../components/User/BadgeSection';
 import MenuSection from '../components/User/MenuSection';
 import ModalFindClub from "../components/Modale/ModalFindClub";
 import ChatbotModale from "../components/User/ChatbotModale";
-
 import { Progress } from "../components/ui/progress";
 
 function UserView() {
@@ -35,12 +34,11 @@ function UserView() {
   }, [currentUserAddresses, currentUser]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
     setItems('currentUser', null);
     setItems('login', null);
     setLastFetchTime(null);
-    navigate('/');
-    setShowApp();
+    AuthService.logout();
+    navigate('/auth/login');
   };
 
   return (

@@ -1,26 +1,68 @@
 import { useState, useEffect } from 'react';
 import useStore from '../store/store';
 import api from '../js/App/Api';
+import AuthService from '../js/authService';
 
 export const useInitialData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { userClubs, currentUser, lastFetchTime, setItems, addItem } = useStore();
+  const { userClubs, currentUser, currentUserAddresses, lastFetchTime, setItems, addItem } = useStore();
+
+  const [usedUserData, setUsedUserData] = useState(null);
+  const [usedUserClubs, setUsedUserClubs] = useState(null);
+
+  useEffect(() => {
+    const storedUserData = AuthService.getUserData();
+    const storedUserClubs = AuthService.getUserClubs();
+    
+    if (storedUserData && (!currentUser || Array.isArray(currentUser))) {
+      setItems('currentUser', storedUserData);
+    }
+    
+    if (storedUserClubs && (!userClubs || !userClubs.length)) {
+      setItems('userClubs', storedUserClubs);
+    }
+    
+    setUsedUserData(storedUserData || currentUser);
+    setUsedUserClubs(storedUserClubs || userClubs);
+  }, []);
+
+  useEffect(() => {
+    if (currentUser && !Array.isArray(currentUser)) {
+      setUsedUserData(currentUser);
+    }
+    if (userClubs && Array.isArray(userClubs)) {
+      setUsedUserClubs(userClubs);
+    }
+  }, [userClubs, currentUser]);
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchData = async () => {
       try {
-        if (!userClubs?.length || !currentUser?.id) {
-          if (!userClubs?.length) {
-            console.error("Données des clubs de l'utilisateur manquantes", { userClubs, currentUser });
+        // Vérifier si les données sont dans le localStorage
+        const storedUserData = AuthService.getUserData();
+        const storedUserClubs = AuthService.getUserClubs();
+
+        // Si les données sont dans le localStorage mais pas dans le store, les ajouter
+        if (storedUserData && !currentUser) {
+          setItems('currentUser', storedUserData);
+        }
+        if (storedUserClubs && (!userClubs || !userClubs.length)) {
+          setItems('userClubs', storedUserClubs);
+        }
+
+        // Si les données sont toujours manquantes après la synchronisation
+        if (!usedUserClubs?.length || !usedUserData?.id) {
+          if (!usedUserClubs?.length) {
+            console.error("Données des clubs de l'utilisateur manquantes", { usedUserClubs, usedUserData });
             setError(new Error("Données des clubs de l'utilisateur manquantes"));
             setIsLoading(false);
             return;
           }
-          if (!currentUser?.id) {
-            console.error("Données de l'utilisateur manquantes", { userClubs, currentUser });
+          if (!usedUserData?.id) {
+            console.error("Données de l'utilisateur manquantes", { usedUserClubs, usedUserData });
             setError(new Error("Données de l'utilisateur manquantes"));
             setIsLoading(false);
             return;
@@ -34,10 +76,16 @@ export const useInitialData = () => {
           return;
         }
 
-        const arrayClubId = userClubs.map(club => club.id);
+        const arrayClubId = usedUserClubs.map(club => club.id);
         if (!arrayClubId.length) {
           setIsLoading(false);
           return;
+        }
+
+        if (!currentUserAddresses?.length) {
+          // Récupérer l'adresse
+          const dataCurrentUserAddresses = await api.get(`/address/personnel/${usedUserData.id}`);
+          setItems('currentUserAddresses', dataCurrentUserAddresses);
         }
 
         const [
@@ -70,13 +118,13 @@ export const useInitialData = () => {
         setItems('matchScores', matchScoreData);
 
         const arrayEventId = eventData.map(evnt => evnt.id);
-        const inscriptionData = await api.get("/inscription", { params: { arrayEventId: JSON.stringify(arrayEventId), personPhysicId : currentUser.id } });
+        const inscriptionData = await api.get("/inscription", { params: { arrayEventId: JSON.stringify(arrayEventId), personPhysicId : usedUserData.id } });
         setItems('inscriptions', inscriptionData);
         
         const addressData = await api.get("/address");
         setItems('addresses', addressData);
 
-        const licenceData = await api.get("/licence", { params: { personphysicid: currentUser.id } });
+        const licenceData = await api.get("/licence", { params: { personphysicid: usedUserData.id } });
         setItems('licences', licenceData);
 
         const typeLicencesData = await api.get("/licenceType", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
@@ -88,7 +136,7 @@ export const useInitialData = () => {
         const userRoles = roleData.filter(role => licenceData.some(lic => lic.roleid === role.id));
         setItems('currentUserRoles', userRoles);
 
-        const requestToJoinData = await api.get("/requestToJoin", { params: { userid: currentUser.id, arrayClubId: JSON.stringify(arrayClubId) } });
+        const requestToJoinData = await api.get("/requestToJoin", { params: { userid: usedUserData.id, arrayClubId: JSON.stringify(arrayClubId) } });
         setItems('requestToJoin', requestToJoinData);
 
         const membershipFormData = await api.get("/membershipForm", { params: { arrayClubId: JSON.stringify(arrayClubId)} });
@@ -150,14 +198,14 @@ export const useInitialData = () => {
       }
     };
     
-    if (userClubs?.length > 0 && currentUser) {
+    if (usedUserClubs?.length > 0 && usedUserData) {
       fetchData();
     }
 
     return () => {
       isMounted = false;
     };
-  }, [userClubs, currentUser, lastFetchTime, setItems]);
+  }, [usedUserClubs, usedUserData, currentUserAddresses, lastFetchTime, setItems]);
 
   return [isLoading, error];
 }; 
