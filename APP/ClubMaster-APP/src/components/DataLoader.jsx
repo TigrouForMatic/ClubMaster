@@ -11,22 +11,16 @@ const DataLoader = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated) {
+      // Synchroniser les données du localStorage avec le store
       const storedUserData = AuthService.getUserData();
       const storedUserClubs = AuthService.getUserClubs();
 
-      if (storedUserData && (!currentUser || Array.isArray(currentUser))) {
+      if (storedUserData && !currentUser) {
         setItems('currentUser', storedUserData);
       }
 
-      if (storedUserClubs && Array.isArray(storedUserClubs) && (!userClubs || !userClubs.length)) {
+      if (storedUserClubs && (!userClubs || !userClubs.length)) {
         setItems('userClubs', storedUserClubs);
-      }
-
-      // Si après la synchronisation les données sont toujours invalides, déconnecter l'utilisateur
-      if (!storedUserData || Array.isArray(storedUserData)) {
-        console.error("Format des données utilisateur invalide - déconnexion");
-        AuthService.logout();
-        window.location.reload();
       }
     }
   }, [isAuthenticated, currentUser, userClubs, setItems]);

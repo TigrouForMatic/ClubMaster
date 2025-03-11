@@ -111,11 +111,9 @@ function AuthForm() {
             AuthService.setUserClubs(dataClub);
             navigate('/');
           } else {
-            console.log("no club");
             navigate('/auth/find-club');
           }
         } else {
-          console.log("no personPhysic");
           navigate('/auth/personal-info');
         }
       }
