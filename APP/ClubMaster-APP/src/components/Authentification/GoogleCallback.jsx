@@ -17,28 +17,29 @@ function GoogleCallback() {
         if (!code) {
           throw new Error('Code d\'autorisation manquant');
         }
-
+        console.log("code", code);
         const response = await api.post('/auth/google/callback', { code });
+        console.log("response google callback", response);
 
-        if (response.token) {
+        if (response.data.token) {
           // Stocker le token et les données utilisateur
-          AuthService.setToken(response.token);
-          AuthService.setUserData(response.user);
+          AuthService.setToken(response.data.token);
+          AuthService.setUserData(response.data.user);
 
           // Mettre à jour le store
           useStore.setState({
             login: {
-              id: response.user.id,
-              login: response.user.login,
-              token: response.token,
-              pseudo: response.user.pseudo
+              id: response.data.user.id,
+              login: response.data.user.login,
+              token: response.data.token,
+              pseudo: response.data.user.pseudo
             },
             lastFetchTime: null
           });
 
           try {
             const dataPersonPhysic = await api.get('/personPhysic', { 
-              params: { loginId: response.user.id } 
+              params: { loginId: response.data.user.id } 
             });
 
             if (dataPersonPhysic.length) {

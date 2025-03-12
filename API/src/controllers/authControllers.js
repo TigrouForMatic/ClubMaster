@@ -100,8 +100,10 @@ const testLogin = async (req, res) => {
 const handleGoogleCallback = async (req, res) => {
     try {
         const { code } = req.body;
+        console.log('Code reçu:', code);
 
         // 1. Échanger le code contre un token d'accès
+        console.log('Tentative d\'échange du code contre un token...');
         const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
             code,
             client_id: process.env.GOOGLE_CLIENT_ID,
@@ -109,17 +111,22 @@ const handleGoogleCallback = async (req, res) => {
             redirect_uri: 'https://clubmaster.fr/auth/google/callback',
             grant_type: 'authorization_code'
         });
+        console.log('Réponse du token Google:', tokenResponse.data);
 
         const { access_token } = tokenResponse.data;
+        console.log('Access token obtenu:', access_token ? 'Oui' : 'Non');
 
         // 2. Obtenir les informations de l'utilisateur avec le token
+        console.log('Récupération des informations utilisateur...');
         const userInfoResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
             headers: {
                 Authorization: `Bearer ${access_token}`
             }
         });
+        console.log('Informations utilisateur reçues:', userInfoResponse.data);
 
         const { email, name, picture } = userInfoResponse.data;
+        console.log('Email:', email, 'Nom:', name);
 
         // 3. Connexion à la base de données
         const client = await pool.connect();
@@ -191,9 +198,21 @@ const handleGoogleCallback = async (req, res) => {
         }
 
     } catch (error) {
-        console.error('Erreur lors du callback Google:', error);
-        
-        // Gérer les différents types d'erreurs
+        console.error('Erreur détaillée lors du callback Google:', {
+            message: error.message,
+            stack: error.stack,
+            response: error.response ? {
+                status: error.response.status,
+                data: error.response.data
+            } : 'Pas de réponse',
+            request: error.request ? 'Requête présente' : 'Pas de requête',
+            config: error.config ? {
+                url: error.config.url,
+                method: error.config.method,
+                data: error.config.data
+            } : 'Pas de config'
+        });
+
         if (error.response) {
             // Erreur de l'API Google
             res.status(error.response.status).json({
@@ -201,10 +220,10 @@ const handleGoogleCallback = async (req, res) => {
                 details: error.response.data
             });
         } else {
-            // Erreur interne
             res.status(500).json({
                 error: 'Erreur interne du serveur',
-                message: error.message
+                message: error.message,
+                details: process.env.NODE_ENV === 'development' ? error.stack : undefined
             });
         }
     }
