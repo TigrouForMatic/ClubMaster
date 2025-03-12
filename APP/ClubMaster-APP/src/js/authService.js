@@ -67,7 +67,7 @@ class AuthService {
 
     static isPersonalInfoSet() {
       if (!this.isStorageAvailable()) return false;
-      const personalInfo = localStorage.getItem('personalInfo');
+      const personalInfo = localStorage.getItem('userData');
       return !!personalInfo;
     }
   

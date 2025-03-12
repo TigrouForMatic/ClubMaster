@@ -1,6 +1,7 @@
 //ApiController.js
 import axios from "axios";
 import AuthService from "../authService";
+import { getNavigate } from '../navigationService';
 
 export class APIController {
   constructor(options = {}) {
@@ -113,13 +114,28 @@ export class APIController {
   }
 
   handleError(error) {
-    // Vous pouvez personnaliser la gestion des erreurs ici
     if (error.response) {
-      // La requête a été faite et le serveur a répondu avec un code d'état
-      // qui ne fait pas partie de la plage 2xx
-      console.error('Response error:', error.response.data);
-      console.error('Status:', error.response.status);
-      console.error('Headers:', error.response.headers);
+      console.log('Response error:', error.response.data);
+      console.log('Status:', error.response.status);
+      console.log('Headers:', error.response.headers);
+
+      // Vérification du token expiré ou invalide
+      if (error.response.status === 403 && 
+          (error.response.data.error === 'Invalid token' || 
+           error.response.data.details === 'jwt expired')) {
+        // Supprimer le token invalide du localStorage
+        localStorage.removeItem('token');
+        
+        // Utiliser la fonction de navigation
+        const navigate = getNavigate();
+        if (navigate) {
+          navigate('/auth/login');
+        } else {
+          // Fallback si navigate n'est pas disponible
+          window.location.href = '/auth/login';
+        }
+        return;
+      }
     } else if (error.request) {
       // La requête a été faite mais aucune réponse n'a été reçue
       console.error('Request error:', error.request);

@@ -5,6 +5,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import NotificationContainer from './components/Notification/NotificationContainer';
 import DataLoader from './components/DataLoader';
+import ProtectedRoute from './components/Routes/ProtectedRoute';
 import './App.css';
 
 // Lazy loading des composants
@@ -71,9 +72,11 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
+      <ProtectedRoute>
         <DataLoader>
           <MainLayout />
         </DataLoader>
+      </ProtectedRoute>
     ),
     children: [
       {
