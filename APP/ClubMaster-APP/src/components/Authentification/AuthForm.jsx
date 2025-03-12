@@ -42,6 +42,13 @@ function AuthForm() {
   }, []);
 
   useEffect(() => {
+    const loginData = AuthService.getLogin();
+    if (loginData) {
+      setLogin(loginData.login);
+    }
+  }, []);
+
+  useEffect(() => {
     if (AuthService.isAuthenticated()) {
       if (!AuthService.isPersonalInfoSet()) {
         navigate('/auth/personal-info');
