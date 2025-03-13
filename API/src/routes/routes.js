@@ -48,7 +48,10 @@ router.use(globalLimiter);
 router.get('/health', healthCheck);
 router.post('/auth/login', authLimiter, testLogin);
 router.post('/auth/create-account', createAccountLimiter, createAccount);
+
+// Routes pour l'authentification Google
 router.post('/auth/google/callback', handleGoogleCallback);
+
 // Routes pour le CRUD des addresses
 router.get('/address', getAddresses);
 router.get('/address/:id', getAddressById);

@@ -21,59 +21,88 @@ function GoogleCallback() {
           throw new Error('Code d\'autorisation manquant');
         }
 
-        const response = await api.post('/auth/google/callback', { code });
-        console.log("Response complète:", response);
-
-        if (!response || !response.data) {
-          throw new Error('Réponse invalide du serveur');
-        }
-
-        const { token, user } = response.data;
-        if (!token || !user) {
-          throw new Error('Token ou données utilisateur manquants');
-        }
-
-        // Stocker le token et les données utilisateur
-        AuthService.setToken(token);
-        AuthService.setUserData(user);
-
-        // Mettre à jour le store
-        useStore.setState({
-          login: {
-            id: user.id,
-            login: user.login,
-            token: token,
-            pseudo: user.pseudo
-          },
-          lastFetchTime: null
-        });
-
+        console.log("Envoi de la requête à l'API avec le code:", code);
         try {
-          const dataPersonPhysic = await api.get('/personPhysic', { 
-            params: { loginId: user.id } 
+          // Vérifier la configuration de l'API
+          console.log("Configuration API:", api.defaults);
+          
+          const response = await api.post('/auth/google/callback', { code }, {
+            // Ajouter des options de débogage
+            validateStatus: function (status) {
+              return true; // Accepter tous les status codes pour le débogage
+            },
+            timeout: 10000, // Timeout de 10 secondes
+          });
+          
+          console.log("Status de la réponse:", response?.status);
+          console.log("Headers de la réponse:", response?.headers);
+          console.log("Response brute complète:", JSON.stringify(response, null, 2));
+          console.log("Response.data:", response?.data);
+
+          if (!response || !response.data) {
+            throw new Error('Réponse invalide du serveur: ' + JSON.stringify(response));
+          }
+
+          const { token, user } = response.data;
+          console.log("Token reçu:", token);
+          console.log("User reçu:", user);
+
+          if (!token || !user) {
+            throw new Error('Token ou données utilisateur manquants. Données reçues: ' + JSON.stringify(response.data));
+          }
+
+          // Stocker le token et les données utilisateur
+          AuthService.setToken(token);
+          AuthService.setUserData(user);
+
+          // Mettre à jour le store
+          useStore.setState({
+            login: {
+              id: user.id,
+              login: user.login,
+              token: token,
+              pseudo: user.pseudo
+            },
+            lastFetchTime: null
           });
 
-          if (dataPersonPhysic.length) {
-            useStore.setState({
-              currentUser: dataPersonPhysic[0]
+          try {
+            const dataPersonPhysic = await api.get('/personPhysic', { 
+              params: { loginId: user.id } 
             });
 
-            const dataCurrentUserAddresses = await api.get(`/address/personnel/${dataPersonPhysic[0].id}`);
-            const dataClub = await api.get(`/club/personnel/${dataPersonPhysic[0].id}`);
+            if (dataPersonPhysic.length) {
+              useStore.setState({
+                currentUser: dataPersonPhysic[0]
+              });
 
-            useStore.setState({
-              currentUserAddresses: dataCurrentUserAddresses,
-              userClubs: dataClub
-            });
+              const dataCurrentUserAddresses = await api.get(`/address/personnel/${dataPersonPhysic[0].id}`);
+              const dataClub = await api.get(`/club/personnel/${dataPersonPhysic[0].id}`);
 
-            navigate(dataClub.length ? '/' : '/find-club');
-          } else {
-            navigate('/personal-info');
+              useStore.setState({
+                currentUserAddresses: dataCurrentUserAddresses,
+                userClubs: dataClub
+              });
+
+              navigate(dataClub.length ? '/' : '/find-club');
+            } else {
+              navigate('/personal-info');
+            }
+          } catch (error) {
+            console.error('Erreur lors de la récupération des données:', error);
+            AuthService.logout();
+            navigate('/login?error=data_fetch_failed');
           }
         } catch (error) {
-          console.error('Erreur lors de la récupération des données:', error);
-          AuthService.logout();
-          navigate('/login?error=data_fetch_failed');
+          console.error("Erreur détaillée:", {
+            message: error.message,
+            status: error?.response?.status,
+            statusText: error?.response?.statusText,
+            data: error?.response?.data,
+            config: error?.config,
+            baseURL: api.defaults.baseURL
+          });
+          throw error;
         }
       } catch (error) {
         console.error('Erreur lors du callback Google:', error);

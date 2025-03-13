@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken');
 const noAuthPaths = [
   '/health',
   '/auth/create-account',
-  '/auth/login'
+  '/auth/login',
+  '/auth/google/callback'
 ];
 
 const requireAuth = (req, res, next) => {

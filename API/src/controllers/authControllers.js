@@ -98,13 +98,12 @@ const testLogin = async (req, res) => {
 };
 
 const handleGoogleCallback = async (req, res) => {
-    console.log("4 handleGoogleCallback");
+    console.log("Début handleGoogleCallback");
     try {
         const { code } = req.body;
-        console.log('Code reçu:', code);
+        console.log('Code reçu côté API:', code);
 
         // 1. Échanger le code contre un token d'accès
-        console.log('Tentative d\'échange du code contre un token...');
         const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
             code,
             client_id: process.env.GOOGLE_CLIENT_ID,
@@ -112,7 +111,7 @@ const handleGoogleCallback = async (req, res) => {
             redirect_uri: 'https://clubmaster.fr/auth/google/callback',
             grant_type: 'authorization_code'
         });
-        console.log('Réponse du token Google:', tokenResponse.data);
+        console.log('Token Google obtenu:', tokenResponse.data);
 
         const { access_token } = tokenResponse.data;
         console.log('Access token obtenu:', access_token ? 'Oui' : 'Non');
@@ -184,10 +183,10 @@ const handleGoogleCallback = async (req, res) => {
                 throw new Error('Échec de la génération du token');
             }
 
-            // Assurez-vous que la réponse contient toutes les données nécessaires
-            const response = {
+            // Avant d'envoyer la réponse
+            const responseData = {
                 message: "Authentification Google réussie",
-                token: token, // Assurez-vous que cette valeur n'est pas null
+                token, // Vérifier que cette variable existe
                 user: {
                     id: user.id,
                     login: user.login,
@@ -195,8 +194,8 @@ const handleGoogleCallback = async (req, res) => {
                     lastLogin: new Date()
                 }
             };
-
-            res.status(200).json(response);
+            console.log('Données envoyées au client:', responseData);
+            res.status(200).json(responseData);
 
         } catch (error) {
             // En cas d'erreur, annuler la transaction
@@ -208,13 +207,18 @@ const handleGoogleCallback = async (req, res) => {
         }
 
     } catch (error) {
-        // Améliorer la gestion des erreurs
-        console.error('Erreur détaillée lors du callback Google:', error);
+        console.error('Erreur complète:', error);
+        console.error('Stack trace:', error.stack);
         
+        // Si l'erreur vient de Google
+        if (error.response?.data) {
+            console.error('Erreur Google:', error.response.data);
+        }
+
         res.status(500).json({
             message: "Erreur lors de l'authentification Google",
             error: error.message,
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            details: error.response?.data
         });
     }
 };
