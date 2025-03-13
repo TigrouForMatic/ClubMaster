@@ -23,7 +23,7 @@ export class APIController {
     this.axios.interceptors.request.use(
       config => {
         // Ajouter le token Bearer pour toutes les requêtes sauf les exceptions
-        const noAuthRoutes = ['/auth/login', '/auth/create-account', '/health'];
+        const noAuthRoutes = ['/auth/login', '/auth/create-account', '/health', '/auth/google/callback'];
         
         // Nettoyer l'URL pour la comparaison
         const cleanUrl = config.url?.replace(/^\//, '') || '';
@@ -94,11 +94,23 @@ export class APIController {
   }
 
   async get(url, config = {}) {
-    return this.request({ ...config, method: 'get', url });
+    try {
+      const response = await this.axios.get(url, config);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur get:', error);
+      throw error;
+    }
   }
 
   async post(url, data, config = {}) {
-    return this.request({ ...config, method: 'post', url, data });
+    try {
+      const response = await this.axios.post(url, data, config);
+      return response;
+    } catch (error) {
+      console.error('Erreur post:', error);
+      throw error;
+    }
   }
 
   async put(url, data, config = {}) {

@@ -1,10 +1,3 @@
-import { APIController } from './App/ApiController';
-import useStore from '../store/store';
-
-const api = new APIController({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000'
-});
-
 class AuthService {
     static isStorageAvailable() {
         try {

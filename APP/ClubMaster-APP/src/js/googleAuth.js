@@ -3,7 +3,6 @@ import AuthService from './authService';
 
 class GoogleAuthService {
   static async handleGoogleLogin() {
-    console.log("2 handleGoogleLogin");
     // Les scopes doivent être séparés par des espaces et encodés
     const scopes = encodeURIComponent('email profile openid');
     
@@ -19,11 +18,8 @@ class GoogleAuthService {
   }
 
   static async handleGoogleCallback(code) {
-    console.log("handleGoogleCallback", code);
     try {
       const response = await api.post('/auth/google/callback', { code });
-
-      console.log(response);
       
       if (response.token) {
         // Mettre à jour le store avec les informations de l'utilisateur

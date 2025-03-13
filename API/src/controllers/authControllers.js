@@ -186,7 +186,7 @@ const handleGoogleCallback = async (req, res) => {
             // Avant d'envoyer la réponse
             const responseData = {
                 message: "Authentification Google réussie",
-                token, // Vérifier que cette variable existe
+                token,
                 user: {
                     id: user.id,
                     login: user.login,
@@ -195,7 +195,9 @@ const handleGoogleCallback = async (req, res) => {
                 }
             };
             console.log('Données envoyées au client:', responseData);
-            res.status(200).json(responseData);
+            
+            // Envoyer la réponse avec le bon format
+            return res.status(200).json(responseData);
 
         } catch (error) {
             // En cas d'erreur, annuler la transaction
@@ -215,7 +217,7 @@ const handleGoogleCallback = async (req, res) => {
             console.error('Erreur Google:', error.response.data);
         }
 
-        res.status(500).json({
+        return res.status(500).json({
             message: "Erreur lors de l'authentification Google",
             error: error.message,
             details: error.response?.data

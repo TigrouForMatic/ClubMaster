@@ -95,7 +95,6 @@ const FindClubOption = () => {
   }, [clubs, addresses, nomClub, selectedLocation]);
 
   const handleSendRequest = useCallback(async (clubid) => {
-    // console.log("HANDLE SEND REQUEST");
     try {
       const requestToJoinData = await api.post("/requestToJoin", {
         clubid: clubid, 

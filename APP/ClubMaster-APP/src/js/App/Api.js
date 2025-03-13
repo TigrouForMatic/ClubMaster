@@ -13,19 +13,30 @@ const api = new APIController({
 });
 
 api.addRequestInterceptor((config) => {
-  const token = AuthService.getLogin().token;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const noAuthRoutes = ['/auth/login', '/auth/create-account', '/health', '/auth/google/callback'];
+  const isAuthRoute = noAuthRoutes.some(route => config.url?.includes(route));
+  
+  if (!isAuthRoute) {
+    const token = AuthService.getLogin()?.token;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
   return config;
 });
 
 api.addResponseInterceptor((response) => {
-  if (response.response?.status === 401) {
+  if (response?.response?.status === 401) {
     AuthService.logout();
     window.location.href = '/auth/login';
   }
   
+  // S'assurer que la réponse est correctement formatée
+  if (response?.data) {
+    return response.data;
+  }
+  
+  // Si pas de data, retourner la réponse complète
   return response;
 });
 
@@ -39,6 +50,25 @@ api.addResponseInterceptor((response) => {
 //   });
 //   return request;
 // });
+
+// api.axios.interceptors.response.use(
+//   response => {
+//     console.log('Réponse reçue:', {
+//       status: response.status,
+//       headers: response.headers,
+//       data: response.data
+//     });
+//     return response;
+//   },
+//   error => {
+//     console.error('Erreur de réponse:', {
+//       message: error.message,
+//       status: error?.response?.status,
+//       data: error?.response?.data
+//     });
+//     return Promise.reject(error);
+//   }
+// );
 
 export default api;
 
