@@ -36,16 +36,16 @@ const MembershipFormApplicant = ({ club, membershipForm }) => {
         <div className="mb-8">
           <MDEditor.Markdown 
             source={membershipForm.description} 
-            className="text-gray-700"
+            className="text-gray-700 [&>*]:text-left [&>p]:my-2"
           />
         </div>
 
         {/* Texte légal */}
         <div className="mb-8">
-          <div className="bg-gray-50 p-4 rounded">
+          <div className="p-4 rounded">
             <MDEditor.Markdown 
               source={membershipForm.legaltext} 
-              className="text-sm text-gray-600 bg-gray-50"
+              className="text-sm text-gray-600 [&>*]:text-left [&>p]:my-2"
             />
           </div>
         </div>
