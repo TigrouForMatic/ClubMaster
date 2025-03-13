@@ -10,60 +10,70 @@ function GoogleCallback() {
 
   useEffect(() => {
     const handleCallback = async () => {
+      console.log("3 handleCallback");
       try {
         const urlParams = new URLSearchParams(location.search);
         const code = urlParams.get('code');
 
+        console.log("code", code);
+
         if (!code) {
           throw new Error('Code d\'autorisation manquant');
         }
-        console.log("code", code);
+
         const response = await api.post('/auth/google/callback', { code });
-        console.log("response google callback", response);
+        console.log("Response complète:", response);
 
-        if (response.data.token) {
-          // Stocker le token et les données utilisateur
-          AuthService.setToken(response.data.token);
-          AuthService.setUserData(response.data.user);
+        if (!response || !response.data) {
+          throw new Error('Réponse invalide du serveur');
+        }
 
-          // Mettre à jour le store
-          useStore.setState({
-            login: {
-              id: response.data.user.id,
-              login: response.data.user.login,
-              token: response.data.token,
-              pseudo: response.data.user.pseudo
-            },
-            lastFetchTime: null
+        const { token, user } = response.data;
+        if (!token || !user) {
+          throw new Error('Token ou données utilisateur manquants');
+        }
+
+        // Stocker le token et les données utilisateur
+        AuthService.setToken(token);
+        AuthService.setUserData(user);
+
+        // Mettre à jour le store
+        useStore.setState({
+          login: {
+            id: user.id,
+            login: user.login,
+            token: token,
+            pseudo: user.pseudo
+          },
+          lastFetchTime: null
+        });
+
+        try {
+          const dataPersonPhysic = await api.get('/personPhysic', { 
+            params: { loginId: user.id } 
           });
 
-          try {
-            const dataPersonPhysic = await api.get('/personPhysic', { 
-              params: { loginId: response.data.user.id } 
+          if (dataPersonPhysic.length) {
+            useStore.setState({
+              currentUser: dataPersonPhysic[0]
             });
 
-            if (dataPersonPhysic.length) {
-              useStore.setState({
-                currentUser: dataPersonPhysic[0]
-              });
+            const dataCurrentUserAddresses = await api.get(`/address/personnel/${dataPersonPhysic[0].id}`);
+            const dataClub = await api.get(`/club/personnel/${dataPersonPhysic[0].id}`);
 
-              const dataCurrentUserAddresses = await api.get(`/address/personnel/${dataPersonPhysic[0].id}`);
-              const dataClub = await api.get(`/club/personnel/${dataPersonPhysic[0].id}`);
+            useStore.setState({
+              currentUserAddresses: dataCurrentUserAddresses,
+              userClubs: dataClub
+            });
 
-              useStore.setState({
-                currentUserAddresses: dataCurrentUserAddresses,
-                userClubs: dataClub
-              });
-
-              navigate(dataClub.length ? '/' : '/find-club');
-            } else {
-              navigate('/personal-info');
-            }
-          } catch (error) {
-            console.error('Erreur lors de la récupération des données:', error);
-            AuthService.logout();
-            navigate('/login?error=data_fetch_failed');
+            navigate(dataClub.length ? '/' : '/find-club');
+          } else {
+            navigate('/personal-info');
           }
+        } catch (error) {
+          console.error('Erreur lors de la récupération des données:', error);
+          AuthService.logout();
+          navigate('/login?error=data_fetch_failed');
         }
       } catch (error) {
         console.error('Erreur lors du callback Google:', error);

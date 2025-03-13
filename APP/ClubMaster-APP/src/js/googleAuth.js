@@ -3,6 +3,7 @@ import AuthService from './authService';
 
 class GoogleAuthService {
   static async handleGoogleLogin() {
+    console.log("2 handleGoogleLogin");
     // Les scopes doivent être séparés par des espaces et encodés
     const scopes = encodeURIComponent('email profile openid');
     

@@ -98,6 +98,7 @@ const testLogin = async (req, res) => {
 };
 
 const handleGoogleCallback = async (req, res) => {
+    console.log("4 handleGoogleCallback");
     try {
         const { code } = req.body;
         console.log('Code reçu:', code);
@@ -178,15 +179,24 @@ const handleGoogleCallback = async (req, res) => {
                 { expiresIn: '24h' }
             );
 
-            // 5. Envoyer la réponse
-            res.json({
-                token,
+            // Vérifiez que le token est bien généré
+            if (!token) {
+                throw new Error('Échec de la génération du token');
+            }
+
+            // Assurez-vous que la réponse contient toutes les données nécessaires
+            const response = {
+                message: "Authentification Google réussie",
+                token: token, // Assurez-vous que cette valeur n'est pas null
                 user: {
                     id: user.id,
                     login: user.login,
-                    pseudo: user.pseudo
+                    pseudo: user.pseudo,
+                    lastLogin: new Date()
                 }
-            });
+            };
+
+            res.status(200).json(response);
 
         } catch (error) {
             // En cas d'erreur, annuler la transaction
@@ -198,34 +208,14 @@ const handleGoogleCallback = async (req, res) => {
         }
 
     } catch (error) {
-        console.error('Erreur détaillée lors du callback Google:', {
-            message: error.message,
-            stack: error.stack,
-            response: error.response ? {
-                status: error.response.status,
-                data: error.response.data
-            } : 'Pas de réponse',
-            request: error.request ? 'Requête présente' : 'Pas de requête',
-            config: error.config ? {
-                url: error.config.url,
-                method: error.config.method,
-                data: error.config.data
-            } : 'Pas de config'
+        // Améliorer la gestion des erreurs
+        console.error('Erreur détaillée lors du callback Google:', error);
+        
+        res.status(500).json({
+            message: "Erreur lors de l'authentification Google",
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
-
-        if (error.response) {
-            // Erreur de l'API Google
-            res.status(error.response.status).json({
-                error: 'Erreur lors de l\'authentification Google',
-                details: error.response.data
-            });
-        } else {
-            res.status(500).json({
-                error: 'Erreur interne du serveur',
-                message: error.message,
-                details: process.env.NODE_ENV === 'development' ? error.stack : undefined
-            });
-        }
     }
 };
 

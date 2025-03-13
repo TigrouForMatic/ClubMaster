@@ -147,6 +147,7 @@ function AuthForm() {
 
   const handleGoogleLogin = async () => {
     try {
+      console.log("1 handleGoogleLogin");
       await GoogleAuthService.handleGoogleLogin();
     } catch (error) {
       setError('Erreur lors de la connexion avec Google');
