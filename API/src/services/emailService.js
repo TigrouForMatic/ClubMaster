@@ -1,4 +1,4 @@
-const SibApiV3Sdk = require('sib-api-v3-sdk');
+const axios = require('axios');
 
 class EmailService {
     constructor() {
@@ -8,11 +8,14 @@ class EmailService {
             throw new Error('La clé API Brevo n\'est pas définie dans les variables d\'environnement (BREVO_API_KEY)');
         }
 
-        // Initialisation du client Brevo
-        let defaultClient = SibApiV3Sdk.ApiClient.instance;
-        defaultClient.authentications['api-key'].apiKey = apiKey;
-        
-        this.client = new SibApiV3Sdk.TransactionalEmailsApi();
+        // Configuration d'axios pour Brevo
+        this.apiClient = axios.create({
+            baseURL: 'https://api.brevo.com/v3',
+            headers: {
+                'api-key': apiKey,
+                'Content-Type': 'application/json'
+            }
+        });
         
         this.defaultSender = {
             email: 'clubmaster@clubmaster.fr',
@@ -20,28 +23,68 @@ class EmailService {
         };
     }
 
-    async sendEmail({ to, subject, htmlContent, textContent }) {
+    async sendEmail({ to, subject, htmlContent, textContent, templateId, params, headers }) {
         try {
-            const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-            
-            // Configuration de l'email
-            sendSmtpEmail.sender = this.defaultSender;
-            sendSmtpEmail.to = [{ email: to }];
-            sendSmtpEmail.subject = subject;
-            sendSmtpEmail.htmlContent = htmlContent;
-            sendSmtpEmail.textContent = textContent;
-
             console.log('Tentative d\'envoi d\'email avec les paramètres:', {
                 to,
                 subject,
+                templateId,
                 sender: this.defaultSender
             });
 
-            const response = await this.client.sendTransacEmail(sendSmtpEmail);
-            console.log('Email envoyé avec succès:', response);
-            return response;
+            const emailData = {
+                sender: this.defaultSender,
+                to: Array.isArray(to) ? to : [{ email: to }]
+            };
+
+            // Si un templateId est fourni, on utilise le template
+            if (templateId) {
+                emailData.templateId = templateId;
+                if (params) {
+                    emailData.params = params;
+                }
+            } else {
+                // Sinon on utilise le contenu HTML/texte direct
+                emailData.subject = subject;
+                emailData.htmlContent = htmlContent;
+                emailData.textContent = textContent;
+            }
+
+            // Ajout des en-têtes personnalisés si fournis
+            if (headers) {
+                emailData.headers = headers;
+            }
+
+            const response = await this.apiClient.post('/smtp/email', emailData);
+
+            console.log('Email envoyé avec succès:', response.data);
+            return response.data;
         } catch (error) {
-            console.error('Erreur lors de l\'envoi de l\'email:', error);
+            console.error('Erreur lors de l\'envoi de l\'email:', error.response?.data || error);
+            throw error;
+        }
+    }
+
+    // Nouvelle méthode pour envoyer un email avec template
+    async sendTemplateEmail({ to, templateId, params = {}, headers = {} }) {
+        return this.sendEmail({
+            to: Array.isArray(to) ? to : [{ email: to, name: params.name }],
+            templateId,
+            params,
+            headers
+        });
+    }
+
+    // Méthode pour créer un contact dans Brevo
+    async createContact(email, attributes = {}) {
+        try {
+            const response = await this.apiClient.post('/contacts', {
+                email,
+                attributes
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Erreur lors de la création du contact:', error.response?.data || error);
             throw error;
         }
     }
@@ -88,3 +131,33 @@ class EmailService {
 }
 
 module.exports = new EmailService();
+
+// // Exemple d'envoi d'email avec template
+// await emailService.sendTemplateEmail({
+//     to: {
+//         email: "testmail@example.com",
+//         name: "John Doe"
+//     },
+//     templateId: 8,
+//     params: {
+//         name: "John",
+//         surname: "Doe"
+//     },
+//     headers: {
+//         "X-Mailin-custom": "custom_header_1:custom_value_1|custom_header_2:custom_value_2",
+//         charset: "iso-8859-1"
+//     }
+// });
+
+// // Ou avec plusieurs destinataires
+// await emailService.sendTemplateEmail({
+//     to: [
+//         { email: "testmail1@example.com", name: "John Doe" },
+//         { email: "testmail2@example.com", name: "Jane Doe" }
+//     ],
+//     templateId: 8,
+//     params: {
+//         name: "John",
+//         surname: "Doe"
+//     }
+// });
