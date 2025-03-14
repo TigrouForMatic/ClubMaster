@@ -119,6 +119,11 @@ export class APIController {
       console.log('Status:', error.response.status);
       console.log('Headers:', error.response.headers);
 
+      if (error.response.status === 401) {
+        AuthService.logout();
+        window.location.href = '/auth/login';
+      }
+
       // Vérification du token expiré ou invalide
       if (error.response.status === 403 && 
           (error.response.data.error === 'Invalid token' || 
