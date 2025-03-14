@@ -34,8 +34,12 @@ function PersonalInfoForm() {
   const login = useStore((state) => state.login);
 
   useEffect(() => {
-    if (AuthService.isAuthenticated() && AuthService.isPersonalInfoSet()) {
-      navigate('/auth/find-club');
+    if (AuthService.isAuthenticated()) {
+      if (AuthService.isPersonalInfoSet()) {
+        navigate('/auth/find-club');
+      }
+    } else {
+      navigate('/auth/login');
     }
   }, [navigate]);
 
