@@ -53,17 +53,24 @@ function GoogleCallback() {
           });
 
           try {
+            console.log("DEmande de données", user.id);
             const dataPersonPhysic = await api.get('/personPhysic', { 
               params: { loginId: user.id } 
             });
+            console.log("Données récupérées", dataPersonPhysic);
 
             if (dataPersonPhysic?.length) {
               useStore.setState({
                 currentUser: dataPersonPhysic[0]
               });
 
+              console.log("Récupération des adresses", dataPersonPhysic[0].id);
               const dataCurrentUserAddresses = await api.get(`/address/personnel/${dataPersonPhysic[0].id}`);
+              console.log("Adresses récupérées", dataCurrentUserAddresses);
+
+              console.log("Récupération des clubs", dataPersonPhysic[0].id);
               const dataClub = await api.get(`/club/personnel/${dataPersonPhysic[0].id}`);
+              console.log("Clubs récupérés", dataClub);
 
               useStore.setState({
                 currentUserAddresses: dataCurrentUserAddresses,

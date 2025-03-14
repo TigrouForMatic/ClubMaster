@@ -94,23 +94,11 @@ export class APIController {
   }
 
   async get(url, config = {}) {
-    try {
-      const response = await this.axios.get(url, config);
-      return response.data;
-    } catch (error) {
-      console.error('Erreur get:', error);
-      throw error;
-    }
+    return this.request({ ...config, method: 'get', url });
   }
 
   async post(url, data, config = {}) {
-    try {
-      const response = await this.axios.post(url, data, config);
-      return response;
-    } catch (error) {
-      console.error('Erreur post:', error);
-      throw error;
-    }
+    return this.request({ ...config, method: 'post', url, data });
   }
 
   async put(url, data, config = {}) {
