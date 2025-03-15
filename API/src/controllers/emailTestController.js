@@ -1,42 +1,68 @@
 const emailService = require('../services/emailService');
 
-// Dans votre contrôleur d'inscription
-async function register(req, res) {
+// Fonction pour créer un nouveau contact
+const createContact = async (req, res) => {
     try {
-        const { email, name } = req.body;
-        
-        if (!email || !name) {
-            return res.status(400).json({ error: 'Email et nom requis' });
+        const { email, attributes } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'L\'email est requis' 
+            });
         }
 
-        // Envoi de l'email de bienvenue
-        await emailService.sendWelcomeEmail(email, name);
-
-        res.status(201).json({ message: 'Email de bienvenue envoyé avec succès' });
+        const result = await emailService.createContact(email, attributes);
+        
+        res.status(201).json({
+            success: true,
+            data: result
+        });
     } catch (error) {
-        console.error('Erreur lors de l\'inscription:', error);
-        res.status(500).json({ error: 'Erreur lors de l\'inscription' });
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la création du contact',
+            error: error.message
+        });
     }
 }
 
-// Dans votre contrôleur de réinitialisation de mot de passe
-async function requestPasswordReset(req, res) {
+// Fonction pour envoyer un email avec template
+const sendWelcomeEmail = async (req, res) => {
     try {
-        const { email } = req.body;
-        // Générer un token de réinitialisation
-        const resetToken = generateResetToken(); // À implémenter selon votre logique
+        const { to, params, headers } = req.body;
 
-        // Envoi de l'email de réinitialisation
-        await emailService.sendPasswordResetEmail(email, resetToken);
+        if (!to) {
+            return res.status(400).json({
+                success: false,
+                message: 'Le destinataire (to) et l\'ID du template sont requis'
+            });
+        }
 
-        res.json({ message: 'Email de réinitialisation envoyé' });
+        const templateId = 2;
+
+        const result = await emailService.sendTemplateEmail({
+            to,
+            templateId,
+            params,
+            headers
+        });
+
+        res.status(200).json({
+            success: true,
+            data: result
+        });
     } catch (error) {
-        console.error('Erreur lors de la demande de réinitialisation:', error);
-        res.status(500).json({ error: 'Erreur lors de la demande de réinitialisation' });
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de l\'envoi de l\'email',
+            error: error.message
+        });
     }
 }
 
 module.exports = {
-    register,
-    requestPasswordReset
+    createContact,
+    sendWelcomeEmail
 };
+
