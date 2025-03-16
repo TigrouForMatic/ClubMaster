@@ -65,7 +65,7 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
           naissancedate: personnalData.naissancedate,
         };
 
-        const personalResponse = await api.put(`/personphysic/${currentUser.id}`, personalPayload);
+        const personalResponse = await api.put(`/login/${currentUser.id}`, personalPayload);
         setCurrentUser(personalResponse);
       }
       
@@ -86,7 +86,6 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
 
   const handleDelete = async () => {
     await api.delete(`/login/${login.id}`);
-    await api.delete(`/personphysic/${currentUser.id}`);
     setCurrentUser(null);
     setPersonnalData(null);
     AuthService.logout();

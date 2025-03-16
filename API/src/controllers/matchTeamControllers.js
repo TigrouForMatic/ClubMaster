@@ -19,16 +19,16 @@ const getMatchTeam = async (req, res) => {
                     CASE WHEN db.TeamMember.Id IS NOT NULL THEN
                         json_build_object(
                             'memberId', db.TeamMember.Id,
-                            'name', db.PersonPhysic.Name,
-                            'pseudo', db.Login.Pseudo
+                            'firstName', lo.FirstName,
+                            'lastName', lo.LastName,
+                            'pseudo', lo.Pseudo
                         )
                     ELSE NULL END
                 ) FILTER (WHERE db.TeamMember.Id IS NOT NULL) as members
             FROM db.MatchTeam
             LEFT JOIN db.Team ON db.MatchTeam.TeamId = db.Team.Id
             LEFT JOIN db.TeamMember ON db.Team.Id = db.TeamMember.TeamId AND db.TeamMember.Bin = false
-            LEFT JOIN db.PersonPhysic ON db.TeamMember.PersonPhysicId = db.PersonPhysic.Id
-            LEFT JOIN db.Login ON db.PersonPhysic.LoginId = db.Login.Id
+            LEFT JOIN db.Login lo ON db.TeamMember.LoginId = lo.Id
             WHERE db.MatchTeam.Bin = false
         `;
 

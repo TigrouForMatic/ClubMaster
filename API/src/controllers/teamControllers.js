@@ -11,14 +11,14 @@ const getTeam = async (req, res) => {
                 json_agg(
                     json_build_object(
                         'memberId', db.TeamMember.Id,
-                        'name', db.PersonPhysic.Name,
-                        'pseudo', db.Login.Pseudo
+                        'firstName', lo.FirstName,
+                        'lastName', lo.LastName,
+                        'pseudo', lo.Pseudo
                     )
                 ) as members
             FROM ${TABLE_NAME}
             LEFT JOIN db.TeamMember ON db.Team.Id = db.TeamMember.TeamId
-            LEFT JOIN db.PersonPhysic ON db.TeamMember.PersonPhysicId = db.PersonPhysic.Id
-            LEFT JOIN db.Login ON db.PersonPhysic.LoginId = db.Login.Id
+            LEFT JOIN db.Login lo ON db.TeamMember.LoginId = lo.Id
             WHERE db.TeamMember.Bin = false AND db.Team.Public = true
         `;
 

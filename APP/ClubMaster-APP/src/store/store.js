@@ -5,7 +5,6 @@ const useStore = create((set) => ({
   clubs: [],
   addresses: [],
   currentUserAddresses: [],
-  personPhysics: [],
   licences: [],
   licenceTypes: [],
   notifications: [],

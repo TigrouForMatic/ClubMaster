@@ -20,15 +20,16 @@ const Conversation = React.memo(({ conversation }) => {
       const messageResponse = await api.post('/message', {
         content: newMessage.trim(),
         conversationid: conversation.conversationid,
-        personPhysicId: currentUser.id,
+        loginId: currentUser.id,
       });
 
       if (messageResponse && messageResponse.id) {
         const newMessageData = {
           content: messageResponse.content,
           messageid: messageResponse.id,
-          personname: currentUser.name,
-          personphysicid: messageResponse.personphysicid,
+          firstName: currentUser.firstName,
+          lastName: currentUser.lastName,
+          loginid: messageResponse.loginid,
           sentat: messageResponse.dc
         };
 
@@ -60,7 +61,7 @@ const Conversation = React.memo(({ conversation }) => {
           messages.map((message, index) => {
             const previousMessage = index > 0 ? messages[index - 1] : null;
             const showDate = !previousMessage || dateFormat(message.sentat) !== dateFormat(previousMessage.sentat);
-            const isCurrentUserMessage = message.personphysicid === currentUser.id;
+            const isCurrentUserMessage = message.loginid === currentUser.id;
 
             return (
               <React.Fragment key={message.messageid}>
@@ -74,13 +75,13 @@ const Conversation = React.memo(({ conversation }) => {
                 <div className={`flex ${isCurrentUserMessage ? 'justify-end' : 'justify-start'} gap-2`}>
                   {!isCurrentUserMessage && (
                     <div className="flex-shrink-0">
-                      <UserImage name={message.personname} size={30} />
+                      <UserImage name={message.firstName + ' ' + message.lastName} size={30} />
                     </div>
                   )}
                   <div className={`max-w-[70%] ${isCurrentUserMessage ? 'order-1' : 'order-2'}`}>
                     {!isCurrentUserMessage && (
                       <p className="text-sm text-gray-600 mb-1">
-                        {message.personname}
+                        {message.firstName + ' ' + message.lastName}
                       </p>
                     )}
                     <div className={`rounded-lg p-3 ${

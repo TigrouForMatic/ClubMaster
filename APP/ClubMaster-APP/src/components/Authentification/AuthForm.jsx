@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import useStore from '../../store/store';
 import api from '../../js/App/Api';
-import { FacebookIcon, Eye, EyeOff } from 'lucide-react';
+import { FacebookIcon, Eye, EyeOff, Loader2 } from 'lucide-react';
 import GoogleAuthService from '../../js/googleAuth';
 import { useNavigate } from 'react-router-dom';
 import AuthCarousel from './AuthCarousel';
@@ -24,6 +24,7 @@ function AuthForm() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState(false);
   const [passwordValidation, setPasswordValidation] = useState({
     valid: false,
     errors: []
@@ -67,6 +68,7 @@ function AuthForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setPendingSubmit(true);
     
     try {
       const response = await api.post(isLogin ? '/auth/login' : '/auth/create-account', {
@@ -130,6 +132,8 @@ function AuthForm() {
       } else {
         setError(`Erreur lors de ${isLogin ? 'la connexion' : 'la création du compte'}`);
       }
+    } finally {
+      setPendingSubmit(false);
     }
   };
 
@@ -178,7 +182,7 @@ function AuthForm() {
                   placeholder="Email"
                   value={login}
                   onChange={(e) => setLogin(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
                 
@@ -188,7 +192,7 @@ function AuthForm() {
                     placeholder="Mot de passe"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                   <button
@@ -196,7 +200,7 @@ function AuthForm() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                   </button>
                 </div>
                 
@@ -208,7 +212,7 @@ function AuthForm() {
                         placeholder="Confirmer le mot de passe"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                       />
                       <button
@@ -216,7 +220,7 @@ function AuthForm() {
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                       >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showConfirmPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                       </button>
                     </div>
                     
@@ -239,10 +243,13 @@ function AuthForm() {
 
               <button
                 type="submit"
-                disabled={!isLogin && !passwordValidation.valid}
+                disabled={!isLogin && !passwordValidation.valid || pendingSubmit}
                 className="w-full py-2 bg-zinc-900 text-white rounded-md hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLogin ? 'Se connecter' : 'Créer un compte'}
+                {isLogin && !pendingSubmit ? 'Se connecter' : 'Créer un compte'}
+                {pendingSubmit && <span className="ml-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </span>}
               </button>
             </form>
 

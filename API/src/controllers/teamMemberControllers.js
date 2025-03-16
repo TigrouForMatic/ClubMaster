@@ -10,11 +10,11 @@ const getTeamMember = async (req, res) => {
         let queryString = `
             SELECT 
                 db.TeamMember.*,
-                db.PersonPhysic.Name,
-                db.Login.Pseudo
+                lo.FirstName,
+                lo.LastName,
+                lo.Pseudo
             FROM ${TABLE_NAME}
-            JOIN db.PersonPhysic ON db.TeamMember.PersonPhysicId = db.PersonPhysic.Id
-            JOIN db.Login ON db.PersonPhysic.LoginId = db.Login.Id
+            JOIN db.Login lo ON db.TeamMember.LoginId = lo.Id
         `;
         
         if (arrayTeamId && Array.isArray(JSON.parse(arrayTeamId))) {

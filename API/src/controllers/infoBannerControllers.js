@@ -8,9 +8,9 @@ const getInfoBanner = async (req, res) => {
         let queryString = `SELECT * FROM ${TABLE_NAME}`;
         const values = [];
         
-        queryString = `SELECT i.*, p.Name as CreatedByName, c.Label as ClubLabel
+        queryString = `SELECT i.*, l.FirstName, l.LastName as CreatedByName, c.Label as ClubLabel
                       FROM ${TABLE_NAME} i
-                      LEFT JOIN db.PersonPhysic p ON i.CreatedBy = p.id
+                      LEFT JOIN db.Login l ON i.CreatedBy = l.id
                       LEFT JOIN db.Club c ON i.ClubId = c.id`;
         
         queryString += ` WHERE i.Bin = false AND i.Dd <= CURRENT_DATE AND i.Df >= CURRENT_DATE`;

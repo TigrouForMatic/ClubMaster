@@ -32,9 +32,9 @@ const getLicenceManage = async (req, res) => {
         const { arrayClubId } = req.query;
 
         let queryString = `
-            SELECT l.*, pp.Name, pp.NaissanceDate, pp.PhoneNumber, pp.EmailAddress, lt.Label AS TypeLabel
+            SELECT l.*, lo.FirstName, lo.LastName, lo.NaissanceDate, lo.PhoneNumber, lo.EmailAddress, lt.Label AS TypeLabel
             FROM db.Licence l
-            JOIN db.PersonPhysic pp ON l.PersonPhysicId = pp.Id
+            JOIN db.Login lo ON l.LoginId = lo.Id
             JOIN db.LicenceType lt ON l.LicenceTypeId = lt.Id
         `;
         const values = [];
@@ -75,18 +75,19 @@ const getLicenceExport = async (req, res) => {
         // Construction de la requête SQL avec les conditions
         let queryString = `
             SELECT 
-                pp.name,
+                lo.firstname,
+                lo.lastname,
                 l.licencefederation,
                 lt.label as type,
                 l.dd as date_debut,
                 l.df as date_fin,
                 r.label as role,
-                pp.emailaddress,
-                pp.phonenumber,
-                pp.naissancedate,
+                lo.emailaddress,
+                lo.phonenumber,
+                lo.naissancedate,
                 c.label as club
             FROM db.Licence l
-            JOIN db.PersonPhysic pp ON l.PersonPhysicId = pp.Id
+            JOIN db.Login lo ON l.LoginId = lo.Id
             LEFT JOIN db.LicenceType lt ON l.licencetypeid = lt.id
             LEFT JOIN db.Role r ON l.roleid = r.id
             LEFT JOIN db.Club c ON lt.clubid = c.id
@@ -179,9 +180,9 @@ const addLicenceManage = async (req, res) => {
         const resultAddLicence = await client.query(insertQuery, valuesWithDates);
 
         let queryString = `
-            SELECT l.*, pp.Name, pp.NaissanceDate, pp.PhoneNumber, pp.EmailAddress, lt.Label AS TypeLabel
+            SELECT l.*, lo.FirstName, lo.LastName, lo.NaissanceDate, lo.PhoneNumber, lo.EmailAddress, lt.Label AS TypeLabel
             FROM db.Licence l
-            JOIN db.PersonPhysic pp ON l.PersonPhysicId = pp.Id
+            JOIN db.Login lo ON l.LoginId = lo.Id
             JOIN db.LicenceType lt ON l.LicenceTypeId = lt.Id
             WHERE l.id = $1
         `;

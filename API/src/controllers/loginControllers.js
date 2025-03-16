@@ -72,12 +72,13 @@ const createAccountData = async (req, res) => {
 
     const currentDate = new Date(); 
 
-    if (columns.includes('phoneNumber') && values[2] !== '') {
+    // Vérification du numéro de téléphone s'il est présent dans la requête
+    if (req.body.phoneNumber && req.body.phoneNumber !== '') {
         try {
             let queryString = `SELECT * FROM ${TABLE_NAME} WHERE PhoneNumber = $1 AND Bin = false`;
 
             const client = await pool.connect();
-            const result = await client.query(queryString, [values[2]]);
+            const result = await client.query(queryString, [req.body.phoneNumber]);
             client.release();
             if (result.rows.length > 0) {
                 return res.status(400).send('Ce numéro de téléphone existe déjà');
@@ -88,32 +89,39 @@ const createAccountData = async (req, res) => {
         }
     }
 
-    const email = req.body.emailaddress;
-    const attributes = {
-        PRENOM: req.body.firstName,
-        NOM: req.body.lastName,
-        DATE_DE_NAISSANCE: req.body.naissanceDate,
-        TELEPHONE: req.body.phoneNumber,
-        ID_DE_CONNEXION: req.body.loginId
-    };
+    // const email = req.body.emailaddress;
+    // const attributes = {
+    //     PRENOM: req.body.firstName,
+    //     NOM: req.body.lastName,
+    //     DATE_DE_NAISSANCE: req.body.naissanceDate,
+    //     TELEPHONE: req.body.phoneNumber,
+    //     ID_DE_CONNEXION: req.body.loginId
+    // };
 
-    let brevoResponse = null;
+    // let brevoResponse = null;
 
-    if (email) {
-        brevoResponse = await emailService.createContact(email, attributes);
-    }
+    // if (email) {
+    //     brevoResponse = await emailService.createContact(email, attributes);
+    // }
 
     let contactId = null;
-    if (brevoResponse) {
-        contactId = brevoResponse.data.id;
-    }
+    // if (brevoResponse) {
+    //     contactId = brevoResponse.data.id;
+    // }
 
     try {
         const client = await pool.connect();
-        const updatesWithDates = `${updates}, Dm, ContactId`;
-        const valuesWithDates = [...values, currentDate, contactId];
-        const updateQuery = `UPDATE ${TABLE_NAME} SET ${updatesWithDates} WHERE id = $${valuesWithDates.length + 1} RETURNING *`;
-        const result = await client.query(updateQuery, valuesWithDates);
+        
+        // Créer un objet avec toutes les valeurs à mettre à jour
+        const allUpdates = {
+            ...req.body,
+            Dm: currentDate,
+            ContactId: contactId
+        };
+        
+        const { updates, values } = prepareUpdateData(allUpdates);
+        const updateQuery = `UPDATE ${TABLE_NAME} SET ${updates} WHERE id = $${values.length + 1} RETURNING *`;
+        const result = await client.query(updateQuery, [...values, id]);
         client.release();
         if (result.rows.length === 0) {
             return res.status(404).send('Login non trouvée');

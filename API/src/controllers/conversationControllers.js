@@ -35,13 +35,14 @@ const getConversationByEvent = async (req, res) => {
           c.EventId,
           c.Dc AS CreatedAt,
           m.Id AS MessageId,
-          pp.Name AS PersonName,
-          pp.Id AS PersonPhysicId,
+          l.FirstName AS FirstName,
+          l.LastName AS LastName,
+          l.Id AS LoginId,
           m.Content,
           m.Dm AS SentAt
         FROM db.Conversation c
         LEFT JOIN db.Message m ON c.Id = m.ConversationId
-        LEFT JOIN db.PersonPhysic pp ON m.PersonPhysicId = pp.Id
+        LEFT JOIN db.Login l ON m.LoginId = l.Id
         WHERE c.EventId = $1
       `, [eventId]);
   
@@ -50,7 +51,7 @@ const getConversationByEvent = async (req, res) => {
       const conversations = {};
   
       result.rows.forEach(row => {
-        const { conversationid, eventid, createdat, messageid, personname, personphysicid, content, sentat } = row;
+        const { conversationid, eventid, createdat, messageid, firstname, lastname, loginid, content, sentat } = row;
   
         if (!conversations[conversationid]) {
           conversations[conversationid] = {
@@ -64,8 +65,9 @@ const getConversationByEvent = async (req, res) => {
         if (messageid) {
           conversations[conversationid].messages.push({
             messageid,
-            personname,
-            personphysicid,
+            firstname,
+            lastname,
+            loginid,
             content,
             sentat
           });

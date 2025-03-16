@@ -34,6 +34,7 @@ const FindClubOption = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClub, setSelectedClub] = useState(null);
+  const [maxRequestToJoin, setMaxRequestToJoin] = useState(0);
   const clubsPerPage = 10;
 
   const { clubs, addresses, setItems, addItem, currentUser, requestToJoin, membershipForms } = useStore((state) => ({
@@ -95,13 +96,18 @@ const FindClubOption = () => {
   }, [clubs, addresses, nomClub, selectedLocation]);
 
   const handleSendRequest = useCallback(async (clubid) => {
+    if (maxRequestToJoin >= 5) {
+      setError('Vous avez atteint le maximum de demandes d\'adhésion.');
+      return;
+    }
     try {
       const requestToJoinData = await api.post("/requestToJoin", {
         clubid: clubid, 
-        personphysicid: currentUser.id,
+        loginid: currentUser.id,
         status: 'pending'
       });
       addItem('requestToJoin', requestToJoinData);
+      setMaxRequestToJoin(maxRequestToJoin + 1);
     } catch (err) {
       console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
     }
@@ -146,7 +152,7 @@ const FindClubOption = () => {
   }
 
  const getRequestByClub = (club) => {
-    return requestToJoin.find(rtj => rtj.clubid == club.id && rtj.personphysicid == currentUser.id)
+    return requestToJoin.find(rtj => rtj.clubid == club.id && rtj.loginid == currentUser.id)
   } 
 
   const filteredClubsWithRequest = useMemo(() => {

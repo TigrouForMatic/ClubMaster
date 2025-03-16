@@ -53,13 +53,11 @@ function GoogleCallback() {
           });
 
           try {
-            const dataPersonPhysic = await api.get('/personPhysic', { 
-              params: { loginId: user.id } 
-            });
+            const dataPersonPhysic = await api.get('/login/'+user.id);
 
-            if (dataPersonPhysic?.length) {
+            if (dataPersonPhysic) {
               useStore.setState({
-                currentUser: dataPersonPhysic[0]
+                currentUser: dataPersonPhysic
               });
 
               AuthService.setUserData(dataPersonPhysic[0]);
