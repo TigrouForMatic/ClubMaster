@@ -72,11 +72,11 @@ function PersonalInfoForm() {
     }
 
     try {
-      const personalInfoResponse = await api.post('/personPhysic', {
-        name: `${personalInfo.firstName} ${personalInfo.lastName}`,
+      const personalInfoResponse = await api.post('/login/createAccount/'+login.id, {
+        firstName: personalInfo.firstName,
+        lastName: personalInfo.lastName,
         naissanceDate: personalInfo.bornDate,
         phoneNumber: personalInfo.phoneNumber,
-        loginId: login.id,
         emailaddress: login.login,
         generalConditions: consentGivenConditions,
         privacyPolicy: consentGivenPolitique

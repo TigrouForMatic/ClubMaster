@@ -91,26 +91,24 @@ function AuthForm() {
         });
 
         // Récupérer les données de l'utilisateur
-        const dataPersonPhysic = await api.get('/personPhysic', { 
-          params: { loginId: response.user.id } 
-        });
+        const loginUserData = await api.get(`/login/${response.user.id}`);
 
-        if (dataPersonPhysic.length) {
+        if (loginUserData.length) {
           // Mettre à jour l'utilisateur
           useStore.setState({
-            currentUser: dataPersonPhysic[0]
+            currentUser: loginUserData[0]
           });
 
-          AuthService.setUserData(dataPersonPhysic[0]);
+          AuthService.setUserData(loginUserData[0]);
 
           // Récupérer l'adresse
-          const dataCurrentUserAddresses = await api.get(`/address/personnel/${dataPersonPhysic[0].id}`);
+          const dataCurrentUserAddresses = await api.get(`/address/personnel/${loginUserData[0].id}`);
           useStore.setState({
             currentUserAddresses: dataCurrentUserAddresses
           });
 
           // Récupérer les clubs
-          const dataClub = await api.get(`/club/personnel/${dataPersonPhysic[0].id}`);
+          const dataClub = await api.get(`/club/personnel/${loginUserData[0].id}`);
           if (dataClub.length) {
             useStore.setState({
               userClubs: dataClub
