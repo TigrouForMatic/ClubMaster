@@ -96,10 +96,7 @@ const FindClubOption = () => {
   }, [clubs, addresses, nomClub, selectedLocation]);
 
   const handleSendRequest = useCallback(async (clubid) => {
-    if (maxRequestToJoin >= 5) {
-      setError('Vous avez atteint le maximum de demandes d\'adhésion.');
-      return;
-    }
+    setMaxRequestToJoin(maxRequestToJoin + 1);
     try {
       const requestToJoinData = await api.post("/requestToJoin", {
         clubid: clubid, 
@@ -107,12 +104,11 @@ const FindClubOption = () => {
         status: 'pending'
       });
       addItem('requestToJoin', requestToJoinData);
-      setMaxRequestToJoin(maxRequestToJoin + 1);
     } catch (err) {
       console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
     }
     setIsModalOpen(false);
-  }, [addItem, currentUser, requestToJoin]);
+  }, [addItem, currentUser, requestToJoin, maxRequestToJoin]);
 
   const locations = useMemo(() => {
     if (!addresses || addresses.length === 0) return [];
@@ -216,17 +212,21 @@ const FindClubOption = () => {
             {currentClubs.length > 0 ? (
               currentClubs.map((club) => (
                 <ClubCard key={club.id} club={club} onClick={() => {
-                  if (!club.request) {
-                    setSelectedClub(club);
-                    if (getMembershipForm(club.id)) {
-                      if (getMembershipForm(club.id).requiresacknowledgment) {
-                        setIsModalOpen(true);
+                  if (maxRequestToJoin <= 5) {
+                    if (!club.request) {
+                      setSelectedClub(club);
+                      if (getMembershipForm(club.id)) {
+                        if (getMembershipForm(club.id).requiresacknowledgment) {
+                          setIsModalOpen(true);
+                        } else {
+                          handleSendRequest(club.id);
+                        }
                       } else {
                         handleSendRequest(club.id);
                       }
-                    } else {
-                      handleSendRequest(club.id);
                     }
+                  } else {
+                    window.alert('Vous avez atteint le maximum de demandes d\'adhésion.');
                   }
                 }} />
               ))
