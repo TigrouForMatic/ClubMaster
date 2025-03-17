@@ -45,9 +45,9 @@ function UserView() {
       <div className="space-y-6">
         {/* Header Section */}
         <div className="bg-white rounded-lg shadow-sm p-6 flex items-center space-x-4">
-          <UserImage name={user.name} className="w-16 h-16 rounded-full" />
+          <UserImage name={user.firstname + ' ' + user.lastname} className="w-16 h-16 rounded-full" />
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{user.firstname} {user.lastname}</h1>
             <p className="text-gray-500">{user.address}</p>
           </div>
         </div>

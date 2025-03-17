@@ -16,7 +16,7 @@ export const useInitialData = () => {
     const storedUserClubs = AuthService.getUserClubs();
     
     if (storedUserData && (!currentUser || Array.isArray(currentUser))) {
-      setCurrentUser(storedUserData);
+      setItems('currentUser', storedUserData);
     }
     
     if (storedUserClubs && (!userClubs || !userClubs.length)) {
