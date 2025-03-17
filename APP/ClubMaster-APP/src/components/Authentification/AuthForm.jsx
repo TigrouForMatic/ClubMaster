@@ -75,42 +75,38 @@ function AuthForm() {
         login,
         password
       });
+      // message: "Login réussi"
+      // token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImxvZ2luIjoianVsZXMuY2hhc3NhbnlAZ21haWwuY29tIiwiaWF0IjoxNzQyMjUwMzk5LCJleHAiOjE3NDIyNTM5OTl9.2tgI1mDHzfNC7tbiMEKsS7nN03XxlViGTmThkmVA7M8"
+      // user: {
+      //   firstname: "Jules"
+      //   id: 1
+      //   lastname: "Chassany"
+      //   login: "jules.chassany@gmail.com"
+      //   naissancedate: "2003-10-25T00:00:00.000Z"
+      //   phonenumber: "0677332963"
+      //   pseudo: "Le Coach"
+      // }
+      if (response.user.token) {
+        const userData = response.user;
 
-      if (response.token) {
-        const loginData = {
-          id: response.user.id,
-          login: response.user.login,
-          token: response.token,
-          pseudo: response.user.pseudo
-        }
-
-        AuthService.setLogin(loginData);
+        AuthService.setLogin(userData);
         
         // Mettre à jour le login
         useStore.setState({
-          login: loginData,
+          currentUser: userData,
           lastFetchTime: null
         });
 
-        // Récupérer les données de l'utilisateur
-        const loginUserData = await api.get(`/login/${response.user.id}`);
-
-        if (loginUserData.length) {
-          // Mettre à jour l'utilisateur
-          useStore.setState({
-            currentUser: loginUserData[0]
-          });
-
-          AuthService.setUserData(loginUserData[0]);
+        if (userData.firstname && userData.lastname && userData.naissancedate && userData.phonenumber && userData.id) {
 
           // Récupérer l'adresse
-          const dataCurrentUserAddresses = await api.get(`/address/personnel/${loginUserData[0].id}`);
+          const dataCurrentUserAddresses = await api.get(`/address/personnel/${userData.id}`);
           useStore.setState({
             currentUserAddresses: dataCurrentUserAddresses
           });
 
           // Récupérer les clubs
-          const dataClub = await api.get(`/club/personnel/${loginUserData[0].id}`);
+          const dataClub = await api.get(`/club/personnel/${userData.id}`);
           if (dataClub.length) {
             useStore.setState({
               userClubs: dataClub

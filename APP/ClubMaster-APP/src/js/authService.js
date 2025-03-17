@@ -30,6 +30,22 @@ class AuthService {
         return false;
       }
     }
+
+    static isPersonalInfoSet() {
+      if (!this.isStorageAvailable()) return false;
+      try {
+        const login = localStorage.getItem('login');
+        const loginData = JSON.parse(login);
+        if (loginData.firstname && loginData.lastname && loginData.naissancedate && loginData.phonenumber) {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (e) {
+        console.error('Erreur lors de la récupération du login:', e);
+        return false;
+      }
+    }
   
     static getLogin() {
       if (!this.isStorageAvailable()) return null;
@@ -56,39 +72,6 @@ class AuthService {
     static clearLogin() {
       if (!this.isStorageAvailable()) return;
       localStorage.removeItem('login');
-    }
-
-    static isPersonalInfoSet() {
-      if (!this.isStorageAvailable()) return false;
-      const personalInfo = localStorage.getItem('userData');
-      return !!personalInfo;
-    }
-  
-    static getUserData() {
-      if (!this.isStorageAvailable()) return null;
-      try {
-        const userData = localStorage.getItem('userData');
-        return userData ? JSON.parse(userData) : null;
-      } catch (e) {
-        console.error('Erreur lors de la récupération des données utilisateur:', e);
-        return null;
-      }
-    }
-  
-    static setUserData(userData) {
-      if (!this.isStorageAvailable()) return false;
-      try {
-        localStorage.setItem('userData', JSON.stringify(userData));
-        return true;
-      } catch (e) {
-        console.error('Erreur lors de la sauvegarde des données utilisateur:', e);
-        return false;
-      }
-    }
-  
-    static clearUserData() {
-      if (!this.isStorageAvailable()) return;
-      localStorage.removeItem('userData');
     }
 
     static isUserClubsSet() {
@@ -126,7 +109,6 @@ class AuthService {
   
     static logout() {
       this.clearLogin();
-      this.clearUserData();
       this.clearUserClubs();
     }
   }

@@ -12,7 +12,7 @@ const DataLoader = ({ children }) => {
   useEffect(() => {
     if (isAuthenticated) {
       // Synchroniser les données du localStorage avec le store
-      const storedUserData = AuthService.getUserData();
+      const storedUserData = AuthService.getLogin();
       const storedUserClubs = AuthService.getUserClubs();
 
       if (storedUserData && !currentUser) {

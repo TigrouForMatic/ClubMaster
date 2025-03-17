@@ -12,7 +12,7 @@ export const useInitialData = () => {
   const [usedUserClubs, setUsedUserClubs] = useState(null);
 
   useEffect(() => {
-    const storedUserData = AuthService.getUserData();
+    const storedUserData = AuthService.getLogin();
     const storedUserClubs = AuthService.getUserClubs();
     
     if (storedUserData && (!currentUser || Array.isArray(currentUser))) {
@@ -42,7 +42,7 @@ export const useInitialData = () => {
     const fetchData = async () => {
       try {
         // Vérifier si les données sont dans le localStorage
-        const storedUserData = AuthService.getUserData();
+        const storedUserData = AuthService.getLogin();
         const storedUserClubs = AuthService.getUserClubs();
 
         // Si les données sont dans le localStorage mais pas dans le store, les ajouter

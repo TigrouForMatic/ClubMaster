@@ -32,7 +32,7 @@ const getLicenceManage = async (req, res) => {
         const { arrayClubId } = req.query;
 
         let queryString = `
-            SELECT l.*, lo.FirstName, lo.LastName, lo.NaissanceDate, lo.PhoneNumber, lo.EmailAddress, lt.Label AS TypeLabel
+            SELECT l.*, lo.FirstName, lo.LastName, lo.NaissanceDate, lo.PhoneNumber, lo.login, lt.Label AS TypeLabel
             FROM db.Licence l
             JOIN db.Login lo ON l.LoginId = lo.Id
             JOIN db.LicenceType lt ON l.LicenceTypeId = lt.Id
@@ -82,7 +82,7 @@ const getLicenceExport = async (req, res) => {
                 l.dd as date_debut,
                 l.df as date_fin,
                 r.label as role,
-                lo.emailaddress,
+                lo.login,
                 lo.phonenumber,
                 lo.naissancedate,
                 c.label as club
@@ -180,7 +180,7 @@ const addLicenceManage = async (req, res) => {
         const resultAddLicence = await client.query(insertQuery, valuesWithDates);
 
         let queryString = `
-            SELECT l.*, lo.FirstName, lo.LastName, lo.NaissanceDate, lo.PhoneNumber, lo.EmailAddress, lt.Label AS TypeLabel
+            SELECT l.*, lo.FirstName, lo.LastName, lo.NaissanceDate, lo.PhoneNumber, lo.login, lt.Label AS TypeLabel
             FROM db.Licence l
             JOIN db.Login lo ON l.LoginId = lo.Id
             JOIN db.LicenceType lt ON l.LicenceTypeId = lt.Id
