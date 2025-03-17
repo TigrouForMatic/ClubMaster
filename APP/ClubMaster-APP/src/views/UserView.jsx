@@ -14,7 +14,7 @@ import { Progress } from "../components/ui/progress";
 
 function UserView() {
   const navigate = useNavigate();
-  const { currentUser, currentUserAddresses, userClubs, licences, licenceTypes, roles, setItems, setShowApp, setLastFetchTime } = useStore();
+  const { currentUser, currentUserAddresses, userClubs, licences, licenceTypes, roles, setCurrentUser, setShowApp, setLastFetchTime } = useStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
@@ -34,8 +34,7 @@ function UserView() {
   }, [currentUserAddresses, currentUser]);
 
   const handleLogout = () => {
-    setItems('currentUser', null);
-    setItems('login', null);
+    setCurrentUser(null);
     setLastFetchTime(null);
     AuthService.logout();
     navigate('/auth/login');

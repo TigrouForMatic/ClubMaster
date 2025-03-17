@@ -75,10 +75,10 @@ const MenuSection = () => {
           </div>
           
           <div className="space-y-2 text-gray-600">
-            <p><span className="font-medium">Nom :</span> {currentUser.name}</p>
+            <p><span className="font-medium">Nom :</span> {currentUser.firstname} {currentUser.lastname}</p>
             <p><span className="font-medium">Date de naissance :</span> {new Date(currentUser.naissancedate).toLocaleDateString()}</p>
             <p><span className="font-medium">Téléphone :</span> {currentUser.phonenumber}</p>
-            <p><span className="font-medium">Email :</span> {currentUser.emailaddress}</p>
+            <p><span className="font-medium">Email :</span> {currentUser.login}</p>
           </div>
 
           <div className="mt-4">

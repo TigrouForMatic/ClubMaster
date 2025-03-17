@@ -5,7 +5,7 @@ import useStore from '../store/store';
 import AuthService from '../js/authService';
 
 const DataLoader = ({ children }) => {
-  const { userClubs, currentUser, setItems } = useStore();
+  const { userClubs, currentUser, setItems, setCurrentUser } = useStore();
   const isAuthenticated = AuthService.isAuthenticated();
   const [isLoading, error] = isAuthenticated ? useInitialData() : [false, null];
 
@@ -16,7 +16,7 @@ const DataLoader = ({ children }) => {
       const storedUserClubs = AuthService.getUserClubs();
 
       if (storedUserData && !currentUser) {
-        setItems('currentUser', storedUserData);
+        setCurrentUser(storedUserData);
       }
 
       if (storedUserClubs && (!userClubs || !userClubs.length)) {

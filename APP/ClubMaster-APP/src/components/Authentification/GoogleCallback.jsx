@@ -56,9 +56,7 @@ function GoogleCallback() {
             const dataPersonPhysic = await api.get('/login/'+user.id);
 
             if (dataPersonPhysic) {
-              useStore.setState({
-                currentUser: dataPersonPhysic
-              });
+              useStore.setCurrentUser(dataPersonPhysic);
 
               AuthService.setUserData(dataPersonPhysic[0]);
 

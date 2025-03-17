@@ -75,23 +75,12 @@ function AuthForm() {
         login,
         password
       });
-      // message: "Login réussi"
-      // token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImxvZ2luIjoianVsZXMuY2hhc3NhbnlAZ21haWwuY29tIiwiaWF0IjoxNzQyMjUwMzk5LCJleHAiOjE3NDIyNTM5OTl9.2tgI1mDHzfNC7tbiMEKsS7nN03XxlViGTmThkmVA7M8"
-      // user: {
-      //   firstname: "Jules"
-      //   id: 1
-      //   lastname: "Chassany"
-      //   login: "jules.chassany@gmail.com"
-      //   naissancedate: "2003-10-25T00:00:00.000Z"
-      //   phonenumber: "0677332963"
-      //   pseudo: "Le Coach"
-      // }
       if (response.user.token) {
         const userData = response.user;
 
         AuthService.setLogin(userData);
         
-        // Mettre à jour le login
+        // Correction de l'utilisation du store
         useStore.setState({
           currentUser: userData,
           lastFetchTime: null
@@ -127,6 +116,7 @@ function AuthForm() {
         setError('Ce nom d\'utilisateur existe déjà');
       } else {
         setError(`Erreur lors de ${isLogin ? 'la connexion' : 'la création du compte'}`);
+        console.log(err);
       }
     } finally {
       setPendingSubmit(false);

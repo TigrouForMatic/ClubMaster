@@ -9,14 +9,16 @@ import AuthService from '../../js/authService';
 
 function ModalEditPersonnalData({ isOpen, onClose }) {
   const navigate = useNavigate();
-  const { currentUser, login, setCurrentUser, setLogin } = useStore();
+  const { currentUser, setCurrentUser } = useStore();
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const [personnalData, setPersonnalData] = useState({
-    name: currentUser.name || '',
-    emailaddress: currentUser.emailaddress || '',
+    firstname: currentUser.firstname || '',
+    lastname: currentUser.lastname || '',
+    emailaddress: currentUser.login || '',
     phonenumber: currentUser.phonenumber || '',
     naissancedate: currentUser.naissancedate || '',
+    pseudo: currentUser.pseudo || '',
   });
 
   const [loginData, setLoginData] = useState({

@@ -81,7 +81,7 @@ function PersonalInfoForm() {
         privacyPolicy: consentGivenPolitique
       });
 
-      setItems('currentUser', personalInfoResponse);
+      useStore.setCurrentUser(personalInfoResponse);
 
       const addressResponse = await api.post('/address/', {
         ...addressInfo,
