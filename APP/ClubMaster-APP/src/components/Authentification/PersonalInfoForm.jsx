@@ -31,7 +31,7 @@ function PersonalInfoForm() {
   const [modalIsOpenConditions, setModalIsOpenConditions] = useState(false);
   const navigate = useNavigate();
   const setItems = useStore((state) => state.setItems);
-  const login = useStore((state) => state.login);
+  const currentUser = useStore((state) => state.currentUser);
 
   useEffect(() => {
     if (AuthService.isAuthenticated()) {
@@ -66,13 +66,13 @@ function PersonalInfoForm() {
       return;
     }
 
-    if (!login.id) {
+    if (!currentUser.id) {
       setError('ID de connexion non trouvé. Veuillez vous reconnecter.');
       return;
     }
 
     try {
-      const personalInfoResponse = await api.post('/login/createAccount/'+login.id, {
+      const personalInfoResponse = await api.post('/login/createAccount/'+currentUser.id, {
         firstName: personalInfo.firstName,
         lastName: personalInfo.lastName,
         naissanceDate: personalInfo.bornDate,
@@ -81,7 +81,12 @@ function PersonalInfoForm() {
         privacyPolicy: consentGivenPolitique
       });
 
-      useStore.setCurrentUser(personalInfoResponse);
+      const currentUserUpdate = {
+        ...currentUser,
+        ...personalInfoResponse.user
+      }
+
+      setItems('currentUser', currentUserUpdate);
 
       const addressResponse = await api.post('/address/', {
         ...addressInfo,
@@ -95,6 +100,7 @@ function PersonalInfoForm() {
       localStorage.setItem('personalInfo', JSON.stringify(personalInfoResponse));
       navigate('/auth/find-club');
     } catch (err) {
+      console.log(err);
       if (err.status === 400) {
         setError('Un compte est deja lié à ce numéro de téléphone');
       } else {

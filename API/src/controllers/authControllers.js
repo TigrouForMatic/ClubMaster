@@ -35,10 +35,20 @@ const createAccount = async (req, res) => {
                 { expiresIn: '1h' }
             );
 
+            const userData = {
+                id: user.id,
+                login: user.login,
+                pseudo: user.pseudo,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                naissancedate: user.naissancedate,
+                phonenumber: user.phonenumber,
+                token: token
+            }
+
             res.status(201).json({ 
                 message: "Compte créé avec succès",
-                token,
-                user
+                user: userData
             });
         } finally {
             client.release();
@@ -241,16 +251,21 @@ const handleGoogleCallback = async (req, res) => {
                 throw new Error('Échec de la génération du token');
             }
 
+            const userData = {
+                id: user.id,
+                login: user.login,
+                pseudo: user.pseudo,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                naissancedate: user.naissancedate,
+                phonenumber: user.phonenumber,
+                token: token
+            }
+
             // Avant d'envoyer la réponse
             const responseData = {
                 message: "Authentification Google réussie",
-                token,
-                user: {
-                    id: user.id,
-                    login: user.login,
-                    pseudo: user.pseudo,
-                    lastLogin: new Date()
-                }
+                user: userData
             };
             console.log('Données envoyées au client:', responseData);
             

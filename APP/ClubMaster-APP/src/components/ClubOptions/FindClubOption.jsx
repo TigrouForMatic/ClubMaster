@@ -212,7 +212,7 @@ const FindClubOption = () => {
             {currentClubs.length > 0 ? (
               currentClubs.map((club) => (
                 <ClubCard key={club.id} club={club} onClick={() => {
-                  if (maxRequestToJoin <= 5) {
+                  if (maxRequestToJoin <= 4) {
                     if (!club.request) {
                       setSelectedClub(club);
                       if (getMembershipForm(club.id)) {

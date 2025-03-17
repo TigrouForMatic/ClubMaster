@@ -126,7 +126,21 @@ const createAccountData = async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).send('Login non trouvée');
         }
-        res.json(result.rows[0]);
+
+        const userData = {
+            id: result.rows[0].id,
+            login: result.rows[0].login,
+            pseudo: result.rows[0].pseudo,
+            firstname: result.rows[0].firstname,
+            lastname: result.rows[0].lastname,
+            naissancedate: result.rows[0].naissancedate,
+            phonenumber: result.rows[0].phonenumber
+        }
+
+        res.status(201).json({
+            message: "Compte créé avec succès",
+            user: userData
+        });
     } catch (err) {
         console.error(`Erreur lors de la mise à jour du login avec l'ID ${id}`, err);
         res.status(500).send(`Erreur lors de la mise à jour du login avec l'ID ${id}`);
