@@ -34,6 +34,7 @@ const FindClubOption = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClub, setSelectedClub] = useState(null);
+  const [maxRequestToJoin, setMaxRequestToJoin] = useState(0);
   const clubsPerPage = 10;
 
   const { clubs, addresses, setItems, addItem, currentUser, requestToJoin, membershipForms } = useStore((state) => ({
@@ -95,10 +96,11 @@ const FindClubOption = () => {
   }, [clubs, addresses, nomClub, selectedLocation]);
 
   const handleSendRequest = useCallback(async (clubid) => {
+    setMaxRequestToJoin(maxRequestToJoin + 1);
     try {
       const requestToJoinData = await api.post("/requestToJoin", {
         clubid: clubid, 
-        personphysicid: currentUser.id,
+        loginid: currentUser.id,
         status: 'pending'
       });
       addItem('requestToJoin', requestToJoinData);
@@ -106,7 +108,7 @@ const FindClubOption = () => {
       console.error('Erreur lors de la récupération des demandes d\'adhésion:', err.message);
     }
     setIsModalOpen(false);
-  }, [addItem, currentUser, requestToJoin]);
+  }, [addItem, currentUser, requestToJoin, maxRequestToJoin]);
 
   const locations = useMemo(() => {
     if (!addresses || addresses.length === 0) return [];
@@ -146,7 +148,7 @@ const FindClubOption = () => {
   }
 
  const getRequestByClub = (club) => {
-    return requestToJoin.find(rtj => rtj.clubid == club.id && rtj.personphysicid == currentUser.id)
+    return requestToJoin.find(rtj => rtj.clubid == club.id && rtj.loginid == currentUser.id)
   } 
 
   const filteredClubsWithRequest = useMemo(() => {
@@ -210,17 +212,21 @@ const FindClubOption = () => {
             {currentClubs.length > 0 ? (
               currentClubs.map((club) => (
                 <ClubCard key={club.id} club={club} onClick={() => {
-                  if (!club.request) {
-                    setSelectedClub(club);
-                    if (getMembershipForm(club.id)) {
-                      if (getMembershipForm(club.id).requiresacknowledgment) {
-                        setIsModalOpen(true);
+                  if (maxRequestToJoin <= 4) {
+                    if (!club.request) {
+                      setSelectedClub(club);
+                      if (getMembershipForm(club.id)) {
+                        if (getMembershipForm(club.id).requiresacknowledgment) {
+                          setIsModalOpen(true);
+                        } else {
+                          handleSendRequest(club.id);
+                        }
                       } else {
                         handleSendRequest(club.id);
                       }
-                    } else {
-                      handleSendRequest(club.id);
                     }
+                  } else {
+                    window.alert('Vous avez atteint le maximum de demandes d\'adhésion.');
                   }
                 }} />
               ))

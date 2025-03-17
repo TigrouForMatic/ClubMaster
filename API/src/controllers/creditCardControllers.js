@@ -52,7 +52,7 @@ const getCreditCardById = async (req, res) => {
 };
 
 const addCreditCard = async (req, res) => {
-    const { personPhysicId, cardNumber, expirationDate, cvv, cardType } = req.body;
+    const { loginId, cardNumber, expirationDate, cvv, cardType } = req.body;
     const currentDate = new Date();
 
     
@@ -64,8 +64,8 @@ const addCreditCard = async (req, res) => {
 
     try {
         const client = await pool.connect();
-        const insertQuery = `INSERT INTO ${TABLE_NAME} (Dc, Dm, PersonPhysicId, EncryptedCardNumber, EncryptedExpirationDate, EncryptedCVV, LastFourDigits, CardType) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`;
-        const result = await client.query(insertQuery, [currentDate, currentDate, personPhysicId, encryptedCardNumber, encryptedExpirationDate, encryptedCVV, lastFourDigits, cardType]);
+        const insertQuery = `INSERT INTO ${TABLE_NAME} (Dc, Dm, LoginId, EncryptedCardNumber, EncryptedExpirationDate, EncryptedCVV, LastFourDigits, CardType) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`;
+        const result = await client.query(insertQuery, [currentDate, currentDate, loginId, encryptedCardNumber, encryptedExpirationDate, encryptedCVV, lastFourDigits, cardType]);
         client.release();
         res.status(201).json(result.rows[0]);
     } catch (err) {

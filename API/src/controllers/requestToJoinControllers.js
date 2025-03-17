@@ -6,9 +6,9 @@ const getRequestToJoin = async (req, res) => {
     const { arrayClubId, userId } = req.query;
     try {
         let queryString = `
-            SELECT r.*, p.Name as PersonName,p.EmailAddress as PersonEmailAddress,p.PhoneNumber as PersonPhoneNumber, c.Label as ClubLabel
+            SELECT r.*, lo.FirstName, lo.LastName, lo.Login, lo.PhoneNumber, c.Label as ClubLabel
             FROM ${TABLE_NAME} r
-            LEFT JOIN db.PersonPhysic p ON r.PersonPhysicId = p.Id
+            LEFT JOIN db.Login lo ON r.LoginId = lo.Id
             LEFT JOIN db.Club c ON r.ClubId = c.Id
             WHERE r.Bin = false`;
         const values = [];
@@ -16,14 +16,14 @@ const getRequestToJoin = async (req, res) => {
 
         if (userId && arrayClubId && Array.isArray(JSON.parse(arrayClubId))) {
             const clubIds = JSON.parse(arrayClubId);
-            queryString += ` AND r.PersonPhysicId = $${paramCount} AND r.ClubId = ANY($${paramCount + 1})`;
+            queryString += ` AND r.LoginId = $${paramCount} AND r.ClubId = ANY($${paramCount + 1})`;
             values.push(userId, clubIds);
         } else if (arrayClubId && Array.isArray(JSON.parse(arrayClubId))) {
             const clubIds = JSON.parse(arrayClubId);
             queryString += ` AND r.ClubId = ANY($${paramCount})`;
             values.push(clubIds);
         } else if (userId) {
-            queryString += ` AND r.PersonPhysicId = $${paramCount}`;
+            queryString += ` AND r.LoginId = $${paramCount}`;
             values.push(userId);
         }
 

@@ -11,10 +11,10 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles, selectedClubId 
   const [filterEndDate, setFilterEndDate] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-
+  
   const filteredLicences = React.useMemo(() => {
     return licences.filter(licence => {
-      const matchesSearch = licence.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = licence.firstname.toLowerCase().includes(searchQuery.toLowerCase()) || licence.lastname.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType = !filterType || licence.licencetypeid == filterType;
       const matchesRole = !filterRole || licence.roleid == filterRole;
       
@@ -146,9 +146,9 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles, selectedClubId 
               <tr key={licence.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                 <td className="p-4 align-middle">
                   <div className="flex items-center gap-3">
-                    <UserImage name={licence.name} size={40} />
+                    <UserImage name={licence.firstname + ' ' + licence.lastname} size={40} />
                     <div className="flex flex-col">
-                      <span className="font-medium">{licence.name}</span>
+                      <span className="font-medium">{licence.firstname + ' ' + licence.lastname}</span>
                       <span className="flex items-center gap-1 text-sm text-muted-foreground">
                         <BirthdayCake className="h-4 w-4" />
                         {getDisplayFormatedDate(licence.naissancedate)}
@@ -163,7 +163,7 @@ const LicenceList = React.memo(({ licences, licenceTypes, roles, selectedClubId 
                 <td className="p-4 align-middle">{licence.role}</td>
                 <td className="p-4 align-middle">
                   <div className="flex flex-col gap-1">
-                    <a href={`mailto:${licence.emailaddress}`} className="text-sm cursor-pointer">{licence.emailaddress}</a>
+                    <a href={`mailto:${licence.login}`} className="text-sm cursor-pointer">{licence.login}</a>
                     <a href={`tel:${licence.phonenumber}`} className="text-sm text-muted-foreground cursor-pointer">{licence.phonenumber}</a>
                   </div>
                 </td>

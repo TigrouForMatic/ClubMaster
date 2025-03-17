@@ -23,8 +23,8 @@ const createAccount = async (req, res) => {
             const hashedPassword = await bcrypt.hash(password, 10);
 
             // Insérer le nouvel utilisateur avec les dates de création et modification
-            const insertUserQuery = 'INSERT INTO db.Login (Dc, Dm, Login, Password) VALUES ($1, $2, $3, $4) RETURNING Id, Login';
-            const insertUserResult = await client.query(insertUserQuery, [currentDate, currentDate, login, hashedPassword]);
+            const insertUserQuery = 'INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING Id, Login';
+            const insertUserResult = await client.query(insertUserQuery, [currentDate, currentDate, false, currentDate, login, hashedPassword]);
 
             const user = insertUserResult.rows[0];
 
@@ -35,10 +35,20 @@ const createAccount = async (req, res) => {
                 { expiresIn: '1h' }
             );
 
+            const userData = {
+                id: user.id,
+                login: user.login,
+                pseudo: user.pseudo,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                naissancedate: user.naissancedate,
+                phonenumber: user.phonenumber,
+                token: token
+            }
+
             res.status(201).json({ 
                 message: "Compte créé avec succès",
-                token,
-                user
+                user: userData
             });
         } finally {
             client.release();
@@ -81,6 +91,64 @@ const testLogin = async (req, res) => {
             const currentDate = new Date(); 
 
             const updateLastLoginQuery = 'UPDATE db.Login SET LastLogin = $1 WHERE Id = $2';
+            await client.query(updateLastLoginQuery, [currentDate, user.id]);
+
+            const userData = {
+                id: user.id,
+                login: user.login,
+                pseudo: user.pseudo,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                naissancedate: user.naissancedate,
+                phonenumber: user.phonenumber,
+                token: token
+            }
+
+            res.status(200).json({ 
+                message: "Login réussi", 
+                user: userData
+            });
+        } finally {
+            client.release();
+        }
+    } catch (err) {
+        console.error('Erreur lors de la tentative de connexion', err);
+        res.status(500).json({ message: 'Erreur lors de la tentative de connexion' });
+    }
+};
+
+const testAdminLogin = async (req, res) => {
+    const { login, password } = req.body;
+
+    try {
+        const client = await pool.connect();
+
+        try {
+            const getUserQuery = 'SELECT * FROM db.AdminLogin WHERE Login = $1 AND Bin = false';
+            const getUserResult = await client.query(getUserQuery, [login]);
+
+            if (getUserResult.rows.length === 0) {
+                return res.status(401).json({ message: "Login ou mot de passe incorrect" });
+            }
+
+            const user = getUserResult.rows[0];
+
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+
+            if (!isPasswordValid) {
+                return res.status(401).json({ message: "Login ou mot de passe incorrect" });
+            }
+
+            // Générer un token JWT
+            const token = jwt.sign(
+                { userId: user.id, login: user.login },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+
+            const currentDate = new Date(); 
+
+            const updateLastLoginQuery = 'UPDATE db.AdminLogin SET LastLogin = $1 WHERE Id = $2';
             await client.query(updateLastLoginQuery, [currentDate, user.id]);
 
             res.status(200).json({ 
@@ -183,16 +251,21 @@ const handleGoogleCallback = async (req, res) => {
                 throw new Error('Échec de la génération du token');
             }
 
+            const userData = {
+                id: user.id,
+                login: user.login,
+                pseudo: user.pseudo,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                naissancedate: user.naissancedate,
+                phonenumber: user.phonenumber,
+                token: token
+            }
+
             // Avant d'envoyer la réponse
             const responseData = {
                 message: "Authentification Google réussie",
-                token,
-                user: {
-                    id: user.id,
-                    login: user.login,
-                    pseudo: user.pseudo,
-                    lastLogin: new Date()
-                }
+                user: userData
             };
             console.log('Données envoyées au client:', responseData);
             
@@ -228,5 +301,6 @@ const handleGoogleCallback = async (req, res) => {
 module.exports = {
     createAccount,
     testLogin,
+    testAdminLogin,
     handleGoogleCallback
 };

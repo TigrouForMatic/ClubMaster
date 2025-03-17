@@ -5,8 +5,7 @@ const { healthCheck } = require('../controllers/healthControllers');
 const { createAccount, testLogin, handleGoogleCallback } = require('../controllers/authControllers');
 const { requireAuth } = require('../middleware/auth');
 const { getAddresses, getAddressById, getAddressByPerson, addAddress, updateAddress, deleteAddress } = require('../controllers/addressControllers');
-const { getPersonPhysic, getPersonPhysicById, addPersonPhysic, updatePersonPhysic, deletePersonPhysic } = require('../controllers/personPhysicControllers');
-const { getLogin, getLoginById, addLogin, updateLogin, deleteLogin } = require('../controllers/loginControllers');
+const { getLogin, getLoginById, createAccountData, addLogin, updateLogin, deleteLogin } = require('../controllers/loginControllers');
 const { getClub, getClubByPerson, getClubById, addClub, updateClub, deleteClub } = require('../controllers/clubControllers');
 const { getLicenceType, getLicenceTypeById, addLicenceType, addLicenceTypeFromNewClub, updateLicenceType, deleteLicenceType } = require('../controllers/licenceTypeControllers');
 const { getLicence, getLicenceManage, getLicenceById, addLicence, updateLicence, deleteLicence, getLicenceExport, addLicenceManage } = require('../controllers/licenceControllers');
@@ -60,16 +59,10 @@ router.post('/address', addAddress);
 router.put('/address/:id', updateAddress);
 router.delete('/address/:id', deleteAddress);
 
-// Routes pour le CRUD des personnes physiques
-router.get('/personPhysic', getPersonPhysic);
-router.get('/personPhysic/:id', getPersonPhysicById);
-router.post('/personPhysic', addPersonPhysic);
-router.put('/personPhysic/:id', updatePersonPhysic);
-router.delete('/personPhysic/:id', deletePersonPhysic);
-
 // Routes pour le CRUD des logins
 router.get('/login', getLogin);
 router.get('/login/:id', getLoginById);
+router.post('/login/createAccount/:id', createAccountData);
 router.post('/login', addLogin);
 router.put('/login/:id', updateLogin);
 router.delete('/login/:id', deleteLogin);

@@ -41,7 +41,7 @@ const ModalAcceptRequestToJoin = ({ isOpen, onClose, request, licenceTypes, role
         dd: toSqlDate(new Date()),
         df: toSqlDate(getDateEndLicence()),
         licenceTypeId: selectedLicenceType.value,
-        personPhysicId: request.personphysicid,
+        loginid: request.loginid,
         roleId: selectedRole.value,
       });
 
@@ -79,7 +79,7 @@ const ModalAcceptRequestToJoin = ({ isOpen, onClose, request, licenceTypes, role
                 Nom de la personne
               </label>
               <div className="p-2 bg-zinc-50 rounded-md">
-                {request.personname}
+                {request.firstName + ' ' + request.lastName}
               </div>
             </div>
 

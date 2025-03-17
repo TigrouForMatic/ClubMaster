@@ -86,7 +86,7 @@ function ModaleInfoBanner({ isOpen, onClose, infoBanner = null }) {
       } else {
         response = await api.post('/infobanner', finalBannerData);
         response.clublabel = userClubs.find(club => club.id === selectedClubId).label;
-        response.createdbyname = currentUser.name;
+        response.createdbyname = currentUser.firstname + ' ' + currentUser.lastname;
         addItem('infoBanners', response);
         await uploadFile(response.id);
       }

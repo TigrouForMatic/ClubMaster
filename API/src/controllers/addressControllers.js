@@ -28,11 +28,7 @@ const getAddresses = async (req, res) => {
 };
 
 const getAddressByPerson = async (req, res) => {
-    
-    
-    
     const { idPersonnel } = req.params;
-
     try {
 
         let queryString = `SELECT * FROM ${TABLE_NAME} WHERE private = true AND validate = true AND referenceid = $1 AND Bin = false`;
@@ -51,9 +47,6 @@ const getAddressByPerson = async (req, res) => {
 };
 
 const getAddressById = async (req, res) => {
-
-    
-    
     const { id } = req.params;
     try {
         const client = await pool.connect();
@@ -71,11 +64,7 @@ const getAddressById = async (req, res) => {
 
 const addAddress = async (req, res) => {
     const currentDate = new Date();
-
-    
-
     const { columns, values } = prepareInsertData(req.body);
-
     try {
         const client = await pool.connect();
 
@@ -94,12 +83,8 @@ const addAddress = async (req, res) => {
 };
 
 const updateAddress = async (req, res) => {
-
-    
-
     const { id } = req.params;
     const { updates, values } = prepareUpdateData(req.body);
-
     try {
         const client = await pool.connect();
         const updateQuery = `UPDATE ${TABLE_NAME} SET ${updates} WHERE id = $${values.length + 1} RETURNING *`;
@@ -116,9 +101,6 @@ const updateAddress = async (req, res) => {
 };
 
 const deleteAddress = async (req, res) => {
-
-    
-
     const { id } = req.params;
     try {
         const client = await pool.connect();

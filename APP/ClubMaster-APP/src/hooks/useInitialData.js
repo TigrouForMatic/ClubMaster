@@ -12,7 +12,7 @@ export const useInitialData = () => {
   const [usedUserClubs, setUsedUserClubs] = useState(null);
 
   useEffect(() => {
-    const storedUserData = AuthService.getUserData();
+    const storedUserData = AuthService.getLogin();
     const storedUserClubs = AuthService.getUserClubs();
     
     if (storedUserData && (!currentUser || Array.isArray(currentUser))) {
@@ -42,7 +42,7 @@ export const useInitialData = () => {
     const fetchData = async () => {
       try {
         // Vérifier si les données sont dans le localStorage
-        const storedUserData = AuthService.getUserData();
+        const storedUserData = AuthService.getLogin();
         const storedUserClubs = AuthService.getUserClubs();
 
         // Si les données sont dans le localStorage mais pas dans le store, les ajouter
@@ -118,13 +118,13 @@ export const useInitialData = () => {
         setItems('matchScores', matchScoreData);
 
         const arrayEventId = eventData.map(evnt => evnt.id);
-        const inscriptionData = await api.get("/inscription", { params: { arrayEventId: JSON.stringify(arrayEventId), personPhysicId : usedUserData.id } });
+        const inscriptionData = await api.get("/inscription", { params: { arrayEventId: JSON.stringify(arrayEventId), loginId : usedUserData.id } });
         setItems('inscriptions', inscriptionData);
         
         const addressData = await api.get("/address");
         setItems('addresses', addressData);
 
-        const licenceData = await api.get("/licence", { params: { personphysicid: usedUserData.id } });
+        const licenceData = await api.get("/licence", { params: { loginid: usedUserData.id } });
         setItems('licences', licenceData);
 
         const typeLicencesData = await api.get("/licenceType", { params: { arrayClubId: JSON.stringify(arrayClubId)} });

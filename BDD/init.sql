@@ -23,8 +23,14 @@ BEGIN
         LastLogin TIMESTAMP,
         Login VARCHAR(255) NOT NULL,
         Password VARCHAR(255) NOT NULL,
-        Pseudo VARCHAR(255)
+        Pseudo VARCHAR(255),
+        FirstName VARCHAR(255),
+        LastName VARCHAR(255),
+        PhoneNumber VARCHAR(20)
     );
+
+      INSERT INTO db.AdminLogin (Dc, Dm, Bin, LastLogin, Login, Password, Pseudo, FirstName, LastName, PhoneNumber) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', 'jules.chassany@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach','Jules','Chassany','0600000000');
 
     CREATE TABLE db.Login (
         Id SERIAL PRIMARY KEY,
@@ -33,25 +39,26 @@ BEGIN
         Bin BOOLEAN,
         LastLogin TIMESTAMP,
         Login VARCHAR(255) NOT NULL,
-        Password VARCHAR(255) NOT NULL,
+        Password VARCHAR(255),
         Pseudo VARCHAR(255),
-        GoogleId VARCHAR(255)
+        GoogleId VARCHAR(255),
+        FirstName VARCHAR(255),
+        LastName VARCHAR(255),
+        NaissanceDate DATE,
+        PhoneNumber VARCHAR(20),
+        ContactId INT,
+        GeneralConditions BOOLEAN,
+        PrivacyPolicy BOOLEAN
     );
 
-
-    CREATE TABLE db.PersonPhysic (
+    CREATE TABLE db.Session (
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
         Bin BOOLEAN,
-        Name VARCHAR(255) NOT NULL,
-        NaissanceDate DATE,
-        PhoneNumber VARCHAR(20),
-        EmailAddress VARCHAR(255),
         LoginId INT,
-        ContactId INT,
-        GeneralConditions BOOLEAN,
-        PrivacyPolicy BOOLEAN,
+        Token VARCHAR(255),
+        Expiration TIMESTAMP,
         FOREIGN KEY (LoginId) REFERENCES db.Login(Id)
     );
 
@@ -74,13 +81,13 @@ BEGIN
         Id SERIAL PRIMARY KEY,
         Dc TIMESTAMP,
         Dm TIMESTAMP,
-        PersonPhysicId INT,
+        LoginId INT,
         EncryptedCardNumber TEXT,
         EncryptedExpirationDate TEXT,
         EncryptedCVV TEXT,
         LastFourDigits VARCHAR(4),
         CardType VARCHAR(50),
-        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+        FOREIGN KEY (LoginId) REFERENCES db.Login(Id)
     );
 
     CREATE TABLE db.Plan (
@@ -188,9 +195,9 @@ BEGIN
         Dc TIMESTAMP,
         Dm TIMESTAMP,
         EventId INT,
-        PersonPhysicId INT,
+        LoginId INT,
         FOREIGN KEY (EventId) REFERENCES db.Event(Id),
-        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+        FOREIGN KEY (LoginId) REFERENCES db.Login(Id)
     );
 
     CREATE TABLE db.LicenceType (
@@ -228,10 +235,10 @@ BEGIN
         Df TIMESTAMP,
         LicenceFederation VARCHAR(255),
         LicenceTypeId INT,
-        PersonPhysicId INT,
+        LoginId INT,
         RoleId INT,
         FOREIGN KEY (LicenceTypeId) REFERENCES db.LicenceType(Id),
-        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id),
+        FOREIGN KEY (LoginId) REFERENCES db.Login(Id),
         FOREIGN KEY (RoleId) REFERENCES db.Role(Id)
     );
 
@@ -252,9 +259,9 @@ BEGIN
         Dm TIMESTAMP,
         Bin BOOLEAN,
         TeamId INT,
-        PersonPhysicId INT,
+        LoginId INT,
         FOREIGN KEY (TeamId) REFERENCES db.Team(Id),
-        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+        FOREIGN KEY (LoginId) REFERENCES db.Login(Id)
     );
 
     CREATE TABLE db.Conversation (
@@ -273,9 +280,9 @@ BEGIN
         Dm TIMESTAMP,
         Content TEXT NOT NULL,
         ConversationId INT,
-        PersonPhysicId INT,
+        LoginId INT,
         FOREIGN KEY (ConversationId) REFERENCES db.Conversation(Id),
-        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+        FOREIGN KEY (LoginId) REFERENCES db.Login(Id)
     );
 
     CREATE TABLE db.InfoBanner (
@@ -292,7 +299,7 @@ BEGIN
         CreatedBy INTEGER NOT NULL,
         EventId INTEGER NULL,
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id),
-        FOREIGN KEY (CreatedBy) REFERENCES db.PersonPhysic(Id),
+        FOREIGN KEY (CreatedBy) REFERENCES db.Login(Id),
         FOREIGN KEY (EventId) REFERENCES db.Event(Id)
     );
 
@@ -334,7 +341,7 @@ BEGIN
         ReferenceType VARCHAR(50),
         CreatedBy INTEGER,
         ClubId INTEGER,
-        FOREIGN KEY (CreatedBy) REFERENCES db.PersonPhysic(Id),
+        FOREIGN KEY (CreatedBy) REFERENCES db.Login(Id),
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id)
     );
 
@@ -345,9 +352,9 @@ BEGIN
         Bin BOOLEAN NOT NULL,
         Status VARCHAR(255) NOT NULL,
         ClubId INTEGER NOT NULL,
-        PersonPhysicId INTEGER NOT NULL,
+        LoginId INTEGER NOT NULL,
         FOREIGN KEY (ClubId) REFERENCES db.Club(Id),
-        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+        FOREIGN KEY (LoginId) REFERENCES db.Login(Id)
     );
 
     CREATE TABLE db.MembershipForm (
@@ -372,9 +379,9 @@ BEGIN
         Bin BOOLEAN NOT NULL,
         Signature TEXT NOT NULL,
         MembershipFormId INTEGER NOT NULL,
-        PersonPhysicId INTEGER NOT NULL,
+        LoginId INTEGER NOT NULL,
         FOREIGN KEY (MembershipFormId) REFERENCES db.MembershipForm(Id),
-        FOREIGN KEY (PersonPhysicId) REFERENCES db.PersonPhysic(Id)
+        FOREIGN KEY (LoginId) REFERENCES db.Login(Id)
     );  
     
 
@@ -391,35 +398,20 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '12 avenue Yves Robert','Saint-Abraham','Bretagne','56460','France', 6, false, true),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Chemin du paradis','Sérent','Bretagne','56460','France', 7, false, true);
 
-    INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password, Pseudo, GoogleId) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', 'jules.chassany@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach', null),
-    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, '2024-11-17T00:00:00.000Z', 'constance.le.ray@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle', null),
-    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, '2024-12-09T00:00:00.000Z', 'elisa@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'Zaza', null),
-    ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, '2024-12-01T00:00:00.000Z', 'user1@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User One', null),
-    ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, '2024-12-02T00:00:00.000Z', 'user2@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Two', null),
-    ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, '2024-12-03T00:00:00.000Z', 'user3@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Three', null),
-    ('2024-12-04T00:00:00.000Z', '2024-12-04T00:00:00.000Z', false, '2024-12-04T00:00:00.000Z', 'user4@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Four', null),
-    ('2024-12-05T00:00:00.000Z', '2024-12-05T00:00:00.000Z', false, '2024-12-05T00:00:00.000Z', 'user5@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Five', null),
-    ('2024-12-06T00:00:00.000Z', '2024-12-06T00:00:00.000Z', false, '2024-12-06T00:00:00.000Z', 'user6@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Six', null),
-    ('2024-12-07T00:00:00.000Z', '2024-12-07T00:00:00.000Z', false, '2024-12-07T00:00:00.000Z', 'user7@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Seven', null),
-    ('2024-12-08T00:00:00.000Z', '2024-12-08T00:00:00.000Z', false, '2024-12-08T00:00:00.000Z', 'user8@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Eight', null),
-    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, '2024-12-09T00:00:00.000Z', 'user9@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Nine', null),
-    ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, '2024-12-10T00:00:00.000Z', 'user10@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Ten', null);
-
-    INSERT INTO db.PersonPhysic (Dc, Dm, Bin, Name, NaissanceDate, PhoneNumber, EmailAddress, LoginId, GeneralConditions, PrivacyPolicy, ContactId) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Jules Chassany','2003-10-25T00:00:00.000Z','0677332963','jules@clubmaster.bzh',1, true, true, null),
-    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, 'Constance Le Ray','1991-04-27T00:00:00.000Z','0677332963','constance@clubmaster.bzh',2, true, true, null),
-    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'Elisa Battiard', '2012-04-23T00:00:00.000Z', '0610000001', 'elisa@clubmaster.bzh', 3, true, true, null),
-    ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, 'User One', '1990-01-01T00:00:00.000Z', '0600000001', 'user1@clubmaster.bzh', 4, true, true, null),
-    ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, 'User Two', '1991-02-02T00:00:00.000Z', '0600000002', 'user2@clubmaster.bzh', 5, true, true, null),
-    ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, 'User Three', '1992-03-03T00:00:00.000Z', '0600000003', 'user3@clubmaster.bzh', 6, true, true, null),
-    ('2024-12-04T00:00:00.000Z', '2024-12-04T00:00:00.000Z', false, 'User Four', '1993-04-04T00:00:00.000Z', '0600000004', 'user4@clubmaster.bzh', 7, true, true, null),
-    ('2024-12-05T00:00:00.000Z', '2024-12-05T00:00:00.000Z', false, 'User Five', '1994-05-05T00:00:00.000Z', '0600000005', 'user5@clubmaster.bzh', 8, true, true, null),
-    ('2024-12-06T00:00:00.000Z', '2024-12-06T00:00:00.000Z', false, 'User Six', '1995-06-06T00:00:00.000Z', '0600000006', 'user6@clubmaster.bzh', 9, true, true, null),
-    ('2024-12-07T00:00:00.000Z', '2024-12-07T00:00:00.000Z', false, 'User Seven', '1996-07-07T00:00:00.000Z', '0600000007', 'user7@clubmaster.bzh', 10, true, true, null),
-    ('2024-12-08T00:00:00.000Z', '2024-12-08T00:00:00.000Z', false, 'User Eight', '1997-08-08T00:00:00.000Z', '0600000008', 'user8@clubmaster.bzh', 11, true, true, null),
-    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, 'User Nine', '1998-09-09T00:00:00.000Z', '0600000009', 'user9@clubmaster.bzh', 12, true, true, null),
-    ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, 'User Ten', '1999-10-10T00:00:00.000Z', '0600000010', 'user10@clubmaster.bzh', 13, true, true, null);
+    INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password, Pseudo, GoogleId, FirstName, LastName, NaissanceDate, PhoneNumber, ContactId, GeneralConditions, PrivacyPolicy) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', 'jules.chassany@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach', null, 'Jules', 'Chassany', '2003-10-25T00:00:00.000Z', '0677332963', null, true, true),
+    ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, '2024-11-17T00:00:00.000Z', 'constance.le.ray@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle', null, 'Constance', 'Le Ray', '1991-04-27T00:00:00.000Z', '0677332963', null, true, true),
+    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, '2024-12-09T00:00:00.000Z', 'elisa@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'Zaza', null, 'Elisa', 'Battiard', '2012-04-23T00:00:00.000Z', '0610000001', null, true, true),
+    ('2024-12-01T00:00:00.000Z', '2024-12-01T00:00:00.000Z', false, '2024-12-01T00:00:00.000Z', 'user1@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User One', null, 'User', 'One', '1990-01-01T00:00:00.000Z', '0600000001', null, true, true),
+    ('2024-12-02T00:00:00.000Z', '2024-12-02T00:00:00.000Z', false, '2024-12-02T00:00:00.000Z', 'user2@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Two', null, 'User', 'Two', '1991-02-02T00:00:00.000Z', '0600000002', null, true, true),
+    ('2024-12-03T00:00:00.000Z', '2024-12-03T00:00:00.000Z', false, '2024-12-03T00:00:00.000Z', 'user3@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Three', null, 'User', 'Three', '1992-03-03T00:00:00.000Z', '0600000003', null, true, true),
+    ('2024-12-04T00:00:00.000Z', '2024-12-04T00:00:00.000Z', false, '2024-12-04T00:00:00.000Z', 'user4@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Four', null, 'User', 'Four', '1993-04-04T00:00:00.000Z', '0600000004', null, true, true),
+    ('2024-12-05T00:00:00.000Z', '2024-12-05T00:00:00.000Z', false, '2024-12-05T00:00:00.000Z', 'user5@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Five', null, 'User', 'Five', '1994-05-05T00:00:00.000Z', '0600000005', null, true, true),
+    ('2024-12-06T00:00:00.000Z', '2024-12-06T00:00:00.000Z', false, '2024-12-06T00:00:00.000Z', 'user6@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Six', null, 'User', 'Six', '1995-06-06T00:00:00.000Z', '0600000006', null, true, true),
+    ('2024-12-07T00:00:00.000Z', '2024-12-07T00:00:00.000Z', false, '2024-12-07T00:00:00.000Z', 'user7@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Seven', null, 'User', 'Seven', '1996-07-07T00:00:00.000Z', '0600000007', null, true, true),
+    ('2024-12-08T00:00:00.000Z', '2024-12-08T00:00:00.000Z', false, '2024-12-08T00:00:00.000Z', 'user8@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Eight', null, 'User', 'Eight', '1997-08-08T00:00:00.000Z', '0600000008', null, true, true),
+    ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, '2024-12-09T00:00:00.000Z', 'user9@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Nine', null, 'User', 'Nine', '1998-09-09T00:00:00.000Z', '0600000009', null, true, true),
+    ('2024-12-10T00:00:00.000Z', '2024-12-10T00:00:00.000Z', false, '2024-12-10T00:00:00.000Z', 'user10@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'User Ten', null, 'User', 'Ten', '1999-10-10T00:00:00.000Z', '0600000010', null, true, true);
 
     INSERT INTO db.PersonMoral (Dc, Dm, Bin, Name, Rib, RnaNumber, Siren, Siret) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Oust', null, null, null, null),
@@ -503,7 +495,7 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Pleuc A', true, 2),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Pleuc B', true, 2);
 
-    INSERT INTO db.TeamMember (Dc, Dm, Bin, TeamId, PersonPhysicId) VALUES
+    INSERT INTO db.TeamMember (Dc, Dm, Bin, TeamId, LoginId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 1, 1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 1, 2),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 1, 3),
@@ -545,7 +537,7 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Coach',2,2),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Adhérent',1,2);
 
-    INSERT INTO db.Licence (Dc, Dm, Bin, Label, Dd, Df, LicenceFederation, LicenceTypeId, PersonPhysicId, RoleId) VALUES
+    INSERT INTO db.Licence (Dc, Dm, Bin, Label, Dd, Df, LicenceFederation, LicenceTypeId, LoginId, RoleId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Président','2025-09-03T00:00:00.000Z','2025-08-31T00:00:00.000Z','Federation',4,1,2),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Secrétaire','2025-09-03T00:00:00.000Z','2025-08-31T00:00:00.000Z','Federation',8,1,9),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2025-08-31T00:00:00.000Z','Federation',1,4,1),
@@ -559,7 +551,7 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2024-12-30T00:00:00.000Z','Federation',1,12,1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Licence Visiteur','2025-09-03T00:00:00.000Z','2024-11-30T00:00:00.000Z','Federation',1,13,1);
 
-    INSERT INTO db.Inscription (Dc, Dm, EventId, PersonPhysicId) VALUES
+    INSERT INTO db.Inscription (Dc, Dm, EventId, LoginId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 7, 1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 9, 1),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, 1),
@@ -578,7 +570,7 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 10, null),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 11, null);
 
-    INSERT INTO Message (Dc, Dm, Content, ConversationId, PersonPhysicId) VALUES
+    INSERT INTO db.Message (Dc, Dm, Content, ConversationId, LoginId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', 'Hello', 11,1),
     ('2024-07-30T00:00:00.000Z', '2024-07-30T00:00:00.000Z', 'Chaud pour un petit Bad?', 11,1),
     ('2024-08-08T00:00:00.000Z', '2024-08-08T00:00:00.000Z', 'Pourquoi pas :)', 11,2);

@@ -31,7 +31,7 @@ function PersonalInfoForm() {
   const [modalIsOpenConditions, setModalIsOpenConditions] = useState(false);
   const navigate = useNavigate();
   const setItems = useStore((state) => state.setItems);
-  const login = useStore((state) => state.login);
+  const currentUser = useStore((state) => state.currentUser);
 
   useEffect(() => {
     if (AuthService.isAuthenticated()) {
@@ -66,23 +66,27 @@ function PersonalInfoForm() {
       return;
     }
 
-    if (!login.id) {
+    if (!currentUser.id) {
       setError('ID de connexion non trouvé. Veuillez vous reconnecter.');
       return;
     }
 
     try {
-      const personalInfoResponse = await api.post('/personPhysic', {
-        name: `${personalInfo.firstName} ${personalInfo.lastName}`,
+      const personalInfoResponse = await api.post('/login/createAccount/'+currentUser.id, {
+        firstName: personalInfo.firstName,
+        lastName: personalInfo.lastName,
         naissanceDate: personalInfo.bornDate,
         phoneNumber: personalInfo.phoneNumber,
-        loginId: login.id,
-        emailaddress: login.login,
         generalConditions: consentGivenConditions,
         privacyPolicy: consentGivenPolitique
       });
 
-      setItems('currentUser', personalInfoResponse);
+      const currentUserUpdate = {
+        ...currentUser,
+        ...personalInfoResponse.user
+      }
+
+      setItems('currentUser', currentUserUpdate);
 
       const addressResponse = await api.post('/address/', {
         ...addressInfo,
@@ -96,6 +100,7 @@ function PersonalInfoForm() {
       localStorage.setItem('personalInfo', JSON.stringify(personalInfoResponse));
       navigate('/auth/find-club');
     } catch (err) {
+      console.log(err);
       if (err.status === 400) {
         setError('Un compte est deja lié à ce numéro de téléphone');
       } else {
@@ -171,7 +176,7 @@ function PersonalInfoForm() {
                     placeholder="Prénom"
                     value={personalInfo.firstName}
                     onChange={handlePersonalInfoChange}
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                   <input
@@ -180,7 +185,7 @@ function PersonalInfoForm() {
                     placeholder="Nom"
                     value={personalInfo.lastName}
                     onChange={handlePersonalInfoChange}
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
@@ -191,7 +196,7 @@ function PersonalInfoForm() {
                   placeholder="Numéro de téléphone"
                   value={personalInfo.phoneNumber}
                   onChange={handlePersonalInfoChange}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
                 <input
@@ -200,7 +205,7 @@ function PersonalInfoForm() {
                   placeholder="Date de naissance"
                   value={personalInfo.bornDate}
                   onChange={handlePersonalInfoChange}
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
                 <div className="space-y-2 mt-6">
@@ -213,7 +218,7 @@ function PersonalInfoForm() {
                       placeholder={key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}
                       value={value}
                       onChange={handleAddressChange}
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ))}
                 </div>
@@ -224,14 +229,14 @@ function PersonalInfoForm() {
                       type="checkbox"
                       checked={consentGivenPolitique}
                       onChange={(e) => setConsentGivenPolitique(e.target.checked)}
-                      className="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+                      className="rounded border-zinc-300 text-zinc-900 focus:ring-blue-500"
                     />
                     <span className="text-sm">
                       J'ai lu et j'accepte la politique de confidentialité
                     </span>
                     <OpenInWindow
                       onClick={openModalPolitique}
-                      className="h-4 w-4 cursor-pointer text-zinc-500 hover:text-zinc-900"
+                      className="h-4 w-4 cursor-pointer text-zinc-500 hover:text-blue-500"
                     />
                   </div>
 
@@ -240,14 +245,14 @@ function PersonalInfoForm() {
                       type="checkbox"
                       checked={consentGivenConditions}
                       onChange={(e) => setConsentGivenConditions(e.target.checked)}
-                      className="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+                      className="rounded border-zinc-300 text-zinc-900 focus:ring-blue-500"
                     />
                     <span className="text-sm">
                       J'ai lu et j'accepte les conditions générales d'utilisation
                     </span>
                     <OpenInWindow
                       onClick={openModalConditions}
-                      className="h-4 w-4 cursor-pointer text-zinc-500 hover:text-zinc-900"
+                      className="h-4 w-4 cursor-pointer text-zinc-500 hover:text-blue-500"
                     />
                   </div>
                 </div>

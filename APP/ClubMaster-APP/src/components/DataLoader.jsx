@@ -5,18 +5,18 @@ import useStore from '../store/store';
 import AuthService from '../js/authService';
 
 const DataLoader = ({ children }) => {
-  const { userClubs, currentUser, setItems } = useStore();
+  const { userClubs, currentUser, setItems, setCurrentUser } = useStore();
   const isAuthenticated = AuthService.isAuthenticated();
   const [isLoading, error] = isAuthenticated ? useInitialData() : [false, null];
 
   useEffect(() => {
     if (isAuthenticated) {
       // Synchroniser les données du localStorage avec le store
-      const storedUserData = AuthService.getUserData();
+      const storedUserData = AuthService.getLogin();
       const storedUserClubs = AuthService.getUserClubs();
 
       if (storedUserData && !currentUser) {
-        setItems('currentUser', storedUserData);
+        setCurrentUser(storedUserData);
       }
 
       if (storedUserClubs && (!userClubs || !userClubs.length)) {

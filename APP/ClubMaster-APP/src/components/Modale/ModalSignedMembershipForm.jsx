@@ -21,7 +21,7 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSu
                 await api.post("/membershipFormSignature", {
                     signature: signature,
                     membershipFormId: membershipForm.id,
-                    personPhysicId: currentUser.id
+                    loginid: currentUser.id
                 });
                 onSubmit(club.id);
                 handleClose();

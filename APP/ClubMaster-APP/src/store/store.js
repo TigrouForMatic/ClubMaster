@@ -5,14 +5,12 @@ const useStore = create((set) => ({
   clubs: [],
   addresses: [],
   currentUserAddresses: [],
-  personPhysics: [],
   licences: [],
   licenceTypes: [],
   notifications: [],
-  currentUser: [],
+  currentUser: null,
   currentUserRoles: [],
   roles: [],
-  login: [],
   typesEvent: [],
   events: [],
   matchTeams: [],
@@ -106,13 +104,20 @@ const useStore = create((set) => ({
     [category]: state[category].filter(item => !ids.includes(item.id))
   })),
 
-
-  setLogin: (login) => set(() => ({
-    login: login
-  })),
-
+  // Gestion complète de currentUser
+  // store.setCurrentUser({ id: 1, name: "Jean", email: "jean@example.com" });
   setCurrentUser: (currentUser) => set(() => ({
     currentUser: currentUser
+  })),
+
+  // store.updateCurrentUser({ name: "Jean-Pierre" });
+  updateCurrentUser: (updates) => set((state) => ({
+    currentUser: { ...state.currentUser, ...updates }
+  })),
+
+  // store.removeCurrentUser();
+  removeCurrentUser: () => set(() => ({
+    currentUser: null
   })),
 
   initialize: () => set((state) => {

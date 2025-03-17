@@ -93,8 +93,8 @@ const InfoEvent = ({ isOpen, onClose, eventId }) => {
     if (!event) return;
     try {
       const inscriptionResponse = await api.post('/inscription', {
-        eventId: event.id,
-        personPhysicId: currentUser.id
+        eventid: event.id,
+        loginid: currentUser.id
       });
       addItem('inscriptions', inscriptionResponse);
     } catch (err) {

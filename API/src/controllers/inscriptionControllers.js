@@ -3,7 +3,7 @@ const { pool } = require('../../database');
 const TABLE_NAME = 'db.Inscription';
 
 const getInscription = async (req, res) => {
-    const { arrayEventId, personPhysicId } = req.query;
+    const { arrayEventId, loginId } = req.query;
     try {
         let queryString = `SELECT * FROM ${TABLE_NAME}`;
         const values = [];
@@ -14,13 +14,13 @@ const getInscription = async (req, res) => {
             values.push(eventId);
         }
 
-        if (personPhysicId) {
+        if (loginId) {
             if (arrayEventId && Array.isArray(JSON.parse(arrayEventId))) {
-                queryString += ` AND PersonPhysicId = $2`;
-                values.push(personPhysicId);
+                queryString += ` AND LoginId = $2`;
+                values.push(loginId);
             } else {
-                queryString += ` WHERE PersonPhysicId = $2`;
-                values.push(personPhysicId);
+                queryString += ` WHERE LoginId = $2`;
+                values.push(loginId);
             }
         }
 

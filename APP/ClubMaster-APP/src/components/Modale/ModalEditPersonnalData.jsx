@@ -9,19 +9,16 @@ import AuthService from '../../js/authService';
 
 function ModalEditPersonnalData({ isOpen, onClose }) {
   const navigate = useNavigate();
-  const { currentUser, login, setCurrentUser, setLogin } = useStore();
+  const { currentUser, setItems } = useStore();
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const [personnalData, setPersonnalData] = useState({
-    name: currentUser.name || '',
-    emailaddress: currentUser.emailaddress || '',
+    firstname: currentUser.firstname || '',
+    lastname: currentUser.lastname || '',
+    login: currentUser.login || '',
     phonenumber: currentUser.phonenumber || '',
     naissancedate: currentUser.naissancedate || '',
-  });
-
-  const [loginData, setLoginData] = useState({
-    login: login.login,
-    pseudo: login.pseudo,
+    pseudo: currentUser.pseudo || '',
   });
 
   const handleChangePersonnalData = (e) => {
@@ -32,41 +29,42 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
   const handleChangeLogin = (e) => {
     const { name, value } = e.target;
     if (name === 'login') {
-      setLoginData(prevData => ({ ...prevData, [name]: value }));
-      setPersonnalData(prevData => ({ ...prevData, ['emailaddress']: value }));
+      setPersonnalData(prevData => ({ ...prevData, ['login']: value }));
     } else {
-      setLoginData(prevData => ({ ...prevData, [name]: value }));
+      setPersonnalData(prevData => ({ ...prevData, [name]: value }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (loginData.login !== login.login || loginData.pseudo !== login.pseudo) {
+      if (personnalData.login !== currentUser.login || personnalData.pseudo !== currentUser.pseudo) {
         const loginPayload = {
           ...login,
-          login: loginData.login,
-          pseudo: loginData.pseudo,
+          login: personnalData.login,
+          pseudo: personnalData.pseudo,
         };
         const loginResponse = await api.put(`/login/${login.id}`, loginPayload);
         setLogin(loginResponse);
       }
 
-      if (personnalData.name !== currentUser.name || 
-          personnalData.emailaddress !== currentUser.emailaddress || 
+      if (personnalData.firstname !== currentUser.firstname || 
+          personnalData.lastname !== currentUser.lastname || 
+          personnalData.login !== currentUser.login || 
           personnalData.phonenumber !== currentUser.phonenumber || 
           personnalData.naissancedate !== currentUser.naissancedate) {
 
         const personalPayload = {
           ...currentUser,
-          name: personnalData.name,
-          emailaddress: personnalData.emailaddress,
+          firstname: personnalData.firstname,
+          lastname: personnalData.lastname,
+          login: personnalData.login,
           phonenumber: personnalData.phonenumber,
           naissancedate: personnalData.naissancedate,
         };
 
-        const personalResponse = await api.put(`/personphysic/${currentUser.id}`, personalPayload);
-        setCurrentUser(personalResponse);
+        const personalResponse = await api.put(`/login/${currentUser.id}`, personalPayload);
+        setItems('currentUser', personalResponse);
       }
       
       handleClose();
@@ -86,8 +84,7 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
 
   const handleDelete = async () => {
     await api.delete(`/login/${login.id}`);
-    await api.delete(`/personphysic/${currentUser.id}`);
-    setCurrentUser(null);
+    setItems('currentUser', null);
     setPersonnalData(null);
     AuthService.logout();
     navigate('/auth/login');
@@ -119,14 +116,29 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
             
             <div className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-zinc-700">
+                <label htmlFor="firstname" className="block text-sm font-medium text-zinc-700">
+                  Prénom
+                </label>
+                <input
+                  type="text"
+                  id="firstname"
+                  name="firstname"
+                  value={personnalData.firstname}
+                  onChange={handleChangePersonnalData}
+                  required
+                  className="p-2 mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="lastname" className="block text-sm font-medium text-zinc-700">
                   Nom
                 </label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  value={personnalData.name}
+                  id="lastname"
+                  name="lastname"
+                  value={personnalData.lastname}
                   onChange={handleChangePersonnalData}
                   required
                   className="p-2 mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
@@ -141,8 +153,8 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
                   type="text"
                   id="pseudo"
                   name="pseudo"
-                  value={loginData.pseudo}
-                  onChange={handleChangeLogin}
+                  value={personnalData.pseudo}
+                  onChange={handleChangePersonnalData}
                   className="p-2 mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 />
               </div>
@@ -194,8 +206,8 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
                 type="email"
                 id="login"
                 name="login"
-                value={loginData.login}
-                onChange={handleChangeLogin}
+                value={personnalData.login}
+                onChange={handleChangePersonnalData}
                 className="p-2 mt-1 block w-full rounded-md border-zinc-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>

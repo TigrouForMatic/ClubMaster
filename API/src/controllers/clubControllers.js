@@ -38,7 +38,7 @@ const getClubByPerson = async (req, res) => {
             JOIN db.Club c ON r.ClubId = c.Id
             JOIN db.PlanClub pc on pc.ClubId = c.Id
             JOIN db.Plan p on p.Id = pc.PlanId
-            WHERE l.PersonPhysicId = $1 AND c.Bin = false AND ((pc.StartDate <= NOW() AND pc.EndDate >= NOW()) OR (pc.EndDate IS NULL AND pc.StartDate <= NOW()))
+            WHERE l.LoginId = $1 AND c.Bin = false AND ((pc.StartDate <= NOW() AND pc.EndDate >= NOW()) OR (pc.EndDate IS NULL AND pc.StartDate <= NOW()))
             ORDER BY l.Dd DESC
         `;
 
