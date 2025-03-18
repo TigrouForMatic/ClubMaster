@@ -28,10 +28,20 @@ const createAccount = async (req, res) => {
             const contactId = contact.id;
 
             //TODO : AJOUTER UNE VERIFACATION DE L'ADRESSE EMAIL VIA UN ENVOI D'UN EMAIL DE VERIFICATION
+            
+            // Générer un token de vérification
+            // const verificationToken = jwt.sign({ email: login }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            // await emailService.sendTemplateEmail({
+            //     to: login,
+            //     templateId: 'verify_email',
+            //     params: {
+            //         verificationLink: `https://clubmaster.fr/verify-email?token=${verificationToken}`
+            //     }
+            // });
 
             // Insérer le nouvel utilisateur avec les dates de création et modification
-            const insertUserQuery = 'INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password, BrevoId) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING Id, Login';
-            const insertUserResult = await client.query(insertUserQuery, [currentDate, currentDate, false, currentDate, login, hashedPassword, contactId]);
+            const insertUserQuery = 'INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password, BrevoId, BrevoVerified) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING Id, Login';
+            const insertUserResult = await client.query(insertUserQuery, [currentDate, currentDate, false, currentDate, login, hashedPassword, contactId, false]);
 
             const user = insertUserResult.rows[0];
 
@@ -234,8 +244,8 @@ const handleGoogleCallback = async (req, res) => {
 
                 // Créer un nouvel utilisateur
                 const newUserResult = await client.query(
-                    `INSERT INTO db.Login (Login, Password, Pseudo, Dc, Dm, GoogleId, BrevoId) 
-                     VALUES ($1, $2, $3, NOW(), NOW(), $4, $5) 
+                    `INSERT INTO db.Login (Login, Password, Pseudo, Dc, Dm, GoogleId, BrevoId, BrevoVerified) 
+                     VALUES ($1, $2, $3, NOW(), NOW(), $4, $5, true) 
                      RETURNING *`,
                     [email, 'GOOGLE_AUTH', name, email, contactId]
                 );

@@ -130,3 +130,12 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+select {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+select::-webkit-scrollbar {
+  display: none;
+}

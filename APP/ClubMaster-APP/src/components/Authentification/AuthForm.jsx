@@ -232,10 +232,13 @@ function AuthForm() {
                 disabled={!isLogin && !passwordValidation.valid || pendingSubmit}
                 className="w-full py-2 bg-zinc-900 text-white rounded-md hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLogin && !pendingSubmit ? 'Se connecter' : 'Créer un compte'}
-                {pendingSubmit && <span className="ml-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                </span>}
+                {pendingSubmit ? (
+                  <span className="flex items-center justify-center">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  </span>
+                ) : (
+                  isLogin ? 'Se connecter' : 'Créer un compte'
+                )}
               </button>
             </form>
 

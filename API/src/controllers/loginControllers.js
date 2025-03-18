@@ -89,26 +89,6 @@ const createAccountData = async (req, res) => {
         }
     }
 
-    // const email = req.body.emailaddress;
-    // const attributes = {
-    //     PRENOM: req.body.firstName,
-    //     NOM: req.body.lastName,
-    //     DATE_DE_NAISSANCE: req.body.naissanceDate,
-    //     TELEPHONE: req.body.phoneNumber,
-    //     ID_DE_CONNEXION: req.body.loginId
-    // };
-
-    // let brevoResponse = null;
-
-    // if (email) {
-    //     brevoResponse = await emailService.createContact(email, attributes);
-    // }
-
-    let contactId = null;
-    // if (brevoResponse) {
-    //     contactId = brevoResponse.data.id;
-    // }
-
     try {
         const client = await pool.connect();
         
@@ -116,7 +96,6 @@ const createAccountData = async (req, res) => {
         const allUpdates = {
             ...req.body,
             Dm: currentDate,
-            ContactId: contactId
         };
         
         const { updates, values } = prepareUpdateData(allUpdates);
@@ -136,6 +115,36 @@ const createAccountData = async (req, res) => {
             naissancedate: result.rows[0].naissancedate,
             phonenumber: result.rows[0].phonenumber
         }
+
+        const attributes = {
+            PRENOM: userData.firstname,
+            NOM: userData.lastname,
+            PSEUDO: userData.pseudo,
+            DATE_NAISSANCE: userData.naissancedate,
+            STATUT_MEMBRE: "Nouveau membre",
+            WHATSAPP: userData.phonenumber,
+            EXT_ID: userData.id
+        }
+
+        await emailService.updateContactAttributes(userData.login, attributes);
+        
+        await emailService.sendTemplateEmail({
+            to: [
+                {
+                    email: userData.login,
+                    name: userData.firstname + ' ' + userData.lastname
+                }
+            ],
+            templateId: 2,
+            params: {
+                name: userData.firstname,
+                surname: userData.lastname
+            },
+            headers: {
+                'X-Mailin-custom': 'custom_header_1:custom_value_1|custom_header_2:custom_value_2|custom_header_3:custom_value_3',
+                charset: 'iso-8859-1'
+            }
+        });
 
         res.status(201).json({
             message: "Compte créé avec succès",
