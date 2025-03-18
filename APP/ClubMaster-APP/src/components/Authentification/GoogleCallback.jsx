@@ -30,39 +30,28 @@ function GoogleCallback() {
             throw new Error('Réponse invalide du serveur');
           }
 
-          const { token, user } = response;
-
-          if (!token || !user) {
+          if (!response.user) {
             throw new Error('Token ou données utilisateur manquants');
           }
 
-          const loginData = {
-            id: user.id,
-            login: user.login,
-            token: token,
-            pseudo: user.pseudo
-          }
+          const loginData = response.user;
 
           // Stocker le token et les données utilisateur
           AuthService.setLogin(loginData);
 
           // Mettre à jour le store
           useStore.setState({
-            login: loginData,
+            currentUser: loginData,
             lastFetchTime: null
           });
 
           try {
-            const dataPersonPhysic = await api.get('/login/'+user.id);
 
-            if (dataPersonPhysic) {
-              useStore.setCurrentUser(dataPersonPhysic);
+            if (loginData) {
 
-              AuthService.setUserData(dataPersonPhysic[0]);
+              const dataCurrentUserAddresses = await api.get(`/address/personnel/${loginData.id}`);
 
-              const dataCurrentUserAddresses = await api.get(`/address/personnel/${dataPersonPhysic[0].id}`);
-
-              const dataClub = await api.get(`/club/personnel/${dataPersonPhysic[0].id}`);
+              const dataClub = await api.get(`/club/personnel/${loginData.id}`);
 
               if (dataClub?.length) {
                 useStore.setState({
