@@ -89,6 +89,51 @@ class EmailService {
         }
     }
 
+    // Méthode pour mettre à jour les attributs d'un contact dans Brevo
+    async updateContactAttributes(identifier, updateData = {}, identifierType = null) {
+        try {
+            let url = `/contacts/${encodeURIComponent(identifier)}`;
+            if (identifierType) {
+                url += `?identifierType=${identifierType}`;
+            }
+
+            // Modification : Envoyer directement les attributs sans wrapper supplémentaire
+            const response = await this.apiClient.put(url, {
+                attributes: updateData
+            });
+
+            // Vérification de la réponse
+            if (response.status !== 204) {
+                throw new Error('La mise à jour a échoué');
+            }
+
+            return {
+                message: 'Contact mis à jour avec succès',
+                email: identifier
+            };
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour du contact:', error.response?.data || error);
+            throw error;
+        }
+    }
+
+    // Méthode pour supprimer un contact dans Brevo
+    async deleteContact(identifier) {
+        try {
+            // L'API attend un identifiant (email ou ID) dans l'URL
+            const response = await this.apiClient.delete(`/contacts/${encodeURIComponent(identifier)}`, {
+                headers: {
+                    'accept': 'application/json'
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Erreur lors de la suppression du contact:', error.response?.data || error);
+            throw error;
+        }
+    }
+    
+
     // Méthode pour envoyer un email de bienvenue
     async sendWelcomeEmail(userEmail, userName) {
         const subject = 'Bienvenue sur ClubMaster !';

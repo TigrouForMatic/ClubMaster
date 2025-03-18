@@ -34,7 +34,7 @@ const { addPhoto, upload, getPhoto, deletePhoto, getPhotos } = require('../contr
 
 const { getEntries, getEntryById, addEntry, updateEntry, deleteEntry } = require('../controllers/controllers');
 
-const { createContact,sendWelcomeEmail } = require('../controllers/emailTestController');
+const { createContact,sendWelcomeEmail, updateContactAttributes, deleteContact } = require('../controllers/emailTestController');
 const { globalLimiter, authLimiter, createAccountLimiter } = require('../middleware/rateLimiter');
 
 // Appliquer le middleware d'authentification à toutes les routes
@@ -222,7 +222,8 @@ router.delete('/photo/:id', deletePhoto);
 // router.post('/register', register);
 router.post('/emailTest/createContact', createContact);
 router.post('/emailTest/sendWelcomeMail', sendWelcomeEmail);
-
+router.post('/emailTest/updateContactAttributes', updateContactAttributes);
+router.post('/emailTest/deleteContact', deleteContact);
 // Routes génériques
 router.get('/:table', getEntries);
 router.get('/:table/:id', getEntryById);
