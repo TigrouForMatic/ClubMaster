@@ -2,6 +2,7 @@ const { pool } = require('../../database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const emailService = require('../services/emailService');
 
 const createAccount = async (req, res) => {
     const { login, password } = req.body;
@@ -22,9 +23,15 @@ const createAccount = async (req, res) => {
             // Hacher le mot de passe
             const hashedPassword = await bcrypt.hash(password, 10);
 
+            // Créer un contact dans Brevo
+            const contact = await emailService.createContact(login, {});
+            const contactId = contact.id;
+
+            //TODO : AJOUTER UNE VERIFACATION DE L'ADRESSE EMAIL VIA UN ENVOI D'UN EMAIL DE VERIFICATION
+
             // Insérer le nouvel utilisateur avec les dates de création et modification
-            const insertUserQuery = 'INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING Id, Login';
-            const insertUserResult = await client.query(insertUserQuery, [currentDate, currentDate, false, currentDate, login, hashedPassword]);
+            const insertUserQuery = 'INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password, BrevoId) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING Id, Login';
+            const insertUserResult = await client.query(insertUserQuery, [currentDate, currentDate, false, currentDate, login, hashedPassword, contactId]);
 
             const user = insertUserResult.rows[0];
 
@@ -217,16 +224,20 @@ const handleGoogleCallback = async (req, res) => {
                 
                 // Mettre à jour la dernière connexion
                 await client.query(
-                    'UPDATE db.Login SET Dm = NOW() WHERE Id = $1',
+                    'UPDATE db.Login SET LastLogin = NOW() WHERE Id = $1',
                     [user.id]
                 );
             } else {
+                // Créer un contact dans Brevo
+                const contact = await emailService.createContact(email, {});
+                const contactId = contact.id;
+
                 // Créer un nouvel utilisateur
                 const newUserResult = await client.query(
-                    `INSERT INTO db.Login (Login, Password, Pseudo, Dc, Dm, GoogleId) 
-                     VALUES ($1, $2, $3, NOW(), NOW(), $4) 
+                    `INSERT INTO db.Login (Login, Password, Pseudo, Dc, Dm, GoogleId, BrevoId) 
+                     VALUES ($1, $2, $3, NOW(), NOW(), $4, $5) 
                      RETURNING *`,
-                    [email, 'GOOGLE_AUTH', name, email]
+                    [email, 'GOOGLE_AUTH', name, email, contactId]
                 );
 
                 user = newUserResult.rows[0];

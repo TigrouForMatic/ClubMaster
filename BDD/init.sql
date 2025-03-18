@@ -46,7 +46,7 @@ BEGIN
         LastName VARCHAR(255),
         NaissanceDate DATE,
         PhoneNumber VARCHAR(20),
-        ContactId INT,
+        BrevoId INT,
         GeneralConditions BOOLEAN,
         PrivacyPolicy BOOLEAN
     );
@@ -398,7 +398,7 @@ BEGIN
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '12 avenue Yves Robert','Saint-Abraham','Bretagne','56460','France', 6, false, true),
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Chemin du paradis','Sérent','Bretagne','56460','France', 7, false, true);
 
-    INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password, Pseudo, GoogleId, FirstName, LastName, NaissanceDate, PhoneNumber, ContactId, GeneralConditions, PrivacyPolicy) VALUES
+    INSERT INTO db.Login (Dc, Dm, Bin, LastLogin, Login, Password, Pseudo, GoogleId, FirstName, LastName, NaissanceDate, PhoneNumber, BrevoId, GeneralConditions, PrivacyPolicy) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', 'jules.chassany@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le Coach', null, 'Jules', 'Chassany', '2003-10-25T00:00:00.000Z', '0677332963', null, true, true),
     ('2024-11-17T00:00:00.000Z', '2024-11-17T00:00:00.000Z', false, '2024-11-17T00:00:00.000Z', 'constance.le.ray@gmail.com','$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu','Le PLus Belle', null, 'Constance', 'Le Ray', '1991-04-27T00:00:00.000Z', '0677332963', null, true, true),
     ('2024-12-09T00:00:00.000Z', '2024-12-09T00:00:00.000Z', false, '2024-12-09T00:00:00.000Z', 'elisa@clubmaster.bzh', '$2b$10$UPJSSFgJOfhsVzuYsQ4HCeF3ilCMfV0Vm2yQLi1pJE0HLgnQj4HVu', 'Zaza', null, 'Elisa', 'Battiard', '2012-04-23T00:00:00.000Z', '0610000001', null, true, true),
