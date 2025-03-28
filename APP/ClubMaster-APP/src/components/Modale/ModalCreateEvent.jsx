@@ -112,41 +112,72 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
 
     if (recurrenceData.isCustomConfig) {
       return {
-        interval: recurrenceData.interval,
+        interval: parseInt(recurrenceData.interval),
         unit: recurrenceData.unit,
         endDate: recurrenceData.endDate
       };
     }
 
-    // Calcul automatique basé sur l'option sélectionnée
-    const config = {
-      interval: 1,
-      unit: 'weeks',
-      endDate: new Date(startDate)
-    };
-
-    // Configuration de l'intervalle
-    switch (recurrenceData.option) {
-      case '2weeks': config.interval = 2; break;
-      case 'monthly': config.unit = 'months'; break;
-      case 'quarterly': config.interval = 3; config.unit = 'months'; break;
-      case 'biannual': config.interval = 6; config.unit = 'months'; break;
-      case 'yearly': config.interval = 1; config.unit = 'years'; break;
-    }
-
-    // Configuration de la durée
+    // Configuration automatique basée sur l'option sélectionnée
+    let interval = 1;
+    let unit = 'weeks';
     const endDate = new Date(startDate);
-    switch (recurrenceData.duration) {
-      case '2weeks': endDate.setDate(endDate.getDate() + 14); break;
-      case 'month': endDate.setMonth(endDate.getMonth() + 1); break;
-      case 'quarter': endDate.setMonth(endDate.getMonth() + 3); break;
-      case 'biannual': endDate.setMonth(endDate.getMonth() + 6); break;
-      case 'year': endDate.setFullYear(endDate.getFullYear() + 1); break;
-      default: endDate.setDate(endDate.getDate() + 7);
+
+    // Configuration de l'intervalle et de l'unité
+    switch (recurrenceData.option) {
+      case 'weekly':
+        interval = 1;
+        unit = 'weeks';
+        break;
+      case '2weeks':
+        interval = 2;
+        unit = 'weeks';
+        break;
+      case 'monthly':
+        interval = 1;
+        unit = 'months';
+        break;
+      case 'quarterly':
+        interval = 3;
+        unit = 'months';
+        break;
+      case 'biannual':
+        interval = 6;
+        unit = 'months';
+        break;
+      case 'yearly':
+        interval = 1;
+        unit = 'years';
+        break;
     }
 
-    config.endDate = endDate.toISOString().split('T')[0];
-    return config;
+    // Configuration de la date de fin selon la durée choisie
+    switch (recurrenceData.duration) {
+      case 'week':
+        endDate.setDate(endDate.getDate() + 7);
+        break;
+      case '2weeks':
+        endDate.setDate(endDate.getDate() + 14);
+        break;
+      case 'month':
+        endDate.setMonth(endDate.getMonth() + 1);
+        break;
+      case 'quarter':
+        endDate.setMonth(endDate.getMonth() + 3);
+        break;
+      case 'biannual':
+        endDate.setMonth(endDate.getMonth() + 6);
+        break;
+      case 'year':
+        endDate.setFullYear(endDate.getFullYear() + 1);
+        break;
+    }
+
+    return {
+      interval: interval,
+      unit: unit,
+      endDate: endDate.toISOString().split('T')[0]
+    };
   };
 
   const handleSubmit = async (e) => {
@@ -432,17 +463,19 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
                 <div className="flex items-center gap-2 ml-4">
                   <span className="text-sm font-medium">Configuration :</span>
                   <div className="relative inline-flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={recurrenceData.isCustomConfig}
-                      onChange={(e) => handleRecurrenceChange('isCustomConfig', e.target.checked)}
-                      className="sr-only peer"
-                      id="customConfig"
-                    />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-                    <span className="ml-2 text-sm font-medium">
-                      {recurrenceData.isCustomConfig ? 'Personnalisée' : 'Commune'}
-                    </span>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={recurrenceData.isCustomConfig}
+                        onChange={(e) => handleRecurrenceChange('isCustomConfig', e.target.checked)}
+                        className="sr-only peer"
+                        id="customConfig"
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500 cursor-pointer"></div>
+                      <span className="ml-2 text-sm font-medium">
+                        {recurrenceData.isCustomConfig ? 'Personnalisée' : 'Commune'}
+                      </span>
+                    </label>
                   </div>
                 </div>
 
@@ -453,17 +486,48 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
                       onChange={(opt) => handleRecurrenceChange('option', opt.value)}
                       options={RECURRENCE_OPTIONS}
                       className="flex-1"
+                      placeholder="Fréquence"
                     />
                     <Select
                       value={DURATION_OPTIONS.find(opt => opt.value === recurrenceData.duration)}
                       onChange={(opt) => handleRecurrenceChange('duration', opt.value)}
                       options={DURATION_OPTIONS}
                       className="flex-1"
+                      placeholder="Durée"
                     />
                   </div>
                 ) : (
                   <div className="ml-6 space-y-4">
-                    {/* Configuration personnalisée existante */}
+                    <div className="flex gap-4">
+                      <div className="flex-1">
+                        <label className="text-sm font-medium">Répéter tous les</label>
+                        <div className="flex gap-2 mt-1">
+                          <input
+                            type="number"
+                            min="1"
+                            value={recurrenceData.interval}
+                            onChange={(e) => handleRecurrenceChange('interval', parseInt(e.target.value))}
+                            className="w-20 px-3 py-2 border rounded-md"
+                          />
+                          <Select
+                            value={RECURRENCE_UNITS.find(opt => opt.value === recurrenceData.unit)}
+                            onChange={(opt) => handleRecurrenceChange('unit', opt.value)}
+                            options={RECURRENCE_UNITS}
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Se termine le</label>
+                      <input
+                        type="date"
+                        value={recurrenceData.endDate}
+                        onChange={(e) => handleRecurrenceChange('endDate', e.target.value)}
+                        min={startDate}
+                        className="w-full mt-1 px-3 py-2 border rounded-md"
+                      />
+                    </div>
                   </div>
                 )}
               </div>

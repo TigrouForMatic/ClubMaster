@@ -79,16 +79,16 @@ const addEvent = async (req, res) => {
 
                 // Calculer la prochaine date selon l'unité de récurrence
                 switch (Recurrence.unit.toLowerCase()) {
-                    case 'jours':
+                    case 'days':
                         currentEventDate.setDate(currentEventDate.getDate() + Recurrence.interval);
                         break;
-                    case 'semaines':
+                    case 'weeks':
                         currentEventDate.setDate(currentEventDate.getDate() + (Recurrence.interval * 7));
                         break;
-                    case 'mois':
+                    case 'months':
                         currentEventDate.setMonth(currentEventDate.getMonth() + Recurrence.interval);
                         break;
-                    case 'ans':
+                    case 'years':
                         currentEventDate.setFullYear(currentEventDate.getFullYear() + Recurrence.interval);
                         break;
                 }
