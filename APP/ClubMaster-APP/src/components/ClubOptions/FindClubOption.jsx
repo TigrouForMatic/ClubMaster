@@ -5,7 +5,7 @@ import api from '../../js/App/Api';
 import { Search, MapPin, Building2 } from 'lucide-react';
 import ModalSignedMembershipForm from '../Modale/ModalSignedMembershipForm';
 
-const ClubCard = React.memo(({ club, onClick }) => (
+const ClubCard = React.memo(({ club, onClick, maxRequestToJoin }) => (
   <div 
     onClick={() => onClick(club)}
     className="group relative flex cursor-pointer items-center justify-between rounded-lg border p-4 hover:bg-gray-50 transition-colors"
@@ -19,7 +19,7 @@ const ClubCard = React.memo(({ club, onClick }) => (
         <span className="text-xs text-blue-500">Demande envoyée</span>
       </div>
     )}
-    {!club.request && (
+    {!club.request && maxRequestToJoin <= 4 && (
       <div className="ml-4 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
         <span className="text-xs text-muted-foreground">Cliquer pour rejoindre</span>
       </div>
@@ -211,7 +211,7 @@ const FindClubOption = () => {
           <div className="p-4 space-y-4">
             {currentClubs.length > 0 ? (
               currentClubs.map((club) => (
-                <ClubCard key={club.id} club={club} onClick={() => {
+                <ClubCard key={club.id} club={club} maxRequestToJoin={maxRequestToJoin} onClick={() => {
                   if (maxRequestToJoin <= 4) {
                     if (!club.request) {
                       setSelectedClub(club);

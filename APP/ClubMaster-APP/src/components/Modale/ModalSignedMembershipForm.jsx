@@ -23,12 +23,13 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSu
                     membershipFormId: membershipForm.id,
                     loginid: currentUser.id
                 });
-                onSubmit(club.id);
-                handleClose();
             } catch (err) {
                 console.error('Erreur lors de la récupération des signatures:', err.message);
             }
         }
+
+        onSubmit(club.id);
+        handleClose();
     };
 
     const handleClose = useCallback(() => {
@@ -74,7 +75,7 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSu
                             </svg>
                         </button>
                         <h2 className="text-2xl font-semibold tracking-tight">
-                            Signature du formulaire d'adhésion
+                            Formulaire d'adhésion
                         </h2>
                     </div>
                     <button 
@@ -121,6 +122,7 @@ const ModalSignedMembershipForm = ({ isOpen, onClose, club, membershipForm, onSu
                         </button>
                         <button
                             onClick={handleSubmit}
+                            disabled={!signature && membershipForm.RequiresSignature}
                             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700"
                         >
                             Demander à rejoindre
