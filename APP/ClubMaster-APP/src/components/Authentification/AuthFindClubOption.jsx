@@ -8,7 +8,11 @@ const AuthFindClubOption = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (AuthService.isAuthenticated() && AuthService.isPersonalInfoSet() && AuthService.isUserClubsSet()) {
+    if (!AuthService.isAuthenticated()) {
+      navigate('/auth/login');
+    } else if (!AuthService.isPersonalInfoSet()) {
+      navigate('/auth/personal-info');
+    } else if (AuthService.isUserClubsSet()) {
       navigate('/');
     }
   }, [navigate]);
