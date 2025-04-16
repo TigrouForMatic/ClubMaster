@@ -44,38 +44,27 @@ function ModalEditPersonnalData({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (personnalData.login !== currentUser.login || personnalData.pseudo !== currentUser.pseudo) {
-        const loginPayload = {
-          id: currentUser.id,
-          login: personnalData.login,
-          pseudo: personnalData.pseudo,
-        };
-        const loginResponse = await api.put(`/login/${currentUser.id}`, loginPayload);
-        setItems('currentUser', loginResponse);
-      }
-
-      if (personnalData.firstname !== currentUser.firstname || 
-          personnalData.lastname !== currentUser.lastname || 
-          personnalData.login !== currentUser.login || 
-          personnalData.phonenumber !== currentUser.phonenumber || 
-          personnalData.naissancedate !== currentUser.naissancedate) {
-
-        const personalPayload = {
+      const hasChanges = Object.keys(personnalData).some(
+        key => personnalData[key] !== currentUser[key]
+      );
+  
+      if (hasChanges) {
+        const payload = {
           id: currentUser.id,
           firstname: personnalData.firstname,
           lastname: personnalData.lastname,
           login: personnalData.login,
           phonenumber: personnalData.phonenumber,
           naissancedate: personnalData.naissancedate,
+          pseudo: personnalData.pseudo
         };
-
-        const personalResponse = await api.put(`/login/${currentUser.id}`, personalPayload);
-        setItems('currentUser', personalResponse);
+  
+        const response = await api.put(`/login/${currentUser.id}`, payload);
+        setItems('currentUser', response);
+        handleClose();
       }
-      
-      handleClose();
     } catch (error) {
-      console.error('Erreur lors de la création/modification de l\'utilisateur:', error);
+      console.error('Erreur lors de la modification de l\'utilisateur:', error);
     }
   };
 

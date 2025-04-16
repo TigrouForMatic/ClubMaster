@@ -168,6 +168,28 @@ const updateLogin = async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).send('Login non trouvée');
         }
+
+        const userData = {
+            id: result.rows[0].id,
+            login: result.rows[0].login,
+            pseudo: result.rows[0].pseudo,
+            firstname: result.rows[0].firstname,
+            lastname: result.rows[0].lastname,
+            naissancedate: result.rows[0].naissancedate,
+            phonenumber: result.rows[0].phonenumber
+        }
+
+        const attributes = {
+            PRENOM: userData.firstname,
+            NOM: userData.lastname,
+            PSEUDO: userData.pseudo,
+            DATE_NAISSANCE: userData.naissancedate,
+            WHATSAPP: userData.phonenumber,
+            EXT_ID: userData.id
+        }
+
+        await emailService.updateContactAttributes(userData.login, attributes);
+
         res.json(result.rows[0]);
     } catch (err) {
         console.error(`Erreur lors de la mise à jour du login avec l'ID ${id}`, err);
