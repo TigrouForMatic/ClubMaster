@@ -106,8 +106,7 @@ function PersonalInfoForm() {
       });
 
       setItems('currentAddressesPerson', addressResponse)
-
-      localStorage.setItem('personalInfo', JSON.stringify(personalInfoResponse));
+      AuthService.setLogin(personalInfoResponse.user);
       navigate('/auth/find-club');
     } catch (err) {
       console.log(err);

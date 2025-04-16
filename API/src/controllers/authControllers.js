@@ -118,6 +118,9 @@ const testLogin = async (req, res) => {
                 lastname: user.lastname,
                 naissancedate: user.naissancedate,
                 phonenumber: user.phonenumber,
+                isVerified: user.brevoverified,
+                isGoogle: user.googleid ? true : false,
+                isPassword: user.password ? true : false,
                 token: token
             }
 

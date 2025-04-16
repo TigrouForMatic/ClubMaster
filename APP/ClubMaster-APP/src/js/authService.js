@@ -36,6 +36,7 @@ class AuthService {
       try {
         const login = localStorage.getItem('login');
         const loginData = JSON.parse(login);
+        console.log('Login data:', loginData);
         if (loginData.firstname && loginData.lastname && loginData.naissancedate && loginData.phonenumber) {
           return true;
         } else {
@@ -62,6 +63,7 @@ class AuthService {
       if (!this.isStorageAvailable()) return false;
       try {
         localStorage.setItem('login', JSON.stringify(login));
+        console.log('Login sauvegardé:', login);
         return true;
       } catch (e) {
         console.error('Erreur lors de la sauvegarde du login:', e);
