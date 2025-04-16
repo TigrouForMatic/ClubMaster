@@ -49,7 +49,8 @@ BEGIN
         BrevoId INT,
         BrevoVerified BOOLEAN,
         GeneralConditions BOOLEAN,
-        PrivacyPolicy BOOLEAN
+        PrivacyPolicy BOOLEAN,
+        RefreshToken VARCHAR(255)
     );
 
     CREATE TABLE db.Session (

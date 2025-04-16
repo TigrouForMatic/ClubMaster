@@ -52,7 +52,12 @@ class AuthService {
       if (!this.isStorageAvailable()) return null;
       try {
         const login = localStorage.getItem('login');
-        return login ? JSON.parse(login) : null;
+        const password = localStorage.getItem('password');
+        const loginData = login ? JSON.parse(login) : null;
+        if (loginData && password) {
+          loginData.password = password;
+        }
+        return loginData;
       } catch (e) {
         console.error('Erreur lors de la récupération du login:', e);
         return null;
@@ -62,6 +67,12 @@ class AuthService {
     static setLogin(login) {
       if (!this.isStorageAvailable()) return false;
       try {
+        // Stocker le mot de passe séparément et de manière sécurisée
+        if (login.password) {
+          localStorage.setItem('password', login.password);
+          // Ne pas stocker le mot de passe dans l'objet login
+          delete login.password;
+        }
         localStorage.setItem('login', JSON.stringify(login));
         console.log('Login sauvegardé:', login);
         return true;
@@ -74,6 +85,7 @@ class AuthService {
     static clearLogin() {
       if (!this.isStorageAvailable()) return;
       localStorage.removeItem('login');
+      localStorage.removeItem('password');
     }
 
     static isUserClubsSet() {

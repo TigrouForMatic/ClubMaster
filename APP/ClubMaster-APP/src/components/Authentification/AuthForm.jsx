@@ -77,7 +77,10 @@ function AuthForm() {
       });
       if (response.user.token) {
         const userData = response.user;
-
+        // Stocker le refresh token au lieu du mot de passe
+        if (response.refreshToken) {
+          userData.refreshToken = response.refreshToken;
+        }
         AuthService.setLogin(userData);
         
         // Correction de l'utilisation du store

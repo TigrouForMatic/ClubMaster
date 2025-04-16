@@ -105,10 +105,18 @@ const testLogin = async (req, res) => {
                 { expiresIn: '1h' }
             );
 
+            // Générer un refresh token
+            const refreshToken = jwt.sign(
+                { userId: user.id },
+                process.env.JWT_REFRESH_SECRET,
+                { expiresIn: '7d' }
+            );
+
             const currentDate = new Date(); 
 
-            const updateLastLoginQuery = 'UPDATE db.Login SET LastLogin = $1 WHERE Id = $2';
-            await client.query(updateLastLoginQuery, [currentDate, user.id]);
+            // Stocker le refresh token dans la base de données
+            const updateRefreshTokenQuery = 'UPDATE db.Login SET RefreshToken = $1, LastLogin = $2 WHERE Id = $3';
+            await client.query(updateRefreshTokenQuery, [refreshToken, currentDate, user.id]);
 
             const userData = {
                 id: user.id,
@@ -126,7 +134,8 @@ const testLogin = async (req, res) => {
 
             res.status(200).json({ 
                 message: "Login réussi", 
-                user: userData
+                user: userData,
+                refreshToken: refreshToken
             });
         } finally {
             client.release();
@@ -322,9 +331,54 @@ const handleGoogleCallback = async (req, res) => {
     }
 };
 
+// Nouvelle route pour rafraîchir le token
+const refreshToken = async (req, res) => {
+    const { refreshToken } = req.body;
+
+    try {
+        const client = await pool.connect();
+
+        try {
+            // Vérifier si le refresh token existe dans la base
+            const checkTokenQuery = 'SELECT * FROM db.Login WHERE RefreshToken = $1 AND Bin = false';
+            const checkTokenResult = await client.query(checkTokenQuery, [refreshToken]);
+
+            if (checkTokenResult.rows.length === 0) {
+                return res.status(401).json({ message: "Refresh token invalide" });
+            }
+
+            const user = checkTokenResult.rows[0];
+
+            // Vérifier la validité du refresh token
+            jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err) => {
+                if (err) {
+                    return res.status(401).json({ message: "Refresh token expiré" });
+                }
+            });
+
+            // Générer un nouveau token
+            const newToken = jwt.sign(
+                { userId: user.id, login: user.login },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+
+            res.status(200).json({ 
+                token: newToken
+            });
+        } finally {
+            client.release();
+        }
+    } catch (err) {
+        console.error('Erreur lors du rafraîchissement du token', err);
+        res.status(500).json({ message: 'Erreur lors du rafraîchissement du token' });
+    }
+};
+
 module.exports = {
     createAccount,
     testLogin,
     testAdminLogin,
-    handleGoogleCallback
+    handleGoogleCallback,
+    refreshToken
 };

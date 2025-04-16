@@ -120,32 +120,75 @@ export class APIController {
       console.log('Headers:', error.response.headers);
 
       if (error.response.status === 401) {
-        AuthService.logout();
-        window.location.href = '/auth/login';
+        // Vérifier si on a un refresh token valide
+        const loginData = AuthService.getLogin();
+        if (loginData?.refreshToken) {
+          // Tenter un rafraîchissement du token
+          this.axios.post('/auth/refresh-token', {
+            refreshToken: loginData.refreshToken
+          })
+          .then(response => {
+            if (response.data.token) {
+              // Mettre à jour le token dans les données de login
+              loginData.token = response.data.token;
+              AuthService.setLogin(loginData);
+              // Retenter la requête originale
+              return this.axios(error.config);
+            }
+          })
+          .catch(() => {
+            // Si le rafraîchissement échoue, déconnecter l'utilisateur
+            AuthService.logout();
+            window.location.href = '/auth/login';
+          });
+        } else {
+          AuthService.logout();
+          window.location.href = '/auth/login';
+        }
       }
 
       // Vérification du token expiré ou invalide
       if (error.response.status === 403 && 
           (error.response.data.error === 'Invalid token' || 
            error.response.data.details === 'jwt expired')) {
-        // Supprimer le token invalide du localStorage
-        localStorage.removeItem('token');
-        
-        // Utiliser la fonction de navigation
-        const navigate = getNavigate();
-        if (navigate) {
-          navigate('/auth/login');
+        // Tenter un rafraîchissement du token
+        const loginData = AuthService.getLogin();
+        if (loginData?.refreshToken) {
+          this.axios.post('/auth/refresh-token', {
+            refreshToken: loginData.refreshToken
+          })
+          .then(response => {
+            if (response.data.token) {
+              // Mettre à jour le token dans les données de login
+              loginData.token = response.data.token;
+              AuthService.setLogin(loginData);
+              // Retenter la requête originale
+              return this.axios(error.config);
+            }
+          })
+          .catch(() => {
+            AuthService.logout();
+            const navigate = getNavigate();
+            if (navigate) {
+              navigate('/auth/login');
+            } else {
+              window.location.href = '/auth/login';
+            }
+          });
         } else {
-          // Fallback si navigate n'est pas disponible
-          window.location.href = '/auth/login';
+          AuthService.logout();
+          const navigate = getNavigate();
+          if (navigate) {
+            navigate('/auth/login');
+          } else {
+            window.location.href = '/auth/login';
+          }
         }
         return;
       }
     } else if (error.request) {
-      // La requête a été faite mais aucune réponse n'a été reçue
       console.error('Request error:', error.request);
     } else {
-      // Quelque chose s'est passé lors de la configuration de la requête qui a déclenché une erreur
       console.error('Error:', error.message);
     }
     return error;
