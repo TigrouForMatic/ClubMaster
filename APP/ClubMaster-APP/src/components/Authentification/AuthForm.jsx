@@ -281,7 +281,7 @@ function AuthForm() {
               </svg>
               <span>Continuer avec Google</span>
             </button>
-            <button
+            {/* <button
               type="button"
               onClick={() => {
                 window.alert('Cette fonctionnalité n\'est pas encore disponible. Elle arrivera dans une prochaine version.');
@@ -290,7 +290,7 @@ function AuthForm() {
             >
               <FacebookIcon className="h-4 w-4" />
               Facebook
-            </button>
+            </button> */}
 
             <button
               onClick={toggleForm}

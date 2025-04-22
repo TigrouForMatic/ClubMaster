@@ -6,10 +6,10 @@ import useStore from '../../store/store';
 import { getDateEndLicence } from '../../js/date';
 import { toSqlDate } from '../../js/date';
 
-const ModalAcceptRequestToJoin = ({ isOpen, onClose, request, licenceTypes, roles }) => {
+const ModalAcceptRequestToJoin = ({ isOpen, onClose, request, licenceTypes, roles, selectedClubId }) => {
   const [selectedLicenceType, setSelectedLicenceType] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
-  const { addItem, updateItem } = useStore();
+  const { addItem, updateItem, userClubs } = useStore();
 
   useEffect(() => {
     // Sélectionner par défaut le rôle de niveau 0 et la licence de base
@@ -43,6 +43,12 @@ const ModalAcceptRequestToJoin = ({ isOpen, onClose, request, licenceTypes, role
         licenceTypeId: selectedLicenceType.value,
         loginid: request.loginid,
         roleId: selectedRole.value,
+      });
+
+      // Ajouter le contact à la liste Brevo
+      await api.post('/emailTest/addContactToList', {
+        email: request.login,
+        listId: userClubs.find(club => club.id == selectedClubId).idbrevo,
       });
 
       addItem('licencesAdmin', licenceData);

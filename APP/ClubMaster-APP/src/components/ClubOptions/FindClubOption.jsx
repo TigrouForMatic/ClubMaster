@@ -49,7 +49,8 @@ const FindClubOption = () => {
 
   const fetchData = useCallback(async (endpoint) => {
     try {
-      return await api.get(endpoint);
+      const response = await api.get(endpoint);
+      return response.data || [];
     } catch (error) {
       console.error('Erreur:', error);
       setError(error.message);
@@ -58,22 +59,38 @@ const FindClubOption = () => {
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchAllData = async () => {
-      const [clubsData, addressesData, requestToJoinData, membershipForms, photosData] = await Promise.all([
-        fetchData('club'),
-        fetchData('address'),
-        fetchData('requestToJoin'),
-        fetchData('membershipForm'),
-        fetchData('photos')
-      ]);
-      setItems('clubs', clubsData);
-      setItems('addresses', addressesData);
-      setItems('requestToJoin', requestToJoinData);
-      setItems('membershipForms', membershipForms);
-      setItems('photos', photosData);
+      try {
+        const [clubsData, addressesData, requestToJoinData, membershipForms, photosData] = await Promise.all([
+          fetchData('club'),
+          fetchData('address'),
+          fetchData('requestToJoin'),
+          fetchData('membershipForm'),
+          fetchData('photos')
+        ]);
+        
+        if (isMounted) {
+          setItems('clubs', clubsData);
+          setItems('addresses', addressesData);
+          setItems('requestToJoin', requestToJoinData);
+          setItems('membershipForms', membershipForms);
+          setItems('photos', photosData);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des données:', error);
+        if (isMounted) {
+          setError('Erreur lors du chargement des données');
+        }
+      }
     };
     
     fetchAllData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [fetchData, setItems]);
 
   const getMembershipForm = (clubId) => {

@@ -173,6 +173,23 @@ class EmailService {
             textContent
         });
     }
+
+    // Méthode pour ajouter un contact à une liste Brevo
+    async addContactToList(contactIdentifier, listId) {
+        try {
+            const response = await this.apiClient.post(`/contacts/lists/${listId}/contacts/add`, {
+                emails: [contactIdentifier]
+            });
+
+            return {
+                message: 'Contact ajouté à la liste avec succès',
+                data: response.data
+            };
+        } catch (error) {
+            console.error('Erreur lors de l\'ajout du contact à la liste:', error.response?.data || error);
+            throw error;
+        }
+    }
 }
 
 module.exports = new EmailService();

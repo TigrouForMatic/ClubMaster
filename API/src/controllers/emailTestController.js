@@ -144,10 +144,47 @@ const sendWelcomeEmail = async (req, res) => {
     }
 }
 
+// Fonction pour ajouter un contact à une liste
+const addContactToList = async (req, res) => {
+    try {
+        const { email, listId } = req.body;
+
+        // Validation de l'email
+        if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email invalide ou manquant'
+            });
+        }
+
+        // Validation de l'ID de la liste
+        if (!listId || typeof listId !== 'number') {
+            return res.status(400).json({
+                success: false,
+                message: 'ID de liste invalide ou manquant'
+            });
+        }
+
+        const result = await emailService.addContactToList(email, listId);
+
+        res.status(200).json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de l\'ajout du contact à la liste',
+            error: error.message
+        });
+    }
+}
+
 module.exports = {
     createContact,
     sendWelcomeEmail,
     updateContactAttributes,
-    deleteContact
+    deleteContact,
+    addContactToList
 };
 

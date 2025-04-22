@@ -195,6 +195,7 @@ const RequestToJoinList = React.memo(({ selectedClubId, licenceTypes, roles }) =
         request={selectedRequest} 
         licenceTypes={licenceTypes} 
         roles={roles}
+        selectedClubId={selectedClubId}
       />
       <CustomConfirm 
         isOpen={isConfirmOpen} 

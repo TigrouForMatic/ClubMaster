@@ -126,6 +126,7 @@ BEGIN
         PersonMoralId INT,
         OldLabel VARCHAR(255),
         CreationDate DATE,
+        IdBrevo INT,
         FOREIGN KEY (PersonMoralId) REFERENCES db.PersonMoral(Id)
     );
 
@@ -425,15 +426,15 @@ BEGIN
     ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'Badminton Sérent', null, null, null, null),
     ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'Loyat Volley Club', null, null, null, null);
 
-    INSERT INTO db.Club (Dc, Dm, Bin, Label, PersonMoralId, OldLabel, CreationDate) VALUES
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'La Claie', 2, null, '2022-08-01T00:00:00.000Z'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Pleuc', 1, null, '2022-08-01T00:00:00.000Z'),
-    ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'BPP56', 3, null, '1998-08-01T00:00:00.000Z'),
-    ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'AcroGym', 4, null, '1998-08-01T00:00:00.000Z'),
-    ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'AOBD', 5, null, '2022-08-01T00:00:00.000Z'),
-    ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'Les fous du volant', 6, null, '2022-08-01T00:00:00.000Z'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Badminton Sérent', 7, null, '2022-08-01T00:00:00.000Z'),
-    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Loyat Volley Club', 8, null, '2022-08-01T00:00:00.000Z');
+    INSERT INTO db.Club (Dc, Dm, Bin, Label, PersonMoralId, OldLabel, CreationDate, IdBrevo) VALUES
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'La Claie', 2, null, '2022-08-01T00:00:00.000Z',6),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Vol en Pleuc', 1, null, '2022-08-01T00:00:00.000Z',7),
+    ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'BPP56', 3, null, '1998-08-01T00:00:00.000Z',8),
+    ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'AcroGym', 4, null, '1998-08-01T00:00:00.000Z',9),
+    ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'AOBD', 5, null, '2022-08-01T00:00:00.000Z',10),
+    ('2025-03-11T00:00:00.000Z', '2025-03-11T00:00:00.000Z', false, 'Les fous du volant', 6, null, '2022-08-01T00:00:00.000Z',11),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Badminton Sérent', 7, null, '2022-08-01T00:00:00.000Z',12),
+    ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, 'Loyat Volley Club', 8, null, '2022-08-01T00:00:00.000Z',13);
 
     INSERT INTO db.PlanClub (Dc, Dm, Bin, StartDate, EndDate, ClubId, PlanId) VALUES
     ('2024-06-30T00:00:00.000Z', '2024-06-30T00:00:00.000Z', false, '2024-06-30T00:00:00.000Z', '2024-07-30T00:00:00.000Z', 1, 1),
