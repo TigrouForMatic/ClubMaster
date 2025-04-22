@@ -118,11 +118,17 @@ function ManageView() {
       case 'club':
         return (
           <div className="space-y-6">
-            <LicenceTypeList 
-              licenceTypes={filteredLicenceTypes} 
-              selectedClubId={selectedClubId} 
-            />
+              <LicenceTypeList 
+                licenceTypes={filteredLicenceTypes} 
+                selectedClubId={selectedClubId} 
+              />
             <RoleList roles={filteredRoles} />
+            {/* Fiches d'adhésion */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <MembershipForm 
+                clubId={selectedClubId}
+              />
+            </div>
           </div>
         );
       default:
