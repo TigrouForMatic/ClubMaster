@@ -42,14 +42,39 @@ const getEventById = async (req, res) => {
     }
 };
 
+const checkDuplicateEvent = async (client, eventData) => {
+    const { EventTypeId, Dd, AddressId } = eventData;
+    
+    // Vérifier si un événement existe déjà avec le même type, la même date et la même adresse
+    const checkQuery = `
+        SELECT * FROM ${TABLE_NAME} 
+        WHERE EventTypeId = $1 
+        AND DATE(Dd) = DATE($2)
+        AND AddressId = $3
+        AND Bin = false
+    `;
+    
+    const result = await client.query(checkQuery, [EventTypeId, Dd, AddressId]);
+    return result.rows.length > 0;
+};
+
 const addEvent = async (req, res) => {
     const currentDate = new Date();
-
     const { Recurrence, ...eventData } = req.body;
     
     if (Recurrence && Recurrence.interval && Recurrence.unit && Recurrence.endDate) {
         try {
             const client = await pool.connect();
+            
+            // Vérifier le doublon pour le premier événement
+            const isDuplicate = await checkDuplicateEvent(client, eventData);
+            if (isDuplicate) {
+                client.release();
+                return res.status(400).json({ 
+                    error: 'Un événement du même type existe déjà à cette date et à cette adresse' 
+                });
+            }
+            
             const results = [];
             const endDate = new Date(Recurrence.endDate);
             let currentEventDate = new Date(eventData.Dd);
@@ -106,6 +131,15 @@ const addEvent = async (req, res) => {
 
         try {
             const client = await pool.connect();
+            
+            // Vérifier le doublon
+            const isDuplicate = await checkDuplicateEvent(client, eventData);
+            if (isDuplicate) {
+                client.release();
+                return res.status(400).json({ 
+                    error: 'Un événement du même type existe déjà à cette date et à cette adresse' 
+                });
+            }
     
             const columnsWithDates = `${columns}, Dc, Dm, Bin`;
             const valuesWithDates = [...values, currentDate, currentDate, false];

@@ -30,7 +30,7 @@ const RECURRENCE_UNITS = [
 ];
 
 function ModalCreateEvent({ isOpen, onClose, date }) {
-  const { currentUserRoles, userClubs, addresses, typesEvent } = useStore();
+  const { currentUserRoles, userClubs, addresses, typesEvent, events } = useStore();
   const addItem = useStore((state) => state.addItem);
   const addItems = useStore((state) => state.addItems);
   const [selectedClubId, setSelectedClubId] = useState(userClubs[0].id);
@@ -42,6 +42,7 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [isMatch, setIsMatch] = useState(false);
+  const [error, setError] = useState('');
 
   const [eventData, setEventData] = useState({
     Label: '',
@@ -182,6 +183,7 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Réinitialiser l'erreur
     try {
       const date = startDate || new Date().toISOString().split('T')[0];
       const finalEventData = {
@@ -214,7 +216,12 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
       }
       handleClose();
     } catch (error) {
-      console.error('Erreur lors de la création de l\'événement:', error);
+      if (error.response?.data?.error) {
+        setError(error.response.data.error);
+      } else {
+        console.error('Erreur lors de la création de l\'événement:', error);
+        setError('Une erreur est survenue lors de la création de l\'événement');
+      }
     }
   };
 
@@ -237,6 +244,7 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
     setRecurrenceEndDate('');
     setRecurrenceInterval(1);
     setRecurrenceUnit('jours');
+    setError('');
     setRecurrenceData({
       isEnabled: false,
       isCustomConfig: false,
@@ -305,6 +313,12 @@ function ModalCreateEvent({ isOpen, onClose, date }) {
             <span className="text-2xl">&times;</span>
           </button>
         </div>
+
+        {error && (
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
 
         {filteredClubs.length > 1 && (
           <div className="mt-6">
