@@ -1,6 +1,5 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState, useMemo } from "react";
 import useStore from '../store/store';
-import api from "../js/App/Api";
 import ClubList from "../components/Manager/ClubList";
 import LicenceList from "../components/Manager/LicenceList";
 import EventTypeList from "../components/Manager/EventTypeList";
@@ -12,9 +11,8 @@ import MembershipForm from "../components/MemberShip/MembershipForm";
 
 function ManageView() {
   const { userClubs, currentUserRoles, typesEvent, licenceTypes, productTypes, roles, licencesAdmin } = useStore();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [selectedClubId, setSelectedClubId] = useState(userClubs[0].id);
+  const [activeSection, setActiveSection] = useState('dashboard');
 
   const filteredClubs = useMemo(() => {
     const highLevelClubIds = new Set(
@@ -31,11 +29,9 @@ function ManageView() {
   }, [typesEvent, selectedClubId]);
 
   const filteredLicences = useMemo(() => {
-    // Créer des Map pour un accès rapide aux types de licence et aux rôles
     const licenceTypeMap = new Map(licenceTypes.map(type => [type.id, type]));
     const roleMap = new Map(roles.map(role => [role.id, role]));
   
-    // Filtrer et transformer les licences en une seule passe
     return licencesAdmin
       .filter(licence => {
         const licenceType = licenceTypeMap.get(licence.licencetypeid);
@@ -50,7 +46,6 @@ function ManageView() {
           role: role ? role.label : undefined
         };
       });
-  
   }, [licencesAdmin, licenceTypes, roles, selectedClubId]);
 
   const filteredLicenceTypes = useMemo(() => {
@@ -61,22 +56,79 @@ function ManageView() {
     return roles.filter(role => selectedClubId ? role.clubid === selectedClubId : true).sort((a, b) => a.level - b.level);
   }, [roles, selectedClubId]);
 
-
   const handleClubSelect = (clubId) => {
     setSelectedClubId(clubId);
   };
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center min-h-[200px]">
-      <div className="text-lg text-gray-600">Chargement...</div>
-    </div>
-  );
-
-  if (error) return (
-    <div className="flex items-center justify-center min-h-[200px]">
-      <div className="text-lg text-red-600">Une erreur est survenue : {error.message}</div>
-    </div>
-  );
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'dashboard':
+        return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white p-6 rounded-lg shadow">
+                <h3 className="text-lg font-semibold mb-4">Statistiques</h3>
+                <p>Nombre d'adhérents : {filteredLicences.length}</p>
+                <p>Nombre d'événements : {filteredTypes.length}</p>
+              </div>
+            </div>
+          </div>
+        );
+      case 'adherents':
+        return (
+          <div className="space-y-6">
+            <RequestToJoinList 
+              selectedClubId={selectedClubId}
+              licenceTypes={filteredLicenceTypes}
+              roles={filteredRoles}
+            />
+            <LicenceList 
+              licences={filteredLicences} 
+              licenceTypes={filteredLicenceTypes} 
+              roles={filteredRoles} 
+              selectedClubId={selectedClubId}
+            />
+          </div>
+        );
+      case 'evenements':
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-1">
+              <EventTypeList types={filteredTypes} />
+            </div>
+            <div className="lg:col-span-3">
+              <EventList clubId={selectedClubId} />
+            </div>
+          </div>
+        );
+      case 'shop':
+        return (
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-4">Boutique</h3>
+            <p>Section boutique en développement</p>
+          </div>
+        );
+      case 'inventaire':
+        return (
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-4">Inventaire</h3>
+            <p>Section inventaire en développement</p>
+          </div>
+        );
+      case 'club':
+        return (
+          <div className="space-y-6">
+            <LicenceTypeList 
+              licenceTypes={filteredLicenceTypes} 
+              selectedClubId={selectedClubId} 
+            />
+            <RoleList roles={filteredRoles} />
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl pb-24">
@@ -116,60 +168,35 @@ function ManageView() {
           </div>
         )}
 
-        {/* Liste des demandes d'adhésion */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <RequestToJoinList 
-            selectedClubId={selectedClubId}
-            licenceTypes={filteredLicenceTypes}
-            roles={filteredRoles}
-          />
-        </div>
-
-        {/* Liste des licences */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <LicenceList 
-            licences={filteredLicences} 
-            licenceTypes={filteredLicenceTypes} 
-            roles={filteredRoles} 
-            selectedClubId={selectedClubId}
-          />
-
-          {filteredLicences?.length > 0 && (
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-              <span className="text-sm text-gray-600">
-                {filteredLicences.length} adhérents
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Types de licences */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <LicenceTypeList 
-            licenceTypes={filteredLicenceTypes} 
-            selectedClubId={selectedClubId} 
-          />
-        </div>
-
-        {/* Section événements */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <EventTypeList types={filteredTypes} />
-            </div>
+        {/* Barre de navigation */}
+        <nav className="bg-white shadow rounded-lg overflow-hidden">
+          <div className="flex flex-wrap justify-center">
+            {[
+              { id: 'dashboard', label: 'Tableau de bord' },
+              { id: 'adherents', label: 'Adhérents' },
+              { id: 'evenements', label: 'Événements' },
+              { id: 'shop', label: 'Boutique' },
+              { id: 'inventaire', label: 'Inventaire' },
+              { id: 'club', label: 'Club' }
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveSection(item.id)}
+                className={`px-6 py-3 text-sm font-medium transition-all duration-300 ${
+                  activeSection === item.id
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
           </div>
-          <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <EventList clubId={selectedClubId} />
-            </div>
-          </div>
-        </div>
+        </nav>
 
-        {/* Fiches d'adhésion */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <MembershipForm 
-            clubId={selectedClubId}
-          />
+        {/* Contenu de la section active */}
+        <div className="mt-6">
+          {renderSection()}
         </div>
       </div>
     </div>
