@@ -21,6 +21,11 @@ class EmailService {
             email: 'clubmaster@clubmaster.fr',
             name: 'ClubMaster'
         };
+
+        this.defaultHeaders = {
+            'X-Mailin-custom': 'custom_header_1:custom_value_1|custom_header_2:custom_value_2|custom_header_3:custom_value_3',
+            charset: 'iso-8859-1'
+        };
     }
 
     async sendEmail({ to, subject, htmlContent, textContent, templateId, params, headers }) {
@@ -34,7 +39,8 @@ class EmailService {
 
             const emailData = {
                 sender: this.defaultSender,
-                to: Array.isArray(to) ? to : [{ email: to }]
+                to: Array.isArray(to) ? to : [{ email: to }],
+                headers: headers || this.defaultHeaders
             };
 
             // Si un templateId est fourni, on utilise le template
@@ -50,11 +56,6 @@ class EmailService {
                 emailData.textContent = textContent;
             }
 
-            // Ajout des en-têtes personnalisés si fournis
-            if (headers) {
-                emailData.headers = headers;
-            }
-
             const response = await this.apiClient.post('/smtp/email', emailData);
 
             console.log('Email envoyé avec succès:', response.data);
@@ -66,12 +67,12 @@ class EmailService {
     }
 
     // Nouvelle méthode pour envoyer un email avec template
-    async sendTemplateEmail({ to, templateId, params = {}, headers = {} }) {
+    async sendTemplateEmail({ to, templateId, params = {}, headers = null }) {
         return this.sendEmail({
             to: Array.isArray(to) ? to : [{ email: to, name: params.name }],
             templateId,
             params,
-            headers
+            headers: headers || this.defaultHeaders
         });
     }
 
