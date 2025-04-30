@@ -182,10 +182,20 @@ const addEvent = async (req, res) => {
                 `;
                 const contactsResult = await client.query(contactsQuery, [eventType.clubid]);
                 
+                const dd = new Date(eventData.Dd);
+                const df = new Date(eventData.Df);
+                // Ajuster les dates avec le GMT
+                const ddGMT = new Date(dd.getTime() + dd.getTimezoneOffset() * 60000);
+                const dfGMT = new Date(df.getTime() + df.getTimezoneOffset() * 60000);
                 // Préparer les données pour l'email
                 const emailParams = {
                     nom_evenement: eventData.Label,
-                    date_evenement: new Date(eventData.Dd).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                    date_evenement: new Date(eventData.Dd).toLocaleDateString('fr-FR', { 
+                        day: '2-digit', 
+                        month: 'short', 
+                        year: 'numeric' 
+                    }),
+                    horaire_evenement: `${(ddGMT.getHours()+2).toString().padStart(2, '0')}h${ddGMT.getMinutes().toString().padStart(2, '0')} à ${(dfGMT.getHours()+2).toString().padStart(2, '0')}h${dfGMT.getMinutes().toString().padStart(2, '0')}`,
                     lieu_evenement: `${eventType.street}, ${eventType.postalcode} ${eventType.city}`,
                     nom_club: eventType.club_label,
                     lien_inscription: `https://clubmaster.fr/event/${insertedEvent.id}`
