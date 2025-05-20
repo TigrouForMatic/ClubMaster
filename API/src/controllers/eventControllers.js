@@ -156,71 +156,6 @@ const addEvent = async (req, res) => {
             const selectQuery = `SELECT * FROM ${TABLE_NAME} WHERE id = $1`;
             const selectResult = await client.query(selectQuery, [insertedEvent.id]);
             
-            // Récupérer les informations du type d'événement et du club
-            const eventTypeQuery = `
-                SELECT et.*, c.label as club_label, c.idbrevo as club_brevo_id, a.street, a.city, a.postalcode
-                FROM db.EventType et
-                JOIN db.Club c ON et.clubid = c.id
-                JOIN db.Address a ON $1 = a.id
-                WHERE et.id = $2
-            `;
-            const eventTypeResult = await client.query(eventTypeQuery, [eventData.AddressId, eventData.EventTypeId]);
-            
-            if (eventTypeResult.rows.length > 0) {
-                const eventType = eventTypeResult.rows[0];
-                
-                // Récupérer les contacts de la liste Brevo du club
-                const contactsQuery = `
-                    SELECT DISTINCT l.login, l.firstname, l.lastname 
-                    FROM db.Login l
-                    JOIN db.Licence lic ON l.id = lic.loginid
-                    JOIN db.LicenceType lt ON lic.licencetypeid = lt.id
-                    WHERE lt.clubid = $1 
-                    AND lic.df >= NOW()
-                    AND lic.bin = false
-                    AND l.brevoid IS NOT NULL
-                `;
-                const contactsResult = await client.query(contactsQuery, [eventType.clubid]);
-                
-                const dd = new Date(eventData.Dd);
-                const df = new Date(eventData.Df);
-                // Ajuster les dates avec le GMT
-                const ddGMT = new Date(dd.getTime() + dd.getTimezoneOffset() * 60000);
-                const dfGMT = new Date(df.getTime() + df.getTimezoneOffset() * 60000);
-                // Préparer les données pour l'email
-                const emailParams = {
-                    nom_evenement: eventData.Label,
-                    date_evenement: new Date(eventData.Dd).toLocaleDateString('fr-FR', { 
-                        day: '2-digit', 
-                        month: 'short', 
-                        year: 'numeric' 
-                    }),
-                    horaire_evenement: `${(ddGMT.getHours()+2).toString().padStart(2, '0')}h${ddGMT.getMinutes().toString().padStart(2, '0')} à ${(dfGMT.getHours()+2).toString().padStart(2, '0')}h${dfGMT.getMinutes().toString().padStart(2, '0')}`,
-                    lieu_evenement: `${eventType.street}, ${eventType.postalcode} ${eventType.city}`,
-                    nom_club: eventType.club_label,
-                    lien_inscription: `https://clubmaster.fr/event/${insertedEvent.id}`
-                };
-                
-                // Envoyer l'email à tous les contacts
-                for (const contact of contactsResult.rows) {
-                    try {
-                        await emailService.sendTemplateEmail({
-                            to: contact.login,
-                            templateId: 4, // ID du template de notification d'événement
-                            params: {
-                                ...emailParams,
-                                FIRSTNAME: contact.firstname || 'cher adhérent'
-                            },
-                            headers: {
-                                'api-key': process.env.BREVO_API_KEY
-                            }
-                        });
-                    } catch (emailError) {
-                        console.error(`Erreur lors de l'envoi de l'email à ${contact.login}:`, emailError);
-                    }
-                }
-            }
-            
             client.release();
             res.status(201).json(selectResult.rows[0]);
         } catch (err) {
@@ -243,6 +178,71 @@ const updateEvent = async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).send('Événement non trouvé');
         }
+
+        // Récupérer les informations du type d'événement et du club
+    //     const eventTypeQuery = `
+    //     SELECT et.*, c.label as club_label, c.idbrevo as club_brevo_id, a.street, a.city, a.postalcode
+    //     FROM db.EventType et
+    //     JOIN db.Club c ON et.clubid = c.id
+    //     JOIN db.Address a ON $1 = a.id
+    //     WHERE et.id = $2
+    // `;
+    // const eventTypeResult = await client.query(eventTypeQuery, [eventData.AddressId, eventData.EventTypeId]);
+    
+    // if (eventTypeResult.rows.length > 0) {
+    //     const eventType = eventTypeResult.rows[0];
+        
+    //     // Récupérer les contacts de la liste Brevo du club
+    //     const contactsQuery = `
+    //         SELECT DISTINCT l.login, l.firstname, l.lastname 
+    //         FROM db.Login l
+    //         JOIN db.Licence lic ON l.id = lic.loginid
+    //         JOIN db.LicenceType lt ON lic.licencetypeid = lt.id
+    //         WHERE lt.clubid = $1 
+    //         AND lic.df >= NOW()
+    //         AND lic.bin = false
+    //         AND l.brevoid IS NOT NULL
+    //     `;
+    //     const contactsResult = await client.query(contactsQuery, [eventType.clubid]);
+        
+    //     const dd = new Date(eventData.Dd);
+    //     const df = new Date(eventData.Df);
+    //     // Ajuster les dates avec le GMT
+    //     const ddGMT = new Date(dd.getTime() + dd.getTimezoneOffset() * 60000);
+    //     const dfGMT = new Date(df.getTime() + df.getTimezoneOffset() * 60000);
+    //     // Préparer les données pour l'email
+    //     const emailParams = {
+    //         nom_evenement: eventData.Label,
+    //         date_evenement: new Date(eventData.Dd).toLocaleDateString('fr-FR', { 
+    //             day: '2-digit', 
+    //             month: 'short', 
+    //             year: 'numeric' 
+    //         }),
+    //         horaire_evenement: `${(ddGMT.getHours()+2).toString().padStart(2, '0')}h${ddGMT.getMinutes().toString().padStart(2, '0')} à ${(dfGMT.getHours()+2).toString().padStart(2, '0')}h${dfGMT.getMinutes().toString().padStart(2, '0')}`,
+    //         lieu_evenement: `${eventType.street}, ${eventType.postalcode} ${eventType.city}`,
+    //         nom_club: eventType.club_label,
+    //         lien_inscription: `https://clubmaster.fr/event/${insertedEvent.id}`
+    //     };
+        
+    //     // Envoyer l'email à tous les contacts
+    //     for (const contact of contactsResult.rows) {
+    //         try {
+    //             await emailService.sendTemplateEmail({
+    //                 to: contact.login,
+    //                 templateId: 4, // ID du template de notification d'événement
+    //                 params: {
+    //                     ...emailParams,
+    //                     FIRSTNAME: contact.firstname || 'cher adhérent'
+    //                 },
+    //                 headers: {
+    //                     'api-key': process.env.BREVO_API_KEY
+    //                 }
+    //             });
+    //         } catch (emailError) {
+    //             console.error(`Erreur lors de l'envoi de l'email à ${contact.login}:`, emailError);
+    //         }
+    //     }
+    // }
         res.json(result.rows[0]);
     } catch (err) {
         console.error(`Erreur lors de la mise à jour de l'événement avec l'ID ${id}`, err);
